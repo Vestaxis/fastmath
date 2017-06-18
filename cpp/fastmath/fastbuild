@@ -1,0 +1,3 @@
+#!/bin/sh
+
+make && sudo cp -v /home/stephen/git/fastmath/cpp/fastmath/../../target/classes/libfastmath.so /usr/lib/libfastmath.so

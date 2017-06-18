@@ -1,0 +1,12 @@
+fastmath (6.37-1ubuntu3) UNRELEASED; urgency=medium
+
+  * new
+  * version
+
+ -- Stephen Crowley <stephen@m4800>  Tue, 21 Mar 2017 16:20:50 -0500
+
+fastmath (6.36-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Stephen Crowley <crow@zbox>  Fri, 21 Oct 2016 21:04:33 -0500

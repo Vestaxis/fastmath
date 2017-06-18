@@ -1,0 +1,33 @@
+package stochastic;
+
+import math.space.EuclideanSpace;
+
+/**
+ * In the theory of stochastic processes in mathematics and statistics, the
+ * natural filtration associated to a stochastic process is a filtration
+ * associated to the process which records its "past behaviour" at each time. It
+ * is in a sense the simplest filtration available for studying the given
+ * process: all information concerning the process, and only that information,
+ * is available in the natural filtration.
+ * 
+ * More formally, let (Ω, F, P) be a probability space; let (I, ≤) be a totally
+ * ordered index set; let (S, Σ) be a measurable space; let X : I × Ω → S be a
+ * stochastic process. Then the natural filtration of F with respect to X is
+ * defined to be the filtration F•X = (FiX)i∈I given by
+ * 
+ * F_i^X = σ{ X_j^{-1}(A)|j∈I,j⩽i,A∈Σ}
+ * 
+ * i.e., the smallest σ-algebra on Ω that contains all pre-images of
+ * Σ-measurable subsets of S for "times" j up to i.
+ * 
+ * In many examples, the index set I is the natural numbers N (possibly
+ * including 0) or an interval [0, T] or [0, +∞); the state space S is often the
+ * real line R or {@link EuclideanSpace} R^n.
+ * 
+ * Any stochastic process X is an adapted process with respect to its natural
+ * filtration.
+ */
+public interface NaturalFiltration extends Filtration
+{
+
+}

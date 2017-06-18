@@ -1,0 +1,25 @@
+Source: fastmath
+Priority: optional
+Maintainer: Stephen Crowley <crow@zbox>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.6
+Section: libs
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://anonscm.debian.org/collab-maint/fastmath.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/fastmath.git
+
+Package: libfastmath-dev
+Section: libdevel
+Architecture: any
+Depends: libfastmath (= ${binary:Version}), ${misc:Depends}
+Description: development headers for a mathematical library
+ development headers for a mathematical library
+
+Package: libfastmath
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: a mathematical library
+ a mathematical library for vectors, matrices, and special function 
+ evaluation. Includes JNI interface
+ 
+ 

@@ -1,0 +1,4 @@
+#!/bin/sh -x
+
+java -classpath `mvn -q exec:exec` fastmath.arb.ZRoots
+

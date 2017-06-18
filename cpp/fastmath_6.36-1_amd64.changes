@@ -1,0 +1,35 @@
+Format: 1.8
+Date: Fri, 21 Oct 2016 21:04:33 -0500
+Source: fastmath
+Binary: libfastmath-dev libfastmath
+Architecture: source amd64
+Version: 6.36-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Stephen Crowley <crow@zbox>
+Changed-By: Stephen Crowley <crow@zbox>
+Description:
+ libfastmath - a mathematical library
+ libfastmath-dev - development headers for a mathematical library
+Changes:
+ fastmath (6.36-1) unstable; urgency=medium
+ .
+   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+Checksums-Sha1:
+ 21da71034e1551fdf1374126be9f5118c257dc7a 888 fastmath_6.36-1.dsc
+ 0345869b5c385721762352a3e6c9ba2529cd6d0f 105380 fastmath_6.36.orig.tar.xz
+ 9e5a93e516d7391f55ac5b6b69ed1c596364e4e9 19192 fastmath_6.36-1.debian.tar.xz
+ 6edd2252787f0e589626793a83458c79ac80917a 30772 libfastmath-dev_6.36-1_amd64.deb
+ 5dc968417cbe642d3e8e974e0170d476630f2965 291376 libfastmath_6.36-1_amd64.deb
+Checksums-Sha256:
+ 03843b960d7429185ff748c3a9be3e9b30acb49d9908f1b295fd1decc536977c 888 fastmath_6.36-1.dsc
+ cad6a25f575925201efc7f50e8f1329a047c5b32c1178b46934f72e26cb52d56 105380 fastmath_6.36.orig.tar.xz
+ d425b293f8d1838c98fc401f0882562c831f6795fa36042b10232b281a766bed 19192 fastmath_6.36-1.debian.tar.xz
+ 8c4a79adff25f92984dd2ac3fb0236e7c443f0911da6a53cbcb295c187f4a7e2 30772 libfastmath-dev_6.36-1_amd64.deb
+ 8ce38fb60dd9d0747b3e6f369c095a7c31b17026e7353f239810192bd1cefe49 291376 libfastmath_6.36-1_amd64.deb
+Files:
+ b78693087e272b0ad47a2d0c7752728a 888 libs optional fastmath_6.36-1.dsc
+ 2abea5fd5a8802606c1c5c1e68bcea7a 105380 libs optional fastmath_6.36.orig.tar.xz
+ bc65062679b89fe250a119803b96b8a3 19192 libs optional fastmath_6.36-1.debian.tar.xz
+ f1f7a7861adb3b216d13bf9bf9ec063e 30772 libdevel optional libfastmath-dev_6.36-1_amd64.deb
+ dd9d4c1073c3e1626b8856e18e7a5048 291376 libs optional libfastmath_6.36-1_amd64.deb
