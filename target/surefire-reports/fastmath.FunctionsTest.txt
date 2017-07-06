@@ -1,4 +1,64 @@
 -------------------------------------------------------------------------------
 Test set: fastmath.FunctionsTest
 -------------------------------------------------------------------------------
-Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.081 sec - in fastmath.FunctionsTest
+Tests run: 14, Failures: 0, Errors: 5, Skipped: 0, Time elapsed: 0.162 sec <<< FAILURE! - in fastmath.FunctionsTest
+testZSteffensen(fastmath.FunctionsTest)  Time elapsed: 0.005 sec  <<< ERROR!
+java.lang.UnsatisfiedLinkError: Error looking up function 'acb_dirichlet_hardy_z': /usr/lib/libflint-arb.so: undefined symbol: acb_dirichlet_hardy_z
+	at com.sun.jna.Function.<init>(Function.java:212)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:541)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:518)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:504)
+	at com.sun.jna.Library$Handler.invoke(Library.java:220)
+	at com.sun.proxy.$Proxy3.acb_dirichlet_hardy_z(Unknown Source)
+	at fastmath.arb.Complex.HardyZ(Complex.java:435)
+	at fastmath.arb.Complex.ZSteffensen(Complex.java:724)
+	at fastmath.FunctionsTest.testZSteffensen(FunctionsTest.java:109)
+
+testZd(fastmath.FunctionsTest)  Time elapsed: 0.011 sec  <<< ERROR!
+java.lang.UnsatisfiedLinkError: Error looking up function 'acb_dirichlet_hardy_z_series': /usr/lib/libflint-arb.so: undefined symbol: acb_dirichlet_hardy_z_series
+	at com.sun.jna.Function.<init>(Function.java:212)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:541)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:518)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:504)
+	at com.sun.jna.Library$Handler.invoke(Library.java:220)
+	at com.sun.proxy.$Proxy3.acb_dirichlet_hardy_z_series(Unknown Source)
+	at fastmath.arb.Complex.HardyZDerivative(Complex.java:552)
+	at fastmath.Functions.Zd(Functions.java:156)
+	at fastmath.FunctionsTest.testZd(FunctionsTest.java:117)
+
+testZ(fastmath.FunctionsTest)  Time elapsed: 0.003 sec  <<< ERROR!
+java.lang.UnsatisfiedLinkError: Error looking up function 'acb_dirichlet_hardy_z': /usr/lib/libflint-arb.so: undefined symbol: acb_dirichlet_hardy_z
+	at com.sun.jna.Function.<init>(Function.java:212)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:541)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:518)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:504)
+	at com.sun.jna.Library$Handler.invoke(Library.java:220)
+	at com.sun.proxy.$Proxy3.acb_dirichlet_hardy_z(Unknown Source)
+	at fastmath.arb.Complex.HardyZ(Complex.java:435)
+	at fastmath.Functions.Z(Functions.java:135)
+	at fastmath.FunctionsTest.testZ(FunctionsTest.java:134)
+
+testϑ(fastmath.FunctionsTest)  Time elapsed: 0.002 sec  <<< ERROR!
+java.lang.UnsatisfiedLinkError: Error looking up function 'acb_dirichlet_hardy_theta': /usr/lib/libflint-arb.so: undefined symbol: acb_dirichlet_hardy_theta
+	at com.sun.jna.Function.<init>(Function.java:212)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:541)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:518)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:504)
+	at com.sun.jna.Library$Handler.invoke(Library.java:220)
+	at com.sun.proxy.$Proxy3.acb_dirichlet_hardy_theta(Unknown Source)
+	at fastmath.arb.Complex.vartheta(Complex.java:428)
+	at fastmath.Functions.ϑ(Functions.java:226)
+	at fastmath.FunctionsTest.testϑ(FunctionsTest.java:176)
+
+testZNewton(fastmath.FunctionsTest)  Time elapsed: 0.002 sec  <<< ERROR!
+java.lang.UnsatisfiedLinkError: Error looking up function 'acb_dirichlet_hardy_z_series': /usr/lib/libflint-arb.so: undefined symbol: acb_dirichlet_hardy_z_series
+	at com.sun.jna.Function.<init>(Function.java:212)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:541)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:518)
+	at com.sun.jna.NativeLibrary.getFunction(NativeLibrary.java:504)
+	at com.sun.jna.Library$Handler.invoke(Library.java:220)
+	at com.sun.proxy.$Proxy3.acb_dirichlet_hardy_z_series(Unknown Source)
+	at fastmath.arb.Complex.HardyZNewton(Complex.java:616)
+	at fastmath.Functions.ZNewton(Functions.java:172)
+	at fastmath.FunctionsTest.testZNewton(FunctionsTest.java:222)
+

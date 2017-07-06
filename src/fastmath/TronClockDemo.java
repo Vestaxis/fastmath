@@ -33,7 +33,7 @@ public class TronClockDemo extends Application
   {
 
     Group root = new Group();
-    Scene scene = new Scene( root, 650, 220, Color.rgb( 0, 0, 0 ) );
+    Scene scene = new Scene( root, 1000, 500, Color.rgb( 0, 0, 0 ) );
 
     // create a canvas node
     Canvas canvas = new Canvas();
@@ -46,9 +46,9 @@ public class TronClockDemo extends Application
     final GraphicsContext gc = canvas.getGraphicsContext2D();
 
     // create three clocks
-    final ArcClock blueClock = new ArcClock( 20, Color.BLUE, Color.BLUEVIOLET, 200 );
-    final ArcClock greenClock = new ArcClock( 20, Color.BLUE, Color.GREEN, 200 );
-    final ArcClock redClock = new ArcClock( 20, Color.BLUE, Color.RED, 200 );
+    final ArcClock blueClock = new ArcClock( 20, Color.BLUE, Color.BLUEVIOLET, 320 );
+    final ArcClock greenClock = new ArcClock( 20, Color.BLUE, Color.GREEN, 320 );
+    final ArcClock redClock = new ArcClock( 20, Color.BLUE, Color.RED, 320 );
 
     // create an animation (update & render loop)
     new AnimationTimer()
