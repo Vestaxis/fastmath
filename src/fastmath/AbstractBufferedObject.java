@@ -52,8 +52,12 @@ public abstract class AbstractBufferedObject implements Writable
   {
     ByteBuffer newBuffer = BufferUtils.newNativeBuffer( newSize * MiDouble.BYTES );
 
-    BLAS1.dcopy( min( prevSize, newSize ), buffer, 0, 1, newBuffer, 0, 1 );
-
+    newBuffer.mark();
+    if  ( buffer != null )
+    {
+    	newBuffer.put(buffer);
+    }
+    newBuffer.reset();
     buffer = newBuffer;
   }
 

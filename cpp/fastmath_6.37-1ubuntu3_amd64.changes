@@ -17,11 +17,11 @@ Changes:
    * new
    * version
 Checksums-Sha1:
- 354579db57b19d2e2ab33a9a7365de5ea76204bc 14384 libfastmath-dev_6.37-1ubuntu3_amd64.deb
- ae6405d75fd497474d991fc171b291c18f4b398b 308444 libfastmath_6.37-1ubuntu3_amd64.deb
+ dd97dc0cb804c0c096d22a854ccdd59f4776abbc 14380 libfastmath-dev_6.37-1ubuntu3_amd64.deb
+ f7eff58d94038af1c57fc23a2427e1ab18a854bd 342812 libfastmath_6.37-1ubuntu3_amd64.deb
 Checksums-Sha256:
- 8ed8e2f680689e7978ae6d486a159e64fd45ffd4fd1ce1bd9de0fcfdfb47f77c 14384 libfastmath-dev_6.37-1ubuntu3_amd64.deb
- e0c27783275109c23e2f5425b0b2fa96c36559cb74f08eee00dbdb6589c5c92a 308444 libfastmath_6.37-1ubuntu3_amd64.deb
+ a40568a5ee129d98f9abba5a7a2f065fc26c4bbdab7123dd58a472effa5c6cb8 14380 libfastmath-dev_6.37-1ubuntu3_amd64.deb
+ c61e937d4e2f2ecbfa3529a51648cce5a023fcad6da2bbf03d5b3847b59b261c 342812 libfastmath_6.37-1ubuntu3_amd64.deb
 Files:
- 11ecdb288400e0df87b9a4a23a67f33c 14384 libdevel optional libfastmath-dev_6.37-1ubuntu3_amd64.deb
- 07934cd0ce417f493ba0eddb4c7f5e15 308444 libs optional libfastmath_6.37-1ubuntu3_amd64.deb
+ feabffb6a8c2f28ebb360ee7722532d0 14380 libdevel optional libfastmath-dev_6.37-1ubuntu3_amd64.deb
+ 5daf694f87208037f516aec3297a10e0 342812 libs optional libfastmath_6.37-1ubuntu3_amd64.deb

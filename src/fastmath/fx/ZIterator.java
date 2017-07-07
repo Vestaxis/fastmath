@@ -2,7 +2,6 @@ package fastmath.fx;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.exp;
-import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
 import static java.lang.System.currentTimeMillis;
@@ -26,10 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
-import com.sleepycat.je.tree.Tree;
-
 import fastmath.ExponentialMovingAverage;
-import fastmath.Fastmath;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.arb.Complex;
