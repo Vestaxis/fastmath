@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import com.sleepycat.persist.model.Persistent;
 
+import fastmath.Vector.Condition;
 import fastmath.matfile.MiDouble;
 
 /**
@@ -255,6 +256,19 @@ public class DoubleRowMatrix extends DoubleMatrix
 
     return row( i );
 
+  }
+
+  /**
+   * A getter for Run-Length encoded matrix
+   * 
+   * @param t
+   * @param yk
+   * @return
+   */
+  public double getSparse(double t, int yk) 
+  {	
+	int row = col(0).findLast(t, Condition.LTE);
+	return row >= 0  ? get(row,yk+1) : 0;
   }
 
 }

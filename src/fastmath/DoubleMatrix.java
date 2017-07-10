@@ -918,6 +918,10 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   @Override
   public double get( int i, int j )
   {
+	  if ( i >= numRows || j >= numCols || i < 0 || j < 0 )
+	  {
+		  return Double.NaN;
+	  }
     assert i < numRows : format( "i=%d >= numRows=%d", i, numRows );
     assert j < numCols : format( "j=%d >= numCols=%d", j, numCols );
     int offset = getOffset( i, j );
