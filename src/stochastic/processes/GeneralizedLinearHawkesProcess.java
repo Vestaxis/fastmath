@@ -1,10 +1,13 @@
 package stochastic.processes;
 
+import fastmath.Vector;
+
 public class GeneralizedLinearHawkesProcess {
 	final int k;
 	final double dt;
 	final double L;
 
+	Vector α  = new Vector( n );
 	/**
 	 * 
 	 * @param L length of window over which feedback is considered
