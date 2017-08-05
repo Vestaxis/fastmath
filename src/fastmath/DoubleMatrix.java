@@ -1663,7 +1663,7 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
     maxLength += 2;
 
-    StringBuffer sb = new StringBuffer( ( getName() != null ? ( getName() + "=" ) : "" ) + "\n" );
+	StringBuffer sb = new StringBuffer( ( getName() != null ? ( getName() + "=" ) : "" ) +  getDimString() + "\n" );
 
     for ( int i = 0; i < numRows; i++ )
     {
@@ -1691,6 +1691,11 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
 
     return sb.toString();
   }
+
+private String getDimString() {
+	String dimString = "(" + getRowCount() + "," + getColCount() + ")";
+	return dimString;
+}
 
   /**
    * Return a transposed view of this Matrix
@@ -1744,4 +1749,24 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return (DoubleMatrix) super.pow( x );
   }
 
+  
+  public DoubleMatrix reverseRows() 
+  {
+	  for ( Vector row : rows() )
+	  {
+		  row.assign(row.reverse().copy());
+	  }
+	  return this;
+  }
+  
+  public DoubleMatrix reverseCols() 
+  {
+	  for ( Vector col : cols() )
+	  {
+		 col.assign(col.reverse().copy());
+	  }
+	  return this;
+  }
 }
+
+

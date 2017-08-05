@@ -176,7 +176,7 @@ public class BLAS1 {
 	 * FIXME: this needs to support row major operations
 	 */
 	public static void dgemm(DoubleMatrix A, double alpha, DoubleMatrix B, DoubleMatrix C, double beta) {
-		assert A.getColCount() == B.getRowCount() : "A.cols != B.rows";
+		assert A.getColCount() == B.getRowCount() : "A.cols=" + A.getColCount() + " != B.rows=" + B.getRowCount();
 		assert A.getRowCount() == C.getRowCount() : "A.rows != C.rows";
 		assert B.getColCount() == C.getColCount() : "B.cols != C.cols";
 		// assert A.isDense() : "A is not dense";
