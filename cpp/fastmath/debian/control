@@ -11,7 +11,7 @@ Homepage: <insert the upstream URL, if relevant>
 Package: libfastmath-dev
 Section: libdevel
 Architecture: any
-Depends: libfastmath (= ${binary:Version}), ${misc:Depends}
+Depends: libfastmath (= ${binary:Version}), ${misc:Depends}, libflint-arb-dev, libflint-dev, libatlas-base-dev
 Description: development headers for a mathematical library
  development headers for a mathematical library
 

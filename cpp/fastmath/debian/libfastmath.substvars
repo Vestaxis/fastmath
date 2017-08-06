@@ -1,3 +1,0 @@
-shlibs:Depends=libatlas3-base, libblas3 | libblas.so.3, libc6 (>= 2.4), libflint-2.5.2, libflint-arb1, libgcc1 (>= 1:4.0), liblapack3 | liblapack.so.3, libmpfr4 (>= 3.1.3), libstdc++6 (>= 5.2)
-misc:Depends=
-misc:Pre-Depends=

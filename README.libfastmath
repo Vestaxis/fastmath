@@ -1,0 +1,6 @@
+to build the fastmath deb file do this:
+
+cd fastmath/cpp/fastmath
+ln -s /usr/lib/jvm/java-1.8.0-openjdk-amd64 /usr/lib/jvm/default-java (if it does not already exist) 
+dpkg-buildpackage -b -us -uc
+dpkg -i ../libfastmath-dev_6.37-1ubuntu3_amd64.deb ../libfastmath_6.37-1ubuntu3_amd64.deb

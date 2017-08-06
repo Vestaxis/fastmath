@@ -3,3 +3,8 @@
 /libfastmath-dev.debhelper.log
 /libfastmath-dev/
 /libfastmath/
+/control~
+/debhelper-build-stamp
+/files
+/libfastmath-dev.substvars
+/libfastmath.substvars
