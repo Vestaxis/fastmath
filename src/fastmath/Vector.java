@@ -1,5 +1,7 @@
 package fastmath;
 
+import static fastmath.Functions.sum;
+import static java.lang.Math.pow;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
@@ -1372,5 +1374,12 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     } );
     
     return A;
-  }
+	}
+
+	public double variance() 
+	{
+		final int n = size();
+		final double mean = mean();
+		return Functions.sum(t -> get(t)*get(t) - mean, 0, n - 1) / n;
+	}
 }
