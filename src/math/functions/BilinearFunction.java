@@ -1,5 +1,7 @@
 package math.functions;
 
+import org.apache.commons.math3.analysis.BivariateFunction;
+
 import math.Set;
 
 /**
@@ -15,7 +17,7 @@ import math.Set;
  * @param <B>
  * @param <R>
  */
-public interface BilinearFunction<A extends Set, B extends Set, R extends Set> extends BivariateFunction<A, B, R>
+public interface BilinearFunction<A extends Set, B extends Set, R extends Set> extends BivariateFunction
 {
 
 }

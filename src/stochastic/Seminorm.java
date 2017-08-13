@@ -1,7 +1,8 @@
 package stochastic;
 
+import java.util.function.Function;
+
 import math.Set;
-import math.functions.Function;
 import math.space.VectorSpace;
 
 /**

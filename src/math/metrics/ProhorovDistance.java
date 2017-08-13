@@ -16,10 +16,9 @@ public class ProhorovDistance<X extends Set> implements Metric<X>
 {
 
   @Override
-  public RealNumbers apply( Product<X, X> t )
+  public Double apply( Product<X, X> t )
   {
-    // TODO Auto-generated method stub
-    return null;
+	  throw new UnsupportedOperationException( "TODO" );
   }
 
 }

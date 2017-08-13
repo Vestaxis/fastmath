@@ -1,5 +1,7 @@
 package math.functions;
 
+import java.util.function.Function;
+
 import math.Product;
 import math.Set;
 

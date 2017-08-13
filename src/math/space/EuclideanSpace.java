@@ -26,5 +26,10 @@ public interface EuclideanSpace
                                 RadonSpace,
                                 SigmaField<RealNumbers>
 {
-
+	/**
+	 * @return the dimension of the space
+	 */
+ public int getDimension();
+ 
+ public double getDist( EuclideanSpace other );
 }

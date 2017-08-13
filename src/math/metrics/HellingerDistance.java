@@ -30,10 +30,9 @@ public class HellingerDistance implements Metric<ProbabilityMeasure<?, ?>>
 {
 
   @Override
-  public RealNumbers apply( Product<ProbabilityMeasure<?, ?>, ProbabilityMeasure<?, ?>> t )
+  public Double apply( Product<ProbabilityMeasure<?, ?>, ProbabilityMeasure<?, ?>> t )
   {
-    // TODO Auto-generated method stub
-    return null;
+	  throw new UnsupportedOperationException( "TODO" );
   }
 
 }

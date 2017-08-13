@@ -1,5 +1,7 @@
 package math.functions;
 
+import java.util.function.Function;
+
 import math.Product;
 import math.Set;
 
@@ -23,13 +25,13 @@ import math.Set;
  */
 public interface BinaryOperator<A extends Set> extends Function<Product<A, A>, A>
 {
-  /**
-   * 
-   * @param left
-   *          an element of A
-   * @param right
-   *          an element of A
-   * @return an element of A
-   */
-  public A compose( A left, A right );
+	/**
+	 * 
+	 * @param left
+	 *            an element of A
+	 * @param right
+	 *            an element of A
+	 * @return an element of A
+	 */
+	public A compose(A left, A right);
 }

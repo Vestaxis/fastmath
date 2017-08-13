@@ -1,7 +1,8 @@
 package stochastic.processes.pointprocesses;
 
+import java.util.function.Function;
+
 import fastmath.Vector;
-import math.functions.Function;
 import numbersystems.PositiveRealNumbers;
 import numbersystems.RealNumbers;
 

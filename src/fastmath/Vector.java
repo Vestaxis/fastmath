@@ -1382,4 +1382,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		final double mean = mean();
 		return Functions.sum(t -> get(t)*get(t) - mean, 0, n - 1) / n;
 	}
+
+	@Override
+	public double getDist(EuclideanSpace other)
+	{
+		if ( ! ( other instanceof Vector ) )
+		{
+			  throw new UnsupportedOperationException( "TODO" ); 
+		}
+		Vector b = (Vector)other;
+		return Functions.sum(k -> Math.abs( get(k) - b.get(k) ), 0, size() );
+	}
 }

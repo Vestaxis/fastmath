@@ -1,17 +1,12 @@
 package stochastic.measures;
 
+import java.util.function.Function;
+
 import math.Product;
 import math.Set;
-import math.functions.Function;
-import numbersystems.RealNumbers;
 import stochastic.order.OrderedSet;
 
-/**
- * 
- * @author crow
- *
- */
-public interface Measure<X extends Set> extends OrderedSet, Function<Product<X, X>, RealNumbers>
+public interface Measure<X extends Set> extends OrderedSet, Function<Product<X, X>, Double>
 {
 
 }
