@@ -915,6 +915,16 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return this;
   }
 
+  public DoubleMatrix log()
+  {
+    for ( Vector col : cols() )
+    {
+      col.log();
+    }
+
+    return this;
+  }
+  
   @Override
   public double get( int i, int j )
   {

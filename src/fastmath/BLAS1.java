@@ -1,5 +1,7 @@
 package fastmath;
 
+import static java.lang.String.format;
+
 import java.nio.ByteBuffer;
 
 import com.sun.jna.ptr.IntByReference;
@@ -144,7 +146,7 @@ public class BLAS1 {
 	 * yet )
 	 */
 	public static void dcopy(Vector X, Vector Y) {
-		assert X.size() == Y.size() : "Dimensions of X and Y must be the same";
+		assert X.size() == Y.size() : format( "Dimensions of X and Y must be the same: %d != %d", X.size(), Y.size() );
 
 		Y.assign(X);
 		//Fastmath.instance.dcopy(X.size, X.getBuffer().asDoubleBuffer(), X.getIncrement(), Y.getBuffer().asDoubleBuffer(), Y.getIncrement());

@@ -4,6 +4,7 @@ import static java.lang.System.err;
 import static java.lang.System.out;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -269,12 +270,11 @@ public class MatFile implements Iterable<MiElement>
    * by {@link Runtime#addShutdownHook(Thread)}
    * 
    * @param fileChannel
-   * @throws IOException
+ * @throws IOException
    */
-  public MatFile(File file, String headerText)
+  public MatFile(File file, String headerText) throws IOException
   {
     RandomAccessFile raf;
-    try
     {
       if ( file.exists() )
       {
@@ -302,10 +302,7 @@ public class MatFile implements Iterable<MiElement>
       this.header = new Header( this.getFileChannel(), headerText );
       readOnly = false;
     }
-    catch( Exception e )
-    {
-      throw new RuntimeException( file.getName() + ": " + e.getMessage(), e );
-    }
+    
   }
 
   public MatFile(String filename)
