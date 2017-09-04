@@ -1,5 +1,6 @@
 package stochastic.processes.hawkes;
 
+import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 
@@ -20,12 +21,12 @@ import math.DoublePair;
 
 public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel implements MultivariateFunction, Serializable
 {
-	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel(double ρ, double τ0, double τ, double ε,
+	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel(double ρ, double η, double τ, double ε,
 			double b)
 	{
 		super();
 		this.ρ = ρ;
-		this.τ0 = τ0;
+		this.η = η;
 		this.τ = τ;
 		this.ε = ε;
 		this.b = b;
@@ -120,7 +121,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel im
 	/**
 	 * short-time cutoff
 	 */
-	private double τ0;
+	private double η;
 	
 	/**
 	 * powerlaw scale
@@ -139,6 +140,20 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel im
 	
 	private double b;
 	
+	public double ψ( double t )
+	{		
+		return ρ / getZ() * (M * b * exp(-t / τ) + sum( i-> pow(1 / η / pow(m, i), 1 + ε) * exp(-t / η / pow(m, i)), 0, M - 1));
+	}
+
+	/**
+	 * 
+	 * @return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1)
+	 */
+	private double getZ()
+	{
+		return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1);
+	}
+	
 	/**
 	 * subs({alpha[i] = , beta[i] = }, nu(t));
 
@@ -151,10 +166,9 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel im
 		final int n = times.size();
 		double B[] = new double[M];
 		double intensity = 0;
-		double kappa = M*b*exp(-t*m/τ);
+		double kappa = M*b*exp(-t*τ);
 		double itime;
-		final double Z = (M * b * τ * pow(m, -ε) - M * b * τ + pow(τ, -ε) * m * pow(pow(m, -ε), M) - pow(τ, -ε) * m) / m / (pow(m, -ε) - 1);
-		double normalizationFactor = ρ / Z;
+		double normalizationFactor = ρ / getZ();
 
 		for (int i = 0; i < n && (itime = times.get(i)) < t; i++)
 		{
@@ -162,8 +176,8 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel im
 			double x = t - itime;
 			for (int j = 0; j < M; j++)
 			{
-				final double alphaj = pow(1/(τ0*pow(m,i)),1+ε);				
-				final double betaj = 1/(τ0*pow(m,i));
+				final double alphaj = pow(1/(η*pow(m,i)),1+ε);				
+				final double betaj = 1/(η*pow(m,i));
 				double exphi = exp(-betaj * x);
 				B[j] = (1 + B[j]) * exphi;
 				firstSum += alphaj * B[j];
