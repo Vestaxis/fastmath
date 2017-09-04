@@ -23,9 +23,15 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernelTes
 	
 	public void testIntensity()
 	{
-		HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel process = new HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( 0.75, 0.2, 0.9, 0.35, 0.1 );
+		double ρ = 0.75;
+		double ε = 0.2;
+		double τ = 0.9;
+		double η = 0.35;
+		double b = 0.1;
+		HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel process = new HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( ρ, η, τ, ε, b );
 		Vector T = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0 } );
-		double intensity = process.λ(T, 1.3);
+		double intensity = process.λ(T, 1.8);
 		out.println( "intensity=" + intensity );
+		assertEquals( .9073429721, intensity, pow(10,-9));
 	}
 }

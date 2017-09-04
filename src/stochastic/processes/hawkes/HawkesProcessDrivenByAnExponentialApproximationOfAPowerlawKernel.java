@@ -172,17 +172,18 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel im
 
 		for (int i = 0; i < n && (itime = times.get(i)) < t; i++)
 		{
-			double firstSum = kappa;
-			double x = t - itime;
-			for (int j = 0; j < M; j++)
-			{
-				final double alphaj = pow(1/(η*pow(m,i)),1+ε);				
-				final double betaj = 1/(η*pow(m,i));
-				double exphi = exp(-betaj * x);
-				B[j] = (1 + B[j]) * exphi;
-				firstSum += alphaj * B[j];
-			}
-			intensity = normalizationFactor * firstSum;
+			intensity += ψ( t- itime );
+//			double firstSum = kappa;
+//			double x = t - itime;
+//			for (int j = 0; j < M; j++)
+//			{
+//				final double alphaj = pow(1/(η*pow(m,i)),1+ε);				
+//				final double betaj = 1/(η*pow(m,i));
+//				double exphi = exp(-betaj * x);
+//				B[j] = (1 + B[j]) * exphi;
+//				firstSum += alphaj * B[j];
+//			}
+//			intensity = normalizationFactor * firstSum;
 		}
 		return intensity;
 	}
