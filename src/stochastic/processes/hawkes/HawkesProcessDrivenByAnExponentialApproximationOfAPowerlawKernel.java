@@ -2,11 +2,13 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
+import static java.lang.System.out;
 
 import java.io.Serializable;
 
-import javax.swing.JProgressBar;
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -22,11 +24,17 @@ import math.DoublePair;
 public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		implements MultivariateFunction, Serializable
 {
-	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel(double ρ, double η, double τ, double ε,
+	/**
+	 * 
+	 * @param η exponential multiplier
+	 * @param τ power multiplier
+	 * @param ε degree of fractional integration
+	 * @param b amplitude of short-term exponential 
+	 */
+	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( double η, double τ, double ε,
 			double b)
 	{
 		super();
-		this.ρ = ρ;
 		this.η = η;
 		this.τ = τ;
 		this.ε = ε;
@@ -40,7 +48,17 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		initializeParameterVectors();
 	}
 
-	protected Vector intereventTimes;
+	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel(double ρ2, double η2, double τ2, double ε2,
+			double b2)
+	{
+		this.ρ = ρ2;
+		this.η = η2;
+		this.τ = τ2;
+		this.ε = ε2;
+		this.b = b2;
+	}
+
+	protected Vector eventTimes;
 
 	public double computeMoment(int moment)
 	{
@@ -59,10 +77,12 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	public int estimateParameters(int digits)
 	{
 		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
-		optimizer.setSimplex(new NelderMeadSimplex(4, 0.01));
+		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.01));
 
-		PointValuePair params = optimizer.optimize(Integer.MAX_VALUE, this, GoalType.MAXIMIZE,
-				calculateInitialGuess(intereventTimes).toPrimitiveArray());
+		int maxIters = 100;
+		double[] initialEstimate = calculateInitialGuess(eventTimes).toPrimitiveArray();
+		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE,
+				initialEstimate);
 		getParameters().assign(params.getKey());
 
 		return optimizer.getEvaluations();
@@ -75,44 +95,24 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 
 	private Vector calculateInitialGuess(Vector durations)
 	{
-		// final Vector vec = getParameters();
-		// final double meanduration = durations.mean();
-		// if ( log.isDebugEnabled() )
-		// {
-		// log.debug( "meanDuration=" + meanduration );
-		// }
-		// vec.set( 0, ( ( 0.5 / meanduration ) ) );
-		// vec.slice( 1, order + 1 ).assign( 1.0 / order );
-		// vec.slice( order + 1, 2 * order + 1 ).assign( 2 );
-		//
-		// if ( log.isDebugEnabled() )
-		// {
-		// log.debug( "initial guess of the optimal parameter set = " + vec );
-		// }
-		//
-		// if ( vec.hasAnyInfinities() )
-		// {
-		// throw new IllegalArgumentException(
-		// "initial guess contains at least one infinite value" );
-		// }
-		//
-		// return vec;
-		return null;
+			 final Vector vec = getParameters();
+	
+		 return vec;
+		//return null;
 	}
 
 	public String getParamString()
 	{
-		return "";
+		return getParameters().toString();
 		// return "kappa=" + getKappa() + " alpha=" + alpha.toString().replace(
 		// "\n", "" ) + " beta="
 		// + beta.toString().replace( "\n", "" );
 	}
 
-	public static native double calculateLogLikelihood(final Vector times, double lambda, Vector alpha, Vector beta);
 
 	static enum Parameter
 	{
-		ρ, b, τ, τ0, ε
+		b, τ, ε, η
 	};
 
 	/**
@@ -120,7 +120,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	 */
 	int M = 15;
 
-	private double ρ; // branching rate
+	private double ρ = 1; // branching rate
 	/**
 	 * short-time cutoff
 	 */
@@ -146,7 +146,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	public double ψ(double t)
 	{
 		return ρ / getZ()
-				* (M * b * exp(-t / τ) + sum(i -> pow(1 / η / pow(m, i), 1 + ε) * exp(-t / η / pow(m, i)), 0, M - 1));
+				* (M * b * exp(-t / τ) + sum(i -> pow(1.0 / η / pow(m, i), 1.0 + ε) * exp(-t / η / pow(m, i)), 0, M - 1));
 	}
 
 	/**
@@ -155,113 +155,57 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	 */
 	private double getZ()
 	{
-		return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1);
+		return M * b * τ + 1.0 / (pow(m, -ε) - 1.0) * pow(η, -ε) * (pow(m, -ε * M) - 1.0);
 	}
 
 	/**
 	 * subs({alpha[i] = , beta[i] = }, nu(t));
-	 * 
-	 * @param times
 	 * @param t
+	 * 
 	 * @return
 	 */
-	public double λ(Vector times, double t)
+	public double λ(double t)
 	{
-		final int n = times.size();
-		double B[] = new double[M];
+		final int n = eventTimes.size();
 		double intensity = 0;
-		double kappa = M * b * exp(-t * τ);
 		double itime;
-		double normalizationFactor = ρ / getZ();
 
-		for (int i = 0; i < n && (itime = times.get(i)) < t; i++)
+		for (int i = 0; i < n && (itime = eventTimes.get(i)) <= t; i++)
 		{
 			intensity += ψ(t - itime);
-			// double firstSum = kappa;
-			// double x = t - itime;
-			// for (int j = 0; j < M; j++)
-			// {
-			// final double alphaj = pow(1/(η*pow(m,i)),1+ε);
-			// final double betaj = 1/(η*pow(m,i));
-			// double exphi = exp(-betaj * x);
-			// B[j] = (1 + B[j]) * exphi;
-			// firstSum += alphaj * B[j];
-			// }
-			// intensity = normalizationFactor * firstSum;
+		
 		}
 		return intensity;
 	}
 
-	// public Vector calculateIntensity( Vector durations )
-	// {
-	// final int n = durations.size();
-	// final int hawkesOrder = alpha.size();
-	// assert alpha.size() == beta.size() :
-	// "α and β must be of the same dimension";
-	// double B[] = new double[hawkesOrder];
-	// Vector intensity = new Vector( n );
-	// double kappa = getKappa();
-	// for ( int i = 0; i < n; i++ )
-	// {
-	// double firstSum = kappa;
-	// double x = durations.get( i );
-	// for ( int j = 0; j < hawkesOrder; j++ )
-	// {
-	// final double a = alpha.get( j );
-	// final double b = beta.get( j );
-	// double exphi = exp( -b * x );
-	// B[j] = ( 1 + B[j] ) * exphi;
-	// firstSum += a * B[j];
-	// }
-	// intensity.set( i, firstSum );
-	// }
-	// return intensity;
-	// }
-
+	
 	/**
 	 * 
-	 * @param intereventTimes
+	 * @param eventTimes
 	 * @param deterministicIntensity
 	 * @param lambda
 	 * @param alpha
 	 * @param beta
 	 * @return Pair<logLik,E[Lambda]>
 	 */
-	public DoublePair calculateLogLikelihoodHawkes()
+	public double logLik()
 	{
-		final int n = intereventTimes.size();
-		double ll = intereventTimes.sum();
-		double A[] = new double[M];
-		double B[] = new double[M];
-		double ecomp = 0;
-		// double kappa =
-		for (int i = 0; i < n; i++)
-		{
-			double x = intereventTimes.get(i);
-			double firstSum = getKappa(x);
-			double secondSum = x * getKappa(x);
-			for (int j = 0; j < M; j++)
-			{
-				final double a = pow(1/(η*pow(m,j)),1+ε);
-				final double b = 1/(η*pow(m,i));
-				double exphi = exp(-b * x);
-				B[j] = (1 + B[j]) * exphi;
-				A[j] = 1 + (exphi * A[j]);
-				firstSum += a * B[j];
-				secondSum += (a / b) * (1 - exphi) * A[j];
-			}
-			ecomp += secondSum;
-			double llTerm = Math.log(firstSum) - secondSum;
-			if (!Double.isNaN(llTerm))
-			{
-				ll += llTerm;
-			} else
-			{
-				ll += Double.NEGATIVE_INFINITY;
-			}
+		final int n = eventTimes.size();
+		double ll = eventTimes.sum();
+	
+
+		for (int i = 1; i < n; i++)
+		{			
+			double prevt = eventTimes.get(i-1);
+			double thist = eventTimes.get(i);
+			ll += log(λ(prevt)) - Ψ( prevt, thist );
 		}
-		throw new UnsupportedOperationException("TODO");
-		// return new DoublePair( ll, ecomp / n );
+		out.println( getParamString() + "=" + ll );
+		if ( Double.isNaN( ll ) ) 
+		{
+			ll = Double.NEGATIVE_INFINITY;
+		}
+		return ll;
 	}
 
 	/**
@@ -302,9 +246,9 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	{
 		final int n = times.size();
 		Vector compensator = new Vector(n);
-		for ( int i = 0; i < n - 1; i++ )
+		for ( int i = 1; i < n; i++ )
 		{
-			compensator.set(Ψ(times.get(i), times.get(i+1)));
+			compensator.set(Ψ(times.get(i-1), times.get(i)));
 		}
 		// double lambda = getKappa();
 		//
@@ -359,8 +303,12 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	public double value(double[] point)
 	{
 		getParameters().assign(point);
-
-		double ll = calculateLogLikelihoodHawkes().left;
+		this.b = point[Parameter.b.ordinal()];
+		this.ε = point[Parameter.ε.ordinal()];
+		this.η = point[Parameter.η.ordinal()];
+		this.τ = point[Parameter.τ.ordinal()];
+		
+		double ll = logLik();
 
 		if (Double.isNaN(ll))
 		{
@@ -384,34 +332,41 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	{
 		if (params == null)
 		{
-
-			int paramCount = 3;
-
-			// String[] paramNames = new String[params.size()];
-			// String[] alphaParamNames = new String[order];
-			// String[] betaParamNames = new String[order];
-			// params.setTableModelColumnNames( paramNames );
-			// alpha.setTableModelColumnNames( alphaParamNames );
-			// beta.setTableModelColumnNames( betaParamNames );
-			// paramNames[0] = "κ";
-			// for ( int i = 1; i <= order; i++ )
-			// {
-			// paramNames[i] = alphaParamNames[i - 1] = "α" + ( order > 1 ? i : "" );
-			// paramNames[i + order] = betaParamNames[i - 1] = "β" + ( order > 1 ? i :
-			// "" );
-			// }
+			int paramCount = Parameter.values().length;
+			params = new Vector( paramCount );				
 		}
+		params.set(Parameter.b.ordinal(), b );
+		params.set(Parameter.ε.ordinal(), ε );
+		//params.set(Parameter.ρ.ordinal(), ρ );
+		params.set(Parameter.τ.ordinal(), τ );
+		//params.set(Parameter.η.ordinal(), η );		
 		return params;
 	}
 
-	public Vector getDurations()
+
+	public double getΡ()
 	{
-		return intereventTimes;
+		return ρ;
 	}
 
-	public void setDurations(Vector intereventTimes)
+	public void setρ(double ρ)
 	{
-		this.intereventTimes = intereventTimes;
+		this.ρ = ρ;
+	}
+
+	public double getΕ()
+	{
+		return ε;
+	}
+
+	public void setε(double ε)
+	{
+		this.ε = ε;
+	}
+
+	public void setη(double η)
+	{
+		this.η = η;
 	}
 
 }

@@ -29,9 +29,40 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernelTes
 		double η = 0.35;
 		double b = 0.1;
 		HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel process = new HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( ρ, η, τ, ε, b );
-		Vector T = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0 } );
-		double intensity = process.λ(T, 1.8);
+		process.eventTimes = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0 } );
+		double intensity = process.λ(1.8);
 		out.println( "intensity=" + intensity );
 		assertEquals( .9073429721, intensity, pow(10,-9));
 	}
+	
+	public void testLL()
+	{
+		double ρ = 0.75;
+		double ε = 0.2;
+		double τ = 0.9;
+		double η = 0.35;
+		double b = 0.1;
+		HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel process = new HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( ρ, η, τ, ε, b );
+		process.eventTimes = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0, 2.04, 2.06, 2.08 } );
+		out.println( "log-likelihood=" + process.logLik() );
+		process.setη(1.0);
+		out.println( "log-likelihood=" + process.logLik() );
+		process.setη(0.7);
+		out.println( "log-likelihood=" + process.logLik() );
+	}
+	
+	public void testEstimateParmeters()
+	{
+		double ρ = 0.75;
+		double ε = 0.2;
+		double τ = 0.9;
+		double η = 0.35;
+		double b = 0.1;
+		HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel process = new HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( ρ, η, τ, ε, b );
+		process.eventTimes = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0, 2.04, 2.06, 2.08 } );
+		int evals = process.estimateParameters(9);
+		out.println( evals + " iterations");
+		
+	}
+	
 }
