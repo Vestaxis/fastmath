@@ -21,7 +21,7 @@ import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 import math.DoublePair;
 
-public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
+public class ExponentialPowerlawHawkesProcess
 		implements MultivariateFunction, Serializable
 {
 	/**
@@ -31,7 +31,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 	 * @param ε degree of fractional integration
 	 * @param b amplitude of short-term exponential 
 	 */
-	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel( double η, double τ, double ε,
+	public ExponentialPowerlawHawkesProcess( double η, double τ, double ε,
 			double b)
 	{
 		super();
@@ -43,12 +43,12 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 
 	private static final long serialVersionUID = 1L;
 
-	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel()
+	public ExponentialPowerlawHawkesProcess()
 	{
 		initializeParameterVectors();
 	}
 
-	public HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel(double ρ2, double η2, double τ2, double ε2,
+	public ExponentialPowerlawHawkesProcess(double ρ2, double η2, double τ2, double ε2,
 			double b2)
 	{
 		this.ρ = ρ2;
@@ -79,7 +79,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
 		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.01));
 
-		int maxIters = 100;
+		int maxIters = 1000;
 		double[] initialEstimate = calculateInitialGuess(eventTimes).toPrimitiveArray();
 		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE,
 				initialEstimate);
@@ -170,7 +170,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		double intensity = 0;
 		double itime;
 
-		for (int i = 0; i < n && (itime = eventTimes.get(i)) <= t; i++)
+		for (int i = 0; i < n && (itime = eventTimes.get(i)) < t; i++)
 		{
 			intensity += ψ(t - itime);
 		
@@ -198,7 +198,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		{			
 			double prevt = eventTimes.get(i-1);
 			double thist = eventTimes.get(i);
-			ll += log(λ(prevt)) - Ψ( prevt, thist );
+			ll += log(λ(thist)) - Ψ( prevt, thist );
 		}
 		out.println( getParamString() + "=" + ll );
 		if ( Double.isNaN( ll ) ) 
@@ -225,12 +225,21 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 
 	public double Ψ(double s, double t)
 	{
-		return ρ * (M * b * τ - τ * M * b * exp(-t / τ)
-				+ 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
-				+ sum(i -> -pow(η, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / η * pow(m, -i)), 0, M - 1))
-				/ (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1) * t);
+		return iΨ(t) - iΨ(s); 
 	}
 
+
+
+	public double iΨ(double t)
+	{
+		return t * ρ
+				* (M * b * τ - τ * M * b * exp(-t / τ)
+						+ 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
+						+ sum(i -> -pow(η, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / η * pow(m, -i)), 0,
+								M - 1))
+				/ (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1) * t);
+	}
+	
 	/**
 	 * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
 	 * more uniformly distributed it is.
@@ -339,7 +348,7 @@ public class HawkesProcessDrivenByAnExponentialApproximationOfAPowerlawKernel
 		params.set(Parameter.ε.ordinal(), ε );
 		//params.set(Parameter.ρ.ordinal(), ρ );
 		params.set(Parameter.τ.ordinal(), τ );
-		//params.set(Parameter.η.ordinal(), η );		
+		params.set(Parameter.η.ordinal(), η );		
 		return params;
 	}
 
