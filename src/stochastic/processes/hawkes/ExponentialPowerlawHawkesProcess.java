@@ -24,7 +24,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 {
 
 	public static double arctanh(double x)
-	{		
+	{
 		return x == 0 ? 0 : 0.5 * log((x + 1.0) / (x - 1.0));
 	}
 
@@ -39,13 +39,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * @param b
 	 *            amplitude of short-term exponential
 	 */
-	public ExponentialPowerlawHawkesProcess(double η, double τ, double ε, double b)
+	public ExponentialPowerlawHawkesProcess(double η, double ε)
 	{
 		super();
 		this.η = log(η);
-		this.τ = log(τ);
 		this.ε = arctanh(-1 + 4 * ε);
-		this.b = log(b);
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -55,13 +53,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		initializeParameterVectors();
 	}
 
-	public ExponentialPowerlawHawkesProcess(double ρ2, double η2, double τ2, double ε2, double b2)
+	public ExponentialPowerlawHawkesProcess(double ρ2, double η2, double ε2)
 	{
 		this.ρ = ρ2;
 		this.η = log(η2);
-		this.τ = log(τ2);
 		this.ε = arctanh(-1 + 4 * ε2);
-		this.b = log(b2);
 	}
 
 	protected Vector eventTimes;
@@ -111,13 +107,13 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
 		// return "kappa=" + getKappa() + " alpha=" + alpha.toString().replace(
-		// "\n", "" ) + " beta="
-		// + beta.toString().replace( "\n", "" );
+		// "\n", "" ) + " bη="
+		// + bη.toString().replace( "\n", "" );
 	}
 
 	static enum Parameter
 	{
-		b, τ, ε, η
+		ε, η
 	};
 
 	/**
@@ -126,15 +122,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	int M = 15;
 
 	private double ρ = 1; // branching rate
-	/**
-	 * short-time cutoff
-	 */
-	private double η;
 
 	/**
-	 * powerlaw scale
+	 * smallest timescale
 	 */
-	private double τ;
+	private double η;
 
 	/**
 	 * Tail exponent
@@ -146,8 +138,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	private double m = 5;
 
-	private double b;
-
 	/**
 	 * kernel function
 	 * 
@@ -157,25 +147,22 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	public double ψ(double t)
 	{
 		final double eta = exp(η);
-		double eps = 0.25*tanh(ε)+0.25;
-		return ρ / getZ() * (M * exp(b) * exp(-t / exp(τ)) + sum(i -> {
-			return pow(1.0 / eta / pow(m, i), 1.0 + eps) * exp(-t / eta / pow(m, i));
-		}, 0, M - 1));
+		double eps = 0.25 * tanh(ε) + 0.25;
+		double a = sum(i -> pow(0.1e1 / eta / pow(m, i), 0.1e1 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
+		double b = 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+				* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (double) (M - 1))) * exp(-t / eta * m);
+		double c = ρ * m * (-0.1e1 + pow(m, eps));
+		double numer = c * (a - b);
+		double denom = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
+				- 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps))
+						* (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))) * pow(m, eps)
+				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1)
+						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))));
+		return numer / denom;
 	}
 
 	/**
-	 * normalization factor such that the branching rate is equal to this{@link #ρ}
-	 * 
-	 * @return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1)
-	 */
-	private double getZ()
-	{
-		double eps = 0.25*tanh(ε)+0.25;
-		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1.0) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1.0);
-	}
-
-	/**
-	 * subs({alpha[i] = , beta[i] = }, nu(t));
+	 * subs({alpha[i] = , bη[i] = }, nu(t));
 	 * 
 	 * @param t
 	 * 
@@ -201,7 +188,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * @param deterministicIntensity
 	 * @param lambda
 	 * @param alpha
-	 * @param beta
+	 * @param bη
 	 * @return Pair<logLik,E[Lambda]>
 	 */
 	public double logLik()
@@ -222,7 +209,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		}
 		return ll;
 	}
-	
+
 	/**
 	 * compensator
 	 * 
@@ -248,16 +235,53 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double iΨ(double t)
 	{
-		double tau = exp(τ);
-		double bee = exp(b);
 		double eta = exp(η);
-		double eps = 0.25*tanh(ε)+0.25;
-		return t * ρ
-				* (M * bee * tau - tau * M * bee * exp(-t / tau)
-						+ 1 / (-1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-						+ sum(i -> -pow(eta, -eps) * pow(m, i) * pow(pow(m, -i), 1 + eps) * exp(-t / eta * pow(m, -i)), 0,
-								M - 1))
-				/ (M * bee * tau * t + 1 / (pow(m, -eps) - 1) * pow(eta, -eps) * (pow(m, -eps * M) - 1) * t);
+		double eps = 0.25 * tanh(ε) + 0.25;
+
+		double A = 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
+				+ sum(i -> -pow(η, -ε) * pow(pow(m, -i), 1 + ε) * pow(m, i) * exp(-t / η * pow(m, -i)), 0, M - 1);
+		return -ρ * (0.2e1 * pow(m, (M * eps + 2 * M + 1)) * pow(eta, eps) * t
+				+ pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) * pow(eta, eps) * t
+				+ pow(m, (2 * M * eps + 2 * M + eps + 2)) * pow(eta, eps) * t
+				+ pow(m, (M * eps + 2 * M + 2 * eps + 2)) * pow(eta, eps) * t
+				+ pow(m, (M * eps + M - eps)) * pow(eta, eps) * t + pow(m, (M * eps + M + eps)) * pow(eta, eps) * t
+				- pow(m, ((eps + 2) * (1 + M))) * pow(eta, eps) * t
+				- pow(m, (2 * (1 + eps) * (1 + M))) * pow(eta, eps) * t
+				- pow(m, (M * eps + M + 2 * eps + 1)) * pow(eta, eps) * t
+				- pow(m, (2 * M * eps + 2 * M + eps)) * pow(eta, eps) * t
+				- pow(m, (2 * M * eps + 2 * M + 1)) * pow(eta, eps) * t
+				- pow(m, (M * eps + 2 * M - eps)) * pow(eta, eps) * t - pow(m, (M * eps + M + 1)) * pow(eta, eps) * t
+				- 0.2e1 * pow(m, (M * eps + 2 * M + eps + 1)) * pow(eta, eps) * t
+				+ 0.2e1 * pow(m, ((1 + eps) * (1 + M))) * pow(eta, eps) * t
+				+ pow(m, (2 * (1 + eps) * M)) * pow(eta, eps) * t + pow(m, (M * (eps + 2))) * pow(eta, eps) * t
+				- 0.2e1 * pow(m, ((1 + eps) * M)) * pow(eta, eps) * t)
+				* pow(pow(m, ((1 + eps) * (1 + M))) - pow(m, (M * eps + M + eps)) - pow(m, (1 + eps + M)) + pow(m, M)
+						+ pow(m, eps) - 0.1e1, -0.2e1)
+				* A
+				- ρ * (-0.1e1 + pow(m, ((1 + eps) * M)) + exp(-t / eta * m) + pow(m, M)
+						+ pow(m, (M + eps)) * exp(-t / eta * m) + pow(m, (M * (eps + 2))) * exp(-t / eta * m)
+						+ pow(m, (2 * eps)) * exp(-t / eta * m) + pow(m, ((1 + eps) * (2 * M + 1))) * exp(-t / eta * m)
+						- 0.2e1 * pow(m, (M * eps + M + 2 * eps)) * exp(-t / eta * m)
+						+ pow(m, (2 * M * eps + 2 * M + 2 * eps)) * exp(-t / eta * m)
+						+ pow(m, (M * eps + 2 * M + 2 * eps + 1)) * exp(-t / eta * m)
+						- pow(m, (M * eps + 2 * M + eps)) * exp(-t / eta * m) - pow(m, M) * exp(-t / eta * m)
+						- pow(m, (2 * M * eps + 2 * M + eps)) * exp(-t / eta * m)
+						- pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) * exp(-t / eta * m)
+						- pow(m, (M * eps + 2 * M + eps + 1)) * exp(-t / eta * m) + 0.2e1 * pow(m, eps)
+						+ 0.2e1 * pow(m, (M * eps + M + 2 * eps)) + pow(m, (M * eps + 2 * M + eps + 1))
+						- pow(m, (M * eps + 2 * M + 2 * eps + 1)) - pow(m, (2 * M * eps + 2 * M + 2 * eps))
+						+ pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) + pow(m, (2 * M * eps + 2 * M + eps))
+						+ pow(m, (M * eps + 2 * M + eps)) - pow(m, (M * (eps + 2))) - pow(m, ((1 + eps) * (2 * M + 1)))
+						- pow(m, (M + eps)) + pow(m, (1 + 2 * eps + M)) - pow(m, (1 + 2 * eps + M)) * exp(-t / eta * m)
+						+ pow(m, (1 + eps + M)) * exp(-t / eta * m) - pow(m, (M * eps + M + 2 * eps + 1))
+						- pow(m, (1 + eps + M)) - 0.3e1 * pow(m, (M * eps + M + eps)) + pow(m, ((1 + eps) * (1 + M)))
+						- pow(m, (2 * eps)) - 0.2e1 * pow(m, eps) * exp(-t / eta * m)
+						- pow(m, ((1 + eps) * M)) * exp(-t / eta * m)
+						- pow(m, ((1 + eps) * (1 + M))) * exp(-t / eta * m)
+						+ 0.3e1 * pow(m, (M * eps + M + eps)) * exp(-t / eta * m)
+						+ pow(m, (M * eps + M + 2 * eps + 1)) * exp(-t / eta * m))
+						* pow(pow(m, ((1 + eps) * (1 + M))) - pow(m, (M * eps + M + eps)) - pow(m, (1 + eps + M))
+								+ pow(m, M) + pow(m, eps) - 0.1e1, -0.2e1);
 	}
 
 	/**
@@ -289,7 +313,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		// for ( int j = 0; j < order; j++ )
 		// {
 		// final double a = alpha.get( j );
-		// final double b = beta.get( j );
+		// final double b = bη.get( j );
 		// double exphi = exp( -b * x );
 		// A[j] = 1 + ( exphi * A[j] );
 		// secondSum += ( a / b ) * ( 1 - exphi ) * A[j];
@@ -344,10 +368,8 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	public double value(double[] point)
 	{
 		getParameters().assign(point);
-		this.b = point[Parameter.b.ordinal()];
 		this.ε = point[Parameter.ε.ordinal()];
 		this.η = point[Parameter.η.ordinal()];
-		this.τ = point[Parameter.τ.ordinal()];
 
 		double ll = logLik();
 
@@ -376,10 +398,8 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 			int paramCount = Parameter.values().length;
 			params = new Vector(paramCount);
 		}
-		params.set(Parameter.b.ordinal(), b);
 		params.set(Parameter.ε.ordinal(), ε);
 		// params.set(Parameter.ρ.ordinal(), ρ );
-		params.set(Parameter.τ.ordinal(), τ);
 		params.set(Parameter.η.ordinal(), η);
 		return params;
 	}
@@ -387,10 +407,8 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	public Vector getTransformedParameters()
 	{
 		Vector tparams = new Vector(Parameter.values().length);
-		tparams.set(Parameter.b.ordinal(), exp(b));
-		tparams.set(Parameter.ε.ordinal(), 0.25*tanh(ε)+0.25);
+		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
 		// params.set(Parameter.ρ.ordinal(), ρ );
-		tparams.set(Parameter.τ.ordinal(), exp(τ));
 		tparams.set(Parameter.η.ordinal(), exp(η));
 		return tparams;
 	}
