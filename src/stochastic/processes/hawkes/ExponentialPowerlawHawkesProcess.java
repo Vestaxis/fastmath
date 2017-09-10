@@ -148,21 +148,20 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
-		double a = sum(i -> pow(0.1e1 / eta / pow(m, i), 0.1e1 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
-		double b = 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-				* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (double) (M - 1))) * exp(-t / eta * m);
-		double c = ρ * m * (-0.1e1 + pow(m, eps));
+		double a = sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
+		double b = 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1)))
+				* exp(-t / eta * m);
+		double c = ρ * m * (-1 + pow(m, eps));
 		double numer = c * (a - b);
 		double denom = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
-				- 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps))
+				- 1 / (pow(m, (1 + eps)) - 1) * pow(eta, (-1 - eps))
 						* (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))) * pow(m, eps)
-				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1)
+				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + 1 / (pow(m, (1 + eps)) - 1)
 						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))));
 		return numer / denom;
 	}
 
 	/**
-	 * subs({alpha[i] = , bη[i] = }, nu(t));
 	 * 
 	 * @param t
 	 * 
@@ -218,12 +217,12 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * @param t
 	 *            > s
 	 * 
-	 * @return ∫this{@link #ψ(double)}(t)dt -∫this{@link #ψ(double)}(s)ds
+	 * @return ∫this{@link #ψ}(t)dt -∫this{@link #ψ}(s)ds
 	 */
 	public double Ψ(double s, double t)
 	{
 		assert t > s;
-		return iΨ(t) - iΨ(s);
+		return iψ(t) - iψ(s);
 	}
 
 	/**
@@ -231,57 +230,46 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * of this{@link #ρ}
 	 * 
 	 * @param t
-	 * @return ∫this{@link #ψ(double)}(t)dt
+	 * @return ∫this{@link #ψ}(t)dt
 	 */
-	public double iΨ(double t)
+	public double iψ(double t)
 	{
 		double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
 
-		double A = 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
-				+ sum(i -> -pow(η, -ε) * pow(pow(m, -i), 1 + ε) * pow(m, i) * exp(-t / η * pow(m, -i)), 0, M - 1);
-		return -ρ * (0.2e1 * pow(m, (M * eps + 2 * M + 1)) * pow(eta, eps) * t
-				+ pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) * pow(eta, eps) * t
-				+ pow(m, (2 * M * eps + 2 * M + eps + 2)) * pow(eta, eps) * t
-				+ pow(m, (M * eps + 2 * M + 2 * eps + 2)) * pow(eta, eps) * t
-				+ pow(m, (M * eps + M - eps)) * pow(eta, eps) * t + pow(m, (M * eps + M + eps)) * pow(eta, eps) * t
-				- pow(m, ((eps + 2) * (1 + M))) * pow(eta, eps) * t
-				- pow(m, (2 * (1 + eps) * (1 + M))) * pow(eta, eps) * t
-				- pow(m, (M * eps + M + 2 * eps + 1)) * pow(eta, eps) * t
-				- pow(m, (2 * M * eps + 2 * M + eps)) * pow(eta, eps) * t
-				- pow(m, (2 * M * eps + 2 * M + 1)) * pow(eta, eps) * t
-				- pow(m, (M * eps + 2 * M - eps)) * pow(eta, eps) * t - pow(m, (M * eps + M + 1)) * pow(eta, eps) * t
-				- 0.2e1 * pow(m, (M * eps + 2 * M + eps + 1)) * pow(eta, eps) * t
-				+ 0.2e1 * pow(m, ((1 + eps) * (1 + M))) * pow(eta, eps) * t
-				+ pow(m, (2 * (1 + eps) * M)) * pow(eta, eps) * t + pow(m, (M * (eps + 2))) * pow(eta, eps) * t
-				- 0.2e1 * pow(m, ((1 + eps) * M)) * pow(eta, eps) * t)
-				* pow(pow(m, ((1 + eps) * (1 + M))) - pow(m, (M * eps + M + eps)) - pow(m, (1 + eps + M)) + pow(m, M)
-						+ pow(m, eps) - 0.1e1, -0.2e1)
-				* A
-				- ρ * (-0.1e1 + pow(m, ((1 + eps) * M)) + exp(-t / eta * m) + pow(m, M)
-						+ pow(m, (M + eps)) * exp(-t / eta * m) + pow(m, (M * (eps + 2))) * exp(-t / eta * m)
-						+ pow(m, (2 * eps)) * exp(-t / eta * m) + pow(m, ((1 + eps) * (2 * M + 1))) * exp(-t / eta * m)
-						- 0.2e1 * pow(m, (M * eps + M + 2 * eps)) * exp(-t / eta * m)
-						+ pow(m, (2 * M * eps + 2 * M + 2 * eps)) * exp(-t / eta * m)
-						+ pow(m, (M * eps + 2 * M + 2 * eps + 1)) * exp(-t / eta * m)
-						- pow(m, (M * eps + 2 * M + eps)) * exp(-t / eta * m) - pow(m, M) * exp(-t / eta * m)
-						- pow(m, (2 * M * eps + 2 * M + eps)) * exp(-t / eta * m)
-						- pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) * exp(-t / eta * m)
-						- pow(m, (M * eps + 2 * M + eps + 1)) * exp(-t / eta * m) + 0.2e1 * pow(m, eps)
-						+ 0.2e1 * pow(m, (M * eps + M + 2 * eps)) + pow(m, (M * eps + 2 * M + eps + 1))
-						- pow(m, (M * eps + 2 * M + 2 * eps + 1)) - pow(m, (2 * M * eps + 2 * M + 2 * eps))
-						+ pow(m, (2 * M * eps + 2 * M + 2 * eps + 1)) + pow(m, (2 * M * eps + 2 * M + eps))
-						+ pow(m, (M * eps + 2 * M + eps)) - pow(m, (M * (eps + 2))) - pow(m, ((1 + eps) * (2 * M + 1)))
-						- pow(m, (M + eps)) + pow(m, (1 + 2 * eps + M)) - pow(m, (1 + 2 * eps + M)) * exp(-t / eta * m)
-						+ pow(m, (1 + eps + M)) * exp(-t / eta * m) - pow(m, (M * eps + M + 2 * eps + 1))
-						- pow(m, (1 + eps + M)) - 0.3e1 * pow(m, (M * eps + M + eps)) + pow(m, ((1 + eps) * (1 + M)))
-						- pow(m, (2 * eps)) - 0.2e1 * pow(m, eps) * exp(-t / eta * m)
-						- pow(m, ((1 + eps) * M)) * exp(-t / eta * m)
-						- pow(m, ((1 + eps) * (1 + M))) * exp(-t / eta * m)
-						+ 0.3e1 * pow(m, (M * eps + M + eps)) * exp(-t / eta * m)
-						+ pow(m, (M * eps + M + 2 * eps + 1)) * exp(-t / eta * m))
-						* pow(pow(m, ((1 + eps) * (1 + M))) - pow(m, (M * eps + M + eps)) - pow(m, (1 + eps + M))
-								+ pow(m, M) + pow(m, eps) - 0.1e1, -0.2e1);
+		double a = ρ * m * (-1 + pow(m, eps))
+				* (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
+						+ 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1))) * eta / m * exp(-t / eta * m))
+				/ eta
+				/ (pow(eta, -1 - eps) * pow(m, 1 + eps)
+						- 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
+						- pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1) + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+		double b = ρ * m * (-0.1e1 + pow(m, eps))
+				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m)
+				/ eta
+				/ (pow(eta, -0.1e1 - eps) * pow(m, 0.1e1 + eps)
+						- 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
+						- pow(eta, -0.1e1 - eps) * pow(m, -0.4e1 * eps + 0.1e1) + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
+								* pow(eta, -0.1e1 - eps) * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+
+		double c = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
+				- 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps))
+						* (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))) * pow(m, eps)
+				- pow(eta, (-1 - eps)) * pow(m, (-4 * eps + 1)) + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1)
+						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))));
+
+		double d = m * (-0.1e1 + pow(m, eps))
+				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m);
+
+		return -((a - b) * c) / d;
 	}
 
 	/**
