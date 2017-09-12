@@ -33,9 +33,9 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		double η = 0.8;
 		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(  η, ε  );
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-		process.eventTimes = data;
+		process.T = data;
 		int midpoint = data.size() / 2;
-		data = data.slice( midpoint - 500, midpoint + 500 );
+		data = data.slice( midpoint - 250, midpoint + 250 );
 		
 //		while ( data.diff().find(0.0, Condition.EQUAL, 0) != -1 )
 //		{
@@ -43,7 +43,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 //		}
 		
 		//process.eventTimes = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0, 2.04, 2.06, 2.08 } );
-		process.eventTimes = data;
+		process.T = data;
 		int evals = process.estimateParameters(15);
 		MatFile.write("/data/test.mat", data.setName("d").createMiMatrix(), process.calculateCompensator().setName("C").createMiMatrix() );
 

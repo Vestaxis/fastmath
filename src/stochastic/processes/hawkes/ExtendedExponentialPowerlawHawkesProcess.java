@@ -197,7 +197,7 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 
 	/**
 	 * 
-	 * @param eventTimes
+	 * @param T
 	 * @param deterministicIntensity
 	 * @param lambda
 	 * @param alpha

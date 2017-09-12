@@ -60,7 +60,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		this.ε = arctanh(-1 + 4 * ε2);
 	}
 
-	protected Vector eventTimes;
+	protected Vector T;
 
 	public double computeMoment(int moment)
 	{
@@ -82,7 +82,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
 
 		int maxIters = Integer.MAX_VALUE;
-		double[] initialEstimate = calculateInitialGuess(eventTimes).toPrimitiveArray();
+		double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
 		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
 		double[] key = params.getKey();
 		getParameters().assign(key);
@@ -169,11 +169,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double λ(double t)
 	{
-		final int n = eventTimes.size();
+		final int n = T.size();
 		double intensity = 0;
 		double itime;
 
-		for (int i = 0; i < n && (itime = eventTimes.get(i)) < t; i++)
+		for (int i = 0; i < n && (itime = T.get(i)) < t; i++)
 		{
 			intensity += ψ(t - itime);
 
@@ -183,7 +183,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	/**
 	 * 
-	 * @param eventTimes
+	 * @param T
 	 * @param deterministicIntensity
 	 * @param lambda
 	 * @param alpha
@@ -192,13 +192,13 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double logLik()
 	{
-		final int n = eventTimes.size();
-		double ll = eventTimes.sum();
+		final int n = T.size();
+		double ll = T.sum();
 
 		for (int i = 1; i < n; i++)
 		{
-			double prevt = eventTimes.get(i - 1);
-			double thist = eventTimes.get(i);
+			double prevt = T.get(i - 1);
+			double thist = T.get(i);
 			ll += log(λ(thist)) - Ψ(prevt, thist);
 		}
 		out.println("LL{" + getParamString() + "}=" + ll);
@@ -285,12 +285,13 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public Vector calculateCompensator()
 	{
-		final int n = eventTimes.size();
+		final int n = T.size();
 		Vector compensator = new Vector(n);
-		for (int i = 1; i < n; i++)
+		for (int i = 0; i < n-1; i++)
 		{
 			compensator.set(i, Ψ(i));
 		}
+		compensator = compensator.cumsum();
 		// double lambda = getKappa();
 		//
 		// double A[] = new double[order];
@@ -316,11 +317,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * 
 	 * @param i
 	 *            >= 1 and <= n
-	 * @return Ψ(eventTimes.get(i-1), eventTimes.get(i)
+	 * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0, i-1)
 	 */
 	private double Ψ(int i)
 	{
-		return Ψ(eventTimes.get(i - 1), eventTimes.get(i));
+		return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0, i-1);
 	}
 
 	public Vector simulate(double T)
