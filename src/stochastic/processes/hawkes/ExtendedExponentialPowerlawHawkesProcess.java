@@ -211,9 +211,8 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 
 		for (int i = 1; i < n; i++)
 		{
-			double prevt = eventTimes.get(i - 1);
 			double thist = eventTimes.get(i);
-			ll += log(λ(thist)) - Ψ(prevt, thist);
+			ll += log(λ(thist)) - Ψ(i);
 		}
 		out.println("LL{" + getParamString() + "}=" + ll);
 		if (Double.isNaN(ll))
@@ -223,21 +222,7 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		return ll;
 	}
 	
-	/**
-	 * compensator
-	 * 
-	 * @param s
-	 *            < t
-	 * @param t
-	 *            > s
-	 * 
-	 * @return ∫this{@link #ψ(double)}(t)dt -∫this{@link #ψ(double)}(s)ds
-	 */
-	public double Ψ(double s, double t)
-	{
-		assert t > s;
-		return iΨ(t) - iΨ(s);
-	}
+	
 
 	/**
 	 * integrated kernel function which is the anti-derivative/indefinite integral
@@ -246,7 +231,7 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	 * @param t
 	 * @return ∫this{@link #ψ(double)}(t)dt
 	 */
-	public double iΨ(double t)
+	public double iψ(double t)
 	{
 		double tau = exp(τ);
 		double bee = exp(b);
@@ -304,11 +289,12 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	 * 
 	 * @param i
 	 *            >= 1 and <= n
-	 * @return Ψ(eventTimes.get(i-1), eventTimes.get(i)
+	 * @return 
 	 */
 	private double Ψ(int i)
 	{
-		return Ψ(eventTimes.get(i - 1), eventTimes.get(i));
+		Vector T = eventTimes;
+		return sum(k -> iψ(T.get(i) - T.get(k)) - iψ(T.get(i-1) - T.get(k)), 0, i-1);
 	}
 
 	public Vector simulate(double T)

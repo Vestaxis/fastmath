@@ -197,9 +197,8 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 		for (int i = 1; i < n; i++)
 		{
-			double prevt = T.get(i - 1);
 			double thist = T.get(i);
-			ll += log(λ(thist)) - Ψ(prevt, thist);
+			ll += log(λ(thist)) - Ψ(i);
 		}
 		out.println("LL{" + getParamString() + "}=" + ll);
 		if (Double.isNaN(ll))
@@ -209,21 +208,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return ll;
 	}
 
-	/**
-	 * compensator
-	 * 
-	 * @param s
-	 *            < t
-	 * @param t
-	 *            > s
-	 * 
-	 * @return ∫this{@link #ψ}(t)dt -∫this{@link #ψ}(s)ds
-	 */
-	public double Ψ(double s, double t)
-	{
-		assert t > s;
-		return iψ(t) - iψ(s);
-	}
 
 	/**
 	 * integrated kernel function which is the anti-derivative/indefinite integral
@@ -321,7 +305,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	private double Ψ(int i)
 	{
-		return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0, i-1);
+		return sum(k -> iψ(T.get(i) - T.get(k)) - iψ(T.get(i-1) - T.get(k)), 0, i-1);
 	}
 
 	public Vector simulate(double T)

@@ -30,7 +30,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 	public void testEstimateParmeters2() throws IOException
 	{
 		double ε = 0.25;
-		double η = 0.8;
+		double η = 100;
 		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(  η, ε  );
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		process.T = data;

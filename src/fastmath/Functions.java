@@ -595,7 +595,7 @@ public class Functions
 
   public static double sum( IntToDoubleFunction summand, int lowerIndex, int upperIndex )
   {
-    return rangeClosed( lowerIndex, upperIndex ).mapToDouble( summand ).sum();
+    return rangeClosed( lowerIndex, upperIndex ).parallel().mapToDouble( summand ).sum();
   }
 
 }

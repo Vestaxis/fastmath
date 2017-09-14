@@ -65,21 +65,11 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 		double η = 0.35;
 		double b = 0.1;
 		ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess( ρ, η, τ, ε, b );
-		double phi = process.iΨ( 0.4 );
+		double phi = process.iψ( 0.4 );
 		assertEquals( .1994241620, phi, pow(10,-9));
 	}
 	
-	public void testΨ()
-	{		
-		double ρ = 0.75;
-		double ε = 0.2;
-		double τ = 0.9;
-		double η = 0.35;
-		double b = 0.1;
-		ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess( ρ, η, τ, ε, b );
-		double phi = process.Ψ( 0.4, 0.9 );
-		assertEquals( .1145700097, phi, pow(10,-9));
-	}
+	
 	public void testEstimateParmeters()
 	{
 //		double ρ = 1;
