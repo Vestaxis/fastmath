@@ -9,6 +9,7 @@ import static java.lang.System.out;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -25,7 +26,8 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	public static double arctanh(double x)
 	{
-		return x == 0 ? 0 : 0.5 * log((x + 1.0) / (x - 1.0));
+		double r = x == 0 ? 0 : 0.5 * log((x + 1.0) / (x - 1.0));
+		return Double.isNaN(r) ? 0 : r;
 	}
 
 	/**
@@ -198,7 +200,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		for (int i = 1; i < n; i++)
 		{
 			double thist = T.get(i);
-			ll += log(λ(thist)) - Ψ(i);
+			ll += log(λ(thist)) - Λ(i);
 		}
 		out.println("LL{" + getParamString() + "}=" + ll);
 		if (Double.isNaN(ll))
@@ -207,7 +209,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		}
 		return ll;
 	}
-
 
 	/**
 	 * integrated kernel function which is the anti-derivative/indefinite integral
@@ -267,13 +268,14 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * 
 	 * @return ξ
 	 */
-	public Vector calculateCompensator()
+	public Vector Λ()
 	{
 		final int n = T.size();
 		Vector compensator = new Vector(n);
-		for (int i = 0; i < n-1; i++)
+
+		for (int i = 0; i < n - 1; i++)
 		{
-			compensator.set(i, Ψ(i));
+			compensator.set(i, Λ(i));
 		}
 		compensator = compensator.cumsum();
 		// double lambda = getKappa();
@@ -301,11 +303,46 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * 
 	 * @param i
 	 *            >= 1 and <= n
-	 * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0, i-1)
+	 * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
+	 *         i-1)
 	 */
-	private double Ψ(int i)
+	private double Λ(int i)
 	{
-		return sum(k -> iψ(T.get(i) - T.get(k)) - iψ(T.get(i-1) - T.get(k)), 0, i-1);
+		double sum = sum(k -> {
+			double t0 = T.get(i) - T.get(k);
+			double t1 = T.get(i - 1) - T.get(k);
+			return iψ(t0) - iψ(t1);
+		}, 0, i - 1);
+		return sum;
+	}
+
+	public Vector recursiveΛ()
+	{
+	    double A = 0;
+	    Vector compensator = new Vector( T.size() );
+	    int eye = 0;
+		for ( int i = 1; i < T.size(); i++ )
+	    {
+			double upperTime = T.get(i);
+			double lowerTime = T.get(i-1);
+
+			double ktime;
+			int k;
+			double subsum = iψ(upperTime - lowerTime) * A;
+			
+			A = subsum;
+
+			double innerSum = subsum * (eye - iψ(upperTime - lowerTime));
+			for (k = i-1; k < i; k++)
+			{
+				ktime = T.get(k);			
+				innerSum += eye - iψ((upperTime - ktime));				
+			}
+
+			compensator.set(i,innerSum);
+	    }
+	    
+		return compensator;
 	}
 
 	public Vector simulate(double T)

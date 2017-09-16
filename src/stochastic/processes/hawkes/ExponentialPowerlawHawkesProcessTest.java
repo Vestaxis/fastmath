@@ -27,27 +27,39 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		//out.println( "x=" + x );
 	}
 	
-	public void testEstimateParmeters2() throws IOException
+//	public void testEstimateParmeters2() throws IOException
+//	{
+//		double ε = 0.15;
+//		double η = 1.6;
+//		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(  η, ε  );
+//		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+//		process.T = data;
+//		int midpoint = data.size() / 2;
+//		data = data.slice( midpoint - 250, midpoint + 250 );
+//		
+//		process.T = data;
+//		int evals = process.estimateParameters(15);
+//		MatFile.write("/data/test.mat", data.setName("d").createMiMatrix(), process.Λ().setName("C").createMiMatrix() );
+//
+//		out.println( evals + " iterations");
+//		
+//	}
+	
+	public void testΛ() throws IOException
 	{
-		double ε = 0.25;
-		double η = 100;
+		double ε = 0.15;
+		double η = 1.6;
 		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(  η, ε  );
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-		process.T = data;
 		int midpoint = data.size() / 2;
 		data = data.slice( midpoint - 250, midpoint + 250 );
-		
-//		while ( data.diff().find(0.0, Condition.EQUAL, 0) != -1 )
-//		{
-//			data = randomizeContemperaneousPoints( data );	
-//		}
-		
-		//process.eventTimes = new Vector( new double[] { 0.3, 0.5, 0.9, 1.2, 1.4, 2.0, 2.04, 2.06, 2.08 } );
 		process.T = data;
-		int evals = process.estimateParameters(15);
-		MatFile.write("/data/test.mat", data.setName("d").createMiMatrix(), process.calculateCompensator().setName("C").createMiMatrix() );
+		Vector comp = process.Λ();
+		Vector rcomp = process.recursiveΛ();
 
-		out.println( evals + " iterations");
+		out.println( "Λ=" + comp );
+		out.println( "rΛ=" + rcomp );
 		
 	}
+
 }

@@ -29,16 +29,53 @@ double calculateHawkesLogLikelihood(double *times,
     for (int i = 0; i < n; i++)
     {
       double innersum = lambda;
-      {
-        R[j] = ( i == 0 ) ? 0 : exp(-beta[j]*(times[i]-times[i-1]))*(1+R[j]);
-        firstsum += alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])));
-        innersum += alpha[j] * R[j];
-      }
+   	  R[j] = ( i == 0 ) ? 0 : exp(-beta[j]*(times[i]-times[i-1]))*(1+R[j]);
+      firstsum += alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])));
+      innersum += alpha[j] * R[j];
       secondsum += log(innersum);
     }
     //return secondsum - firstsum;
     return ( 1 - lambda ) * tn - firstsum + secondsum;
 }
+
+
+inline double beta( int j, double ε, double η )
+{
+	return η * pow( m, -j );
+}
+
+inline double alpha( int j, double ε, double η )
+{
+	return pow( beta(j, ε, η ), 1 + ε );
+}
+
+
+double calculateHawkesExpPowerlawLogLikelihood(double *times,
+		int n,
+		double ε,
+		double η,
+	    double m,
+		int M )
+{
+    double tn = times[n - 1];
+    double firstsum = 0.0;
+    double secondsum = 0.0;
+    double R[M];
+
+    for (int j = 0; j < M; j++)
+    {
+      for (int i = 0; i < n; i++)
+      {
+        double a = alpha(j, ε, η);
+	    double b = beta(j, ε, η);
+	    R[j] = (i == 0) ? 0 : exp(-b * (times[i] - times[i - 1])) * (1 + R[j]);
+	    firstsum += a / b * (1 - exp(-b * (tn - times[i])));
+        secondsum += log(a * R[j]);
+      }
+    }
+    return tn - firstsum + secondsum;
+}
+
 
 double calculateHawkesLogLikelihoodPos(double *times,
                                        int n,
