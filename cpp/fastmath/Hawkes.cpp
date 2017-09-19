@@ -39,21 +39,21 @@ double calculateHawkesLogLikelihood(double *times,
 }
 
 
-inline double beta( int j, double ε, double η )
+inline double beta( int j, double epsilon, double eta, double m )
 {
-	return η * pow( m, -j );
+	return eta * pow( m, -j );
 }
 
-inline double alpha( int j, double ε, double η )
+inline double alpha( int j, double epsilon, double eta, double m )
 {
-	return pow( beta(j, ε, η ), 1 + ε );
+	return pow( beta(j, epsilon, eta, m ), 1 + epsilon );
 }
 
 
 double calculateHawkesExpPowerlawLogLikelihood(double *times,
 		int n,
-		double ε,
-		double η,
+		double epsilon,
+		double eta,
 	    double m,
 		int M )
 {
@@ -66,8 +66,8 @@ double calculateHawkesExpPowerlawLogLikelihood(double *times,
     {
       for (int i = 0; i < n; i++)
       {
-        double a = alpha(j, ε, η);
-	    double b = beta(j, ε, η);
+        double a = alpha(j, epsilon, eta, m);
+	    double b = beta(j, epsilon, eta, m);
 	    R[j] = (i == 0) ? 0 : exp(-b * (times[i] - times[i - 1])) * (1 + R[j]);
 	    firstsum += a / b * (1 - exp(-b * (tn - times[i])));
         secondsum += log(a * R[j]);

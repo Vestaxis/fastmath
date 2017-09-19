@@ -9,7 +9,6 @@ import static java.lang.System.out;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -17,18 +16,13 @@ import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
 import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
+import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
 public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
-
-	public static double arctanh(double x)
-	{
-		double r = x == 0 ? 0 : 0.5 * log((x + 1.0) / (x - 1.0));
-		return Double.isNaN(r) ? 0 : r;
-	}
 
 	/**
 	 * 
@@ -45,7 +39,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		super();
 		this.η = log(η);
-		this.ε = arctanh(-1 + 4 * ε);
+		this.ε = FastMath.atanh(-1 + 4 * ε);
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -55,26 +49,9 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		initializeParameterVectors();
 	}
 
-	public ExponentialPowerlawHawkesProcess(double ρ2, double η2, double ε2)
-	{
-		this.ρ = ρ2;
-		this.η = log(η2);
-		this.ε = arctanh(-1 + 4 * ε2);
-	}
-
 	protected Vector T;
 
-	public double computeMoment(int moment)
-	{
-		switch (moment)
-		{
-		case 1:
-			return ρ;
-		default:
-			throw new UnsupportedOperationException("only mean is supported");
-		}
-	}
-
+	
 	/**
 	 * TODO: rewrite this part to not use deprecated stuff
 	 */
@@ -123,8 +100,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	int M = 15;
 
-	private double ρ = 1; // branching rate
-
 	/**
 	 * smallest timescale
 	 */
@@ -153,7 +128,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		double a = sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
 		double b = 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1)))
 				* exp(-t / eta * m);
-		double c = ρ * m * (-1 + pow(m, eps));
+		double c = m * (-1 + pow(m, eps));
 		double numer = c * (a - b);
 		double denom = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
 				- 1 / (pow(m, (1 + eps)) - 1) * pow(eta, (-1 - eps))
@@ -222,7 +197,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
 
-		double a = ρ * m * (-1 + pow(m, eps))
+		double a = m * (-1 + pow(m, eps))
 				* (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
 						+ 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
 								* (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1))) * eta / m * exp(-t / eta * m))
@@ -232,7 +207,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
 						- pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1) + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
 								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
-		double b = ρ * m * (-0.1e1 + pow(m, eps))
+		double b = m * (-0.1e1 + pow(m, eps))
 				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
 						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
 								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m)
@@ -308,6 +283,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	private double Λ(int i)
 	{
+
 		double sum = sum(k -> {
 			double t0 = T.get(i) - T.get(k);
 			double t1 = T.get(i - 1) - T.get(k);
@@ -318,61 +294,33 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	public Vector recursiveΛ()
 	{
-	    double A = 0;
-	    Vector compensator = new Vector( T.size() );
-	    int eye = 0;
-		for ( int i = 1; i < T.size(); i++ )
-	    {
+		double A = 0;
+		Vector compensator = new Vector(T.size());
+		int eye = 1;
+		for (int i = 1; i < T.size(); i++)
+		{
 			double upperTime = T.get(i);
-			double lowerTime = T.get(i-1);
+			double lowerTime = T.get(i - 1);
 
 			double ktime;
 			int k;
 			double subsum = iψ(upperTime - lowerTime) * A;
-			
+
 			A = subsum;
 
 			double innerSum = subsum * (eye - iψ(upperTime - lowerTime));
-			for (k = i-1; k < i; k++)
+			for (k = i - 1; k < i; k++)
 			{
-				ktime = T.get(k);			
-				innerSum += eye - iψ((upperTime - ktime));				
+				ktime = T.get(k);
+				innerSum += eye - iψ((upperTime - ktime));
 			}
 
-			compensator.set(i,innerSum);
-	    }
-	    
+			compensator.set(i, innerSum);
+		}
+
 		return compensator;
 	}
 
-	public Vector simulate(double T)
-	{
-		// if ( order != 1 )
-		// {
-		// throw new
-		// UnsupportedOperationException("only order 1 Hawkes processes are currently
-		// supported");
-		// }
-		// double lambdastar = getLambda();
-		// int n = 1;
-		// UniformRealDistribution uniformDist = new UniformRealDistribution();
-		// double U = uniformDist.sample();
-		// double s = -1.0/lambdastar*Math.log(U);
-		// while( s < T )
-		// {
-		// double t1 = s;
-		// lambdastar = getLambda() + alpha.get(0);
-		// U = uniformDist.sample();
-		// s = -1.0/lambdastar*Math.log(U);
-		// if ( s >= T )
-		// {
-		// continue;
-		// }
-		// double D = uniformDist.sample();
-		// if ( D <= )
-		// }
-		return null;
-	}
 
 	@Override
 	public double value(double[] point)
@@ -421,16 +369,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		// params.set(Parameter.ρ.ordinal(), ρ );
 		tparams.set(Parameter.η.ordinal(), exp(η));
 		return tparams;
-	}
-
-	public double getΡ()
-	{
-		return ρ;
-	}
-
-	public void setρ(double ρ)
-	{
-		this.ρ = ρ;
 	}
 
 	public double getΕ()
