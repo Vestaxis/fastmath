@@ -49,7 +49,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		initializeParameterVectors();
 	}
 
-	protected Vector T;
+	public Vector T;
 
 	
 	/**
@@ -98,7 +98,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	/**
 	 * range of the approximation
 	 */
-	int M = 15;
+	public int M = 15;
 
 	/**
 	 * smallest timescale
@@ -123,21 +123,68 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double ψ(double t)
 	{
+//		final double eta = exp(η);
+//		double eps = 0.25 * tanh(ε) + 0.25;
+		double a = sum(i -> getAlpha(i) * exp(-getBeta(i) * t ), 0, M - 1);
+		
+		a += αS() * exp(  -t * βS() );		
+		return a;
+		
+		//return a;
+		//return squash( t,a );
+//		double b = 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1)))
+//				* exp(-t / eta * m);
+//		double c = m * (-1 + pow(m, eps));
+//		double numer = c * (a - b);
+//		double denom = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
+//				- 1 / (pow(m, (1 + eps)) - 1) * pow(eta, (-1 - eps))
+//						* (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))) * pow(m, eps)
+//				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + 1 / (pow(m, (1 + eps)) - 1)
+//						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))));
+//		return numer / denom;
+	}
+
+	public double βS()
+	{
+		return m / η;
+	}
+
+	public double αS()
+	{
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
-		double a = sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
+		return 1 / (pow(m,  (1 + eps)) - 1) * pow(eta,  (-1 - eps)) * (pow(m,  (1 + eps)) - pow(m, - ((1 + eps) * (M - 1))));
+	}
+
+	public double squash(double t, double a)
+	{
+		final double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
 		double b = 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1)))
 				* exp(-t / eta * m);
 		double c = m * (-1 + pow(m, eps));
 		double numer = c * (a - b);
 		double denom = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
-				- 1 / (pow(m, (1 + eps)) - 1) * pow(eta, (-1 - eps))
-						* (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))) * pow(m, eps)
-				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + 1 / (pow(m, (1 + eps)) - 1)
-						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, -((1 + eps) * (M - 1)))));
+				- αS() * pow(m, eps)
+				- pow(eta, (-1 - eps)) * pow(m, (-M * eps + eps + 1)) + αS());
 		return numer / denom;
 	}
+	
+	public double getBeta(int i)
+	{
+		final double eta = exp(η);
+		return 1 / eta / pow(m, i);
+	}
 
+	public double getAlpha(int i)
+	{
+		final double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
+		return pow( 1 / eta / pow(m, i), 1 + eps);
+	}
+
+
+	
 	/**
 	 * 
 	 * @param t
@@ -386,4 +433,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		this.η = η;
 	}
 
+	
+
+	
 }
