@@ -128,7 +128,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		double a = sum(i -> getAlpha(i) * exp(-getBeta(i) * t ), 0, M - 1);
 		
 		a += αS() * exp(  -t * βS() );		
-		return a;
+		return a / Z();
 		
 		//return a;
 		//return squash( t,a );
@@ -144,6 +144,13 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 //		return numer / denom;
 	}
 
+	public double Z()
+	{
+		final double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
+		return -eta * (pow(m,  (-eps * M + eps + 1)) - pow(m,  (1 + eps))) / m / (-1 + pow(m,  eps)) * pow(eta,  (-1 - eps)) + αS() * eta / m;		
+	}
+	
 	public double βS()
 	{
 		return m / η;
