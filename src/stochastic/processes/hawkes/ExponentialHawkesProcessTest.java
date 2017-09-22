@@ -115,7 +115,7 @@ public class ExponentialHawkesProcessTest extends TestCase
 			othersum += eplhp.getAlpha(j) * S[j];				
 		}
 		S[eplhp.M] =exp( -eplhp.βS() * dt ) * (1 + S[eplhp.M]);
-		return othersum + eplhp.αS() * S[eplhp.M];
+		return othersum - eplhp.αS() * S[eplhp.M];
 	}
 
 	private static void chartFunction(DoubleFunction<Double> func, String name, double dt, double W)
