@@ -260,6 +260,12 @@
 	</build>
 
 	<dependencies>
+	<dependency>
+		<groupId>org.knowm.xchart</groupId>
+		<artifactId>xchart</artifactId>
+		<version>3.5.0</version>
+	</dependency>
+		
 		<dependency>
 			<groupId>com.sleepycat</groupId>
 			<artifactId>je</artifactId>

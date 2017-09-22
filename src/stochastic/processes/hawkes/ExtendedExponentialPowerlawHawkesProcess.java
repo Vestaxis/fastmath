@@ -16,17 +16,13 @@ import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
 import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
+import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
 public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
-
-	public static double arctanh(double x)
-	{		
-		return x == 0 ? 0 : 0.5 * log((x + 1.0) / (x - 1.0));
-	}
 
 	/**
 	 * 
@@ -44,7 +40,7 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		super();
 		this.η = log(η);
 		this.τ = log(τ);
-		this.ε = arctanh(-1 + 4 * ε);
+		this.ε = FastMath.atanh(-1 + 4 * ε);
 		this.b = log(b);
 	}
 
@@ -55,15 +51,6 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		initializeParameterVectors();
 	}
 
-	public ExtendedExponentialPowerlawHawkesProcess(double ρ2, double η2, double τ2, double ε2, double b2)
-	{
-		this.ρ = ρ2;
-		this.η = log(η2);
-		this.τ = log(τ2);
-		this.ε = arctanh(-1 + 4 * ε2);
-		this.b = log(b2);
-	}
-
 	protected Vector eventTimes;
 
 	public double computeMoment(int moment)
@@ -71,27 +58,10 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		switch (moment)
 		{
 		case 1:
-			return ρ;
+			return 1;
 		default:
-			throw new UnsupportedOperationException("only mean is supported");
+			throw new UnsupportedOperationException("TODO");
 		}
-	}
-
-	/**
-	 * TODO: rewrite this part to not use deprecated stuff
-	 */
-	public int estimateParameters(int digits)
-	{
-		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
-		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
-
-		int maxIters = Integer.MAX_VALUE;
-		double[] initialEstimate = calculateInitialGuess(eventTimes).toPrimitiveArray();
-		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
-		double[] key = params.getKey();
-		getParameters().assign(key);
-		out.println("parameter estimates=" + getParamString());
-		return optimizer.getEvaluations();
 	}
 
 	private double[] getParameterArray()
@@ -125,7 +95,6 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	 */
 	int M = 15;
 
-	private double ρ = 1; // branching rate
 	/**
 	 * short-time cutoff
 	 */
@@ -157,10 +126,10 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	public double ψ(double t)
 	{
 		final double eta = exp(η);
-		double eps = 0.25*tanh(ε)+0.25;
-		return ρ / getZ() * (M * exp(b) * exp(-t / exp(τ)) + sum(i -> {
-			return pow(1.0 / eta / pow(m, i), 1.0 + eps) * exp(-t / eta / pow(m, i));
-		}, 0, M - 1));
+		double eps = 0.25 * tanh(ε) + 0.25;
+		double x = sum(i -> pow(1.0 / eta / pow(m, i), 1.0 + eps) * exp(-t / eta / pow(m, i)), 0, M - 1);
+		double y = M * exp(b) * exp(-t / exp(τ)) + x;
+		return y / getZ();
 	}
 
 	/**
@@ -170,8 +139,8 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	 */
 	private double getZ()
 	{
-		double eps = 0.25*tanh(ε)+0.25;
-		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1.0) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1.0);
+		double eps = 0.25 * tanh(ε) + 0.25;
+		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1);
 	}
 
 	/**
@@ -221,8 +190,6 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		}
 		return ll;
 	}
-	
-	
 
 	/**
 	 * integrated kernel function which is the anti-derivative/indefinite integral
@@ -236,12 +203,11 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		double tau = exp(τ);
 		double bee = exp(b);
 		double eta = exp(η);
-		double eps = 0.25*tanh(ε)+0.25;
-		return t * ρ
-				* (M * bee * tau - tau * M * bee * exp(-t / tau)
-						+ 1 / (-1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-						+ sum(i -> -pow(eta, -eps) * pow(m, i) * pow(pow(m, -i), 1 + eps) * exp(-t / eta * pow(m, -i)), 0,
-								M - 1))
+		double eps = 0.25 * tanh(ε) + 0.25;
+		double x = sum(i -> -pow(eta, -eps) * pow(m, i) * pow(pow(m, -i), 1 + eps) * exp(-t / eta * pow(m, -i)), 0,
+				M - 1);
+		return t * (M * bee * tau - tau * M * bee * exp(-t / tau)
+				+ 1 / (-1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1))) + x)
 				/ (M * bee * tau * t + 1 / (pow(m, -eps) - 1) * pow(eta, -eps) * (pow(m, -eps * M) - 1) * t);
 	}
 
@@ -289,12 +255,12 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	 * 
 	 * @param i
 	 *            >= 1 and <= n
-	 * @return 
+	 * @return
 	 */
 	private double Ψ(int i)
 	{
 		Vector T = eventTimes;
-		return sum(k -> iψ(T.get(i) - T.get(k)) - iψ(T.get(i-1) - T.get(k)), 0, i-1);
+		return sum(k -> iψ(T.get(i) - T.get(k)) - iψ(T.get(i - 1) - T.get(k)), 0, i - 1);
 	}
 
 	public Vector simulate(double T)
@@ -374,22 +340,12 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 	{
 		Vector tparams = new Vector(Parameter.values().length);
 		tparams.set(Parameter.b.ordinal(), exp(b));
-		tparams.set(Parameter.ε.ordinal(), 0.25*tanh(ε)+0.25);
-		// params.set(Parameter.ρ.ordinal(), ρ );
+		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
 		tparams.set(Parameter.τ.ordinal(), exp(τ));
 		tparams.set(Parameter.η.ordinal(), exp(η));
 		return tparams;
 	}
 
-	public double getΡ()
-	{
-		return ρ;
-	}
-
-	public void setρ(double ρ)
-	{
-		this.ρ = ρ;
-	}
 
 	public double getΕ()
 	{
@@ -406,4 +362,20 @@ public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFun
 		this.η = η;
 	}
 
+	/**
+	 * TODO: rewrite this part to not use deprecated stuff
+	 */
+	public int estimateParameters(int digits)
+	{
+		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
+		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
+
+		int maxIters = Integer.MAX_VALUE;
+		double[] initialEstimate = calculateInitialGuess(eventTimes).toPrimitiveArray();
+		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
+		double[] key = params.getKey();
+		getParameters().assign(key);
+		out.println("parameter estimates=" + getParamString());
+		return optimizer.getEvaluations();
+	}
 }
