@@ -38,7 +38,7 @@ public class ExponentialHawkesProcessTest extends TestCase
 		Vector Y1 = new Vector(n);
 		Vector Y2 = new Vector( n );
 		Vector Y3 = new Vector( n );
-		Vector Y4 = new Vector( n );
+		Vector Svector = new Vector( n );
 		for (int i = 0; i < X.size(); i++)
 		{
 			double t = i * dt;
@@ -55,7 +55,7 @@ public class ExponentialHawkesProcessTest extends TestCase
 		n = hp.T.size();
 		X = new Vector(n);
 		Y1 = new Vector(n);
-		Y4 = new Vector(n);
+		Svector = new Vector(n);
 		final Vector Y5 = new Vector( n );
 
 		double R[] = new double[hp.getOrder()];
@@ -74,15 +74,15 @@ public class ExponentialHawkesProcessTest extends TestCase
 			X.set(i, hp.T.get(i));
 			Y1.set(i, innersum);	
 			
-			othersum = othersum / eplhp.Z();
-			Y4.set(i, othersum);
+			//othersum = othersum / eplhp.Z();
+			Svector.set(i, othersum);
 			Y5.set(i, eplhp.λ(hp.T.get(i) ) );
 		}
 		out.println( "Y1=" + Y1 );
-		out.println( "Y4=" + Y4 );
+		out.println( "Y4=" + Svector );
 		out.println( "Y5=" + Y5 );
 		chart.addSeries("R[i]", X.toPrimitiveArray(), Y1.toPrimitiveArray());
-		chart.addSeries("S[i]", X.toPrimitiveArray(), Y4.toPrimitiveArray());
+		chart.addSeries("S[i]", X.toPrimitiveArray(), Svector.toPrimitiveArray());
 
 		new SwingWrapper<>(chart).displayChart();
 
