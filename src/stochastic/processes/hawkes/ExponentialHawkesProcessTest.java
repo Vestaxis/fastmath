@@ -74,7 +74,7 @@ public class ExponentialHawkesProcessTest extends TestCase
 			X.set(i, hp.T.get(i));
 			Y1.set(i, innersum);	
 			
-			//othersum = othersum / eplhp.Z();
+			othersum = othersum / eplhp.Z();
 			Svector.set(i, othersum);
 			Y5.set(i, eplhp.λ(hp.T.get(i) ) );
 		}

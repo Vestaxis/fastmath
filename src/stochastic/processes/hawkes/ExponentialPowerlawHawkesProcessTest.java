@@ -61,5 +61,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		out.println( "rΛ=" + rcomp );
 		
 	}
+	
+	
 
 }
