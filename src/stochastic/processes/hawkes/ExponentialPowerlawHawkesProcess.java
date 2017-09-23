@@ -5,6 +5,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.tanh;
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
+import junit.framework.TestCase;
 
 public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
@@ -51,22 +53,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	public Vector T;
 
-	/**
-	 * TODO: rewrite this part to not use deprecated stuff
-	 */
-	public int estimateParameters(int digits)
-	{
-		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
-		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
 
-		int maxIters = Integer.MAX_VALUE;
-		double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
-		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
-		double[] key = params.getKey();
-		getParameters().assign(key);
-		out.println("parameter estimates=" + getParamString());
-		return optimizer.getEvaluations();
-	}
 
 	private double[] getParameterArray()
 	{
@@ -184,8 +171,9 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return intensity;
 	}
 
-	double evolveS( double dt, double[] S, double othersum)
+	double evolveS( double dt, double[] S)
 	{
+		double othersum = 0;
 		for ( int j = 0; j < M; j++ )
 		{
 			S[j] = exp( -getBeta(j) * dt ) * (1 + S[j]);
@@ -209,13 +197,28 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		final int n = T.size();
 		double ll = T.sum();
 		
-		//alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
-		
+		double S[] = new double[M+1];
 		for (int i = 1; i < n; i++)
 		{
-			double thist = T.get(i);
-			ll += log(λ(thist)) - Λ(i);
+			double dt = T.get(i) - T.get(i - 1);
+			double othersum = evolveS( dt, S ) / Z();
+			//TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
+			if ( othersum > 0 )
+			{
+				ll += log( othersum );
+			}
+			
+				ll -= Λ(i);
+			
 		}
+		
+		//alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
+		
+//		for (int i = 1; i < n; i++)
+//		{
+//			double thist = T.get(i);
+//			ll += log(λ(thist)) - Λ(i);
+//		}
 		out.println("LL{" + getParamString() + "}=" + ll);
 		if (Double.isNaN(ll))
 		{
@@ -404,12 +407,11 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		Vector tparams = new Vector(Parameter.values().length);
 		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
-		// params.set(Parameter.ρ.ordinal(), ρ );
 		tparams.set(Parameter.η.ordinal(), exp(η));
 		return tparams;
 	}
 
-	public double getΕ()
+	public double getε()
 	{
 		return ε;
 	}
@@ -422,6 +424,23 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	public void setη(double η)
 	{
 		this.η = η;
+	}
+	
+	/**
+	 * TODO: rewrite this part to not use deprecated stuff
+	 */
+	public int estimateParameters(int digits)
+	{
+		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
+		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
+
+		int maxIters = Integer.MAX_VALUE;
+		double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
+		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
+		double[] key = params.getKey();
+		getParameters().assign(key);
+		out.println("parameter estimates=" + getParamString());
+		return optimizer.getEvaluations();
 	}
 
 }

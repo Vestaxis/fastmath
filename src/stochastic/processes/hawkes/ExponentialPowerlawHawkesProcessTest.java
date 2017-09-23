@@ -35,10 +35,10 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		process.T = data;
 		int midpoint = data.size() / 2;
-		data = data.slice( midpoint - 250, midpoint + 250 );
+		data = data.slice( midpoint - 500, midpoint + 500 );
 		
 		process.T = data;
-		//int evals = process.estimateParameters(15);
+		int evals = process.estimateParameters(15);
 		MatFile.write("/data/test.mat", data.setName("d").createMiMatrix(), process.Λ().setName("C").createMiMatrix() );
 
 		//out.println( evals + " iterations");

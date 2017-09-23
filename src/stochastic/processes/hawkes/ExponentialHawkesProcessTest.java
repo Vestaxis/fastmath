@@ -65,11 +65,11 @@ public class ExponentialHawkesProcessTest extends TestCase
 		for (int i = 1; i < n; i++)
 		{
 			double innersum = hp.getLambda();
-			double othersum = 0;
+			
 			dt = hp.T.get(i) - hp.T.get(i - 1);
 
 			innersum = hp.evolveR( dt, R, innersum);
-			othersum = eplhp.evolveS( dt, S, othersum);
+			double othersum = eplhp.evolveS( dt, S );
 			
 			X.set(i, hp.T.get(i));
 			Y1.set(i, innersum);	
