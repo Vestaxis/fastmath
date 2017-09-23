@@ -68,8 +68,8 @@ public class ExponentialHawkesProcessTest extends TestCase
 			double othersum = 0;
 			dt = hp.T.get(i) - hp.T.get(i - 1);
 
-			innersum = evolveR(hp, dt, R, innersum);
-			othersum = evolveS(eplhp, dt, S, othersum);
+			innersum = hp.evolveR( dt, R, innersum);
+			othersum = eplhp.evolveS( dt, S, othersum);
 			
 			X.set(i, hp.T.get(i));
 			Y1.set(i, innersum);	
@@ -97,26 +97,9 @@ public class ExponentialHawkesProcessTest extends TestCase
 		}
 	}
 
-	private double evolveR(ExponentialHawkesProcess hp, double dt, double[] R, double innersum)
-	{
-		for (int j = 0; j < hp.getOrder(); j++)
-		{
-			R[j] = exp(-hp.β.get(j) * dt) * (1 + R[j]);
-			innersum += hp.α.get(j) * R[j];
-		}
-		return innersum;
-	}
 
-	private double evolveS(ExponentialPowerlawHawkesProcess eplhp, double dt, double[] S, double othersum)
-	{
-		for ( int j = 0; j < eplhp.M; j++ )
-		{
-			S[j] = exp( -eplhp.getBeta(j) * dt ) * (1 + S[j]);
-			othersum += eplhp.getAlpha(j) * S[j];				
-		}
-		S[eplhp.M] =exp( -eplhp.βS() * dt ) * (1 + S[eplhp.M]);
-		return othersum - eplhp.αS() * S[eplhp.M];
-	}
+
+
 
 	private static void chartFunction(DoubleFunction<Double> func, String name, double dt, double W)
 	{

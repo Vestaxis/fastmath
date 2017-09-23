@@ -184,6 +184,17 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return intensity;
 	}
 
+	double evolveS( double dt, double[] S, double othersum)
+	{
+		for ( int j = 0; j < M; j++ )
+		{
+			S[j] = exp( -getBeta(j) * dt ) * (1 + S[j]);
+			othersum += getAlpha(j) * S[j];				
+		}
+		S[M] =exp( -βS() * dt ) * (1 + S[M]);
+		return othersum - αS() * S[M];
+	}
+	
 	/**
 	 * 
 	 * @param T
@@ -197,7 +208,9 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final int n = T.size();
 		double ll = T.sum();
-
+		
+		//alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
+		
 		for (int i = 1; i < n; i++)
 		{
 			double thist = T.get(i);

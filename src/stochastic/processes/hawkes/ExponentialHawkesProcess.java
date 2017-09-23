@@ -48,6 +48,17 @@ public class ExponentialHawkesProcess implements HawkesProcess
 
 	public Vector T;
 
+	
+	double evolveR( double dt, double[] R, double innersum)
+	{
+		for (int j = 0; j < getOrder(); j++)
+		{
+			R[j] = exp(-β.get(j) * dt) * (1 + R[j]);
+			innersum += α.get(j) * R[j];
+		}
+		return innersum;
+	}
+	
 	public double ν(double t)
 	{
 		return sum(i -> α.get(i) * exp(-β.get(i) * t), 0, P - 1);
