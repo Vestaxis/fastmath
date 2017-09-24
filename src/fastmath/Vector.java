@@ -1,7 +1,5 @@
 package fastmath;
 
-import static fastmath.Functions.sum;
-import static java.lang.Math.pow;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
@@ -34,10 +32,6 @@ import fastmath.matfile.MiDouble;
 import fastmath.matfile.MiMatrix;
 import fastmath.matfile.Writable;
 import math.Set;
-import math.metrics.Metric;
-import math.space.EuclideanSpace;
-import math.space.VectorSpace;
-import numbersystems.RealNumbers;
 
 @Persistent
 public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Set

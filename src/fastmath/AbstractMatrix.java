@@ -15,8 +15,6 @@ import fastmath.matfile.MiInt32;
 import fastmath.matfile.MiMatrix;
 import fastmath.matfile.MxDouble;
 import fastmath.matfile.Writable;
-import math.Matrix;
-import numbersystems.RealNumbers;
 import util.AutoHashMap;
 
 @Persistent

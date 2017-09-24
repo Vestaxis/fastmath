@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.sleepycat.persist.model.Persistent;
 
-import numbersystems.RealNumbers;
-
 @Persistent
 public class SquareDoubleColMatrix extends DoubleColMatrix implements  Cloneable
 {
