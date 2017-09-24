@@ -1,8 +1,6 @@
 package stochastic.processes.pointprocesses;
 
-import math.space.PolishSpace;
-
-public interface MarkedPointProcess<M extends MarkedPoint> extends PointProcess<PolishSpace<?, ?>>
+public interface MarkedPointProcess<M extends MarkedPoint>
 {
 
   MarkedPointProcess<M> splitIntoUpAndDownThinnedProcesses( int i, int pennies );
