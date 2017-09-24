@@ -127,7 +127,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 			A[j] = 1 + exp(-β(j) * dt) * A[j];
 			Λ += (α(j) / β(j)) * (1 - exp(-β(j) * dt)) * A[j];
 		}
-		return Λ ;
+		return Λ;
 	}
 
 	boolean recursive = false;
@@ -156,16 +156,16 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 				double t = T.get(i);
 				double dt = t - T.get(i - 1);
 				double λ = evolveλ(dt, S);
-				 double Λ = evolveΛ(dt, A);
+				double Λ = evolveΛ(dt, A);
 
-				//double Λ = sum(j -> α(j) / β(j) * (1 - exp(-β(j) * (tn - t))), 0, M);
+				// double Λ = sum(j -> α(j) / β(j) * (1 - exp(-β(j) * (tn - t))), 0, M);
 
 				if (λ > 0)
 				{
 					ll += log(λ);
 				}
 
-				ll -= Λ / ( Z() * dt );
+				ll -= Λ / (Z() * dt);
 
 			}
 		} else
@@ -199,31 +199,43 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	public Vector Λ()
 	{
 		final int n = T.size();
-		Vector compensator = new Vector(n);
 
+		// for (int i = 0; i < n - 1; i++)
+		// {
+		// compensator.set(i, Λ(i));
+		// }
+		// compensator = compensator.cumsum();
+		return calculateCompensator(n);
+	}
+
+	private Vector calculateCompensator(final int n)
+	{
+		Vector durations = T.diff();
+		double lambda = getKappa();
+		final int order = M + 1;
+
+		double A[] = new double[order];
+		Vector compensator = new Vector(n);		
 		for (int i = 0; i < n - 1; i++)
 		{
-			compensator.set(i, Λ(i));
+			double x = durations.get(i);
+			double secondSum = x * lambda;
+			for (int j = 0; j < order; j++)
+			{
+				final double a = α(j);
+				final double b = β(j);
+				double exphi = exp(-b * x);
+				A[j] = 1 + (exphi * A[j]);
+				secondSum += (a / b) * (1 - exphi) * A[j];
+			}
+			compensator.set(i, secondSum);
 		}
-		compensator = compensator.cumsum();
-		// double lambda = getKappa();
-		//
-		// double A[] = new double[order];
-		// for ( int i = 0; i < n; i++ )
-		// {
-		// double x = durations.get( i );
-		// double secondSum = x * lambda;
-		// for ( int j = 0; j < order; j++ )
-		// {
-		// final double a = alpha.get( j );
-		// final double b = bη.get( j );
-		// double exphi = exp( -b * x );
-		// A[j] = 1 + ( exphi * A[j] );
-		// secondSum += ( a / b ) * ( 1 - exphi ) * A[j];
-		// }
-		// compensator.set( i, secondSum );
-		// }
 		return compensator;
+	}
+
+	private double getKappa()
+	{
+		return 0;
 	}
 
 	public double βS()

@@ -70,8 +70,12 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 250, midpoint + 250);
 		process.T = data;
+		process.estimateParameters(15);
 		Vector comp = process.Λ();
-
+		double compMean = comp.mean();
+		double compVar = comp.variance();
+		out.println( "mean=" + compMean );
+		out.println( "var=" + compVar );
 
 	}
 
