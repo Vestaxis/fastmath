@@ -8,7 +8,7 @@ import com.sleepycat.persist.model.Persistent;
 import numbersystems.RealNumbers;
 
 @Persistent
-public class SquareDoubleColMatrix extends DoubleColMatrix implements SquareMatrix<RealNumbers>, Cloneable
+public class SquareDoubleColMatrix extends DoubleColMatrix implements  Cloneable
 {
 
   @Override

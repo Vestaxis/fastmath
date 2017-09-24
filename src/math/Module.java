@@ -23,7 +23,7 @@ import math.theory.ring.Ring;
  * @author crow
  *
  */
-public interface Module<R extends Ring<?>> extends CommutativeGroup<R>, AdditiveGroup<R>
+public interface Module<R extends Ring<?>> extends AdditiveGroup<R>
 {
 
 }

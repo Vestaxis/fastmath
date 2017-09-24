@@ -4,7 +4,6 @@ import math.Field;
 import math.Scalar;
 import math.properties.Archimedean;
 import math.space.CompleteSeparableMetricSpace;
-import math.space.LocallyCompactSpace;
 import stochastic.SigmaField;
 import stochastic.order.IndexSet;
 
@@ -42,7 +41,6 @@ public abstract class RealNumbers
                                   Field<RealNumbers>,
                                   Scalar,
                                   IndexSet<RealNumbers>,
-                                  LocallyCompactSpace<RealNumbers, SigmaField<RealNumbers>>,
                                   CompleteSeparableMetricSpace<RealNumbers, SigmaField<RealNumbers>>
 {
 

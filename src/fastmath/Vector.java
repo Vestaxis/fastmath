@@ -40,7 +40,7 @@ import math.space.VectorSpace;
 import numbersystems.RealNumbers;
 
 @Persistent
-public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Set, EuclideanSpace
+public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Set
 {
 
 	public Vector()
@@ -1322,23 +1322,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		return this;
 	}
 
-	@Override
-	public int getN()
-	{
-		return size();
-	}
+	
 
-	@Override
-	public VectorSpace<RealNumbers> getDual()
-	{
-		throw new UnsupportedOperationException("TODO: return -this");
-	}
-
-	@Override
-	public Metric<RealNumbers> getMetric()
-	{
-		throw new UnsupportedOperationException("maybe another functional way to do this");
-	}
 
 	@Override
 	public void write(SeekableByteChannel channel) throws IOException
@@ -1386,17 +1371,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		final int n = size();
 		final double mean = mean();
 		return Functions.sum(i -> Math.pow(get(i) - mean, 2), 0, n - 1) / n;
-	}
-
-	@Override
-	public double getDist(EuclideanSpace other)
-	{
-		if (!(other instanceof Vector))
-		{
-			throw new UnsupportedOperationException("TODO");
-		}
-		Vector b = (Vector) other;
-		return Functions.sum(k -> Math.abs(get(k) - b.get(k)), 0, size());
 	}
 
 	public double getStdev()

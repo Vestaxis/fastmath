@@ -21,7 +21,6 @@ import stochastic.SigmaField;
 public interface EuclideanSpace
                                 extends
                                 VectorSpace<RealNumbers>,
-                                CompleteSeparableMetricSpace<RealNumbers, SigmaField<RealNumbers>>,
                                 FiniteDimensionalSpace,
                                 RadonSpace,
                                 SigmaField<RealNumbers>

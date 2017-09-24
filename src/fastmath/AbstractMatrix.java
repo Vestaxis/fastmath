@@ -20,7 +20,7 @@ import numbersystems.RealNumbers;
 import util.AutoHashMap;
 
 @Persistent
-public abstract class AbstractMatrix extends AbstractBufferedObject implements Matrix<RealNumbers>, Writable
+public abstract class AbstractMatrix extends AbstractBufferedObject implements  Writable
 {
   protected String name;
   protected int numCols;

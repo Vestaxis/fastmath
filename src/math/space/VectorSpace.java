@@ -57,7 +57,7 @@ import math.theory.group.CommutativeGroup;
  * @author crow
  *
  */
-public interface VectorSpace<F extends Field<?>> extends Module<F>, CommutativeGroup<F>
+public interface VectorSpace<F extends Field<?>> extends CommutativeGroup<F>
 {
 
   public int getDimension();
