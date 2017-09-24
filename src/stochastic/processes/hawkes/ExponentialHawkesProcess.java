@@ -4,6 +4,9 @@ import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.System.out;
 
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+
 import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
@@ -12,6 +15,89 @@ import fastmath.exceptions.FastMathException;
 
 public class ExponentialHawkesProcess implements HawkesProcess
 {
+	public static void main(String args[]) throws InterruptedException
+	{
+		double[] alpha = new double[]
+		{ 0.1, 0.4 };
+		double[] beta = new double[]
+		{ 1.3, 1.7 };
+		ExponentialHawkesProcess hp = new ExponentialHawkesProcess(0.1, alpha, beta);
+		hp.T = new Vector(new double[]
+		{ 1.3, 1.4, 1.9, 2.5, 3.3, 3.9, 4.2, 4.5 });
+
+		ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
+		eplhp.T = hp.T;
+		XYChart chart = new XYChart(800, 600);
+
+		double W = hp.T.getRightmostValue();
+		double dt = 0.001;
+		int n = (int) (W / dt);
+
+		int idx = 0;
+
+		Vector X = new Vector(n);
+		Vector Y1 = new Vector(n);
+		Vector Y2 = new Vector(n);
+		Vector Y3 = new Vector(n);
+		Vector Svector = new Vector(n);
+		for (int i = 0; i < X.size(); i++)
+		{
+			double t = i * dt;
+			X.set(i, t);
+			Y1.set(i, hp.λ(t));
+			Y2.set(i, hp.λrecursive(t));
+			Y3.set(i, eplhp.λ(t));
+		}
+		chart.addSeries("λexp", X.toPrimitiveArray(), Y1.toPrimitiveArray());
+		chart.addSeries("λr", X.toPrimitiveArray(), Y2.toPrimitiveArray());
+		chart.addSeries("λepl", X.toPrimitiveArray(), Y3.toPrimitiveArray());
+		chart.getStyler().setMarkerSize(1);
+
+		n = hp.T.size();
+		X = new Vector(n);
+		Y1 = new Vector(n);
+		Svector = new Vector(n);
+		final Vector Y5 = new Vector(n);
+
+		double R[] = new double[hp.getOrder()];
+		double S[] = new double[eplhp.M + 1];
+		X.set(0, hp.T.get(0));
+		Y1.set(0, hp.getLambda());
+		for (int i = 1; i < n; i++)
+		{
+			double innersum = hp.getLambda();
+
+			dt = hp.T.get(i) - hp.T.get(i - 1);
+
+			innersum = hp.evolveR(dt, R, innersum);
+			double othersum = eplhp.evolveS(dt, S);
+
+			X.set(i, hp.T.get(i));
+			Y1.set(i, innersum);
+
+			othersum = othersum / eplhp.Z();
+			Svector.set(i, othersum);
+			Y5.set(i, eplhp.λ(hp.T.get(i)));
+		}
+		out.println("Y1=" + Y1);
+		out.println("Y4=" + Svector);
+		out.println("Y5=" + Y5);
+		chart.addSeries("R[i]", X.toPrimitiveArray(), Y1.toPrimitiveArray());
+		chart.addSeries("S[i]", X.toPrimitiveArray(), Svector.toPrimitiveArray());
+
+		new SwingWrapper<>(chart).displayChart();
+
+		// chartFunctions( new String[] { "λ", "λr" }, 0.01, 5, hp::λ, t ->
+		// hp.λrecursive(t) );
+
+		double intensity = hp.λ(1.7);
+		out.println("intensity=" + intensity);
+		while (true)
+		{
+			Thread.sleep(1000);
+		}
+	}
+
 	@Override
 	public String toString()
 	{
@@ -48,8 +134,7 @@ public class ExponentialHawkesProcess implements HawkesProcess
 
 	public Vector T;
 
-	
-	double evolveR( double dt, double[] R, double innersum)
+	double evolveR(double dt, double[] R, double innersum)
 	{
 		for (int j = 0; j < getOrder(); j++)
 		{
@@ -58,7 +143,7 @@ public class ExponentialHawkesProcess implements HawkesProcess
 		}
 		return innersum;
 	}
-	
+
 	public double ν(double t)
 	{
 		return sum(i -> α.get(i) * exp(-β.get(i) * t), 0, P - 1);
@@ -80,17 +165,17 @@ public class ExponentialHawkesProcess implements HawkesProcess
 	{
 		final int n = T.findLast(t, Condition.LT);
 		double λ = lambda;
-		if ( n <= 0 )
+		if (n <= 0)
 		{
 			return λ;
 		}
-//		} else if ( n < 1 )
-//		{
-//			return λ + sum( i-> α.get(i), 0, getOrder() - 1 ); 
-//		}
-		double R[] = new double[n+1];
+		// } else if ( n < 1 )
+		// {
+		// return λ + sum( i-> α.get(i), 0, getOrder() - 1 );
+		// }
+		double R[] = new double[n + 1];
 		double Rsum = 0;
-		
+
 		for (int i = 1; i <= n; i++)
 		{
 			double impulse = getLambda();
@@ -102,32 +187,25 @@ public class ExponentialHawkesProcess implements HawkesProcess
 				impulse += α.get(j) * R[j];
 				Rsum += R[j];
 			}
-			
+
 			λ = impulse;
 		}
-		//λ += sum( j-> α.get(j) *  exp(-β.get(j) * ( t - T.get(n) ) ), 0, getOrder() - 1 );
-		//λ += sum( i-> ν( t - T.get(i) ), 0, n  );
-		//λ += ν( t - Rsum );
-		//λ += λ(t);
-//		double dt = t - tn;
-//		if (dt > 0)
-//		{
-//			for (int j = 0; j < P; j++)
-//			{
-//				R[j] = exp(-β.get(j) * dt) * (1 + R[j]);
-//				λ += α.get(j) * R[j];
-//			}
-//		}
+		// λ += sum( j-> α.get(j) * exp(-β.get(j) * ( t - T.get(n) ) ), 0, getOrder() -
+		// 1 );
+		// λ += sum( i-> ν( t - T.get(i) ), 0, n );
+		// λ += ν( t - Rsum );
+		// λ += λ(t);
+		// double dt = t - tn;
+		// if (dt > 0)
+		// {
+		// for (int j = 0; j < P; j++)
+		// {
+		// R[j] = exp(-β.get(j) * dt) * (1 + R[j]);
+		// λ += α.get(j) * R[j];
+		// }
+		// }
 
 		return λ;
-	}
-
-	private void iterate(double[] R, final double dt)
-	{
-		for (int j = 0; j < P; j++)
-		{
-			R[j] = exp(-β.get(j) * dt) * (1 + R[j]);
-		}
 	}
 
 	public ExponentialHawkesProcess(int order)

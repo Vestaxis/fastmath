@@ -5,7 +5,6 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.tanh;
-import static java.lang.String.format;
 import static java.lang.System.out;
 
 import java.io.Serializable;
@@ -21,7 +20,6 @@ import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
-import junit.framework.TestCase;
 
 public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
@@ -107,7 +105,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double ψ(double t)
 	{
-		return (sum(i -> getAlpha(i) * exp(-getBeta(i) * t), 0, M - 1) - αS() * exp(-t * βS())) / Z();
+		return sum(i -> α(i) * exp(-β(i) * t), 0, M) / Z();
 	}
 
 	public double Z()
@@ -117,7 +115,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		double a = pow(m, (-eps * M + eps + 1)) - pow(m, (1 + eps));
 		double b = pow(m, eps) - 1;
 		double c = pow(eta, -1 - eps);
-		return -eta * a / m / b * c + αS() * eta / m;
+		return -eta * a / m / b * c - αS() * eta / m;
 	}
 
 	public double βS()
@@ -130,28 +128,37 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
-		return -(pow(eta, -1 - eps) * (pow(m, -(1 + eps) * (M - 1)) - pow(m, (1 + eps)))) / (pow(m, 1 + eps) - 1);
+		return (pow(eta, -1 - eps) * (pow(m, -(1 + eps) * (M - 1)) - pow(m, (1 + eps)))) / (pow(m, 1 + eps) - 1);
 
 	}
 
-	public double getBeta(int i)
+	public double β(int i)
 	{
+		if (i == M)
+		{
+			return βS();
+		}
 		final double eta = exp(η);
 		return 1 / eta / pow(m, i);
 	}
 
-	public double getAlpha(int i)
+	public double α(int i)
 	{
+		if (i == M)
+		{
+			return αS();
+		}
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
 		return pow(1 / (eta * pow(m, i)), 1 + eps);
 	}
 
 	/**
+	 * intensity function
 	 * 
 	 * @param t
 	 * 
-	 * @return
+	 * @return intensity at time t
 	 */
 	public double λ(double t)
 	{
@@ -163,12 +170,14 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		double othersum = 0;
 		for (int j = 0; j < M; j++)
 		{
-			S[j] = exp(-getBeta(j) * dt) * (1 + S[j]);
-			othersum += getAlpha(j) * S[j];
+			S[j] = exp(-β(j) * dt) * (1 + S[j]);
+			othersum += α(j) * S[j];
 		}
 		S[M] = exp(-βS() * dt) * (1 + S[M]);
-		return othersum - αS() * S[M];
+		return othersum + αS() * S[M];
 	}
+
+	private boolean recursive = false;
 
 	/**
 	 * 
@@ -181,37 +190,42 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double logLik()
 	{
+		double ll = T.getRightmostValue() - T.getLeftmostValue();
 		final int n = T.size();
-		double ll = T.sum();
 
-		double S[] = new double[M + 1];
-		for (int i = 1; i < n; i++)
+		if (recursive)
 		{
-			double dt = T.get(i) - T.get(i - 1);
-			double othersum = evolveS(dt, S) / Z();
-			// TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
-			if (othersum > 0)
+
+			double S[] = new double[M + 1];
+			for (int i = 1; i < n; i++)
 			{
-				ll += log(othersum);
+				double dt = T.get(i) - T.get(i - 1);
+				double othersum = evolveS(dt, S) / Z();
+				// TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
+				if (othersum > 0)
+				{
+					ll += log(othersum);
+				}
+
+				ll -= Λ(i);
+
 			}
-
-			ll -= Λ(i);
-
-		}
-
-		// alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
-
-		// for (int i = 1; i < n; i++)
-		// {
-		// double thist = T.get(i);
-		// ll += log(λ(thist)) - Λ(i);
-		// }
-		out.println("LL{" + getParamString() + "}=" + ll);
-		if (Double.isNaN(ll))
+		} else
 		{
-			ll = Double.NEGATIVE_INFINITY;
+
+			for (int i = 1; i < n; i++)
+			{
+				double thist = T.get(i);
+				ll += log(λ(thist)) - Λ(i);
+			}
+			out.println("LL{" + getParamString() + "}=" + ll);
+			if (Double.isNaN(ll))
+			{
+				ll = Double.NEGATIVE_INFINITY;
+			}
 		}
 		return ll;
+
 	}
 
 	/**
