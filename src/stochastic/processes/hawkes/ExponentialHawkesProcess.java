@@ -70,7 +70,7 @@ public class ExponentialHawkesProcess implements HawkesProcess
 			dt = hp.T.get(i) - hp.T.get(i - 1);
 
 			innersum = hp.evolveR(dt, R, innersum);
-			double othersum = eplhp.evolveS(dt, S);
+			double othersum = eplhp.evolveλ(dt, S);
 
 			X.set(i, hp.T.get(i));
 			Y1.set(i, innersum);

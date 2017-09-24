@@ -21,19 +21,18 @@ import org.apache.commons.math3.util.FastMath;
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
+@SuppressWarnings("deprecation")
 public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
 
 	/**
 	 * 
 	 * @param η
-	 *            exponential multiplier
-	 * @param τ
-	 *            power multiplier
+	 *            scale
+	 * 
 	 * @param ε
 	 *            degree of fractional integration
-	 * @param b
-	 *            amplitude of short-term exponential
+	 * 
 	 */
 	public ExponentialPowerlawHawkesProcess(double η, double ε)
 	{
@@ -50,27 +49,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	}
 
 	public Vector T;
-
-	private double[] getParameterArray()
-	{
-		return getParameters().toPrimitiveArray();
-	}
-
-	private Vector calculateInitialGuess(Vector durations)
-	{
-		final Vector vec = getParameters();
-
-		return vec;
-		// return null;
-	}
-
-	public String getParamString()
-	{
-		return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
-		// return "kappa=" + getKappa() + " alpha=" + alpha.toString().replace(
-		// "\n", "" ) + " bη="
-		// + bη.toString().replace( "\n", "" );
-	}
 
 	static enum Parameter
 	{
@@ -118,41 +96,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return -eta * a / m / b * c - αS() * eta / m;
 	}
 
-	public double βS()
-	{
-		final double eta = exp(η);
-		return m / eta;
-	}
-
-	public double αS()
-	{
-		final double eta = exp(η);
-		double eps = 0.25 * tanh(ε) + 0.25;
-		return (pow(eta, -1 - eps) * (pow(m, -(1 + eps) * (M - 1)) - pow(m, (1 + eps)))) / (pow(m, 1 + eps) - 1);
-
-	}
-
-	public double β(int i)
-	{
-		if (i == M)
-		{
-			return βS();
-		}
-		final double eta = exp(η);
-		return 1 / eta / pow(m, i);
-	}
-
-	public double α(int i)
-	{
-		if (i == M)
-		{
-			return αS();
-		}
-		final double eta = exp(η);
-		double eps = 0.25 * tanh(ε) + 0.25;
-		return pow(1 / (eta * pow(m, i)), 1 + eps);
-	}
-
 	/**
 	 * intensity function
 	 * 
@@ -165,19 +108,29 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return T.stream().filter(s -> s < t).map(s -> ψ(t - s)).sum();
 	}
 
-	double evolveS(double dt, double[] S)
+	double evolveλ(double dt, double[] S)
 	{
-		double othersum = 0;
-		for (int j = 0; j < M; j++)
+		double λ = 0;
+		for (int j = 0; j <= M; j++)
 		{
 			S[j] = exp(-β(j) * dt) * (1 + S[j]);
-			othersum += α(j) * S[j];
+			λ += α(j) * S[j];
 		}
-		S[M] = exp(-βS() * dt) * (1 + S[M]);
-		return othersum + αS() * S[M];
+		return λ / Z();
 	}
 
-	private boolean recursive = false;
+	double evolveΛ(double dt, double[] A)
+	{
+		double Λ = 0;
+		for (int j = 0; j <= M; j++)
+		{
+			A[j] = 1 + exp(-β(j) * dt) * A[j];
+			Λ += (α(j) / β(j)) * (1 - exp(-β(j) * dt)) * A[j];
+		}
+		return Λ ;
+	}
+
+	boolean recursive = false;
 
 	/**
 	 * 
@@ -190,29 +143,33 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double logLik()
 	{
-		double ll = T.getRightmostValue() - T.getLeftmostValue();
+		double tn = T.getRightmostValue();
+		double ll = tn - T.getLeftmostValue();
 		final int n = T.size();
 
 		if (recursive)
 		{
-
+			double A[] = new double[M + 1];
 			double S[] = new double[M + 1];
 			for (int i = 1; i < n; i++)
 			{
-				double dt = T.get(i) - T.get(i - 1);
-				double othersum = evolveS(dt, S) / Z();
-				// TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
-				if (othersum > 0)
+				double t = T.get(i);
+				double dt = t - T.get(i - 1);
+				double λ = evolveλ(dt, S);
+				 double Λ = evolveΛ(dt, A);
+
+				//double Λ = sum(j -> α(j) / β(j) * (1 - exp(-β(j) * (tn - t))), 0, M);
+
+				if (λ > 0)
 				{
-					ll += log(othersum);
+					ll += log(λ);
 				}
 
-				ll -= Λ(i);
+				ll -= Λ / ( Z() * dt );
 
 			}
 		} else
 		{
-
 			for (int i = 1; i < n; i++)
 			{
 				double thist = T.get(i);
@@ -226,53 +183,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		}
 		return ll;
 
-	}
-
-	/**
-	 * integrated kernel function which is the anti-derivative/indefinite integral
-	 * of this{@link #ρ}
-	 * 
-	 * @param t
-	 * @return ∫this{@link #ψ}(t)dt
-	 */
-	public double iψ(double t)
-	{
-		double eta = exp(η);
-		double eps = 0.25 * tanh(ε) + 0.25;
-
-		double a = m * (-1 + pow(m, eps))
-				* (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
-						+ 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
-								* (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1))) * eta / m * exp(-t / eta * m))
-				/ eta
-				/ (pow(eta, -1 - eps) * pow(m, 1 + eps)
-						- 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
-								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
-						- pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1) + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
-								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
-		double b = m * (-0.1e1 + pow(m, eps))
-				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m)
-				/ eta
-				/ (pow(eta, -0.1e1 - eps) * pow(m, 0.1e1 + eps)
-						- 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-								* (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
-						- pow(eta, -0.1e1 - eps) * pow(m, -0.4e1 * eps + 0.1e1) + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
-								* pow(eta, -0.1e1 - eps) * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
-
-		double c = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
-				- 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps))
-						* (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))) * pow(m, eps)
-				- pow(eta, (-1 - eps)) * pow(m, (-4 * eps + 1)) + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1)
-						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))));
-
-		double d = m * (-0.1e1 + pow(m, eps))
-				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m);
-
-		return -((a - b) * c) / d;
 	}
 
 	/**
@@ -316,6 +226,41 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return compensator;
 	}
 
+	public double βS()
+	{
+		final double eta = exp(η);
+		return m / eta;
+	}
+
+	public double αS()
+	{
+		final double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
+		return (pow(eta, -1 - eps) * (pow(m, -(1 + eps) * (M - 1)) - pow(m, (1 + eps)))) / (pow(m, 1 + eps) - 1);
+
+	}
+
+	public double β(int i)
+	{
+		if (i == M)
+		{
+			return βS();
+		}
+		final double eta = exp(η);
+		return 1 / eta / pow(m, i);
+	}
+
+	public double α(int i)
+	{
+		if (i == M)
+		{
+			return αS();
+		}
+		final double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
+		return pow(1 / (eta * pow(m, i)), 1 + eps);
+	}
+
 	/**
 	 * n-th compensated point
 	 * 
@@ -333,35 +278,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 			return iψ(t0) - iψ(t1);
 		}, 0, i - 1);
 		return sum;
-	}
-
-	public Vector recursiveΛ()
-	{
-		double A = 0;
-		Vector compensator = new Vector(T.size());
-		int eye = 1;
-		for (int i = 1; i < T.size(); i++)
-		{
-			double upperTime = T.get(i);
-			double lowerTime = T.get(i - 1);
-
-			double ktime;
-			int k;
-			double subsum = iψ(upperTime - lowerTime) * A;
-
-			A = subsum;
-
-			double innerSum = subsum * (eye - iψ(upperTime - lowerTime));
-			for (k = i - 1; k < i; k++)
-			{
-				ktime = T.get(k);
-				innerSum += eye - iψ((upperTime - ktime));
-			}
-
-			compensator.set(i, innerSum);
-		}
-
-		return compensator;
 	}
 
 	@Override
@@ -442,6 +358,74 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		getParameters().assign(key);
 		out.println("parameter estimates=" + getParamString());
 		return optimizer.getEvaluations();
+	}
+
+	private double[] getParameterArray()
+	{
+		return getParameters().toPrimitiveArray();
+	}
+
+	private Vector calculateInitialGuess(Vector durations)
+	{
+		final Vector vec = getParameters();
+
+		return vec;
+		// return null;
+	}
+
+	public String getParamString()
+	{
+		return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
+		// return "kappa=" + getKappa() + " alpha=" + alpha.toString().replace(
+		// "\n", "" ) + " bη="
+		// + bη.toString().replace( "\n", "" );
+	}
+
+	/**
+	 * integrated kernel function which is the anti-derivative/indefinite integral
+	 * of this{@link #ρ}
+	 * 
+	 * @param t
+	 * @return ∫this{@link #ψ}(t)dt
+	 */
+	public double iψ(double t)
+	{
+		double eta = exp(η);
+		double eps = 0.25 * tanh(ε) + 0.25;
+
+		double a = m * (-1 + pow(m, eps))
+				* (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
+						+ 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1))) * eta / m * exp(-t / eta * m))
+				/ eta
+				/ (pow(eta, -1 - eps) * pow(m, 1 + eps)
+						- 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
+						- pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1) + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps)
+								* (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+		double b = m * (-0.1e1 + pow(m, eps))
+				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m)
+				/ eta
+				/ (pow(eta, -0.1e1 - eps) * pow(m, 0.1e1 + eps)
+						- 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
+						- pow(eta, -0.1e1 - eps) * pow(m, -0.4e1 * eps + 0.1e1) + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
+								* pow(eta, -0.1e1 - eps) * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+
+		double c = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
+				- 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps))
+						* (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))) * pow(m, eps)
+				- pow(eta, (-1 - eps)) * pow(m, (-4 * eps + 1)) + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1)
+						* pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))));
+
+		double d = m * (-0.1e1 + pow(m, eps))
+				* (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+						+ 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
+								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m);
+
+		return -((a - b) * c) / d;
 	}
 
 }
