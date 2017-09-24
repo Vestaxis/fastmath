@@ -53,8 +53,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	public Vector T;
 
-
-
 	private double[] getParameterArray()
 	{
 		return getParameters().toPrimitiveArray();
@@ -109,9 +107,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double ψ(double t)
 	{
-		double a = sum(i -> getAlpha(i) * exp(-getBeta(i) * t), 0, M - 1);
-		a -= αS() * exp(-t * βS());
-		return a / Z();
+		return (sum(i -> getAlpha(i) * exp(-getBeta(i) * t), 0, M - 1) - αS() * exp(-t * βS())) / Z();
 	}
 
 	public double Z()
@@ -148,7 +144,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
-		return pow(1 / ( eta * pow(m, i) ), 1 + eps);
+		return pow(1 / (eta * pow(m, i)), 1 + eps);
 	}
 
 	/**
@@ -159,30 +155,21 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	public double λ(double t)
 	{
-		final int n = T.size();
-		double intensity = 0;
-		double itime;
-
-		for (int i = 0; i < n && (itime = T.get(i)) < t; i++)
-		{
-			intensity += ψ(t - itime);
-
-		}
-		return intensity;
+		return T.stream().filter(s -> s < t).map(s -> ψ(t - s)).sum();
 	}
 
-	double evolveS( double dt, double[] S)
+	double evolveS(double dt, double[] S)
 	{
 		double othersum = 0;
-		for ( int j = 0; j < M; j++ )
+		for (int j = 0; j < M; j++)
 		{
-			S[j] = exp( -getBeta(j) * dt ) * (1 + S[j]);
-			othersum += getAlpha(j) * S[j];				
+			S[j] = exp(-getBeta(j) * dt) * (1 + S[j]);
+			othersum += getAlpha(j) * S[j];
 		}
-		S[M] =exp( -βS() * dt ) * (1 + S[M]);
+		S[M] = exp(-βS() * dt) * (1 + S[M]);
 		return othersum - αS() * S[M];
 	}
-	
+
 	/**
 	 * 
 	 * @param T
@@ -196,29 +183,29 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final int n = T.size();
 		double ll = T.sum();
-		
-		double S[] = new double[M+1];
+
+		double S[] = new double[M + 1];
 		for (int i = 1; i < n; i++)
 		{
 			double dt = T.get(i) - T.get(i - 1);
-			double othersum = evolveS( dt, S ) / Z();
-			//TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
-			if ( othersum > 0 )
+			double othersum = evolveS(dt, S) / Z();
+			// TestCase.assertEquals( othersum, λ(T.get(i) ), pow(10, -10) );
+			if (othersum > 0)
 			{
-				ll += log( othersum );
+				ll += log(othersum);
 			}
-			
-				ll -= Λ(i);
-			
+
+			ll -= Λ(i);
+
 		}
-		
-		//alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
-		
-//		for (int i = 1; i < n; i++)
-//		{
-//			double thist = T.get(i);
-//			ll += log(λ(thist)) - Λ(i);
-//		}
+
+		// alpha[j] / beta[j] * (1 - exp(-beta[j] * (tn - times[i])))
+
+		// for (int i = 1; i < n; i++)
+		// {
+		// double thist = T.get(i);
+		// ll += log(λ(thist)) - Λ(i);
+		// }
 		out.println("LL{" + getParamString() + "}=" + ll);
 		if (Double.isNaN(ll))
 		{
@@ -425,7 +412,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		this.η = η;
 	}
-	
+
 	/**
 	 * TODO: rewrite this part to not use deprecated stuff
 	 */
