@@ -9,9 +9,7 @@ import fastmath.AbstractMatrix;
 import fastmath.Pair;
 import fastmath.SquareDoubleColMatrix;
 import fastmath.Vector;
-import stochastic.processes.annotations.Markovian;
 
-@Markovian
 @Persistent
 public class TransitionProbabilityMatrix extends SquareDoubleColMatrix
 {
