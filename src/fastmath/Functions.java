@@ -1,6 +1,5 @@
 package fastmath;
 
-import static fastmath.Console.println;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.exp;

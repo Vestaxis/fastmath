@@ -6,17 +6,18 @@ import fastmath.Vector;
 public interface HawkesProcess
 {
 
-  double getBranchingRatio();
+	double getBranchingRatio();
 
-  double logLikelihood( Vector t );
+	double logLikelihood(Vector t);
 
-  double getUnconditionalIntensity();
+	double getUnconditionalIntensity();
 
-  public DoubleColMatrix getJacobian( Vector t );
-  
-  public DoubleColMatrix getHessian( Vector t );
+	public DoubleColMatrix getJacobian(Vector t);
 
-int getOrder();
-  
+	public DoubleColMatrix getHessian(Vector t);
+
+	int getOrder();
+
+	double evolveλ(double dt, double[] R);
 
 }

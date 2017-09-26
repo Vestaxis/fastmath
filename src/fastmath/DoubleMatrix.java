@@ -17,6 +17,7 @@ import fastmath.matfile.MiDouble;
 import fastmath.matfile.NamedWritable;
 
 @Persistent
+@SuppressWarnings("unchecked")
 public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritable
 {
   static

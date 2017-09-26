@@ -1,12 +1,8 @@
 package fastmath;
 
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.IntByReference;
 
 public interface Fastmath extends Library
 {

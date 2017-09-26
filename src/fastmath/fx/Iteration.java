@@ -1,16 +1,9 @@
 package fastmath.fx;
 
-import static fastmath.arb.Constants.HALF;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.System.out;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import fastmath.Functions;
 import fastmath.arb.Complex;
-import fastmath.arb.Constants;
 import fastmath.arb.Real;
 import fastmath.arb.RealConstants;
 

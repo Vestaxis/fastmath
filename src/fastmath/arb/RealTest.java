@@ -1,7 +1,6 @@
 package fastmath.arb;
 
 import static java.lang.Math.pow;
-import static java.lang.System.out;
 
 import junit.framework.TestCase;
 

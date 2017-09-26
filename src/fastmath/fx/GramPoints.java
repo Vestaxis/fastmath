@@ -1,8 +1,6 @@
 package fastmath.fx;
 
-import static fastmath.Console.println;
 import static java.lang.Math.abs;
-import static java.lang.Math.sqrt;
 
 import fastmath.Functions;
 import fastmath.Pair;

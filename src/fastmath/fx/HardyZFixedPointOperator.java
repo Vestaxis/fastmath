@@ -5,7 +5,6 @@ import static fastmath.Functions.W;
 import static java.lang.Math.E;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
-import static java.lang.Math.log;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
@@ -13,7 +12,6 @@ import static java.lang.Math.sqrt;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.exit;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.range;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,12 +22,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.imageio.ImageIO;
 
 import fastmath.DoubleRowMatrix;
-import fastmath.ExponentialMovingAverage;
 import fastmath.Functions;
 import fastmath.Pair;
-import fastmath.RandomComparator;
 import fastmath.arb.Complex;
-import fastmath.arb.Real;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -164,13 +159,7 @@ public class HardyZFixedPointOperator extends Application
     Platform.runLater( () -> {
 
       println( "zoom to " + ul + " , " + lr );
-      if ( rendering )
-      {
-        cancelRendering = true;
-        while (rendering)
-          ;
-      }
-      cancelRendering = false;
+
       minx = ul.left;
       maxx = lr.left;
       miny = ul.right;
@@ -344,7 +333,6 @@ public class HardyZFixedPointOperator extends Application
 
   PixelPainter painter = null;
 
-  private volatile boolean cancelRendering = false;
   private volatile boolean rendering;
 
   public class PixelPainter extends AnimationTimer

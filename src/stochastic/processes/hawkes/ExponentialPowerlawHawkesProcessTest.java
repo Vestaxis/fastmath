@@ -21,7 +21,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 
 	public void testiΨ()
 	{
-		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(1.4, 0.25);
+		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(1.4, 0.25);
 		double x = process.iψ(1.3);
 		assertEquals(.18284483319013261698230044979325998875927092907043, x, pow(10, -9));
 		// out.println( "x=" + x );
@@ -65,7 +65,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 	{
 		double ε = 0.15;
 		double η = 1.6;
-		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
+		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 250, midpoint + 250);

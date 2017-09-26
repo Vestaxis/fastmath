@@ -5,6 +5,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.System.out;
 
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.knowm.xchart.XYChart;
 
 import fastmath.Vector;
@@ -13,9 +14,8 @@ public abstract class ExponentialHawkesProcess
 {
 
 	protected abstract double α(int j);
-	
-	protected abstract double β(int j);
 
+	protected abstract double β(int j);
 
 	public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
 	{
@@ -32,11 +32,11 @@ public abstract class ExponentialHawkesProcess
 
 	public double getBranchingRatio()
 	{
-		return sum(i -> α(i) / β(i), 0, getOrder() -1 );
+		return sum(i -> α(i) / β(i), 0, getOrder() - 1);
 	}
 
 	public abstract int getOrder();
-	
+
 	public abstract double Z();
 
 	/**
@@ -59,7 +59,18 @@ public abstract class ExponentialHawkesProcess
 	 */
 	public final double ψ(double t)
 	{
-		return sum(i -> α(i) * exp(-β(i) * t), 0, getOrder() - 1 ) / Z();
+		return sum(i -> α(i) * exp(-β(i) * t), 0, getOrder() - 1) / Z();
+	}
+
+	/**
+	 * integrated kernel function
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public double iψ(double t)
+	{
+		return sum(i -> -(α(i) / β(i)) * (exp(-β(i) * t) - 1), 0, getOrder() - 1) / Z();
 	}
 
 	protected double evolveλ(double dt, double[] S)
@@ -94,7 +105,7 @@ public abstract class ExponentialHawkesProcess
 	protected Vector calculateCompensator(final int n)
 	{
 		Vector durations = T.diff();
-	
+
 		double A[] = new double[getOrder()];
 		Vector compensator = new Vector(n);
 		for (int i = 0; i < n - 1; i++)
@@ -120,7 +131,7 @@ public abstract class ExponentialHawkesProcess
 		double tn = T.getRightmostValue();
 		double ll = tn - T.getLeftmostValue();
 		final int n = T.size();
-	
+
 		if (recursive)
 		{
 			double A[] = new double[getOrder()];
@@ -131,18 +142,19 @@ public abstract class ExponentialHawkesProcess
 				double dt = t - T.get(i - 1);
 				double λ = evolveλ(dt, S);
 				double Λ = evolveΛ(dt, A);
-	
+
 				// double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
-	
+
 				if (λ > 0)
 				{
 					ll += log(λ);
 				}
-	
+
 				ll -= Λ;
-	
+
 			}
-		} else
+		}
+		else
 		{
 			for (int i = 1; i < n; i++)
 			{
@@ -156,7 +168,7 @@ public abstract class ExponentialHawkesProcess
 			}
 		}
 		return ll;
-	
+
 	}
 
 	public abstract String getParamString();
@@ -171,7 +183,7 @@ public abstract class ExponentialHawkesProcess
 	 */
 	protected double Λ(int i)
 	{
-	
+
 		double sum = sum(k -> {
 			double t0 = T.get(i) - T.get(k);
 			double t1 = T.get(i - 1) - T.get(k);
@@ -181,11 +193,34 @@ public abstract class ExponentialHawkesProcess
 	}
 
 	/**
-	 * integrated kernel function
+	 * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
+	 * more uniformly distributed it is.
 	 * 
-	 * @param t
-	 * @return
+	 * 
+	 * @see UniformRealDistribution on [0,1]
+	 * 
+	 * @param times
+	 * 
+	 * @return ξ
 	 */
-	public abstract double iψ(double t);
+	public Vector Λ()
+	{
+		final int n = T.size();
+
+		if (recursive)
+		{
+			return calculateCompensator(n);
+		}
+		else
+		{
+			Vector compensator = new Vector(n);
+			for (int i = 1; i < n; i++)
+			{
+				compensator.set(i, Λ(i));
+			}
+			return compensator;
+		}
+
+	}
 
 }

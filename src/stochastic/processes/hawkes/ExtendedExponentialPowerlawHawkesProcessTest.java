@@ -6,12 +6,11 @@ import static java.lang.System.out;
 
 import java.io.IOException;
 
-import fastmath.DoubleColMatrix;
 import fastmath.Vector;
-import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
 
+@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
 public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 {
 	public void testKernel()

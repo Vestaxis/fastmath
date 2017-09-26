@@ -29,6 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
 public class HardyZIteratedFunctionMapper extends Application
 {
   /**

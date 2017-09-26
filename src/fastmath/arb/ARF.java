@@ -3,10 +3,7 @@ package fastmath.arb;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Structure;
-
-import fastmath.arb.ArbLibrary.MPFRRoundingMode;
 
 /**
  * typedef struct { fmpz exp; mp_size_t size; mantissa_struct d; } arf_struct;

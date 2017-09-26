@@ -9,6 +9,7 @@ import fastmath.AbstractBufferedObject;
 import fastmath.AbstractMatrix;
 import fastmath.DoubleColMatrix;
 
+@SuppressWarnings("unchecked")
 public class MxDouble extends MxClass
 {
   /**
@@ -110,7 +111,7 @@ public class MxDouble extends MxClass
     }
   }
 
-  @Override
+@Override
   public AbstractMatrix toDenseDoubleMatrix( MiInt32 dimensions )
   {
     if ( !( realPart instanceof MiDouble ) )

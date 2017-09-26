@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 import fastmath.matfile.MiDouble;
 
+@SuppressWarnings("unchecked")
 public class DoubleSubMatrix extends DoubleMatrix
 {
-  private static final long serialVersionUID = 1L;
 
   private final int columnIncrement;
 

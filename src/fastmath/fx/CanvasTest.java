@@ -4,8 +4,6 @@ import static java.lang.System.out;
 
 import java.util.Arrays;
 
-import com.sun.javafx.geom.transform.Affine2D;
-
 import fastmath.Pair;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -21,6 +19,7 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+@SuppressWarnings("unused")
 public class CanvasTest extends Application
 {
 
@@ -49,7 +48,7 @@ public class CanvasTest extends Application
 
   private Canvas canvas;
 
-  private double aspectRatio;
+private double aspectRatio;
 
   private GraphicsContext gc;
 

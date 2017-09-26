@@ -1,7 +1,5 @@
 package fastmath.arb;
 
-import static java.lang.System.out;
-
 import junit.framework.TestCase;
 
 public class ComplexPolynomialTest extends TestCase

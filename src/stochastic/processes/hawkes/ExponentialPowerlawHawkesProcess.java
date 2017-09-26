@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
@@ -21,7 +20,7 @@ import org.apache.commons.math3.util.FastMath;
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
 public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		implements MultivariateFunction, Serializable
 {
@@ -89,36 +88,6 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		double b = pow(m, eps) - 1;
 		double c = pow(eta, -1 - eps);
 		return -eta * a / m / b * c - αS() * eta / m;
-	}
-
-	/**
-	 * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
-	 * more uniformly distributed it is.
-	 * 
-	 * 
-	 * @see UniformRealDistribution on [0,1]
-	 * 
-	 * @param times
-	 * 
-	 * @return ξ
-	 */
-	public Vector Λ()
-	{
-		final int n = T.size();
-
-		if (recursive)
-		{
-			return calculateCompensator(n);
-		} else
-		{
-			Vector compensator = new Vector(n);
-			for (int i = 0; i < n - 1; i++)
-			{
-				compensator.set(i, Λ(i));
-			}
-			return compensator;
-		}
-
 	}
 
 	public double βS()

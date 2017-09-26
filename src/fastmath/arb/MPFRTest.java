@@ -1,7 +1,5 @@
 package fastmath.arb;
 
-import static java.lang.System.out;
-
 import com.sun.jna.Native;
 
 import junit.framework.TestCase;

@@ -1,5 +1,6 @@
 package fastmath.fx;
 
+import static fastmath.fx.ZIterator.getZero;
 import static java.lang.Math.abs;
 import static java.lang.System.out;
 
@@ -8,7 +9,6 @@ import java.io.IOException;
 
 import fastmath.Fastmath;
 import fastmath.Vector;
-import static fastmath.fx.ZIterator.getZero;
 
 public class Rocks
 {

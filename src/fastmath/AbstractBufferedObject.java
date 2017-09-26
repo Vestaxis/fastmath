@@ -1,12 +1,9 @@
 package fastmath;
 
-import static java.lang.Math.min;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
-import com.sleepycat.persist.model.NotPersistent;
 import com.sleepycat.persist.model.Persistent;
 
 import fastmath.matfile.MiDouble;

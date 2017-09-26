@@ -3,8 +3,6 @@ package fastmath.arb;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
-import com.sun.jna.Pointer;
-
 import junit.framework.TestCase;
 
 public class ComplexIntegralTest extends TestCase

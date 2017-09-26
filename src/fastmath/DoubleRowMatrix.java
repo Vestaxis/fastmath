@@ -15,6 +15,7 @@ import fastmath.matfile.MiDouble;
  * have, since it has {@link DoubleColMatrix#appendColumn(Vector)}
  */
 @Persistent
+@SuppressWarnings("unchecked")
 public class DoubleRowMatrix extends DoubleMatrix
 {
 
@@ -23,7 +24,6 @@ public class DoubleRowMatrix extends DoubleMatrix
 
   }
 
-  private static final long serialVersionUID = 1L;
 
   private int rowCapacity;
 

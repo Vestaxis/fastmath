@@ -4,8 +4,6 @@ import static java.lang.String.format;
 
 import java.nio.ByteBuffer;
 
-import com.sun.jna.ptr.IntByReference;
-
 import fastmath.exceptions.FastMathException;
 
 public class BLAS1 {

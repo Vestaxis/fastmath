@@ -3,8 +3,6 @@ package util;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import com.sleepycat.persist.model.Persistent;
-
 /*
  * Extended ConcurrentHashMap which has methods such as getOrCreate
  * @author crow

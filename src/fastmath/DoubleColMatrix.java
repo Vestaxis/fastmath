@@ -2,7 +2,6 @@ package fastmath;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floorDiv;
-import static java.lang.System.getProperties;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import fastmath.exceptions.NotInvertableException;
 import fastmath.matfile.MiDouble;
 
 @Persistent
+@SuppressWarnings("unchecked")
 public class DoubleColMatrix extends DoubleMatrix
 {
 

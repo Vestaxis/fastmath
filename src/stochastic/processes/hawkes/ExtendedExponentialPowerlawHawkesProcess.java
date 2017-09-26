@@ -21,6 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
+@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
 public class ExtendedExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
 

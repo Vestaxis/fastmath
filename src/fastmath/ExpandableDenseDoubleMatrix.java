@@ -2,7 +2,6 @@ package fastmath;
 
 public class ExpandableDenseDoubleMatrix extends DoubleColMatrix
 {
-  private static final long serialVersionUID = 1L;
 
   private int currentRow = -1;
 

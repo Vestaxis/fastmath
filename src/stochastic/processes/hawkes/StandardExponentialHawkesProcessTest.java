@@ -1,73 +1,42 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.exp;
 import static java.lang.System.out;
 
-import java.util.function.DoubleFunction;
-
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.XYChart;
+import java.io.IOException;
 
 import fastmath.Vector;
+import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
 
 public class StandardExponentialHawkesProcessTest extends TestCase
 {
-	public void testIntensity() throws InterruptedException
+	public void testΛ() throws IOException
 	{
+		double[] α = new double[]
+		{ 0.1, 0.4 };
+		double[] β = new double[]
+		{ 1.3, 1.7 };
+		StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(0.1, α, β);
+		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+		int midpoint = data.size() / 2;
+		data = data.slice(midpoint - 250, midpoint + 250);
+		process.T = data;
+		// process.estimateParameters(15);
+		process.recursive = true;
+		Vector recursiveComp = process.Λ();
+		double recursiveMean = recursiveComp.mean();
+		double recursiveVar = recursiveComp.variance();
+		out.println("recursive mean=" + recursiveMean);
+		out.println("recursive var=" + recursiveVar);
+		process.recursive = false;
+		Vector comp = process.Λ();
+		double mean = comp.mean();
+		double var = comp.variance();
+		out.println("mean=" + mean);
+		out.println("var=" + var);
+		assertEquals(mean, recursiveMean);
+		assertEquals(var, recursiveVar);
 
-	
-	}
-
-
-
-
-
-	private static void chartFunction(DoubleFunction<Double> func, String name, double dt, double W)
-	{
-		XYChart chart = new XYChart(800, 600);
-
-		int n = (int) (W / dt);
-		Vector X = new Vector(n);
-		Vector Y = new Vector(n);
-
-		for (int i = 0; i < X.size(); i++)
-		{
-			double t = i * dt;
-			X.set(i, t);
-			Y.set(i, func.apply(t));
-		}
-
-		chart.addSeries(name, X.toPrimitiveArray(), Y.toPrimitiveArray());
-
-		// Show it
-		new SwingWrapper(chart).displayChart();
-	}
-
-	@SafeVarargs
-	private static void chartFunctions(String[] names, double dt, double W, DoubleFunction<Double>... funcs)
-	{
-		XYChart chart = new XYChart(800, 600);
-
-		int n = (int) (W / dt);
-
-		int idx = 0;
-		for (DoubleFunction<Double> func : funcs)
-		{
-			Vector X = new Vector(n);
-			Vector Y = new Vector(n);
-			for (int i = 0; i < X.size(); i++)
-			{
-				double t = i * dt;
-				X.set(i, t);
-				Y.set(i, func.apply(t));
-			}
-
-			chart.addSeries(names[idx++], X.toPrimitiveArray(), Y.toPrimitiveArray());
-		}
-
-		// Show it
-		new SwingWrapper(chart).displayChart();
 	}
 
 }

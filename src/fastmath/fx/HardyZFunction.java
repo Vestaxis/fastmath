@@ -430,7 +430,6 @@ public class HardyZFunction extends Application
   private Canvas canvas;
 
   public Color[] colorCycle;
-  private static double ballRadius = 0.15;
   // private double aspectRatio;
 
   protected Color getIndexColor( int index )

@@ -6,12 +6,8 @@ import static java.lang.Math.PI;
 import static java.lang.System.err;
 import static java.lang.System.out;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 import com.sun.jna.Structure;
 
@@ -19,6 +15,7 @@ import fastmath.Fastmath;
 import fastmath.fx.Iteration;
 import fastmath.fx.ZIterator;
 
+@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
 public class Complex extends Structure
 {
 

@@ -4,8 +4,6 @@ import static fastmath.Console.println;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
-import java.util.concurrent.CompletionException;
-
 import fastmath.Fastmath;
 import fastmath.Functions;
 import junit.framework.TestCase;

@@ -3,8 +3,6 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.exp;
 import static java.lang.System.out;
 
-import java.nio.channels.UnsupportedAddressTypeException;
-
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
@@ -71,7 +69,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
 			dt = hp.T.get(i) - hp.T.get(i - 1);
 
-			innersum = hp.evolveλ(dt, R, innersum);
+			innersum = hp.evolveλ(dt, R );
 			double eplλ = eplhp.evolveλ(dt, S);
 
 			X.set(i, hp.T.get(i));
@@ -120,14 +118,16 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 	
 	private int P;
 
-	double evolveλ(double dt, double[] R, double innersum)
+	@Override
+	public double evolveλ(double dt, double[] R)
 	{
+		double λ = 0;
 		for (int j = 0; j < getOrder(); j++)
 		{
 			R[j] = exp(-β(j) * dt) * (1 + R[j]);
-			innersum += α(j) * R[j];
+			λ += α(j) * R[j];
 		}
-		return innersum;
+		return λ;
 	}
 
 
@@ -640,10 +640,6 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 		return "α=" + α + " β=" + β;
 	}
 
-	@Override
-	public double iψ(double t)
-	{
-		throw new UnsupportedOperationException( "TODO" );
-	}
+	
 
 }
