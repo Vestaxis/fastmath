@@ -15,6 +15,8 @@ public interface HawkesProcess
   public DoubleColMatrix getJacobian( Vector t );
   
   public DoubleColMatrix getHessian( Vector t );
+
+int getOrder();
   
 
 }

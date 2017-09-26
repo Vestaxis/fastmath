@@ -22,7 +22,8 @@ import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
 @SuppressWarnings("deprecation")
-public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
+public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
+		implements MultivariateFunction, Serializable
 {
 
 	/**
@@ -47,8 +48,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		initializeParameterVectors();
 	}
-
-	public Vector T;
 
 	static enum Parameter
 	{
@@ -75,114 +74,21 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 */
 	private double m = 5;
 
-	/**
-	 * kernel function
-	 * 
-	 * @param t
-	 * @return
-	 */
-	public double ψ(double t)
-	{
-		return sum(i -> α(i) * exp(-β(i) * t), 0, M) / Z();
-	}
+	private boolean normalize = false;
 
+	@Override
 	public double Z()
 	{
+		if (!normalize)
+		{
+			return 1;
+		}
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
 		double a = pow(m, (-eps * M + eps + 1)) - pow(m, (1 + eps));
 		double b = pow(m, eps) - 1;
 		double c = pow(eta, -1 - eps);
 		return -eta * a / m / b * c - αS() * eta / m;
-	}
-
-	/**
-	 * intensity function
-	 * 
-	 * @param t
-	 * 
-	 * @return intensity at time t
-	 */
-	public double λ(double t)
-	{
-		return T.stream().filter(s -> s < t).map(s -> ψ(t - s)).sum();
-	}
-
-	double evolveλ(double dt, double[] S)
-	{
-		double λ = 0;
-		for (int j = 0; j <= M; j++)
-		{
-			S[j] = exp(-β(j) * dt) * (1 + S[j]);
-			λ += α(j) * S[j];
-		}
-		return λ / Z();
-	}
-
-	double evolveΛ(double dt, double[] A)
-	{
-		double Λ = 0;
-		for (int j = 0; j <= M; j++)
-		{
-			A[j] = 1 + exp(-β(j) * dt) * A[j];
-			Λ += (α(j) / β(j)) * (1 - exp(-β(j) * dt)) * A[j];
-		}
-		return Λ;
-	}
-
-	boolean recursive = false;
-
-	/**
-	 * 
-	 * @param T
-	 * @param deterministicIntensity
-	 * @param lambda
-	 * @param alpha
-	 * @param bη
-	 * @return Pair<logLik,E[Lambda]>
-	 */
-	public double logLik()
-	{
-		double tn = T.getRightmostValue();
-		double ll = tn - T.getLeftmostValue();
-		final int n = T.size();
-
-		if (recursive)
-		{
-			double A[] = new double[M + 1];
-			double S[] = new double[M + 1];
-			for (int i = 1; i < n; i++)
-			{
-				double t = T.get(i);
-				double dt = t - T.get(i - 1);
-				double λ = evolveλ(dt, S);
-				double Λ = evolveΛ(dt, A);
-
-				// double Λ = sum(j -> α(j) / β(j) * (1 - exp(-β(j) * (tn - t))), 0, M);
-
-				if (λ > 0)
-				{
-					ll += log(λ);
-				}
-
-				ll -= Λ / (Z() * dt);
-
-			}
-		} else
-		{
-			for (int i = 1; i < n; i++)
-			{
-				double thist = T.get(i);
-				ll += log(λ(thist)) - Λ(i);
-			}
-			out.println("LL{" + getParamString() + "}=" + ll);
-			if (Double.isNaN(ll))
-			{
-				ll = Double.NEGATIVE_INFINITY;
-			}
-		}
-		return ll;
-
 	}
 
 	/**
@@ -200,42 +106,19 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	{
 		final int n = T.size();
 
-		// for (int i = 0; i < n - 1; i++)
-		// {
-		// compensator.set(i, Λ(i));
-		// }
-		// compensator = compensator.cumsum();
-		return calculateCompensator(n);
-	}
-
-	private Vector calculateCompensator(final int n)
-	{
-		Vector durations = T.diff();
-		double lambda = getKappa();
-		final int order = M + 1;
-
-		double A[] = new double[order];
-		Vector compensator = new Vector(n);		
-		for (int i = 0; i < n - 1; i++)
+		if (recursive)
 		{
-			double x = durations.get(i);
-			double secondSum = x * lambda;
-			for (int j = 0; j < order; j++)
+			return calculateCompensator(n);
+		} else
+		{
+			Vector compensator = new Vector(n);
+			for (int i = 0; i < n - 1; i++)
 			{
-				final double a = α(j);
-				final double b = β(j);
-				double exphi = exp(-b * x);
-				A[j] = 1 + (exphi * A[j]);
-				secondSum += (a / b) * (1 - exphi) * A[j];
+				compensator.set(i, Λ(i));
 			}
-			compensator.set(i, secondSum);
+			return compensator;
 		}
-		return compensator;
-	}
 
-	private double getKappa()
-	{
-		return 0;
 	}
 
 	public double βS()
@@ -252,6 +135,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 
 	}
 
+	@Override
 	public double β(int i)
 	{
 		if (i == M)
@@ -262,6 +146,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		return 1 / eta / pow(m, i);
 	}
 
+	@Override
 	public double α(int i)
 	{
 		if (i == M)
@@ -271,25 +156,6 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 		final double eta = exp(η);
 		double eps = 0.25 * tanh(ε) + 0.25;
 		return pow(1 / (eta * pow(m, i)), 1 + eps);
-	}
-
-	/**
-	 * n-th compensated point
-	 * 
-	 * @param i
-	 *            >= 1 and <= n
-	 * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
-	 *         i-1)
-	 */
-	private double Λ(int i)
-	{
-
-		double sum = sum(k -> {
-			double t0 = T.get(i) - T.get(k);
-			double t1 = T.get(i - 1) - T.get(k);
-			return iψ(t0) - iψ(t1);
-		}, 0, i - 1);
-		return sum;
 	}
 
 	@Override
@@ -400,6 +266,7 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 	 * @param t
 	 * @return ∫this{@link #ψ}(t)dt
 	 */
+	@Override
 	public double iψ(double t)
 	{
 		double eta = exp(η);
@@ -438,6 +305,12 @@ public class ExponentialPowerlawHawkesProcess implements MultivariateFunction, S
 								* (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m);
 
 		return -((a - b) * c) / d;
+	}
+
+	@Override
+	public int getOrder()
+	{
+		return M + 1;
 	}
 
 }

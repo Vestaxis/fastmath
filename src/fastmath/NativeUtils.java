@@ -73,7 +73,7 @@ public class NativeUtils
 		int readBytes;
 		try
 		{
-			System.loadLibrary("/usr/lib/" + libraryPathExcludingFilenameExtension + "." + filenameExtension);
+			System.load("/usr/lib/" + libraryPathExcludingFilenameExtension + "." + filenameExtension);
 			return;
 		} catch (Exception e)
 		{

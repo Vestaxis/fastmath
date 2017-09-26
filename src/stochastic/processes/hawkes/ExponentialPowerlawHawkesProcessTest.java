@@ -13,7 +13,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 {
 	public void testΨ()
 	{
-		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(1.4, 0.25);
+		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(1.4, 0.25);
 		double x = process.ψ(1.3);
 		// assertEquals(0.11591305818947, x, pow(10,-9));
 		// out.println( "x=" + x );
@@ -50,7 +50,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 
 		double ε = 0.16710;
 		double η = 1.58128;
-		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
+		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 250, midpoint + 250);
@@ -70,12 +70,21 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 250, midpoint + 250);
 		process.T = data;
-		process.estimateParameters(15);
+		//process.estimateParameters(15);
+		process.recursive = true;
+		Vector recursiveComp = process.Λ();
+		double recursiveMean = recursiveComp.mean();
+		double recursiveVar = recursiveComp.variance();
+		out.println( "recursive mean=" + recursiveMean );
+		out.println( "recursive var=" + recursiveVar );
+		process.recursive = false;
 		Vector comp = process.Λ();
-		double compMean = comp.mean();
-		double compVar = comp.variance();
-		out.println( "mean=" + compMean );
-		out.println( "var=" + compVar );
+		double mean = comp.mean();
+		double var = comp.variance();
+		out.println( "mean=" + mean );
+		out.println( "var=" + var );
+		assertEquals( mean, recursiveMean );
+		assertEquals( var, recursiveVar );
 
 	}
 

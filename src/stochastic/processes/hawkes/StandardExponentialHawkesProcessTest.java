@@ -11,7 +11,7 @@ import org.knowm.xchart.XYChart;
 import fastmath.Vector;
 import junit.framework.TestCase;
 
-public class ExponentialHawkesProcessTest extends TestCase
+public class StandardExponentialHawkesProcessTest extends TestCase
 {
 	public void testIntensity() throws InterruptedException
 	{
