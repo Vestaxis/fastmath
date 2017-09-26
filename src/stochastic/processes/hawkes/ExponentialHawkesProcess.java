@@ -89,14 +89,14 @@ public abstract class ExponentialHawkesProcess
     return 0;
   }
 
-  protected double evolveΛ(double dt, double[] A)
+  protected double evolveΛ(double prevdt, double dt, double[] A)
   {
     double Λ = dt * getλ0();
     for (int j = 0; j < getOrder(); j++)
     {
       double a = α(j);
       double b = β(j);
-      A[j] = 1 + exp(-b * dt) * A[j];
+      A[j] = 1 + exp(-b * prevdt) * A[j];
       Λ += (a / b) * (1 - exp(-b * dt)) * A[j];
     }
     return Λ;
@@ -110,8 +110,9 @@ public abstract class ExponentialHawkesProcess
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
+      double dtprev = i == 0 ? 0 : durations.get(i - 1);
       double dt = durations.get(i);
-      double secondSum = evolveΛ(dt, A);
+      double secondSum = evolveΛ(dtprev, dt, A);
       compensator.set(i, secondSum);
     }
     return compensator;
@@ -139,9 +140,10 @@ public abstract class ExponentialHawkesProcess
       for (int i = 1; i < n; i++)
       {
         double t = T.get(i);
+        double prevdt = i == 1 ? 0 : ( T.get(i-1) - T.get(i-2) );
         double dt = t - T.get(i - 1);
         double λ = evolveλ(dt, S);
-        double Λ = evolveΛ(dt, A);
+        double Λ = evolveΛ(prevdt, dt, A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 

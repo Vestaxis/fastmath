@@ -11,6 +11,8 @@ import junit.framework.TestCase;
 
 public class StandardExponentialHawkesProcessTest extends TestCase
 {
+  public static final double ε = pow( 10, -14 );
+
 	public void testΛ() throws IOException
 	{
 		double[] α = new double[]
@@ -49,10 +51,10 @@ public class StandardExponentialHawkesProcessTest extends TestCase
     
 		out.println( "Σrecursivecomp = " + recursiveComp.sum() );
 		
-		assertEquals( totalΛ, compSum, pow( 10, -14 ) );
+    assertEquals( totalΛ, compSum, ε );
 		
-		assertEquals(mean, recursiveMean);
-		assertEquals(var, recursiveVar);
+		assertEquals(mean, recursiveMean, ε);
+		assertEquals(var, recursiveVar, ε);
 
 	}
 
