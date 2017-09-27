@@ -11,7 +11,7 @@ import junit.framework.TestCase;
 
 public class StandardExponentialHawkesProcessTest extends TestCase
 {
-  public static final double ε = pow( 10, -14 );
+  public static final double ε = pow( 10, -13 );
 
 	public void testΛ() throws IOException
 	{
@@ -21,7 +21,13 @@ public class StandardExponentialHawkesProcessTest extends TestCase
 		{ 1.3, 1.7 };
 		StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(0.1, α, β);
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-		int midpoint = data.size() / 2;
+		doTest(process, data);
+
+	}
+
+  public static void doTest(ExponentialHawkesProcess process, Vector data)
+  {
+    int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 50, midpoint + 50);
 		process.T = data;
 		
@@ -55,7 +61,6 @@ public class StandardExponentialHawkesProcessTest extends TestCase
 		
 		assertEquals(mean, recursiveMean, ε);
 		assertEquals(var, recursiveVar, ε);
-
-	}
+  }
 
 }

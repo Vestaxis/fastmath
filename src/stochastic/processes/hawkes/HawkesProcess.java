@@ -16,7 +16,7 @@ public interface HawkesProcess
 
 	public DoubleColMatrix getHessian(Vector t);
 
-	int getOrder();
+	int order();
 
 	double evolveλ(double dt, double[] R);
 

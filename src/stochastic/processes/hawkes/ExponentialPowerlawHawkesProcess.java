@@ -73,7 +73,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	 */
 	private double m = 5;
 
-	private boolean normalize = false;
+	private boolean normalize = true;
 
 	@Override
 	public double Z()
@@ -277,7 +277,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	}
 
 	@Override
-	public int getOrder()
+	public int order()
 	{
 		return M + 1;
 	}

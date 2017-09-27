@@ -59,7 +59,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 		Svector = new Vector(n);
 		final Vector Y5 = new Vector(n);
 
-		double R[] = new double[hp.getOrder()];
+		double R[] = new double[hp.order()];
 		double S[] = new double[eplhp.M + 1];
 		X.set(0, hp.T.get(0));
 		Y1.set(0, hp.getLambda());
@@ -122,7 +122,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 	public double evolveλ(double dt, double[] R)
 	{
 		double λ = 0;
-		for (int j = 0; j < getOrder(); j++)
+		for (int j = 0; j < order(); j++)
 		{
 			R[j] = exp(-β(j) * dt) * (1 + R[j]);
 			λ += α(j) * R[j];
@@ -151,7 +151,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 			double impulse = getLambda();
 			double dt = T.get(i) - T.get(i - 1);
 
-			for (int j = 0; j < getOrder(); j++)
+			for (int j = 0; j < order(); j++)
 			{
 				R[j] = exp(-β(j) * dt) * (1 + R[j]);
 				impulse += α(j) * R[j];
@@ -227,7 +227,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 	}
 
 	@Override
-	public int getOrder()
+	public int order()
 	{
 		return P;
 	}

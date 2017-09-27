@@ -32,10 +32,10 @@ public abstract class ExponentialHawkesProcess
 
   public double getBranchingRatio()
   {
-    return sum(i -> α(i) / β(i), 0, getOrder() - 1);
+    return sum(i -> α(i) / β(i), 0, order() - 1);
   }
 
-  public abstract int getOrder();
+  public abstract int order();
 
   public abstract double Z();
 
@@ -59,7 +59,7 @@ public abstract class ExponentialHawkesProcess
    */
   public final double ψ(double t)
   {
-    return sum(i -> α(i) * exp(-β(i) * t), 0, getOrder() - 1) / Z();
+    return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
 
   /**
@@ -70,13 +70,13 @@ public abstract class ExponentialHawkesProcess
    */
   public double iψ(double t)
   {
-    return sum(i -> -(α(i) / β(i)) * (exp(-β(i) * t) - 1), 0, getOrder() - 1) / Z();
+    return sum(i -> -(α(i) / β(i)) * (exp(-β(i) * t) - 1), 0, order() - 1) / Z();
   }
 
   protected double evolveλ(double dt, double[] S)
   {
     double λ = 0;
-    for (int j = 0; j < getOrder(); j++)
+    for (int j = 0; j < order(); j++)
     {
       S[j] = exp(-β(j) * dt) * (1 + S[j]);
       λ += α(j) * S[j];
@@ -84,36 +84,35 @@ public abstract class ExponentialHawkesProcess
     return λ / Z();
   }
 
-  protected double getλ0()
+  protected double λ0()
   {
     return 0;
   }
 
   protected double evolveΛ(double prevdt, double dt, double[] A)
   {
-    double Λ = dt * getλ0();
-    for (int j = 0; j < getOrder(); j++)
+    double Λ = dt * λ0();
+    for (int j = 0; j < order(); j++)
     {
       double a = α(j);
       double b = β(j);
       A[j] = 1 + exp(-b * prevdt) * A[j];
       Λ += (a / b) * (1 - exp(-b * dt)) * A[j];
     }
-    return Λ;
+    return Λ / Z();
   }
 
   protected Vector calculateRecursiveCompensator(final int n)
   {
     Vector durations = T.diff();
 
-    double A[] = new double[getOrder()];
+    double A[] = new double[order()];
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
       double dtprev = i == 0 ? 0 : durations.get(i - 1);
       double dt = durations.get(i);
-      double secondSum = evolveΛ(dtprev, dt, A);
-      compensator.set(i, secondSum);
+      compensator.set(i, evolveΛ(dtprev, dt, A));
     }
     return compensator;
   }
@@ -135,12 +134,12 @@ public abstract class ExponentialHawkesProcess
 
     if (recursive)
     {
-      double A[] = new double[getOrder()];
-      double S[] = new double[getOrder()];
+      double A[] = new double[order()];
+      double S[] = new double[order()];
       for (int i = 1; i < n; i++)
       {
         double t = T.get(i);
-        double prevdt = i == 1 ? 0 : ( T.get(i-1) - T.get(i-2) );
+        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
         double dt = t - T.get(i - 1);
         double λ = evolveλ(dt, S);
         double Λ = evolveΛ(prevdt, dt, A);
@@ -185,21 +184,30 @@ public abstract class ExponentialHawkesProcess
    */
   protected double Λ(int i)
   {
+    final double Ti = T.get(i);
+    return sum(k -> {
+      double Tk = T.get(k);
+      return sum(j -> {
+        double dt = Ti - Tk;
+        return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
+      }, 0, order() - 1);
+    }, 0, i - 1) / Z();
 
-    double sum = sum(k -> {
-      double t0 = T.get(i) - T.get(k);
-      double t1 = T.get(i - 1) - T.get(k);
-      return iψ(t0) - iψ(t1);
-    }, 0, i - 1);
-    return sum;
+    // double sum = sum(k -> {
+    // double t0 = T.get(i) - T.get(k);
+    // double t1 = T.get(i - 1) - T.get(k);
+    // return iψ(t0) - iψ(t1);
+    // }, 0, i - 1);
+    // return sum;
   }
 
   public double totalΛ()
   {
     double tn = T.getRightmostValue();
 
-    return tn * getλ0()
-        + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i))) ), 0, getOrder() - 1), 0, T.size() - 1);
+    return (tn * λ0()
+        + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1))
+        / Z();
   }
 
   /**
@@ -223,12 +231,12 @@ public abstract class ExponentialHawkesProcess
     }
     else
     {
-      Vector compensator = new Vector(n);
-      for (int i = 0; i < n; i++)
+      Vector compensator = new Vector(n+1);
+      for (int i = 0; i < n+1; i++)
       {
-        compensator.set(i, Λ(i + 1));
+        compensator.set(i, Λ(i));
       }
-      return compensator;
+      return compensator.diff();
     }
 
   }

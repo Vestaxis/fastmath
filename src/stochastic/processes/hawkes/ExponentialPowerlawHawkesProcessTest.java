@@ -45,21 +45,21 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 //
 //	}
 
-	public void testLogLik() throws IOException
-	{
-
-		double ε = 0.16710;
-		double η = 1.58128;
-		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
-		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-		int midpoint = data.size() / 2;
-		data = data.slice(midpoint - 250, midpoint + 250);
-		process.T = data;
-		double llNonRecursive = process.logLik();
-		process.recursive = true;
-		double llRecursive = process.logLik();
-		assertEquals( llNonRecursive, llRecursive, pow( 10, -10 ) );
-	}
+//	public void testLogLik() throws IOException
+//	{
+//
+//		double ε = 0.16710;
+//		double η = 1.58128;
+//		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
+//		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+//		int midpoint = data.size() / 2;
+//		data = data.slice(midpoint - 250, midpoint + 250);
+//		process.T = data;
+//		double llNonRecursive = process.logLik();
+//		process.recursive = true;
+//		double llRecursive = process.logLik();
+//		assertEquals( llNonRecursive, llRecursive, pow( 10, -10 ) );
+//	}
 
 	public void testΛ() throws IOException
 	{
@@ -67,24 +67,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		double η = 1.6;
 		ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-		int midpoint = data.size() / 2;
-		data = data.slice(midpoint - 250, midpoint + 250);
-		process.T = data;
-		//process.estimateParameters(15);
-		process.recursive = true;
-		Vector recursiveComp = process.Λ();
-		double recursiveMean = recursiveComp.mean();
-		double recursiveVar = recursiveComp.variance();
-		out.println( "recursive mean=" + recursiveMean );
-		out.println( "recursive var=" + recursiveVar );
-		process.recursive = false;
-		Vector comp = process.Λ();
-		double mean = comp.mean();
-		double var = comp.variance();
-		out.println( "mean=" + mean );
-		out.println( "var=" + var );
-		assertEquals( mean, recursiveMean );
-		assertEquals( var, recursiveVar );
+		StandardExponentialHawkesProcessTest.doTest(process, data);
 
 	}
 
