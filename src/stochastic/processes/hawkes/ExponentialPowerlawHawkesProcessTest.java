@@ -27,23 +27,28 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		// out.println( "x=" + x );
 	}
 
-//	public void testEstimateParmeters2() throws IOException
-//	{
-//		double ε = 0.16710;
-//		double η = 1.58128;
-//		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
-//		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-//		process.T = data;
-//		int midpoint = data.size() / 2;
-//		data = data.slice(midpoint - 500, midpoint + 500);
-//
-//		process.T = data;
-//		int evals = process.estimateParameters(15);
-//		MatFile.write("/data/test.mat", data.setName("d").createMiMatrix(), process.Λ().setName("C").createMiMatrix());
-//
-//		// out.println( evals + " iterations");
-//
-//	}
+	public void testEstimateParmeters2() throws IOException
+	{
+		double ε = 0.16710;
+		double η = 1.58128;
+		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
+		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+		process.T = data;
+		int midpoint = data.size() / 2;
+		data = data.slice(midpoint - 5000, midpoint + 5000);
+
+		process.T = data;
+		process.recursive = true;
+		int evals = process.estimateParameters(15);
+		MatFile.write("test.mat", data.setName("d").createMiMatrix(), process.Λ().setName("C").createMiMatrix());
+
+		Vector comp = process.Λ();
+		out.println( "comp mean=" + comp.mean() );
+		out.println( "comp var=" + comp.variance() );
+		
+		 out.println( evals + " iterations");
+
+	}
 
 //	public void testLogLik() throws IOException
 //	{

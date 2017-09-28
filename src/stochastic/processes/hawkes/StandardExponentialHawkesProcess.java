@@ -25,7 +25,10 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 		{ 1.3, 1.4, 1.9, 2.5, 3.3, 3.9, 4.2, 4.5 });
 
 		ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
+		;
+		ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25, -eplhp.αS(), eplhp.βS());
 		eplhp.T = hp.T;
+		exthp.T = hp.T;
 		XYChart chart = new XYChart(800, 600);
 
 		double W = hp.T.getRightmostValue();
@@ -36,21 +39,21 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
 		Vector X = new Vector(n);
 		Vector Y1 = new Vector(n);
-		Vector Y2 = new Vector(n);
 		Vector Y3 = new Vector(n);
+		Vector extY = new Vector( n );
 		Vector Svector = new Vector(n);
 		for (int i = 0; i < X.size(); i++)
 		{
 			double t = i * dt;
 			X.set(i, t);
 			Y1.set(i, hp.λ(t));
-			Y2.set(i, hp.λrecursive(t));
 			Y3.set(i, eplhp.λ(t));
+			extY.set(i, exthp.λ(t));
 		}
 		addSeriesToChart(chart, "λexp", X, Y1);
-		addSeriesToChart(chart, "λr", X, Y2);
 		addSeriesToChart(chart, "λepl", X, Y3);
-		
+    addSeriesToChart(chart, "λext", X, extY);
+
 		chart.getStyler().setMarkerSize(1);
 
 		n = hp.T.size();
@@ -82,6 +85,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 		out.println("Y1=" + Y1);
 		out.println("Y4=" + Svector);
 		out.println("Y5=" + Y5);
+
 		addSeriesToChart(chart, "R[i]", X, Y1);
 		addSeriesToChart(chart, "S[i]", X, Svector);
 
@@ -131,52 +135,6 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 	}
 
 
-	public double λrecursive(double t)
-	{
-		final int n = T.findLast(t, Condition.LT);
-		double λ = lambda;
-		if (n <= 0)
-		{
-			return λ;
-		}
-		// } else if ( n < 1 )
-		// {
-		// return λ + sum( i-> α.get(i), 0, getOrder() - 1 );
-		// }
-		double R[] = new double[n + 1];
-		double Rsum = 0;
-
-		for (int i = 1; i <= n; i++)
-		{
-			double impulse = getLambda();
-			double dt = T.get(i) - T.get(i - 1);
-
-			for (int j = 0; j < order(); j++)
-			{
-				R[j] = exp(-β(j) * dt) * (1 + R[j]);
-				impulse += α(j) * R[j];
-				Rsum += R[j];
-			}
-
-			λ = impulse;
-		}
-		// λ += sum( j-> α.get(j) * exp(-β.get(j) * ( t - T.get(n) ) ), 0, getOrder() -
-		// 1 );
-		// λ += sum( i-> ν( t - T.get(i) ), 0, n );
-		// λ += ν( t - Rsum );
-		// λ += λ(t);
-		// double dt = t - tn;
-		// if (dt > 0)
-		// {
-		// for (int j = 0; j < P; j++)
-		// {
-		// R[j] = exp(-β.get(j) * dt) * (1 + R[j]);
-		// λ += α.get(j) * R[j];
-		// }
-		// }
-
-		return λ;
-	}
 
 	public StandardExponentialHawkesProcess(int order)
 	{

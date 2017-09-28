@@ -50,7 +50,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
 	static enum Parameter
 	{
-		ε, η
+		 ε, η
 	};
 
 	/**
@@ -61,12 +61,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	/**
 	 * smallest timescale
 	 */
-	private double η;
+	protected double η;
 
 	/**
 	 * Tail exponent
 	 */
-	private double ε;
+	protected double ε;
 
 	/**
 	 * precision of approximation
@@ -127,12 +127,18 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		return pow(1 / (eta * pow(m, i)), 1 + eps);
 	}
 
+	public double getη()
+  {
+	  return exp(η);
+  }
+	
 	@Override
 	public double value(double[] point)
 	{
 		getParameters().assign(point);
 		this.ε = point[Parameter.ε.ordinal()];
 		this.η = point[Parameter.η.ordinal()];
+   // this.λ0 = point[Parameter.λ0.ordinal()];
 
 		double ll = logLik();
 
@@ -162,7 +168,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 			params = new Vector(paramCount);
 		}
 		params.set(Parameter.ε.ordinal(), ε);
-		// params.set(Parameter.ρ.ordinal(), ρ );
+		//params.set(Parameter.λ0.ordinal(), λ0 );
 		params.set(Parameter.η.ordinal(), η);
 		return params;
 	}
@@ -172,28 +178,29 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		Vector tparams = new Vector(Parameter.values().length);
 		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
 		tparams.set(Parameter.η.ordinal(), exp(η));
+    //tparams.set(Parameter.λ0.ordinal(), exp(λ0));
 		return tparams;
 	}
 
 	public double getε()
 	{
-		return ε;
+		return 0.25 * tanh(ε) + 0.25;
 	}
 
 	public void setε(double ε)
 	{
-		this.ε = ε;
+		this.ε = FastMath.atanh(-1 + 4 * ε);
 	}
 
 	public void setη(double η)
 	{
-		this.η = η;
+		this.η = log(η);
 	}
 
 	/**
 	 * TODO: rewrite this part to not use deprecated stuff
 	 */
-	public int estimateParameters(int digits)
+	public final int estimateParameters(int digits)
 	{
 		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
 		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
@@ -281,5 +288,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	{
 		return M + 1;
 	}
+
+  
 
 }

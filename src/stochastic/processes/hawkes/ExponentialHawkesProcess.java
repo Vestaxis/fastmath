@@ -17,20 +17,17 @@ public abstract class ExponentialHawkesProcess
 
   protected abstract double β(int j);
 
-  public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
-  {
-    chart.addSeries(name, X.toPrimitiveArray(), Y.toPrimitiveArray());
-  }
-
-  public Vector T;
+  public Vector T; 
+  
   protected boolean recursive = false;
+  private double λ0;
 
   public ExponentialHawkesProcess()
   {
     super();
   }
 
-  public double getBranchingRatio()
+  public final double getBranchingRatio()
   {
     return sum(i -> α(i) / β(i), 0, order() - 1);
   }
@@ -75,7 +72,7 @@ public abstract class ExponentialHawkesProcess
 
   protected double evolveλ(double dt, double[] S)
   {
-    double λ = 0;
+    double λ = λ0;
     for (int j = 0; j < order(); j++)
     {
       S[j] = exp(-β(j) * dt) * (1 + S[j]);
@@ -84,14 +81,9 @@ public abstract class ExponentialHawkesProcess
     return λ / Z();
   }
 
-  protected double λ0()
-  {
-    return 0;
-  }
-
   protected double evolveΛ(double prevdt, double dt, double[] A)
   {
-    double Λ = dt * λ0();
+    double Λ = dt * λ0;
     for (int j = 0; j < order(); j++)
     {
       double a = α(j);
@@ -102,7 +94,7 @@ public abstract class ExponentialHawkesProcess
     return Λ / Z();
   }
 
-  protected Vector calculateRecursiveCompensator(final int n)
+  protected Vector recursiveΛ(final int n)
   {
     Vector durations = T.diff();
 
@@ -126,7 +118,7 @@ public abstract class ExponentialHawkesProcess
    * @param bη
    * @return Pair<logLik,E[Lambda]>
    */
-  public double logLik()
+  public final double logLik()
   {
     double tn = T.getRightmostValue();
     double ll = tn - T.getLeftmostValue();
@@ -162,12 +154,12 @@ public abstract class ExponentialHawkesProcess
         double thist = T.get(i);
         ll += log(λ(thist)) - Λ(i);
       }
-      out.println("LL{" + getParamString() + "}=" + ll);
       if (Double.isNaN(ll))
       {
         ll = Double.NEGATIVE_INFINITY;
       }
     }
+    out.println("LL{" + getParamString() + "}=" + ll);
     return ll;
 
   }
@@ -205,7 +197,7 @@ public abstract class ExponentialHawkesProcess
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0()
+    return (tn * λ0
         + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1))
         / Z();
   }
@@ -227,18 +219,23 @@ public abstract class ExponentialHawkesProcess
 
     if (recursive)
     {
-      return calculateRecursiveCompensator(n);
+      return recursiveΛ(n);
     }
     else
     {
-      Vector compensator = new Vector(n+1);
-      for (int i = 0; i < n+1; i++)
+      Vector compensator = new Vector(n + 1);
+      for (int i = 0; i < n + 1; i++)
       {
         compensator.set(i, Λ(i));
       }
       return compensator.diff();
     }
 
+  }
+
+  public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
+  {
+    chart.addSeries(name, X.toPrimitiveArray(), Y.toPrimitiveArray());
   }
 
 }
