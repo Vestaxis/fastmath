@@ -8,10 +8,14 @@ import static java.lang.System.out;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
-import org.apache.commons.math3.optimization.GoalType;
-import org.apache.commons.math3.optimization.PointValuePair;
-import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
-import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultiStartMultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.knowm.xchart.XYChart;
 
 import fastmath.Vector;
@@ -23,10 +27,10 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
 
   protected abstract double β(int j);
 
-  public Vector T; 
-  
+  public Vector T;
+
   protected boolean recursive = true;
-  
+
   private double λ0;
 
   public ExponentialHawkesProcess()
@@ -143,7 +147,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
         double λ = evolveλ(dt, S);
         double Λ = evolveΛ(prevdt, dt, A);
 
-      
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
         if (λ > 0)
@@ -162,11 +165,11 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
         double thist = T.get(i);
         ll += log(λ(thist)) - Λ(i);
       }
-   
+
     }
-    if ( Double.isNaN( ll) )
+    if (Double.isNaN(ll))
     {
-      out.println( "NaN for LL " );
+      out.println("NaN for LL ");
     }
     out.println("LL{" + getParamString() + "}=" + ll);
     return ll;
@@ -243,24 +246,28 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
   }
 
   public abstract double value(double[] point);
-  
+
   /**
    * TODO: rewrite this part to not use deprecated stuff
    */
   public final int estimateParameters(int digits)
   {
-    SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
-    optimizer.setSimplex(new NelderMeadSimplex(getParamCount(), 0.001));
-
+    BOBYQAOptimizer opt = new BOBYQAOptimizer(8);
     int maxIters = Integer.MAX_VALUE;
-    double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
-    PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
-    double[] key = params.getKey();
-    getParameters().assign(key);
+    double[] start = calculateInitialGuess(T).toPrimitiveArray();
+
+    InitialGuess initialGuess = new InitialGuess(start);
+    ObjectiveFunction objectiveFunction = new ObjectiveFunction(this);
+    MaxEval maxEval = new MaxEval(maxIters);
+    SimpleBounds simpleBounds = getParameterBounds();
+    PointValuePair result = opt.optimize(maxEval, initialGuess, objectiveFunction, simpleBounds);
+    getParameters().assign(result.getKey());
     out.println("parameter estimates=" + getParamString());
-    return optimizer.getEvaluations();
+    return opt.getEvaluations();
   }
-  
+
+  public abstract SimpleBounds getParameterBounds();
+
   private Vector calculateInitialGuess(Vector durations)
   {
     final Vector vec = getParameters();
@@ -268,8 +275,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
     return vec;
     // return null;
   }
-  
-  
+
   public abstract Vector getParameters();
 
   public abstract int getParamCount();

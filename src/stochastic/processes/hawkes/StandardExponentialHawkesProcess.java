@@ -3,6 +3,7 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.exp;
 import static java.lang.System.out;
 
+import org.apache.commons.math3.optim.SimpleBounds;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
@@ -610,6 +611,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   public int getParamCount()
   {
     return Parameter.values().length;
+  }
+
+  @Override
+  public SimpleBounds getParameterBounds()
+  {
+    throw new UnsupportedOperationException();
   }
 
 }

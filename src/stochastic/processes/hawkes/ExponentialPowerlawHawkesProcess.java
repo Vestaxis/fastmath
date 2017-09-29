@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
@@ -52,6 +53,13 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		 ε, η
 	};
 
+
+  @Override
+  public SimpleBounds getParameterBounds()
+  {
+    return new SimpleBounds(new double[] { 0.0, 0 }, new double[] { 0.5, 100 } );
+  }
+  
 	/**
 	 * range of the approximation
 	 */
@@ -271,6 +279,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	{
 		return M + 1;
 	}
+
 
   
 
