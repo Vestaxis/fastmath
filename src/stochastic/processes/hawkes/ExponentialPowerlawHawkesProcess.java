@@ -36,16 +36,15 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	 */
 	public ExponentialPowerlawHawkesProcess(double η, double ε)
 	{
-		super();
 		this.η = log(η);
 		this.ε = FastMath.atanh(-1 + 4 * ε);
+    initializeParameterVectors();
 	}
 
 	private static final long serialVersionUID = 1L;
 
 	public ExponentialPowerlawHawkesProcess()
 	{
-		initializeParameterVectors();
 	}
 
 	static enum Parameter
@@ -73,7 +72,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	 */
 	private double m = 5;
 
-	private boolean normalize = true;
+	boolean normalize = true;
 
 	@Override
 	public double Z()
@@ -164,7 +163,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 	{
 		if (params == null)
 		{
-			int paramCount = Parameter.values().length;
+			int paramCount = getParamCount();
 			params = new Vector(paramCount);
 		}
 		params.set(Parameter.ε.ordinal(), ε);
@@ -175,7 +174,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
 	public Vector getTransformedParameters()
 	{
-		Vector tparams = new Vector(Parameter.values().length);
+		Vector tparams = new Vector(getParamCount());
 		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
 		tparams.set(Parameter.η.ordinal(), exp(η));
     //tparams.set(Parameter.λ0.ordinal(), exp(λ0));
@@ -197,35 +196,19 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 		this.η = log(η);
 	}
 
-	/**
-	 * TODO: rewrite this part to not use deprecated stuff
-	 */
-	public final int estimateParameters(int digits)
-	{
-		SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
-		optimizer.setSimplex(new NelderMeadSimplex(Parameter.values().length, 0.001));
 
-		int maxIters = Integer.MAX_VALUE;
-		double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
-		PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
-		double[] key = params.getKey();
-		getParameters().assign(key);
-		out.println("parameter estimates=" + getParamString());
-		return optimizer.getEvaluations();
-	}
+
+  public int getParamCount()
+  {
+    return Parameter.values().length;
+  }
 
 	private double[] getParameterArray()
 	{
 		return getParameters().toPrimitiveArray();
 	}
 
-	private Vector calculateInitialGuess(Vector durations)
-	{
-		final Vector vec = getParameters();
 
-		return vec;
-		// return null;
-	}
 
 	public String getParamString()
 	{

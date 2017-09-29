@@ -26,6 +26,13 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 {
 
 
+  @Override
+  public int getParamCount()
+  {
+    return Parameter.values().length;
+  }
+
+
   /**
 	 * 
 	 * @param η
@@ -39,18 +46,22 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 	 */
 	public ExtendedExponentialPowerlawHawkesProcess(double η, double ε, double b, double τ)
 	{
-		super();
+	  assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
+	  assert η > 0 : "η must be positive";
+	  assert τ > 0 : "τ must be positive";
 		this.η = log(η);
 		this.τ = log(τ);
-		this.ε = FastMath.atanh(-1 + 4 * ε);
+		this.ε = FastMath.atanh(4 * ε - 1);
 		this.b = b;
+    initializeParameterVectors();
+
 	}
 
 	private static final long serialVersionUID = 1L;
 
 	public ExtendedExponentialPowerlawHawkesProcess()
 	{
-		initializeParameterVectors();
+    initializeParameterVectors();
 	}
 
 
@@ -106,8 +117,22 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 	 */
 	public double Z()
 	{
-		double eps = 0.25 * tanh(ε) + 0.25;
-		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1);
+	  if ( !normalize )
+	  {
+	    return 1;
+	  }
+	   final double eta = exp(η);
+	   final double tau = exp(τ);
+	    double eps = getε();
+	    double a = pow(m, (-eps * M + eps + 1)) - pow(m, (1 + eps));
+	    double b = pow(m, eps) - 1;
+	    double c = pow(eta, -1 - eps);
+	    return -eta * a / m / b * c - αS() * eta / m;
+	    
+//    double ass = pow(m, -eps * M) - 1;
+//    return M * b * tau + (pow(eta, -eps) * ass) / (pow(m, -eps) - 1);
+//    		double eps = 0.25 * tanh(ε) + 0.25;
+//		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1);
 	}
 
 
@@ -143,6 +168,11 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
 		double ll = logLik();
 
+		if ( Double.isInfinite( ll ))
+		{
+		  out.println( "infinity " + getParameters() );		  
+		}
+		
 		if (Double.isNaN(ll))
 		{
 			throw new RuntimeException(new NotANumberException("(log)likelihood is NaN"));
@@ -214,7 +244,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double βS()
   {
     double tau = exp(τ);
-    return 1/tau;
+    return tau;
   }
 
 

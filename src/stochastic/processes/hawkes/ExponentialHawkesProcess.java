@@ -3,14 +3,20 @@ package stochastic.processes.hawkes;
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
+import static java.lang.Math.pow;
 import static java.lang.System.out;
 
+import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.optimization.GoalType;
+import org.apache.commons.math3.optimization.PointValuePair;
+import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
+import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
 import org.knowm.xchart.XYChart;
 
 import fastmath.Vector;
 
-public abstract class ExponentialHawkesProcess
+public abstract class ExponentialHawkesProcess implements MultivariateFunction
 {
 
   protected abstract double α(int j);
@@ -19,7 +25,8 @@ public abstract class ExponentialHawkesProcess
 
   public Vector T; 
   
-  protected boolean recursive = false;
+  protected boolean recursive = true;
+  
   private double λ0;
 
   public ExponentialHawkesProcess()
@@ -136,6 +143,7 @@ public abstract class ExponentialHawkesProcess
         double λ = evolveλ(dt, S);
         double Λ = evolveΛ(prevdt, dt, A);
 
+      
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
         if (λ > 0)
@@ -154,10 +162,11 @@ public abstract class ExponentialHawkesProcess
         double thist = T.get(i);
         ll += log(λ(thist)) - Λ(i);
       }
-      if (Double.isNaN(ll))
-      {
-        ll = Double.NEGATIVE_INFINITY;
-      }
+   
+    }
+    if ( Double.isNaN( ll) )
+    {
+      out.println( "NaN for LL " );
     }
     out.println("LL{" + getParamString() + "}=" + ll);
     return ll;
@@ -232,6 +241,38 @@ public abstract class ExponentialHawkesProcess
     }
 
   }
+
+  public abstract double value(double[] point);
+  
+  /**
+   * TODO: rewrite this part to not use deprecated stuff
+   */
+  public final int estimateParameters(int digits)
+  {
+    SimplexOptimizer optimizer = new SimplexOptimizer(pow(0.1, digits), pow(0.1, digits));
+    optimizer.setSimplex(new NelderMeadSimplex(getParamCount(), 0.001));
+
+    int maxIters = Integer.MAX_VALUE;
+    double[] initialEstimate = calculateInitialGuess(T).toPrimitiveArray();
+    PointValuePair params = optimizer.optimize(maxIters, this, GoalType.MAXIMIZE, initialEstimate);
+    double[] key = params.getKey();
+    getParameters().assign(key);
+    out.println("parameter estimates=" + getParamString());
+    return optimizer.getEvaluations();
+  }
+  
+  private Vector calculateInitialGuess(Vector durations)
+  {
+    final Vector vec = getParameters();
+
+    return vec;
+    // return null;
+  }
+  
+  
+  public abstract Vector getParameters();
+
+  public abstract int getParamCount();
 
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
