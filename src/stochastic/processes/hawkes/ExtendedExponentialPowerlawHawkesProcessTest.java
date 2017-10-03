@@ -18,8 +18,8 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   {
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.15);
 
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.getη(),
-        eplhp.getε(), eplhp.αS(), eplhp.βS());
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(
+        eplhp.getη(), eplhp.getε(), eplhp.αS(), eplhp.βS());
 
     for (int i = 0; i < eplhp.order(); i++)
     {
@@ -88,15 +88,15 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   //
   public void testEstimateParmeters() throws IOException
   {
-    double b = 5.72;
-    double τ = 0.34;
-    double ε = 0.15;
-    double η = 5.42;
+    double b = 1;
+    double τ = 1.0/0.5;
+    double ε = 0.18;
+    double η = 2;
     ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(η, ε, b, τ);
     Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0);
 
     int midpoint = data.size() / 2;
-    data = data.slice(midpoint - 2500, midpoint + 2500);
+    data = data.slice(midpoint - 5000, midpoint + 5000);
     process.normalize = true;
     process.T = data;
 
@@ -139,4 +139,13 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   //
   // }
 
+  public void testZeroEps()
+  {
+    double b = 1;
+    double τ = 0.34;
+    double ε = 0;
+    double η = 1;
+    ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(η, ε, b, τ);
+    out.println( "Z=" + process.Z() );
+  }
 }

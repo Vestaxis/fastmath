@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optimization.GoalType;
 import org.apache.commons.math3.optimization.PointValuePair;
 import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
@@ -21,10 +22,13 @@ import org.apache.commons.math3.util.FastMath;
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
 
-@SuppressWarnings( { "deprecation", "unused", "unchecked" } )
-public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
+@SuppressWarnings(
+{ "deprecation", "unused", "unchecked" })
+public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess
+    implements MultivariateFunction, Serializable
 {
 
+  private double ρ;
 
   @Override
   public int getParamCount()
@@ -32,226 +36,210 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     return Parameter.values().length;
   }
 
+  /**
+   * 
+   * @param ρ TODO
+   * @param η
+   *          exponential multiplier
+   * @param ε
+   *          degree of fractional integration
+   * @param b
+   *          amplitude of short-term exponential
+   * @param τ
+   *          power multiplier
+   */
+  public ExtendedExponentialPowerlawHawkesProcess( double η, double ε, double b, double τ)
+  {
+    assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
+    assert η > 0 : "η must be positive";
+    assert τ > 0 : "τ must be positive";
+    assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
+    this.τ0 = η;
+    this.τ = τ;
+    this.ε = ε;
+    this.b = b;
+    initializeParameterVectors();
+
+  }
+
+  private static final long serialVersionUID = 1L;
+
+  public ExtendedExponentialPowerlawHawkesProcess()
+  {
+    initializeParameterVectors();
+  }
+
+  private double[] getParameterArray()
+  {
+    return getParameters().toPrimitiveArray();
+  }
+
+  private Vector calculateInitialGuess(Vector durations)
+  {
+    final Vector vec = getParameters();
+
+    return vec;
+  }
+
+  public String getParamString()
+  {
+    return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
+  
+  }
+
+  static enum Parameter
+  {
+    b, τ, ε, τ0
+  };
+
+  @Override
+  public SimpleBounds getParameterBounds()
+  {
+    return new SimpleBounds(new double[]
+    { -5, 0.00001, 0, 0.00001 }, new double[]
+    { 10, 10, 0.5, 10.0 });
+  }
 
   /**
-	 * 
-	 * @param η
-	 *            exponential multiplier
-   * @param ε
-	 *            degree of fractional integration
-   * @param b
-	 *            amplitude of short-term exponential
-   * @param τ
-	 *            power multiplier
-	 */
-	public ExtendedExponentialPowerlawHawkesProcess(double η, double ε, double b, double τ)
-	{
-	  assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
-	  assert η > 0 : "η must be positive";
-	  assert τ > 0 : "τ must be positive";
-		this.η = log(η);
-		this.τ = log(τ);
-		this.ε = FastMath.atanh(4 * ε - 1);
-		this.b = b;
-    initializeParameterVectors();
+   * range of the approximation
+   */
+  int M = 15;
 
-	}
+  /**
+   * powerlaw scale
+   */
+  private double τ;
 
-	private static final long serialVersionUID = 1L;
+  /**
+   * precision of approximation
+   */
+  private double m = 5;
 
-	public ExtendedExponentialPowerlawHawkesProcess()
-	{
-    initializeParameterVectors();
-	}
+  private double b;
 
+  /**
+   * normalization factor such that the branching rate is equal to this{@link #ρ}
+   * 
+   * @return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1)
+   */
+  public double Z()
+  {
+    if (!normalize) { return 1; }
+    if (ε == 0)
+    {
+      return M * b * τ + M;
+    }
+    else
+    {
+      double a = pow(m, (-ε * M + ε + 1)) - pow(m, (1 + ε));
+      double b = pow(m, ε) - 1;
+      double c = pow(τ0, -1 - ε);
+      return -τ0 * a / m / b * c - αS() * τ0 / m;
+    }
+  }
 
-	private double[] getParameterArray()
-	{
-		return getParameters().toPrimitiveArray();
-	}
+  /**
+   * integrated kernel function which is the anti-derivative/indefinite integral
+   * of this{@link #ρ}
+   * 
+   * @param t
+   * @return ∫this{@link #ψ(double)}(t)dt
+   */
+  public double iψ(double t)
+  {
+    double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
+    return t * ρ * (M * b * τ - τ * M * b * exp(-t / τ)
+        + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
+        / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
+  }
 
-	private Vector calculateInitialGuess(Vector durations)
-	{
-		final Vector vec = getParameters();
+  @Override
+  public double value(double[] point)
+  {
+    getParameters().assign(point);
+    this.b = point[Parameter.b.ordinal()];
+    this.ε = point[Parameter.ε.ordinal()];
+    this.τ0 = point[Parameter.τ0.ordinal()];
+    this.τ = point[Parameter.τ.ordinal()];
 
-		return vec;
-		// return null;
-	}
-
-	public String getParamString()
-	{
-		return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
-		// return "kappa=" + getKappa() + " alpha=" + alpha.toString().replace(
-		// "\n", "" ) + " beta="
-		// + beta.toString().replace( "\n", "" );
-	}
-
-	static enum Parameter
-	{
-		b, τ, ε, η
-	};
-
-	/**
-	 * range of the approximation
-	 */
-	int M = 15;
-
-
-	/**
-	 * powerlaw scale
-	 */
-	private double τ;
+    double ll = logLik();
 
 
-	/**
-	 * precision of approximation
-	 */
-	private double m = 5;
+    if (Double.isNaN(ll)) { throw new RuntimeException(new NotANumberException("(log)likelihood is NaN")); }
 
-	private double b;
+    return ll;
+  }
 
-	/**
-	 * normalization factor such that the branching rate is equal to this{@link #ρ}
-	 * 
-	 * @return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1)
-	 */
-	public double Z()
-	{
-	  if ( !normalize )
-	  {
-	    return 1;
-	  }
-	   final double eta = exp(η);
-	   final double tau = exp(τ);
-	    double eps = getε();
-	    double a = pow(m, (-eps * M + eps + 1)) - pow(m, (1 + eps));
-	    double b = pow(m, eps) - 1;
-	    double c = pow(eta, -1 - eps);
-	    return -eta * a / m / b * c - αS() * eta / m;
-	    
-//    double ass = pow(m, -eps * M) - 1;
-//    return M * b * tau + (pow(eta, -eps) * ass) / (pow(m, -eps) - 1);
-//    		double eps = 0.25 * tanh(ε) + 0.25;
-//		return M * exp(b) * exp(τ) + 1.0 / (pow(m, -eps) - 1) * pow(exp(η), -eps) * (pow(m, -eps * M) - 1);
-	}
+  public Vector initializeParameterVectors()
+  {
+    Vector params = getParameters();
+    return params;
+  }
 
+  private int iterations = 0;
 
-	/**
-	 * integrated kernel function which is the anti-derivative/indefinite integral
-	 * of this{@link #ρ}
-	 * 
-	 * @param t
-	 * @return ∫this{@link #ψ(double)}(t)dt
-	 */
-	public double iψ(double t)
-	{
-		double tau = exp(τ);
-		double bee = exp(b);
-		double eta = exp(η);
-		double eps = 0.25 * tanh(ε) + 0.25;
-		double x = sum(i -> -pow(eta, -eps) * pow(m, i) * pow(pow(m, -i), 1 + eps) * exp(-t / eta * pow(m, -i)), 0,
-				M - 1);
-		return t * (M * bee * tau - tau * M * bee * exp(-t / tau)
-				+ 1 / (-1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1))) + x)
-				/ (M * bee * tau * t + 1 / (pow(m, -eps) - 1) * pow(eta, -eps) * (pow(m, -eps * M) - 1) * t);
-	}
+  Vector params;
 
+  public Vector getParameters()
+  {
+    if (params == null)
+    {
+      int paramCount = Parameter.values().length;
+      params = new Vector(paramCount);
+    }
+    params.set(Parameter.b.ordinal(), b);
+    params.set(Parameter.ε.ordinal(), ε);
+    params.set(Parameter.τ.ordinal(), τ);
+    params.set(Parameter.τ0.ordinal(), τ0);
+    return params;
+  }
 
-	@Override
-	public double value(double[] point)
-	{
-		getParameters().assign(point);
-		this.b = point[Parameter.b.ordinal()];
-		this.ε = point[Parameter.ε.ordinal()];
-		this.η = point[Parameter.η.ordinal()];
-		this.τ = point[Parameter.τ.ordinal()];
+  public Vector getTransformedParameters()
+  {
+    return getParameters();
+  }
 
-		double ll = logLik();
+  public double getΕ()
+  {
+    return ε;
+  }
 
-		if ( Double.isInfinite( ll ))
-		{
-		  out.println( "infinity " + getParameters() );		  
-		}
-		
-		if (Double.isNaN(ll))
-		{
-			throw new RuntimeException(new NotANumberException("(log)likelihood is NaN"));
-		}
+  public void setε(double ε)
+  {
+    this.ε = ε;
+  }
 
-		return ll;
-	}
-
-	public Vector initializeParameterVectors()
-	{
-		Vector params = getParameters();
-		return params;
-	}
-
-	private int iterations = 0;
-
-	Vector params;
-
-	public Vector getParameters()
-	{
-		if (params == null)
-		{
-			int paramCount = Parameter.values().length;
-			params = new Vector(paramCount);
-		}
-		params.set(Parameter.b.ordinal(), b);
-		params.set(Parameter.ε.ordinal(), ε);
-		params.set(Parameter.τ.ordinal(), τ);
-		params.set(Parameter.η.ordinal(), η);
-		return params;
-	}
-
-	public Vector getTransformedParameters()
-	{
-		Vector tparams = new Vector(Parameter.values().length);
-		tparams.set(Parameter.b.ordinal(), exp(b));
-		tparams.set(Parameter.ε.ordinal(), 0.25 * tanh(ε) + 0.25);
-		tparams.set(Parameter.τ.ordinal(), exp(τ));
-		tparams.set(Parameter.η.ordinal(), exp(η));
-		return tparams;
-	}
-
-
-	public double getΕ()
-	{
-		return ε;
-	}
-
-	public void setε(double ε)
-	{
-		this.ε = ε;
-	}
-
-	public void setη(double η)
-	{
-		this.η = η;
-	}
-
-
+  public void setτ0(double η)
+  {
+    this.τ0 = η;
+  }
 
   @Override
   public int order()
   {
-   return M+1;
+    return M + 1;
   }
-
 
   @Override
   public double βS()
   {
-    double tau = exp(τ);
-    return tau;
+    return τ;
+    // double tau = exp(τ);
+    // return tau;
   }
-
 
   @Override
   public double αS()
   {
     return b;
+//    return -pow(η, (-1 - ε))
+//        * ((pow(m, (-ε * M + 2 * ε + 2)) * η - pow(m, (2 + 2 * ε)) * η - pow(m, (-ε * M + ε + 1)) * η
+//            + pow(m, (1 + ε)) * η) * C + pow(m, (2 + 2 * ε)) - pow(m, (-ε * M - M + 2 * ε + 2)) - pow(m, (2 + ε))
+//            + pow(m, (-ε * M - M + ε + 2)))
+//        / ((pow(m, (1 + 2 * ε)) * η - pow(m, (1 + ε)) * η - pow(m, ε) * η + η) * C - pow(m, (2 + 2 * ε))
+//            + pow(m, (2 + ε)) + pow(m, (1 + ε)) - m);
+
+    //return b;
   }
 
 }

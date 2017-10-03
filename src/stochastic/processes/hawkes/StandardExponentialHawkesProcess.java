@@ -29,8 +29,8 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
     ;
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25, eplhp.αS(),
-        eplhp.βS());
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25,
+        eplhp.αS(), eplhp.βS());
     eplhp.T = hp.T;
     exthp.T = hp.T;
     XYChart chart = new XYChart(800, 600);
@@ -121,18 +121,6 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   }
 
   private int P;
-
-  @Override
-  public double evolveλ(double dt, double[] R)
-  {
-    double λ = 0;
-    for (int j = 0; j < order(); j++)
-    {
-      R[j] = exp(-β(j) * dt) * (1 + R[j]);
-      λ += α(j) * R[j];
-    }
-    return λ;
-  }
 
   public StandardExponentialHawkesProcess(int order)
   {

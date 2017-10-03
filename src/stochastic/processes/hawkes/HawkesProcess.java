@@ -18,6 +18,5 @@ public interface HawkesProcess
 
 	int order();
 
-	double evolveλ(double dt, double[] R);
 
 }

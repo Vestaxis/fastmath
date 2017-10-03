@@ -1,10 +1,13 @@
 package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
+import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
-import static java.lang.Math.pow;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.rangeClosed;
+
+import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -12,13 +15,20 @@ import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultiStartMultivariateOptimizer;
-import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
+import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomVectorGenerator;
+import org.apache.commons.math3.random.UniformRandomGenerator;
 import org.knowm.xchart.XYChart;
 
+import fastmath.Pair;
 import fastmath.Vector;
+import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction
 {
@@ -81,7 +91,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
     return sum(i -> -(α(i) / β(i)) * (exp(-β(i) * t) - 1), 0, order() - 1) / Z();
   }
 
-  protected double evolveλ(double dt, double[] S)
+  protected final double evolveλ(double dt, double[] S)
   {
     double λ = λ0;
     for (int j = 0; j < order(); j++)
@@ -92,7 +102,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
     return λ / Z();
   }
 
-  protected double evolveΛ(double prevdt, double dt, double[] A)
+  protected final double evolveΛ(double prevdt, double dt, double[] A)
   {
     double Λ = dt * λ0;
     for (int j = 0; j < order(); j++)
@@ -196,13 +206,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
         return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
       }, 0, order() - 1);
     }, 0, i - 1) / Z();
-
-    // double sum = sum(k -> {
-    // double t0 = T.get(i) - T.get(k);
-    // double t1 = T.get(i - 1) - T.get(k);
-    // return iψ(t0) - iψ(t1);
-    // }, 0, i - 1);
-    // return sum;
   }
 
   public double totalΛ()
@@ -247,23 +250,48 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
 
   public abstract double value(double[] point);
 
-  /**
-   * TODO: rewrite this part to not use deprecated stuff
-   */
   public final int estimateParameters(int digits)
   {
-    BOBYQAOptimizer opt = new BOBYQAOptimizer(8);
+
+    BOBYQAOptimizer opt = new BOBYQAOptimizer(getParamCount() * 2 + 1);
     int maxIters = Integer.MAX_VALUE;
     double[] start = calculateInitialGuess(T).toPrimitiveArray();
-
     InitialGuess initialGuess = new InitialGuess(start);
     ObjectiveFunction objectiveFunction = new ObjectiveFunction(this);
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
-    PointValuePair result = opt.optimize(maxEval, initialGuess, objectiveFunction, simpleBounds);
+
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(opt, 10,
+        makeInitialGuess(simpleBounds));
+
+    PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE, maxEval, initialGuess, objectiveFunction,
+        simpleBounds);
+    for (PointValuePair point : multiopt.getOptima())
+    {
+      out.println("tried " + point);
+    }
     getParameters().assign(result.getKey());
     out.println("parameter estimates=" + getParamString());
     return opt.getEvaluations();
+
+  }
+
+  protected RandomVectorGenerator makeInitialGuess(SimpleBounds bounds)
+  {
+    return () -> {
+      try
+      {
+        double[] point = rangeClosed(0, bounds.getLower().length - 1)
+            .mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim]))).toArray();
+        out.println("starting from " + Arrays.toString(point));
+        return point;
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace(System.err);
+        return null;
+      }
+    };
   }
 
   public abstract SimpleBounds getParameterBounds();

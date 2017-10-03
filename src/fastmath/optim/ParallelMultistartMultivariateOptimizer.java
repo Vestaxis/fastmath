@@ -1,0 +1,235 @@
+package fastmath.optim;
+
+import static java.util.stream.IntStream.range;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.OptimizationData;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultiStartMultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.random.RandomVectorGenerator;
+
+/**
+ * Multi-start optimizer.
+ *
+ * This class wraps an optimizer in order to use it several times in turn with
+ * different starting points (trying to avoid being trapped in a local extremum
+ * when looking for a global one).
+ *
+ * @since 3.0
+ */
+public class ParallelMultistartMultivariateOptimizer extends MultiStartMultivariateOptimizer
+{
+  @Override
+  protected PointValuePair doOptimize()
+  {
+    // Remove all instances of "MaxEval" and "InitialGuess" from the
+    // array that will be passed to the internal optimizer.
+    // The former is to enforce smaller numbers of allowed evaluations
+    // (according to how many have been used up already), and the latter
+    // to impose a different start value for each start.
+
+    OptimizationData[] optimData;
+    try
+    {
+      optimData = getPrivateField("optimData");
+
+      int maxEvalIndex = -1;
+      int initialGuessIndex = -1;
+      for (int i = 0; i < optimData.length; i++)
+      {
+        if (optimData[i] instanceof MaxEval)
+        {
+          optimData[i] = null;
+          maxEvalIndex = i;
+        }
+        if (optimData[i] instanceof InitialGuess)
+        {
+          optimData[i] = null;
+          initialGuessIndex = i;
+          continue;
+        }
+      }
+      if (maxEvalIndex == -1) { throw new MathIllegalStateException(); }
+      if (initialGuessIndex == -1) { throw new MathIllegalStateException(); }
+
+      RuntimeException lastException = null;
+      AtomicInteger totalEvaluations = new AtomicInteger();
+      clear();
+
+      final int maxEval = getMaxEvaluations();
+      final double[] min = getLowerBound();
+      final double[] max = getUpperBound();
+      final double[] startPoint = getStartPoint();
+
+      int starts = getPrivateField("starts");
+      RandomVectorGenerator generator = getPrivateField("generator");
+      final int _maxEvalIndex = maxEvalIndex;
+      final int _initialGuessIndex = initialGuessIndex;
+
+      // FIXME: need multiple instances of wrapped optimizer
+      // Multi-start loop.
+      // for (int i = 0; i < starts; i++)
+      range(0, starts).parallel().forEach(i -> {
+        // CHECKSTYLE: stop IllegalCatch
+        // Decrease number of allowed evaluations.
+        optimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
+        // New start value.
+        double[] s = null;
+        if (i == 0)
+        {
+          s = startPoint;
+        }
+        else
+        {
+          int attempts = 0;
+          while (s == null)
+          {
+            if (attempts++ >= getMaxEvaluations()) { throw new TooManyEvaluationsException(getMaxEvaluations()); }
+            s = generator.nextVector();
+            for (int k = 0; s != null && k < s.length; ++k)
+            {
+              if ((min != null && s[k] < min[k]) || (max != null && s[k] > max[k]))
+              {
+                // reject the vector
+                s = null;
+              }
+            }
+          }
+        }
+        optimData[_initialGuessIndex] = new InitialGuess(s);
+        // Optimize.
+        final PointValuePair result = optimizer.optimize(optimData);
+        store(result);
+        // CHECKSTYLE: resume IllegalCatch
+
+        totalEvaluations.addAndGet(optimizer.getEvaluations());
+      });
+
+      final PointValuePair[] optima = getOptima();
+
+      // Return the best optimum.
+      return optima[0];
+    }
+    catch (NoSuchFieldException | IllegalAccessException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> T getPrivateField(String fieldName) throws NoSuchFieldException, IllegalAccessException
+  {
+    Field field = getClass().getSuperclass().getSuperclass().getDeclaredField(fieldName);
+    field.setAccessible(true);
+    return (T) field.get(this);
+  }
+
+  /** Underlying optimizer. */
+  private final MultivariateOptimizer optimizer;
+  /** Found optima. */
+  private final List<PointValuePair> optima = new ArrayList<PointValuePair>();
+
+  /**
+   * Create a multi-start optimizer from a single-start optimizer.
+   *
+   * @param optimizer
+   *          Single-start optimizer to wrap.
+   * @param starts
+   *          Number of starts to perform. If {@code starts == 1}, the result will
+   *          be same as if {@code optimizer} is called directly.
+   * @param generator
+   *          Random vector generator to use for restarts.
+   * @throws NullArgumentException
+   *           if {@code optimizer} or {@code generator} is {@code null}.
+   * @throws NotStrictlyPositiveException
+   *           if {@code starts < 1}.
+   */
+  public ParallelMultistartMultivariateOptimizer(final MultivariateOptimizer optimizer, final int starts,
+      final RandomVectorGenerator generator) throws NullArgumentException, NotStrictlyPositiveException
+  {
+    super(optimizer, starts, generator);
+    this.optimizer = optimizer;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public PointValuePair[] getOptima()
+  {
+    Collections.sort(optima, getPairComparator());
+    return optima.toArray(new PointValuePair[0]);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void store(PointValuePair optimum)
+  {
+    optima.add(optimum);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void clear()
+  {
+    optima.clear();
+  }
+
+  /**
+   * @return a comparator for sorting the optima.
+   */
+  private Comparator<PointValuePair> getPairComparator()
+  {
+    return new Comparator<PointValuePair>()
+    {
+      /** {@inheritDoc} */
+      public int compare(final PointValuePair o1, final PointValuePair o2)
+      {
+        if (o1 == null)
+        {
+          return (o2 == null) ? 0 : 1;
+        }
+        else if (o2 == null) { return -1; }
+        final double v1 = o1.getValue();
+        final double v2 = o2.getValue();
+        return (optimizer.getGoalType() == GoalType.MINIMIZE) ? Double.compare(v1, v2) : Double.compare(v2, v1);
+      }
+    };
+  }
+}
