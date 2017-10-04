@@ -71,7 +71,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   private double[] getParameterArray()
   {
-    return getParameters().toPrimitiveArray();
+    return getParameters().toArray();
   }
 
   private Vector calculateInitialGuess(Vector durations)

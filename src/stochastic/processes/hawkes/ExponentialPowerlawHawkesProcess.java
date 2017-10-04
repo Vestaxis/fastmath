@@ -200,7 +200,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
   private double[] getParameterArray()
   {
-    return getParameters().toPrimitiveArray();
+    return getParameters().toArray();
   }
 
   public String getParamString()

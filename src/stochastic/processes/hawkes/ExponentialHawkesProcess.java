@@ -253,26 +253,25 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
   public final int estimateParameters(int digits)
   {
 
-    BOBYQAOptimizer opt = new BOBYQAOptimizer(getParamCount() * 2 + 1);
     int maxIters = Integer.MAX_VALUE;
-    double[] start = calculateInitialGuess(T).toPrimitiveArray();
+    double[] start = calculateInitialGuess(T).toArray();
     InitialGuess initialGuess = new InitialGuess(start);
     ObjectiveFunction objectiveFunction = new ObjectiveFunction(this);
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(opt, 10,
-        makeInitialGuess(simpleBounds));
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(
+        () -> new BOBYQAOptimizer(getParamCount() * 2 + 1), 10, makeInitialGuess(simpleBounds));
 
     PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE, maxEval, initialGuess, objectiveFunction,
         simpleBounds);
     for (PointValuePair point : multiopt.getOptima())
     {
-      out.println("tried " + point);
+      out.println("tried " + Arrays.toString(point.getKey() ) + " LL " + point.getValue() );
     }
     getParameters().assign(result.getKey());
     out.println("parameter estimates=" + getParamString());
-    return opt.getEvaluations();
+    return multiopt.getEvaluations();
 
   }
 
@@ -310,7 +309,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
 
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
-    chart.addSeries(name, X.toPrimitiveArray(), Y.toPrimitiveArray());
+    chart.addSeries(name, X.toArray(), Y.toArray());
   }
 
 }

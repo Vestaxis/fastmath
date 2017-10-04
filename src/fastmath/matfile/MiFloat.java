@@ -69,7 +69,7 @@ public class MiFloat extends MiElement
    */
   public double[] toArray()
   {
-    return vector.toPrimitiveArray();
+    return vector.toArray();
   }
 
   /**

@@ -211,7 +211,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 	 */
 	public Vector(Vector v)
 	{
-		this(v.toPrimitiveArray());
+		this(v.toArray());
 		setName(v.getName());
 	}
 
@@ -1128,7 +1128,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 	/**
 	 * Convert to an array
 	 */
-	public double[] toPrimitiveArray()
+	public double[] toArray()
 	{
 		double[] x = new double[size];
 
