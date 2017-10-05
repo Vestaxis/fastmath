@@ -267,4 +267,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     return M + 1;
   }
 
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(τ0, ε);
+    process.T = T;
+    return process;
+  }
+
 }

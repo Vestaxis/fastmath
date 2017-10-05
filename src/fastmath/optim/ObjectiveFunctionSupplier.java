@@ -6,22 +6,33 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.OptimizationData;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 
-public abstract class ObjectiveFunctionSupplier extends ObjectiveFunction implements Supplier<ObjectiveFunction>, OptimizationData
+import stochastic.processes.hawkes.ExponentialHawkesProcess;
+
+public class ObjectiveFunctionSupplier<E extends ExponentialHawkesProcess> extends ObjectiveFunction implements
+    OptimizationData
 {
+ 
 
   @Override
-  public ObjectiveFunction get()
+  public MultivariateFunction getObjectiveFunction()
   {
-    Object ass = super.getObjectiveFunction().clone();
-    
-    // TODO Auto-generated method stub
-    return null;
+    try
+    {
+      MultivariateFunction func = (MultivariateFunction) process.clone();
+      return func;
+    }
+    catch (CloneNotSupportedException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
-  public ObjectiveFunctionSupplier(MultivariateFunction f)
-  {
-    super(f);
-  }
+  E process;
 
+  public ObjectiveFunctionSupplier(E f)
+  {
+    super(null);
+    process = f;
+  }
 
 }

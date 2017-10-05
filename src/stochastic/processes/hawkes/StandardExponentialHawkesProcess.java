@@ -607,4 +607,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     throw new UnsupportedOperationException();
   }
 
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(this);
+    process.T = T;
+    return process;
+  }
+
 }

@@ -27,11 +27,15 @@ import org.knowm.xchart.XYChart;
 
 import fastmath.Pair;
 import fastmath.Vector;
+import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable
 {
+
+  @Override
+  public abstract Object clone() throws CloneNotSupportedException;
 
   protected abstract double α(int j);
 
@@ -256,7 +260,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     int maxIters = Integer.MAX_VALUE;
     double[] start = calculateInitialGuess(T).toArray();
     InitialGuess initialGuess = new InitialGuess(start);
-    ObjectiveFunction objectiveFunction = new ObjectiveFunction(this);
+    ObjectiveFunctionSupplier<ExponentialHawkesProcess> objectiveFunction = new ObjectiveFunctionSupplier<>(this);
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 

@@ -29,7 +29,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 {
 
   @Override
-  protected Object clone() throws CloneNotSupportedException
+  public Object clone() throws CloneNotSupportedException
   {
     ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0,ε,b,τ);
     newobj.T = T;
@@ -164,7 +164,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   }
 
   @Override
-  public synchronized double value(double[] point)
+  public double value(double[] point)
   {
     this.b = point[Parameter.b.ordinal()];
     this.ε = point[Parameter.ε.ordinal()];
