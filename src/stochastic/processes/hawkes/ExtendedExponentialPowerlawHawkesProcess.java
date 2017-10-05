@@ -40,9 +40,9 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   public Object clone()
   {
-    ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
-    newobj.T = T;
-    return newobj;
+    ExtendedExponentialPowerlawHawkesProcess clonedProcess = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
+    clonedProcess.T = T;
+    return clonedProcess;
   }
 
   private double ρ;
@@ -92,13 +92,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     return getParameters().toArray();
   }
 
-  private Vector calculateInitialGuess(Vector durations)
-  {
-    final Vector vec = getParameters();
-
-    return vec;
-  }
-
   public String getParamString()
   {
     return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
@@ -143,7 +136,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double Z()
   {
     if (!normalize) { return 1; }
-    if (ε == 0)
+    if (ε == 0 )
     {
       return M * b * τ + M;
     }

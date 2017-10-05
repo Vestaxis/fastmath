@@ -460,7 +460,13 @@ public class MatFile implements Iterable<MiElement>
 
   public static void write( String filename, MiElement... writables ) throws IOException
   {
-    MatFile matFile = new MatFile( new File( filename ), MatFile.class.getName() );
+    File file = new File( filename );
+    write(file, writables);
+  }
+
+  public static void write(File file, MiElement... writables) throws IOException
+  {
+    MatFile matFile = new MatFile( file, MatFile.class.getName() );
     for ( MiElement writable : writables )
     {
       matFile.write( writable );

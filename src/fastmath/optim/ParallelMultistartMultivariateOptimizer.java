@@ -27,7 +27,6 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
  * different starting points (trying to avoid being trapped in a local extremum
  * when looking for a global one).
  *
- * @since 3.0
  */
 public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOptimizer<PointValuePair>
 {
@@ -55,7 +54,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   }
 
   /** Number of evaluations already performed for all starts. */
-  private int totalEvaluations;
+  
   /** Number of starts to go. */
   private int starts;
   /** Random generator for multi-start. */
@@ -77,7 +76,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   @Override
   public int getEvaluations()
   {
-    return totalEvaluations;
+    return totalEvaluations.get();
   }
 
   /**
@@ -132,7 +131,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     if (objectiveFunctionIndex == -1) { throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified"); }
 
     RuntimeException lastException = null;
-    AtomicInteger totalEvaluations = new AtomicInteger();
     clear();
 
     final int maxEval = getMaxEvaluations();
@@ -149,7 +147,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     range(0, starts).parallel().forEach(i -> {
       OptimizationData[] instanceOptimData = optimData.clone();
       BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
-      // CHECKSTYLE: stop IllegalCatch
       // Decrease number of allowed evaluations.
       instanceOptimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
       double[] s = getStartingPoint(i, min, max, startPoint);
@@ -208,6 +205,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
+  
   /** Found optima. */
   private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>(getPairComparator());
 
@@ -229,10 +227,17 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
         else if (o2 == null) { return -1; }
         final double v1 = o1.getValue();
         final double v2 = o2.getValue();
+        return compareScore(v1, v2);
+      }
+
+      public int compareScore(final double v1, final double v2)
+      {
         return (goalType == GoalType.MINIMIZE) ? Double.compare(v1, v2) : Double.compare(v2, v1);
       }
     };
   }
 
   GoalType goalType = GoalType.MAXIMIZE;
+  
+  private final AtomicInteger totalEvaluations = new AtomicInteger();
 }

@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.concurrent.atomic.DoubleAdder;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
@@ -21,6 +22,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.knowm.xchart.XYChart;
 
 import fastmath.Pair;
@@ -220,8 +222,8 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     double tn = T.getRightmostValue();
 
     return (tn * λ0
-        + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1))
-        / Z();
+            + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1))
+           / Z();
   }
 
   /**
@@ -269,33 +271,43 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     return ll;
   }
-  
+
   public final int estimateParameters(int digits) throws CloneNotSupportedException
   {
 
     int maxIters = Integer.MAX_VALUE;
-    double[] start = calculateInitialGuess(T).toArray();
-    InitialGuess initialGuess = new InitialGuess(start);
-    out.println("initialGuess=" + Arrays.toString(start));
-    ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> {
-      ObjectiveFunction objectiveFunction = new ObjectiveFunction((MultivariateFunction) this.clone());
-      out.println( Thread.currentThread().getName() + " cloned objectiveFunction " + objectiveFunction);
-      return objectiveFunction;
-    };
+
+    InitialGuess initialGuess = getInitialGuess();
+
+    ObjectiveFunctionSupplier objectiveFunctionSupplier =
+                                                        () -> new ObjectiveFunction((MultivariateFunction) this.clone());
 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(
-        () -> new BOBYQAOptimizer(getParamCount() * 2 + 1), Runtime.getRuntime().availableProcessors(),
-        getRandomVectorGenerator(simpleBounds));
+    ParallelMultistartMultivariateOptimizer multiopt =
+                                                     new ParallelMultistartMultivariateOptimizer(() -> new BOBYQAOptimizer(getParamCount()
+                                                                                                                           * 2
+                                                                                                                           + 1),
+                                                                                                 Runtime.getRuntime()
+                                                                                                        .availableProcessors(),
+                                                                                                 getRandomVectorGenerator(simpleBounds));
 
-    PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE, maxEval, initialGuess, objectiveFunctionSupplier,
-        simpleBounds);
+    PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE,
+                                              maxEval,
+                                              initialGuess,
+                                              objectiveFunctionSupplier,
+                                              simpleBounds);
 
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
     for (PointValuePair point : multiopt.getOptima())
     {
-      out.println("tried " + Arrays.toString(point.getKey()) + " LL " + point.getValue());
+      ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
+      process.assignParameters(point.getKey());
+      double[] compensator = process.Λ().stream().sorted().toArray();
+      double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator);
+      out.println("tried " + Arrays.toString(point.getKey()) + " LL " + point.getValue() + " KS=" + ksStatistic);
     }
     assignParameters(result.getKey());
     out.println("parameter estimates=" + getParamString() + " LL of " + result.getValue());
@@ -304,13 +316,25 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
+  public InitialGuess getInitialGuess()
+  {
+    double[] start = calculateInitialGuess(T).toArray();
+    InitialGuess initialGuess = new InitialGuess(start);
+    out.println("initialGuess=" + Arrays.toString(start));
+    return initialGuess;
+  }
+
   protected RandomVectorGenerator getRandomVectorGenerator(SimpleBounds bounds)
   {
     return () -> {
       try
       {
-        double[] point = rangeClosed(0, bounds.getLower().length - 1)
-            .mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim]))).toArray();
+        double[] point =
+                       rangeClosed(0,
+                                   bounds.getLower().length - 1)
+                                                                .mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim],
+                                                                                                             bounds.getUpper()[dim])))
+                                                                .toArray();
         out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
         return point;
       }
