@@ -605,10 +605,11 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     throw new UnsupportedOperationException();
   }
 
-  @Override
-  public Object clone()
+  public Object clone() 
   {
-    return new StandardExponentialHawkesProcess(this);
+    StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(this);
+    process.T = T;
+    return process;
   }
 
 }

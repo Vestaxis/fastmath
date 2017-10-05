@@ -28,7 +28,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     implements MultivariateFunction, Serializable
 {
 
-  @Override
   public Object clone() 
   {
     ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0,ε,b,τ);
@@ -164,7 +163,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   }
 
   @Override
-  public synchronized double value(double[] point)
+  public double value(double[] point)
   {
     this.b = point[Parameter.b.ordinal()];
     this.ε = point[Parameter.ε.ordinal()];
