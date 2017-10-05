@@ -27,7 +27,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		// out.println( "x=" + x );
 	}
 
-	public void testEstimateParmeters2() throws IOException
+	public void testEstimateParmeters2() throws IOException, CloneNotSupportedException
 	{
 		double ε = 0.16710;
 		double η = 1.58128;

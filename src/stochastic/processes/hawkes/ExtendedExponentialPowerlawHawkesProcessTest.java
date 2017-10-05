@@ -86,7 +86,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   // }
   //
   //
-  public void testEstimateParmeters() throws IOException
+  public void testEstimateParmeters() throws IOException, CloneNotSupportedException
   {
     double b = 1;
     double τ = 1.0/0.5;

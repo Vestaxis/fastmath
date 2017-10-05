@@ -30,7 +30,7 @@ import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
-public abstract class ExponentialHawkesProcess implements MultivariateFunction
+public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable
 {
 
   protected abstract double α(int j);
@@ -250,7 +250,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
 
   public abstract double value(double[] point);
 
-  public final int estimateParameters(int digits)
+  public final int estimateParameters(int digits) throws CloneNotSupportedException
   {
 
     int maxIters = Integer.MAX_VALUE;
@@ -265,12 +265,14 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction
 
     PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE, maxEval, initialGuess, objectiveFunction,
         simpleBounds);
+    
     for (PointValuePair point : multiopt.getOptima())
     {
       out.println("tried " + Arrays.toString(point.getKey() ) + " LL " + point.getValue() );
     }
     getParameters().assign(result.getKey());
-    out.println("parameter estimates=" + getParamString());
+    out.println("parameter estimates=" + getParamString() + " LL of " + result.getValue() );
+    
     return multiopt.getEvaluations();
 
   }

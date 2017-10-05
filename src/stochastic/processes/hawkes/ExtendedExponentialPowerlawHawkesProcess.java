@@ -28,6 +28,14 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     implements MultivariateFunction, Serializable
 {
 
+  @Override
+  protected Object clone() throws CloneNotSupportedException
+  {
+    ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0,ε,b,τ);
+    newobj.T = T;
+    return newobj;
+  }
+
   private double ρ;
 
   @Override
@@ -38,8 +46,9 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   /**
    * 
-   * @param ρ TODO
-   * @param η
+   * @param ρ
+   *          TODO
+   * @param τ0
    *          exponential multiplier
    * @param ε
    *          degree of fractional integration
@@ -48,13 +57,13 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
    * @param τ
    *          power multiplier
    */
-  public ExtendedExponentialPowerlawHawkesProcess( double η, double ε, double b, double τ)
+  public ExtendedExponentialPowerlawHawkesProcess(double τ0, double ε, double b, double τ)
   {
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
-    assert η > 0 : "η must be positive";
+    assert τ0 > 0 : "η must be positive";
     assert τ > 0 : "τ must be positive";
     assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
-    this.τ0 = η;
+    this.τ0 = τ0;
     this.τ = τ;
     this.ε = ε;
     this.b = b;
@@ -84,7 +93,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public String getParamString()
   {
     return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
-  
+
   }
 
   static enum Parameter
@@ -148,15 +157,15 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double iψ(double t)
   {
     double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
-    return t * ρ * (M * b * τ - τ * M * b * exp(-t / τ)
-        + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
+    return t
+        * ρ * (M * b * τ - τ * M * b * exp(-t / τ)
+            + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
         / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
   @Override
-  public double value(double[] point)
+  public synchronized double value(double[] point)
   {
-    getParameters().assign(point);
     this.b = point[Parameter.b.ordinal()];
     this.ε = point[Parameter.ε.ordinal()];
     this.τ0 = point[Parameter.τ0.ordinal()];
@@ -164,15 +173,14 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
     double ll = logLik();
 
-
-    if (Double.isNaN(ll)) { throw new RuntimeException(new NotANumberException("(log)likelihood is NaN")); }
+    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
 
     return ll;
   }
 
   public Vector initializeParameterVectors()
   {
-    Vector params = getParameters();
+    params = getParameters();
     return params;
   }
 
@@ -182,11 +190,8 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   public Vector getParameters()
   {
-    if (params == null)
-    {
-      int paramCount = Parameter.values().length;
-      params = new Vector(paramCount);
-    }
+    int paramCount = Parameter.values().length;
+    params = new Vector(paramCount);
     params.set(Parameter.b.ordinal(), b);
     params.set(Parameter.ε.ordinal(), ε);
     params.set(Parameter.τ.ordinal(), τ);
@@ -232,14 +237,17 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double αS()
   {
     return b;
-//    return -pow(η, (-1 - ε))
-//        * ((pow(m, (-ε * M + 2 * ε + 2)) * η - pow(m, (2 + 2 * ε)) * η - pow(m, (-ε * M + ε + 1)) * η
-//            + pow(m, (1 + ε)) * η) * C + pow(m, (2 + 2 * ε)) - pow(m, (-ε * M - M + 2 * ε + 2)) - pow(m, (2 + ε))
-//            + pow(m, (-ε * M - M + ε + 2)))
-//        / ((pow(m, (1 + 2 * ε)) * η - pow(m, (1 + ε)) * η - pow(m, ε) * η + η) * C - pow(m, (2 + 2 * ε))
-//            + pow(m, (2 + ε)) + pow(m, (1 + ε)) - m);
+    // return -pow(η, (-1 - ε))
+    // * ((pow(m, (-ε * M + 2 * ε + 2)) * η - pow(m, (2 + 2 * ε)) * η - pow(m, (-ε *
+    // M + ε + 1)) * η
+    // + pow(m, (1 + ε)) * η) * C + pow(m, (2 + 2 * ε)) - pow(m, (-ε * M - M + 2 * ε
+    // + 2)) - pow(m, (2 + ε))
+    // + pow(m, (-ε * M - M + ε + 2)))
+    // / ((pow(m, (1 + 2 * ε)) * η - pow(m, (1 + ε)) * η - pow(m, ε) * η + η) * C -
+    // pow(m, (2 + 2 * ε))
+    // + pow(m, (2 + ε)) + pow(m, (1 + ε)) - m);
 
-    //return b;
+    // return b;
   }
 
 }

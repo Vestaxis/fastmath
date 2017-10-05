@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -54,6 +55,15 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOptimizer<PointValuePair>
 {
 
+  private OptimizationData[] optimData;
+
+  @Override
+  public PointValuePair optimize(OptimizationData... optData)
+  {
+    this.optimData = optData.clone();
+    return super.optimize(optData);
+  }
+
   public ParallelMultistartMultivariateOptimizer(final Supplier<MultivariateOptimizer> optimizerSupplier,
       final int starts, final RandomVectorGenerator generator)
   {
@@ -64,7 +74,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     this.optimizerSupplier = optimizerSupplier;
     this.starts = starts;
     this.generator = generator;
-    
+
   }
 
   /** Number of evaluations already performed for all starts. */
@@ -74,7 +84,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   /** Random generator for multi-start. */
   private RandomVectorGenerator generator;
   /** Optimization data. */
-  private OptimizationData[] optimData;
+  // private OptimizationData[] optimData;
+
   /**
    * Location in {@link #optimData} where the updated maximum number of
    * evaluations will be stored.
@@ -94,22 +105,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   /**
    * {@inheritDoc}
-   *
-   * @throws MathIllegalStateException
-   *           if {@code optData} does not contain an instance of {@link MaxEval}
-   *           or {@link InitialGuess}.
-   */
-  @Override
-  public PointValuePair optimize(OptimizationData... optData)
-  {
-    // Store arguments in order to pass them to the internal optimizer.
-    optimData = optData;
-    // Set up base class and perform computations.
-    return super.optimize(optData);
-  }
-
-  /**
-   * {@inheritDoc}
    */
   protected void store(PointValuePair optimum)
   {
@@ -124,7 +119,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     optima.clear();
   }
 
-  @Override
   protected PointValuePair doOptimize()
   {
     // Remove all instances of "MaxEval" and "InitialGuess" from the
@@ -166,10 +160,11 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     // Multi-start loop.
     // for (int i = 0; i < starts; i++)
     range(0, starts).parallel().forEach(i -> {
+      OptimizationData[] instanceOptimData = optimData.clone();
       BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
       // CHECKSTYLE: stop IllegalCatch
       // Decrease number of allowed evaluations.
-      optimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
+      instanceOptimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
       // New start value.
       double[] s = null;
       if (i == 0)
@@ -193,39 +188,40 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
           }
         }
       }
-      optimData[_initialGuessIndex] = new InitialGuess(s);
+      instanceOptimData[_initialGuessIndex] = new InitialGuess(s);
       // Optimize.
-      final PointValuePair result = optimizer.optimize(optimData);
-      store(result);
+      final PointValuePair result = optimizer.optimize(instanceOptimData);
+      synchronized (optima)
+      {
+        store(result);
+      }
       // CHECKSTYLE: resume IllegalCatch
 
       totalEvaluations.addAndGet(optimizer.getEvaluations());
     });
 
-    final PointValuePair[] optima = getOptima();
+    final TreeSet<PointValuePair> optima = getOptima();
 
     // Return the best optimum.
-    return optima[0];
+    return optima.first();
 
   }
 
-  public PointValuePair[] getOptima()
+  public TreeSet<PointValuePair> getOptima()
   {
-    Collections.sort(optima, getPairComparator());
-    return optima.toArray(new PointValuePair[0]);
+    return optima;
   }
 
   /** Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
   /** Found optima. */
-  private final List<PointValuePair> optima = new ArrayList<PointValuePair>();
+  private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>( getPairComparator() );
 
   /**
    * @return a comparator for sorting the optima.
    */
   private Comparator<PointValuePair> getPairComparator()
   {
-    BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
 
     return new Comparator<PointValuePair>()
     {
