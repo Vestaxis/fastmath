@@ -7,7 +7,7 @@
 		<maven.javadoc.failOnError>false</maven.javadoc.failOnError>
 		<mdep.outputFile>class.path</mdep.outputFile>
 	</properties>
-	<version>6.53</version>
+	<version>6.54</version>
 	<build>
 		<pluginManagement>
 			<plugins>
