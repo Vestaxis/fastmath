@@ -305,9 +305,14 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     {
       ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
       process.assignParameters(point.getKey());
-      double[] compensator = process.Λ().stream().sorted().toArray();
-      double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator);
-      out.println("tried " + Arrays.toString(point.getKey()) + " LL " + point.getValue() + " KS=" + ksStatistic);
+      Vector compensator = new Vector( process.Λ().stream().sorted() ).reverse();      
+      double meanΛ = compensator.mean();
+      double varΛ = compensator.variance();
+      compensator.normalize();
+      
+      double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator.toArray());
+      
+      out.format("tried %s LL=%f KS=%f mean(Λ)=%f var(Λ)=%f\n",  Arrays.toString(point.getKey()), point.getValue(), ksStatistic, meanΛ, varΛ );
     }
     assignParameters(result.getKey());
     out.println("parameter estimates=" + getParamString() + " LL of " + result.getValue());

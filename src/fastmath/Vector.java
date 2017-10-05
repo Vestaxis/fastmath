@@ -1374,7 +1374,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 
 	public Vector getRescaledRange()
 	{
-		Vector Z = copy().add(-mean()).cumsum();
+		Vector Z = copy().add(-mean()).cumulativeSum();
 		Vector h = new Vector(size());
 
 		for (int i = 0; i < size(); i++)
@@ -1390,7 +1390,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		return h;
 	}
 
-	public Vector cumsum()
+	public Vector cumulativeSum()
 	{
 		Vector x = new Vector(size());
 		double d = 0;
@@ -1400,5 +1400,23 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		}
 		return x;
 	}
+
+  public Vector subtract(double subtrahend)
+  {
+    for (int i = 0; i < size(); i++)
+    {
+      set(i, get(i) - subtrahend );
+    }
+    return this;
+  }
+
+  /**
+   * 
+   * @return this / sum(this)
+   */
+  public Vector normalize()
+  {
+    return divide( sum() );
+  }
 
 }

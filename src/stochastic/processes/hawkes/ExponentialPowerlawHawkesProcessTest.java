@@ -3,6 +3,7 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
+import java.io.File;
 import java.io.IOException;
 
 import fastmath.Vector;
@@ -32,7 +33,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		double ε = 0.16710;
 		double η = 1.58128;
 		ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(η, ε);
-		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0).setName("data");
 		process.T = data;
 		int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 5000, midpoint + 5000);
@@ -40,7 +41,10 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		process.T = data;
 		process.recursive = true;
 		int evals = process.estimateParameters(15);
-		MatFile.write("test.mat", data.setName("d").createMiMatrix(), process.Λ().setName("C").createMiMatrix());
+		File testFile = new File("test.mat");
+		Vector compensator = process.Λ().setName("comp");
+		out.println( "writing timestamp data and compensator to " + testFile.getAbsolutePath() );
+    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix());
 
 		Vector comp = process.Λ();
 		out.println( "comp mean=" + comp.mean() );

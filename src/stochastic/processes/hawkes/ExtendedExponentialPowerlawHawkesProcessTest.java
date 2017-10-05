@@ -89,15 +89,17 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   //
   public void testEstimateParmeters() throws IOException, CloneNotSupportedException
   {
-    double b = 1;
-    double τ = 1.0/0.5;
-    double ε = 0.18;
-    double τ0 = 2;
+    double b = 0;
+    double τ = 1.0;
+    double ε = 0.25;
+    double τ0 = 1;
     ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
     Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0);
 
     int midpoint = data.size() / 2;
     data = data.slice(midpoint - 5000, midpoint + 5000);
+    data = data.copy().subtract( data.get(0 ) );
+    
     process.normalize = true;
     process.T = data;
 
