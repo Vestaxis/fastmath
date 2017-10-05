@@ -35,16 +35,16 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
   /**
    * 
-   * @param η
+   * @param τ0
    *          scale
    * 
    * @param ε
    *          degree of fractional integration
    * 
    */
-  public ExponentialPowerlawHawkesProcess(double η, double ε)
+  public ExponentialPowerlawHawkesProcess(double τ0, double ε)
   {
-    this.τ0 = η;
+    this.τ0 = τ0;
     // this.η = log(η);
     this.ε = ε;
     // this.ε = FastMath.atanh(-1 + 4 * ε);
@@ -59,7 +59,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
   static enum Parameter
   {
-    ε, η
+    ε, τ0
   };
 
   @Override
@@ -69,8 +69,6 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     { 0.0, 0 }, new double[]
     { 0.5, MAX_η });
   }
-
-
 
   /**
    * range of the approximation
@@ -137,13 +135,15 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double value(double[] point)
   {
-    getParameters().assign(point);
     this.ε = point[Parameter.ε.ordinal()];
-    this.τ0 = point[Parameter.η.ordinal()];
+    this.τ0 = point[Parameter.τ0.ordinal()];
 
     double ll = logLik();
 
-    if (Double.isNaN(ll)) { throw new RuntimeException(new NotANumberException("(log)likelihood is NaN")); }
+    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
+
+    // if (Double.isNaN(ll)) { throw new RuntimeException(new
+    // NotANumberException("(log)likelihood is NaN")); }
 
     return ll;
   }
@@ -156,17 +156,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
   private int iterations = 0;
 
-  Vector params;
-
   public Vector getParameters()
   {
-    if (params == null)
-    {
-      int paramCount = getParamCount();
-      params = new Vector(paramCount);
-    }
+    int paramCount = getParamCount();
+    Vector params = new Vector(paramCount);
     params.set(Parameter.ε.ordinal(), ε);
-    params.set(Parameter.η.ordinal(), τ0);
+    params.set(Parameter.τ0.ordinal(), τ0);
     return params;
   }
 
@@ -265,6 +260,14 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   public int order()
   {
     return M + 1;
+  }
+
+  @Override
+  public Object clone()
+  {
+    ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(τ0, ε);
+    process.T = T;
+    return process;
   }
 
 }

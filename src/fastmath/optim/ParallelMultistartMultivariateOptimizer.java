@@ -2,45 +2,22 @@ package fastmath.optim;
 
 import static java.util.stream.IntStream.range;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.exception.MathIllegalStateException;
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
-import org.apache.commons.math3.exception.NullArgumentException;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.apache.commons.math3.optim.BaseMultivariateOptimizer;
-import org.apache.commons.math3.optim.ConvergenceChecker;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.OptimizationData;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 
 /**
@@ -119,6 +96,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     optima.clear();
   }
 
+  @SuppressWarnings("unchecked")
   protected PointValuePair doOptimize()
   {
     // Remove all instances of "MaxEval" and "InitialGuess" from the
@@ -128,22 +106,30 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     // to impose a different start value for each start.
     int maxEvalIndex = -1;
     int initialGuessIndex = -1;
+    int objectiveFunctionIndex = -1;
+    ObjectiveFunctionSupplier objectiveFunctionSupplier = null;
     for (int i = 0; i < optimData.length; i++)
     {
+
       if (optimData[i] instanceof MaxEval)
       {
         optimData[i] = null;
         maxEvalIndex = i;
       }
-      if (optimData[i] instanceof InitialGuess)
+      else if (optimData[i] instanceof InitialGuess)
       {
         optimData[i] = null;
         initialGuessIndex = i;
-        continue;
+      }
+      else if (optimData[i] instanceof ObjectiveFunctionSupplier)
+      {
+        objectiveFunctionIndex = i;
+        objectiveFunctionSupplier = (ObjectiveFunctionSupplier) optimData[i];
       }
     }
-    if (maxEvalIndex == -1) { throw new MathIllegalStateException(); }
-    if (initialGuessIndex == -1) { throw new MathIllegalStateException(); }
+    if (maxEvalIndex == -1) { throw new IllegalArgumentException("MaxEval not specified"); }
+    if (initialGuessIndex == -1) { throw new IllegalArgumentException("InitialGuess not specified"); }
+    if (objectiveFunctionIndex == -1) { throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified"); }
 
     RuntimeException lastException = null;
     AtomicInteger totalEvaluations = new AtomicInteger();
@@ -156,7 +142,9 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
     final int _maxEvalIndex = maxEvalIndex;
     final int _initialGuessIndex = initialGuessIndex;
-
+    final int _objectiveFunctionIndex = objectiveFunctionIndex;
+    final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
+    
     // Multi-start loop.
     // for (int i = 0; i < starts; i++)
     range(0, starts).parallel().forEach(i -> {
@@ -165,30 +153,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       // CHECKSTYLE: stop IllegalCatch
       // Decrease number of allowed evaluations.
       instanceOptimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
-      // New start value.
-      double[] s = null;
-      if (i == 0)
-      {
-        s = startPoint;
-      }
-      else
-      {
-        int attempts = 0;
-        while (s == null)
-        {
-          if (attempts++ >= getMaxEvaluations()) { throw new TooManyEvaluationsException(getMaxEvaluations()); }
-          s = generator.nextVector();
-          for (int k = 0; s != null && k < s.length; ++k)
-          {
-            if ((min != null && s[k] < min[k]) || (max != null && s[k] > max[k]))
-            {
-              // reject the vector
-              s = null;
-            }
-          }
-        }
-      }
+      double[] s = getStartingPoint(i, min, max, startPoint);
       instanceOptimData[_initialGuessIndex] = new InitialGuess(s);
+      instanceOptimData[_objectiveFunctionIndex] = _objectiveFunctionSupplier.get();
+      
       // Optimize.
       final PointValuePair result = optimizer.optimize(instanceOptimData);
       synchronized (optima)
@@ -207,15 +175,43 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   }
 
+  private double[] getStartingPoint(int i, final double[] min, final double[] max, final double[] startPoint)
+  {
+    // New start value.
+    double[] s = null;
+    if (i == 0)
+    {
+      s = startPoint;
+    }
+    else
+    {
+      int attempts = 0;
+      while (s == null)
+      {
+        if (attempts++ >= getMaxEvaluations()) { throw new TooManyEvaluationsException(getMaxEvaluations()); }
+        s = generator.nextVector();
+        for (int k = 0; s != null && k < s.length; ++k)
+        {
+          if ((min != null && s[k] < min[k]) || (max != null && s[k] > max[k]))
+          {
+            // reject the vector
+            s = null;
+          }
+        }
+      }
+    }
+    return s;
+  }
+
   public TreeSet<PointValuePair> getOptima()
   {
     return optima;
   }
 
-  /** Underlying optimizer. */
+  /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
   /** Found optima. */
-  private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>( getPairComparator() );
+  private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>(getPairComparator());
 
   /**
    * @return a comparator for sorting the optima.

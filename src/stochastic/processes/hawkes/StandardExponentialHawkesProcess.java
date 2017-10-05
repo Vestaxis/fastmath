@@ -1,6 +1,5 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.exp;
 import static java.lang.System.out;
 
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -10,9 +9,7 @@ import org.knowm.xchart.XYChart;
 import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
-import fastmath.Vector.Condition;
 import fastmath.exceptions.FastMathException;
-import fastmath.exceptions.NotANumberException;
 import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess implements HawkesProcess
@@ -148,6 +145,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   {
     this(hp.getLambda(), hp.getAlpha().copy(), hp.getBeta().copy());
     this.P = hp.P;
+    this.T = hp.T;
   }
 
   public Vector getAlpha()
@@ -605,6 +603,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   public SimpleBounds getParameterBounds()
   {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Object clone()
+  {
+    return new StandardExponentialHawkesProcess(this);
   }
 
 }

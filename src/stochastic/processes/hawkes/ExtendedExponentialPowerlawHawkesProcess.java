@@ -29,7 +29,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 {
 
   @Override
-  protected Object clone() throws CloneNotSupportedException
+  public Object clone() 
   {
     ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0,ε,b,τ);
     newobj.T = T;
