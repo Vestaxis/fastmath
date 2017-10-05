@@ -21,6 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
 import fastmath.exceptions.NotANumberException;
+import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
@@ -28,9 +29,18 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     implements MultivariateFunction, Serializable
 {
 
-  public Object clone() 
+  @Override
+  public void assignParameters(double[] point)
   {
-    ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0,ε,b,τ);
+    this.ε = point[Parameter.ε.ordinal()];
+    this.τ0 = point[Parameter.τ0.ordinal()];
+    this.b = point[Parameter.b.ordinal()];
+    this.τ = point[Parameter.τ.ordinal()];
+  }
+
+  public Object clone()
+  {
+    ExtendedExponentialPowerlawHawkesProcess newobj = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
     newobj.T = T;
     return newobj;
   }

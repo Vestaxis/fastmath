@@ -255,8 +255,21 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
-  public abstract double value(double[] point);
+  @Override
+  public double value(double[] point)
+  {
+    assignParameters(point);
 
+    double ll = logLik();
+
+    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
+
+    // if (Double.isNaN(ll)) { throw new RuntimeException(new
+    // NotANumberException("(log)likelihood is NaN")); }
+
+    return ll;
+  }
+  
   public final int estimateParameters(int digits) throws CloneNotSupportedException
   {
 
@@ -266,7 +279,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     out.println("initialGuess=" + Arrays.toString(start));
     ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> {
       ObjectiveFunction objectiveFunction = new ObjectiveFunction((MultivariateFunction) this.clone());
-      out.println("cloned objectiveFunction " + objectiveFunction);
+      out.println( Thread.currentThread().getName() + " cloned objectiveFunction " + objectiveFunction);
       return objectiveFunction;
     };
 
@@ -284,7 +297,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     {
       out.println("tried " + Arrays.toString(point.getKey()) + " LL " + point.getValue());
     }
-    getParameters().assign(result.getKey());
+    assignParameters(result.getKey());
     out.println("parameter estimates=" + getParamString() + " LL of " + result.getValue());
 
     return multiopt.getEvaluations();
@@ -327,5 +340,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     chart.addSeries(name, X.toArray(), Y.toArray());
   }
+
+  public abstract void assignParameters(double[] point);
 
 }

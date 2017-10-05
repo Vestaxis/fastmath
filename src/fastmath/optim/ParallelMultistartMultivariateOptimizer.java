@@ -146,7 +146,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
     
     // Multi-start loop.
-    // for (int i = 0; i < starts; i++)
     range(0, starts).parallel().forEach(i -> {
       OptimizationData[] instanceOptimData = optimData.clone();
       BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
@@ -163,7 +162,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       {
         store(result);
       }
-      // CHECKSTYLE: resume IllegalCatch
 
       totalEvaluations.addAndGet(optimizer.getEvaluations());
     });

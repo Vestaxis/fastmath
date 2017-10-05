@@ -132,20 +132,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     return τ0;
   }
 
+
   @Override
-  public double value(double[] point)
+  public void assignParameters(double[] point)
   {
     this.ε = point[Parameter.ε.ordinal()];
     this.τ0 = point[Parameter.τ0.ordinal()];
-
-    double ll = logLik();
-
-    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
-
-    // if (Double.isNaN(ll)) { throw new RuntimeException(new
-    // NotANumberException("(log)likelihood is NaN")); }
-
-    return ll;
   }
 
   public Vector initializeParameterVectors()

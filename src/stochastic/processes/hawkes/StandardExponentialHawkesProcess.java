@@ -612,4 +612,10 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     return process;
   }
 
+  @Override
+  public void assignParameters(double[] point)
+  {
+    throw new UnsupportedOperationException( "implement me" ); 
+  }
+
 }
