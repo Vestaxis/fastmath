@@ -19,8 +19,10 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   {
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.15);
 
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(
-        eplhp.getη(), eplhp.getε(), eplhp.αS(), eplhp.βS());
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.getη(),
+                                                                                                  eplhp.getε(),
+                                                                                                  eplhp.αS(),
+                                                                                                  eplhp.βS());
 
     for (int i = 0; i < eplhp.order(); i++)
     {
@@ -30,14 +32,9 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
     assertEquals("Z", eplhp.Z(), exthp.Z());
 
-    out.println("αS=" + exthp.αS());
-    out.println("βS=" + exthp.βS());
-
     double r = eplhp.ψ(1.3);
     double s = exthp.ψ(1.3);
 
-    out.println("r=" + r);
-    out.println("s=" + s);
     assertEquals(r, s);
   }
 
@@ -98,8 +95,8 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
     int midpoint = data.size() / 2;
     data = data.slice(midpoint - 5000, midpoint + 5000);
-    data = data.copy().subtract( data.get(0 ) );
-    
+    data = data.copy().subtract(data.get(0));
+
     process.normalize = true;
     process.T = data;
 
@@ -107,10 +104,9 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     out.println(evals + " iterations");
 
     Vector compensator = process.Λ();
-    out.println("mean(Λ)=" + compensator.mean());
-    out.println("var(Λ)=" + compensator.variance());
-    File outputFile = new File( "comp.mat" );
-    out.println( "storing compensator to " + outputFile.getAbsolutePath() );
+
+    File outputFile = new File("comp.mat");
+    out.println("storing compensator to " + outputFile.getAbsolutePath());
     MatFile.write(outputFile, compensator.setName("compensator").createMiMatrix());
   }
   //
@@ -151,7 +147,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double ε = 0;
     double τ0 = 1;
     ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
-    assertEquals( 20.1, process.Z(), pow(10,-13) );
+    assertEquals(20.1, process.Z(), pow(10, -13));
 
   }
 }
