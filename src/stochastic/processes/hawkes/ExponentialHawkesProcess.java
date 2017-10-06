@@ -4,12 +4,15 @@ import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAccumulator;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
@@ -19,6 +22,7 @@ import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
@@ -29,6 +33,7 @@ import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable
@@ -46,6 +51,8 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   protected boolean recursive = true;
 
   private double λ0;
+
+  private boolean verbose;
 
   public ExponentialHawkesProcess()
   {
@@ -189,9 +196,16 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     }
     if (Double.isNaN(ll))
     {
-      out.println("NaN for LL ");
+      if (verbose)
+      {
+        out.println(Thread.currentThread().getName() + " NaN for LL ");
+      }
+      ll = Double.NEGATIVE_INFINITY;
     }
-    out.println(Thread.currentThread().getName() + " LL{" + getParamString() + "}=" + ll);
+    if (verbose)
+    {
+      out.println(Thread.currentThread().getName() + " LL{" + getParamString() + "}=" + ll);
+    }
     return ll;
 
   }
@@ -224,7 +238,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     return (tn * λ0 + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
-
+  
   /**
    * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
    * more uniformly distributed it is.
@@ -238,6 +252,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public Vector Λ()
   {
+   
     final int n = T.size() - 1;
 
     if (recursive)
@@ -246,12 +261,12 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     }
     else
     {
-      Vector compensator = new Vector(n + 1);
+      Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
-        compensator.set(i, Λ(i));
+        integratedCompensator.set(i, Λ(i));
       }
-      return compensator.diff();
+      return integratedCompensator.diff();
     }
 
   }
@@ -287,25 +302,29 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    int numStarts = 50;
+    int numStarts = Runtime.getRuntime().availableProcessors() * 10;
 
     SolutionValidator validator = point -> {
       ExponentialHawkesProcess process = newProcess(point);
       return process.Λ().mean() > 0;
     };
 
-    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(
-                                                                                                   () -> new BOBYQAOptimizer(getParamCount()
-                                                                                                                             * 2 + 1),
+    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
+
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
                                                                                                    numStarts,
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
-    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
-                                               validator,
-                                               maxEval,
-                                               initialGuess,
-                                               objectiveFunctionSupplier,
-                                               simpleBounds);
+    PointValuePairComparator discriminator = (a, b) -> {
+      ExponentialHawkesProcess processA = newProcess(a);
+      ExponentialHawkesProcess processB = newProcess(b);
+      double σa = processA.getCompensatorKolmogorovSmirnovStatistic();
+      double σb = processB.getCompensatorKolmogorovSmirnovStatistic();
+      return Double.compare( σb, σa );
+    };
+
+    PointValuePair optimum =
+                           multiopt.optimize(GoalType.MAXIMIZE, discriminator, validator, maxEval, initialGuess, objectiveFunctionSupplier, simpleBounds);
 
     for (PointValuePair point : multiopt.getOptima())
     {
@@ -318,16 +337,45 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
+
+
   public void evaluateParameters(PointValuePair point)
   {
     ExponentialHawkesProcess process = newProcess(point);
-    Vector compensator = new Vector(process.Λ().stream().sorted()).reverse();
-    double meanΛ = compensator.mean();
-    double varΛ = compensator.variance();
+    double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
 
-    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator.toArray());
+    out.format("tried %s LL=%f 1-KS=%f mean(Λ)=%f var(Λ)=%f σ=%f\n",
+               Arrays.toString(point.getKey()),
+               point.getValue(),
+               ksStatistic,
+               process.Λ().mean(),
+               process.Λ().variance(),
+               process.σ());
+  }
 
-    out.format("tried %s LL=%f KS=%f mean(Λ)=%f var(Λ)=%f\n", Arrays.toString(point.getKey()), point.getValue(), ksStatistic, meanΛ, varΛ);
+  public double getCompensatorKolmogorovSmirnovStatistic()
+  {
+    Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
+    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
+    return 1-ksStatistic;
+  }
+
+  public static double sigma(double m, double v)
+  {
+    return -sqrt(pow((m - 1), 2) + pow(v - 1, 2) );
+  }
+  
+  /**
+   * functions which takes its minimum when the mean and the variance of the compensator is closer to 1
+   * 
+   * @return sqrt(Λ().mean()^2 + Λ().variance()^2)
+   */
+  public double σ()
+  {
+    double meanΛ = Λ().mean();
+    double varΛ = Λ().variance();
+    double σ = sigma(meanΛ, varΛ);
+    return σ;
   }
 
   public ExponentialHawkesProcess newProcess(PointValuePair point)

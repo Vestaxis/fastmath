@@ -1,5 +1,6 @@
 package fastmath.optim;
 
+import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 
@@ -74,6 +75,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
    * Location in {@link #optimData} where the updated start value will be stored.
    */
   private int initialGuessIndex = -1;
+  private boolean verbose = true;
 
   /** {@inheritDoc} */
   @Override
@@ -82,22 +84,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     return totalEvaluations.get();
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  protected void store(PointValuePair optimum)
-  {
-    optima.add(optimum);
-  }
 
-  /**
-   * {@inheritDoc}
-   */
-  protected void clear()
-  {
-    optima.clear();
-  }
-
+  /** Found optima. */
+  TreeSet<PointValuePair> optima = null;
+  
   @SuppressWarnings("unchecked")
   protected PointValuePair doOptimize()
   {
@@ -111,10 +101,15 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     int objectiveFunctionIndex = -1;
     ObjectiveFunctionSupplier objectiveFunctionSupplier = null;
     SolutionValidator validator = null;
-
+    PointValuePairComparator pairComparator = null;
+    
     for (int i = 0; i < optimData.length; i++)
     {
-      if (optimData[i] instanceof SolutionValidator)
+      if ( optimData[i] instanceof PointValuePairComparator )
+      {
+        pairComparator = (PointValuePairComparator) optimData[i];
+      }
+      else if (optimData[i] instanceof SolutionValidator)
       {
         validator = (SolutionValidator) optimData[i];
       }
@@ -137,10 +132,15 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     if (maxEvalIndex == -1) { throw new IllegalArgumentException("MaxEval not specified"); }
     if (initialGuessIndex == -1) { throw new IllegalArgumentException("InitialGuess not specified"); }
     if (objectiveFunctionIndex == -1) { throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified"); }
+    if ( pairComparator == null )
+    {
+      pairComparator = new AbstractPointValuePairComparator(goalType);
+    }
+    optima = new TreeSet<PointValuePair>(pairComparator);
+    
+    RuntimeException lastException = null;    
 
-    RuntimeException lastException = null;
-    clear();
-
+    final AtomicInteger iterationCounter = new AtomicInteger();
     final int maxEval = getMaxEvaluations();
     final double[] min = getLowerBound();
     final double[] max = getUpperBound();
@@ -151,6 +151,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     final int _objectiveFunctionIndex = objectiveFunctionIndex;
     final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
     final SolutionValidator _validator = validator;
+
+   
 
     // Multi-start loop.
     range(0, starts).parallel().forEach(i -> {
@@ -163,24 +165,37 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       instanceOptimData[_objectiveFunctionIndex] = _objectiveFunctionSupplier.get();
 
       // Optimize.
-      final PointValuePair result = optimizer.optimize(instanceOptimData);
-      synchronized (optima)
+      try
       {
-        boolean valid = _validator == null || _validator.apply(result);
-        if (valid)
+        final PointValuePair result = optimizer.optimize(instanceOptimData);
+        synchronized (optima)
         {
-          store(result);
-        }
-        else
-        {
-          out.println("Rejecting " + Arrays.toString(result.getKey()));
+          boolean valid = _validator == null || _validator.apply(result);
+          if (valid)
+          {
+            out.println(Thread.currentThread().getName() + " Storing " + Arrays.toString(result.getKey()));
+
+            optima.add(result);
+          }
+          else
+          {
+            out.println(Thread.currentThread().getName() + " Rejecting " + Arrays.toString(result.getKey()));
+          }
         }
       }
+      catch (Exception e)
+      {
+        err.print( Thread.currentThread().getName() + " " );
+        e.printStackTrace( err);
+      }
 
-      totalEvaluations.addAndGet(optimizer.getEvaluations());
+      int evalCount = totalEvaluations.addAndGet(optimizer.getEvaluations());
+      if (verbose)
+      {
+        out.format("#%d/%d\n", iterationCounter.incrementAndGet(), starts);
+      }
     });
 
-    final TreeSet<PointValuePair> optima = getOptima();
 
     // Return the best optimum.
     return optima.first();
@@ -223,35 +238,17 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
 
-  /** Found optima. */
-  private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>(getPairComparator());
+ 
+  
 
-  /**
-   * @return a comparator for sorting the optima.
-   */
-  private Comparator<PointValuePair> getPairComparator()
+  public boolean isVerbose()
   {
+    return verbose;
+  }
 
-    return new Comparator<PointValuePair>()
-    {
-      /** {@inheritDoc} */
-      public int compare(final PointValuePair o1, final PointValuePair o2)
-      {
-        if (o1 == null)
-        {
-          return (o2 == null) ? 0 : 1;
-        }
-        else if (o2 == null) { return -1; }
-        final double v1 = o1.getValue();
-        final double v2 = o2.getValue();
-        return compareScore(v1, v2);
-      }
-
-      public int compareScore(final double v1, final double v2)
-      {
-        return (goalType == GoalType.MINIMIZE) ? Double.compare(v1, v2) : Double.compare(v2, v1);
-      }
-    };
+  public void setVerbose(boolean verbose)
+  {
+    this.verbose = verbose;
   }
 
   GoalType goalType = GoalType.MAXIMIZE;

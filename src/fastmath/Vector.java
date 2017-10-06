@@ -1410,13 +1410,4 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  /**
-   * 
-   * @return this / sum(this)
-   */
-  public Vector normalize()
-  {
-    return divide( sum() );
-  }
-
 }
