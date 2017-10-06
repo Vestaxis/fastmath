@@ -29,6 +29,7 @@ import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import fastmath.optim.SolutionValidator;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable
 {
@@ -221,9 +222,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0
-            + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1))
-           / Z();
+    return (tn * λ0 + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
   /**
@@ -272,6 +271,10 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return ll;
   }
 
+  final static ExponentialDistribution expDist = new ExponentialDistribution(1);
+
+  final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+
   public final int estimateParameters(int digits) throws CloneNotSupportedException
   {
 
@@ -279,46 +282,59 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     InitialGuess initialGuess = getInitialGuess();
 
-    ObjectiveFunctionSupplier objectiveFunctionSupplier =
-                                                        () -> new ObjectiveFunction((MultivariateFunction) this.clone());
+    ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction((MultivariateFunction) this.clone());
 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    ParallelMultistartMultivariateOptimizer multiopt =
-                                                     new ParallelMultistartMultivariateOptimizer(() -> new BOBYQAOptimizer(getParamCount()
-                                                                                                                           * 2
-                                                                                                                           + 1),
-                                                                                                 Runtime.getRuntime()
-                                                                                                        .availableProcessors(),
-                                                                                                 getRandomVectorGenerator(simpleBounds));
+    int numStarts = 50;
 
-    PointValuePair result = multiopt.optimize(GoalType.MAXIMIZE,
-                                              maxEval,
-                                              initialGuess,
-                                              objectiveFunctionSupplier,
-                                              simpleBounds);
+    SolutionValidator validator = point -> {
+      ExponentialHawkesProcess process = newProcess(point);
+      return process.Λ().mean() > 0;
+    };
 
-    ExponentialDistribution expDist = new ExponentialDistribution(1);
-    KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(
+                                                                                                   () -> new BOBYQAOptimizer(getParamCount()
+                                                                                                                             * 2 + 1),
+                                                                                                   numStarts,
+                                                                                                   getRandomVectorGenerator(simpleBounds));
+
+    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
+                                               validator,
+                                               maxEval,
+                                               initialGuess,
+                                               objectiveFunctionSupplier,
+                                               simpleBounds);
+
     for (PointValuePair point : multiopt.getOptima())
     {
-      ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
-      process.assignParameters(point.getKey());
-      Vector compensator = new Vector( process.Λ().stream().sorted() ).reverse();      
-      double meanΛ = compensator.mean();
-      double varΛ = compensator.variance();
-      compensator.normalize();
-      
-      double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator.toArray());
-      
-      out.format("tried %s LL=%f KS=%f mean(Λ)=%f var(Λ)=%f\n",  Arrays.toString(point.getKey()), point.getValue(), ksStatistic, meanΛ, varΛ );
+      evaluateParameters(point);
     }
-    assignParameters(result.getKey());
-    out.println("parameter estimates=" + getParamString() + " LL of " + result.getValue());
+    assignParameters(optimum.getKey());
+    out.println("parameter estimates=" + getParamString() + " LL of " + optimum.getValue());
 
     return multiopt.getEvaluations();
 
+  }
+
+  public void evaluateParameters(PointValuePair point)
+  {
+    ExponentialHawkesProcess process = newProcess(point);
+    Vector compensator = new Vector(process.Λ().stream().sorted()).reverse();
+    double meanΛ = compensator.mean();
+    double varΛ = compensator.variance();
+
+    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, compensator.toArray());
+
+    out.format("tried %s LL=%f KS=%f mean(Λ)=%f var(Λ)=%f\n", Arrays.toString(point.getKey()), point.getValue(), ksStatistic, meanΛ, varΛ);
+  }
+
+  public ExponentialHawkesProcess newProcess(PointValuePair point)
+  {
+    ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
+    process.assignParameters(point.getKey());
+    return process;
   }
 
   public InitialGuess getInitialGuess()
@@ -334,12 +350,10 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return () -> {
       try
       {
-        double[] point =
-                       rangeClosed(0,
-                                   bounds.getLower().length - 1)
-                                                                .mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim],
-                                                                                                             bounds.getUpper()[dim])))
-                                                                .toArray();
+        double[] point = rangeClosed(0, bounds.getLower().length - 1)
+                                                                     .mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim],
+                                                                                                                  bounds.getUpper()[dim])))
+                                                                     .toArray();
         out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
         return point;
       }

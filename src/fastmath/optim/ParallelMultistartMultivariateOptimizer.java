@@ -1,7 +1,9 @@
 package fastmath.optim;
 
+import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,7 +43,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   }
 
   public ParallelMultistartMultivariateOptimizer(final Supplier<MultivariateOptimizer> optimizerSupplier,
-      final int starts, final RandomVectorGenerator generator)
+                                                 final int starts,
+                                                 final RandomVectorGenerator generator)
   {
     super(null);
 
@@ -54,7 +57,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   }
 
   /** Number of evaluations already performed for all starts. */
-  
+
   /** Number of starts to go. */
   private int starts;
   /** Random generator for multi-start. */
@@ -107,10 +110,15 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     int initialGuessIndex = -1;
     int objectiveFunctionIndex = -1;
     ObjectiveFunctionSupplier objectiveFunctionSupplier = null;
+    SolutionValidator validator = null;
+
     for (int i = 0; i < optimData.length; i++)
     {
-
-      if (optimData[i] instanceof MaxEval)
+      if (optimData[i] instanceof SolutionValidator)
+      {
+        validator = (SolutionValidator) optimData[i];
+      }
+      else if (optimData[i] instanceof MaxEval)
       {
         optimData[i] = null;
         maxEvalIndex = i;
@@ -142,7 +150,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     final int _initialGuessIndex = initialGuessIndex;
     final int _objectiveFunctionIndex = objectiveFunctionIndex;
     final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
-    
+    final SolutionValidator _validator = validator;
+
     // Multi-start loop.
     range(0, starts).parallel().forEach(i -> {
       OptimizationData[] instanceOptimData = optimData.clone();
@@ -152,12 +161,20 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       double[] s = getStartingPoint(i, min, max, startPoint);
       instanceOptimData[_initialGuessIndex] = new InitialGuess(s);
       instanceOptimData[_objectiveFunctionIndex] = _objectiveFunctionSupplier.get();
-      
+
       // Optimize.
       final PointValuePair result = optimizer.optimize(instanceOptimData);
       synchronized (optima)
       {
-        store(result);
+        boolean valid = _validator == null || _validator.apply(result);
+        if (valid)
+        {
+          store(result);
+        }
+        else
+        {
+          out.println("Rejecting " + Arrays.toString(result.getKey()));
+        }
       }
 
       totalEvaluations.addAndGet(optimizer.getEvaluations());
@@ -205,7 +222,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
-  
+
   /** Found optima. */
   private final TreeSet<PointValuePair> optima = new TreeSet<PointValuePair>(getPairComparator());
 
@@ -238,6 +255,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   }
 
   GoalType goalType = GoalType.MAXIMIZE;
-  
+
   private final AtomicInteger totalEvaluations = new AtomicInteger();
 }

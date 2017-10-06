@@ -6,6 +6,8 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.tanh;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -25,8 +27,7 @@ import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess
-    implements MultivariateFunction, Serializable
+public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
 
   @Override
@@ -100,15 +101,27 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   static enum Parameter
   {
-    b, τ, ε, τ0
+
+    b(-1, 2), τ(0.00001, 10), ε(0, 0.5), τ0(0.00001, 10);
+
+    Parameter(double min, double max)
+    {
+      this.min = min;
+      this.max = max;
+    }
+
+    double min;
+
+    double max;
+
   };
 
   @Override
   public SimpleBounds getParameterBounds()
   {
-    return new SimpleBounds(new double[]
-    { -5, 0.00001, 0, 0.00001 }, new double[]
-    { 10, 10, 0.5, 10.0 });
+    final int paramCount = Parameter.values().length;
+    return new SimpleBounds(range(0, paramCount).mapToDouble(i -> Parameter.values()[i].min).toArray(),
+                            range(0, paramCount).mapToDouble(i -> Parameter.values()[i].max).toArray());
   }
 
   /**
@@ -136,7 +149,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double Z()
   {
     if (!normalize) { return 1; }
-    if (ε == 0 )
+    if (ε == 0)
     {
       return M * b * τ + M;
     }
@@ -159,10 +172,9 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
   public double iψ(double t)
   {
     double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
-    return t
-        * ρ * (M * b * τ - τ * M * b * exp(-t / τ)
-            + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
-        / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
+    return t * ρ
+           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
+           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
   @Override
