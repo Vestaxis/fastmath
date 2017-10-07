@@ -91,7 +91,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double ε = 0.25;
     double τ0 = 1;
     ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
-    Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0);
+    Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0).setName("data");
 
     int midpoint = data.size() / 2;
     data = data.slice(midpoint - 5000, midpoint + 5000);
@@ -103,11 +103,12 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     int evals = process.estimateParameters(15);
     out.println(evals + " iterations");
 
-    Vector compensator = process.Λ();
+    Vector compensator = process.Λ().setName("compensator");
+    
 
     File outputFile = new File("comp.mat");
     out.println("storing compensator to " + outputFile.getAbsolutePath());
-    MatFile.write(outputFile, compensator.setName("compensator").createMiMatrix());
+    MatFile.write(outputFile, compensator.createMiMatrix(), data.createMiMatrix() );
   }
   //
   // public void testEstimateParmeters2() throws IOException

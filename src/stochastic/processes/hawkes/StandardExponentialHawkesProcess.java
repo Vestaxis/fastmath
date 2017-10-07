@@ -582,12 +582,6 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   }
 
   @Override
-  public double value(double[] point)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public Vector getParameters()
   {
     throw new UnsupportedOperationException();

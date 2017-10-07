@@ -2,12 +2,14 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
+import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
+import static org.apache.commons.math3.util.CombinatoricsUtils.factorialDouble;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAccumulator;
@@ -52,7 +54,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   private double λ0;
 
-  private boolean verbose;
+  private boolean verbose = true;
 
   public ExponentialHawkesProcess()
   {
@@ -238,7 +240,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     return (tn * λ0 + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
-  
+
   /**
    * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
    * more uniformly distributed it is.
@@ -252,7 +254,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public Vector Λ()
   {
-   
+
     final int n = T.size() - 1;
 
     if (recursive)
@@ -271,19 +273,39 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
+  static enum ScoringMethod
+  {
+    LikelihoodMaximization, MomentMatching
+  }
+
+  ScoringMethod scoringMethod = ScoringMethod.MomentMatching;
+
   @Override
-  public double value(double[] point)
+  public final double value(double[] point)
   {
     assignParameters(point);
 
-    double ll = logLik();
+    if (scoringMethod == ScoringMethod.LikelihoodMaximization)
+    {
 
-    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
+      double ll = logLik();
 
-    // if (Double.isNaN(ll)) { throw new RuntimeException(new
-    // NotANumberException("(log)likelihood is NaN")); }
+      if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
 
-    return ll;
+      return ll;
+    }
+    else if (scoringMethod == ScoringMethod.MomentMatching)
+    {
+      double score = σ();
+      if (verbose)
+      {
+        out.println(Thread.currentThread().getName() + " " + Arrays.toString(point) + " σ=" + score);
+      }
+      return score;
+    }
+
+    throw new IllegalStateException("unhandled scoringMethod");
+
   }
 
   final static ExponentialDistribution expDist = new ExponentialDistribution(1);
@@ -302,7 +324,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    int numStarts = Runtime.getRuntime().availableProcessors() * 10;
+    int numStarts = Runtime.getRuntime().availableProcessors();
 
     SolutionValidator validator = point -> {
       ExponentialHawkesProcess process = newProcess(point);
@@ -318,13 +340,20 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     PointValuePairComparator discriminator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a);
       ExponentialHawkesProcess processB = newProcess(b);
-      double σa = processA.getCompensatorKolmogorovSmirnovStatistic();
-      double σb = processB.getCompensatorKolmogorovSmirnovStatistic();
-      return Double.compare( σb, σa );
+      // double σa = processA.getCompensatorKolmogorovSmirnovStatistic();
+      // double σb = processB.getCompensatorKolmogorovSmirnovStatistic();
+      double σa = processA.σ();
+      double σb = processB.σ();
+      return Double.compare(σb, σa);
     };
 
-    PointValuePair optimum =
-                           multiopt.optimize(GoalType.MAXIMIZE, discriminator, validator, maxEval, initialGuess, objectiveFunctionSupplier, simpleBounds);
+    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
+                                               discriminator,
+                                               validator,
+                                               maxEval,
+                                               initialGuess,
+                                               objectiveFunctionSupplier,
+                                               simpleBounds);
 
     for (PointValuePair point : multiopt.getOptima())
     {
@@ -336,8 +365,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return multiopt.getEvaluations();
 
   }
-
-
 
   public void evaluateParameters(PointValuePair point)
   {
@@ -357,25 +384,33 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
     double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
-    return 1-ksStatistic;
+    return 1 - ksStatistic;
   }
 
   public static double sigma(double m, double v)
   {
-    return -sqrt(pow((m - 1), 2) + pow(v - 1, 2) );
+    return 1 - sqrt(pow((m - 1), 2) + pow(v - 1, 2));
   }
-  
+
   /**
-   * functions which takes its minimum when the mean and the variance of the compensator is closer to 1
+   * functions which takes its minimum when the mean and the variance of the
+   * compensator is closer to 1
    * 
-   * @return sqrt(Λ().mean()^2 + Λ().variance()^2)
+   * @return -sum((1-(Λ^i)/i!)^2,i=1..n)/n
    */
   public double σ()
   {
-    double meanΛ = Λ().mean();
-    double varΛ = Λ().variance();
-    double σ = sigma(meanΛ, varΛ);
-    return σ;
+    Vector compensator = Λ();
+    DoubleAdder measure = new DoubleAdder();
+    int n = getParamCount();
+    for (int i = 1; i <= n; i++)
+    {
+      double sampleMoment = compensator.copy().pow(i).mean();
+      double desiredMoment = factorialDouble(i);
+      double ratio = sampleMoment / desiredMoment;
+      measure.add(pow(1 - ratio, 2));      
+    }
+    return -( measure.doubleValue() ) / n;
   }
 
   public ExponentialHawkesProcess newProcess(PointValuePair point)

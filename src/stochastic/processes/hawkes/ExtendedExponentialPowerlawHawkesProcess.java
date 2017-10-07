@@ -177,20 +177,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
            / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
-  @Override
-  public double value(double[] point)
-  {
-    this.b = point[Parameter.b.ordinal()];
-    this.ε = point[Parameter.ε.ordinal()];
-    this.τ0 = point[Parameter.τ0.ordinal()];
-    this.τ = point[Parameter.τ.ordinal()];
-
-    double ll = logLik();
-
-    if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
-
-    return ll;
-  }
 
   public Vector initializeParameterVectors()
   {
