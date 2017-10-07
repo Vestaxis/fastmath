@@ -373,7 +373,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     out.format("tried %s LL=%f 1-KS=%f mean(Λ)=%f var(Λ)=%f σ=%f\n",
                Arrays.toString(point.getKey()),
-               point.getValue(),
+               process.logLik(),
                ksStatistic,
                process.Λ().mean(),
                process.Λ().variance(),
@@ -402,7 +402,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     Vector compensator = Λ();
     DoubleAdder measure = new DoubleAdder();
-    int n = getParamCount();
+    int n = getParamCount() * 2;
     for (int i = 1; i <= n; i++)
     {
       double sampleMoment = compensator.copy().pow(i).mean();

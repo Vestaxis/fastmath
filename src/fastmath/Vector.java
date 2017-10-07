@@ -1023,7 +1023,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 		assert beginIndex >= 0 : String.format("beginIndex %d must be >= 0", beginIndex);
 		assert endIndex <= size() : String.format("endIndex %d must be <= %d", endIndex, size());
 
-		return new Vector.Sub(buffer, endIndex - beginIndex, getOffset(beginIndex), getIncrement());
+		Vector.Sub subset = new Vector.Sub(buffer, endIndex - beginIndex, getOffset(beginIndex), getIncrement());
+		subset.setName(getName());
+    return subset;
 	}
 
 	/**
