@@ -1,62 +1,34 @@
 package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
-import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
-import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static java.lang.Math.tanh;
-import static java.lang.System.out;
-import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.optim.SimpleBounds;
-import org.apache.commons.math3.optimization.GoalType;
-import org.apache.commons.math3.optimization.PointValuePair;
-import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
-import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
-import org.apache.commons.math3.random.RandomVectorGenerator;
-import org.apache.commons.math3.util.FastMath;
 
-import fastmath.Pair;
 import fastmath.Vector;
-import fastmath.exceptions.NotANumberException;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
 public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess implements MultivariateFunction, Serializable
 {
+  private static final long serialVersionUID = 1L;
 
-  private static final int MAX_η = 100;
-
-  /**
-   * 
-   * @param τ0
-   *          scale
-   * 
-   * @param ε
-   *          degree of fractional integration
-   * 
-   */
   public ExponentialPowerlawHawkesProcess(double τ0, double ε)
   {
     this.τ0 = τ0;
-    // this.η = log(η);
     this.ε = ε;
-    // this.ε = FastMath.atanh(-1 + 4 * ε);
     initializeParameterVectors();
   }
-
-  private static final long serialVersionUID = 1L;
 
   public ExponentialPowerlawHawkesProcess()
   {
   }
 
-  static enum Parameter implements Bound
+  static enum Parameter implements BoundedParameter
   {
 
     ε(0, 0.5), τ0(0, 30);
@@ -87,6 +59,13 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess i
     {
       return max;
     }
+
+    @Override
+    public int getOrdinal()
+    {
+      return ordinal();
+    }
+
   };
 
   /**
@@ -166,14 +145,14 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess i
 
   private int iterations = 0;
 
-  public Vector getParameters()
-  {
-    int paramCount = getParamCount();
-    Vector params = new Vector(paramCount);
-    params.set(Parameter.ε.ordinal(), ε);
-    params.set(Parameter.τ0.ordinal(), τ0);
-    return params;
-  }
+  // public Vector getParameters()
+  // {
+  // int paramCount = getParamCount();
+  // Vector params = new Vector(paramCount);
+  // params.set(Parameter.ε.ordinal(), ε);
+  // params.set(Parameter.τ0.ordinal(), τ0);
+  // return params;
+  // }
 
   public Vector getTransformedParameters()
   {
@@ -291,9 +270,15 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess i
   }
 
   @Override
-  public Bound[] getBounds()
+  public BoundedParameter[] getBoundedParameters()
   {
     return Parameter.values();
+  }
+
+  @Override
+  public double λ()
+  {
+    throw new UnsupportedOperationException("TODO: unconditional λ");
   }
 
 }

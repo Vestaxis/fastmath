@@ -2,35 +2,60 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
-import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static java.lang.Math.tanh;
-import static java.lang.System.out;
-import static java.util.stream.IntStream.range;
-import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.Serializable;
-import java.security.Policy.Parameters;
 import java.util.Arrays;
-import java.util.Enumeration;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
-import org.apache.commons.math3.optim.SimpleBounds;
-import org.apache.commons.math3.optimization.GoalType;
-import org.apache.commons.math3.optimization.PointValuePair;
-import org.apache.commons.math3.optimization.direct.NelderMeadSimplex;
-import org.apache.commons.math3.optimization.direct.SimplexOptimizer;
-import org.apache.commons.math3.util.FastMath;
 
 import fastmath.Vector;
-import fastmath.exceptions.NotANumberException;
-import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
 public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
+  static enum Parameter implements BoundedParameter
+  {
+
+    b(-2, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
+
+    Parameter(double min, double max)
+    {
+      this.min = min;
+      this.max = max;
+    }
+
+    double min;
+
+    double max;
+
+    @Override
+    public double getMin()
+    {
+      return min;
+    }
+
+    @Override
+    public double getMax()
+    {
+      return max;
+    }
+
+    @Override
+    public String getName()
+    {
+      return name();
+    }
+
+    @Override
+    public int getOrdinal()
+    {
+      return ordinal();
+    }
+
+
+  };
 
   @Override
   public void assignParameters(double[] point)
@@ -41,7 +66,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     this.τ = point[Parameter.τ.ordinal()];
   }
 
-  public Object clone()
+  public ExponentialPowerlawHawkesProcess clone()
   {
     ExtendedExponentialPowerlawHawkesProcess clonedProcess = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
     clonedProcess.T = T;
@@ -101,46 +126,11 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   }
 
-  static enum Parameter implements Bound
-  {
-
-    b(-1, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
-
-    Parameter(double min, double max)
-    {
-      this.min = min;
-      this.max = max;
-    }
-
-    double min;
-
-    double max;
-
-    @Override
-    public double getMin()
-    {
-      return min;
-    }
-
-    @Override
-    public double getMax()
-    {
-      return max;
-    }
-
-    @Override
-    public String getName()
-    {
-      return name();
-    }
-
-
-  };
 
   
 
   @Override
-  public Bound[] getBounds()
+  public BoundedParameter[] getBoundedParameters()
   {
    Parameter[] parameters = Parameter.values();
    return parameters;
@@ -211,16 +201,16 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   Vector params;
 
-  public Vector getParameters()
-  {
-    int paramCount = Parameter.values().length;
-    params = new Vector(paramCount);
-    params.set(Parameter.b.ordinal(), b);
-    params.set(Parameter.ε.ordinal(), ε);
-    params.set(Parameter.τ.ordinal(), τ);
-    params.set(Parameter.τ0.ordinal(), τ0);
-    return params;
-  }
+//  public Vector getParameters()
+//  {
+//    int paramCount = Parameter.values().length;
+//    params = new Vector(paramCount);
+//    params.set(Parameter.b.ordinal(), b);
+//    params.set(Parameter.ε.ordinal(), ε);
+//    params.set(Parameter.τ.ordinal(), τ);
+//    params.set(Parameter.τ0.ordinal(), τ0);
+//    return params;
+//  }
 
   public Vector getTransformedParameters()
   {

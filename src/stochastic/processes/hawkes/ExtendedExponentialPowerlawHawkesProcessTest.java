@@ -1,7 +1,6 @@
 package stochastic.processes.hawkes;
 
 import static java.lang.Math.pow;
-import static java.lang.Math.random;
 import static java.lang.System.out;
 
 import java.io.File;

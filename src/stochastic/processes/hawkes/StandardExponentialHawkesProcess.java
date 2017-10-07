@@ -2,7 +2,6 @@ package stochastic.processes.hawkes;
 
 import static java.lang.System.out;
 
-import org.apache.commons.math3.optim.SimpleBounds;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 
@@ -117,7 +116,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
                          α,
                          β,
                          getBranchingRatio(),
-                         getUnconditionalIntensity());
+                         λ());
   }
 
   private int P;
@@ -214,13 +213,8 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     return Fastmath.getHawkesLLPos(t, lambda, α, β);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see pp.HawkesProcess#getUnconditionalIntensity()
-   */
   @Override
-  public double getUnconditionalIntensity()
+  public double λ()
   {
     return lambda / (1 - getBranchingRatio());
   }
@@ -583,12 +577,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   {
     return "α=" + α + " β=" + β;
   }
-
-  @Override
-  public Vector getParameters()
-  {
-    throw new UnsupportedOperationException();
-  }
+//
+//  @Override
+//  public Vector getParameters()
+//  {
+//    throw new UnsupportedOperationException();
+//  }
 
   @Override
   public int getParamCount()
@@ -610,7 +604,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   }
 
   @Override
-  public Bound[] getBounds()
+  public BoundedParameter[] getBoundedParameters()
   {
     throw new UnsupportedOperationException("implement me");
   }

@@ -1,22 +1,25 @@
 package stochastic.processes.hawkes;
 
-import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 
 public interface HawkesProcess
 {
 
-	double getBranchingRatio();
+  double getBranchingRatio();
 
-	double logLikelihood(Vector t);
+  double logLikelihood(Vector t);
 
-	double getUnconditionalIntensity();
+  /**
+   * 
+   * @return unconditional mean intensity
+   */
+  double λ();
 
-	public DoubleColMatrix getJacobian(Vector t);
-
-	public DoubleColMatrix getHessian(Vector t);
-
-	int order();
-
+  /**
+   * 
+   * @param t
+   * @return conditional mean intensity
+   */
+  double λ(double t);
 
 }

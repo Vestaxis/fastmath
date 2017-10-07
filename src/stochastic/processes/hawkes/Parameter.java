@@ -1,6 +1,6 @@
 package stochastic.processes.hawkes;
 
-enum Parameter implements Bound
+enum Parameter implements BoundedParameter
 {
 
   b(-1, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
@@ -31,6 +31,12 @@ enum Parameter implements Bound
   public String getName()
   {
     return name();
+  }
+
+  @Override
+  public int getOrdinal()
+  {
+    return ordinal();
   }
 
 
