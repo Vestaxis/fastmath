@@ -8,6 +8,7 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorialDouble;
 
@@ -204,10 +205,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
       }
       ll = Double.NEGATIVE_INFINITY;
     }
-    if (verbose)
-    {
-      out.println(Thread.currentThread().getName() + " LL{" + getParamString() + "}=" + ll);
-    }
+
     return ll;
 
   }
@@ -285,23 +283,27 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     assignParameters(point);
 
+    double score = Double.NaN;
+
     if (scoringMethod == ScoringMethod.LikelihoodMaximization)
     {
 
-      double ll = logLik();
+      score = logLik();
 
-      if (Double.isNaN(ll)) { return Double.NEGATIVE_INFINITY; }
-
-      return ll;
+      if (Double.isNaN(score))
+      {
+        score = Double.NEGATIVE_INFINITY;
+      }
     }
     else if (scoringMethod == ScoringMethod.MomentMatching)
     {
-      double score = σ();
-      if (verbose)
-      {
-        out.println(Thread.currentThread().getName() + " " + Arrays.toString(point) + " σ=" + score);
-      }
+      score = σ();
       return score;
+    }
+
+    if (verbose)
+    {
+      out.println(Thread.currentThread().getName() + " score{" + getParamString() + "}=" + score);
     }
 
     throw new IllegalStateException("unhandled scoringMethod");
@@ -408,9 +410,9 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
       double sampleMoment = compensator.copy().pow(i).mean();
       double desiredMoment = factorialDouble(i);
       double ratio = sampleMoment / desiredMoment;
-      measure.add(pow(1 - ratio, 2));      
+      measure.add(pow(1 - ratio, 2));
     }
-    return -( measure.doubleValue() ) / n;
+    return -(measure.doubleValue()) / n;
   }
 
   public ExponentialHawkesProcess newProcess(PointValuePair point)
@@ -448,7 +450,13 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     };
   }
 
-  public abstract SimpleBounds getParameterBounds();
+  public final SimpleBounds getParameterBounds()
+  {
+    Bound[] bounds = getBounds();
+    final int paramCount = bounds.length;
+    return new SimpleBounds(range(0, paramCount).mapToDouble(i -> bounds[i].getMin()).toArray(),
+                            range(0, paramCount).mapToDouble(i -> bounds[i].getMax()).toArray());
+  }
 
   private Vector calculateInitialGuess(Vector durations)
   {
@@ -468,5 +476,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   }
 
   public abstract void assignParameters(double[] point);
+
+  public abstract Bound[] getBounds();
 
 }

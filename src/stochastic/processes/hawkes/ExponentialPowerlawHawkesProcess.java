@@ -27,8 +27,7 @@ import fastmath.exceptions.NotANumberException;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
-    implements MultivariateFunction, Serializable
+public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess implements MultivariateFunction, Serializable
 {
 
   private static final int MAX_η = 100;
@@ -57,18 +56,38 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   {
   }
 
-  static enum Parameter
+  static enum Parameter implements Bound
   {
-    ε, τ0
-  };
 
-  @Override
-  public SimpleBounds getParameterBounds()
-  {
-    return new SimpleBounds(new double[]
-    { 0.0, 0 }, new double[]
-    { 0.5, MAX_η });
-  }
+    ε(0, 0.5), τ0(0, 30);
+
+    private double min;
+    private double max;
+
+    Parameter(double min, double max)
+    {
+      this.min = min;
+      this.max = max;
+    }
+
+    @Override
+    public String getName()
+    {
+      return name();
+    }
+
+    @Override
+    public double getMin()
+    {
+      return min;
+    }
+
+    @Override
+    public double getMax()
+    {
+      return max;
+    }
+  };
 
   /**
    * range of the approximation
@@ -131,7 +150,6 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   {
     return τ0;
   }
-
 
   @Override
   public void assignParameters(double[] point)
@@ -214,36 +232,47 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     final double eps = ε;
 
     double a = m * (-1 + pow(m, eps))
-        * (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
-            + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1))) * eta
-                / m * exp(-t / eta * m))
-        / eta
-        / (pow(eta, -1 - eps) * pow(m, 1 + eps)
-            - 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps))
-                * pow(m, eps)
-            - pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1)
-            + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+               * (-sum(i -> pow(1 / eta / pow(m, i), 1 + eps) * eta * pow(m, i) * exp(-t / eta / pow(m, i)), 0, M - 1)
+                  + 1 / (pow(m, 1 + eps) - 1)
+                    * pow(eta, -1 - eps)
+                    * (pow(m, 1 + eps) - pow(m, -(1 + eps) * (M - 1)))
+                    * eta
+                    / m
+                    * exp(-t / eta * m))
+               / eta
+               / (pow(eta, -1 - eps) * pow(m, 1 + eps)
+                  - 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
+                  - pow(eta, -1 - eps) * pow(m, -0.4e1 * eps + 1)
+                  + 1 / (pow(m, 1 + eps) - 1) * pow(eta, -1 - eps) * (pow(m, 1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
     double b = m * (-0.1e1 + pow(m, eps))
-        * (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-            + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-                * (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m)
-        / eta
-        / (pow(eta, -0.1e1 - eps) * pow(m, 0.1e1 + eps)
-            - 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-                * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)) * pow(m, eps)
-            - pow(eta, -0.1e1 - eps) * pow(m, -0.4e1 * eps + 0.1e1) + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
-                * pow(eta, -0.1e1 - eps) * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
+               * (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+                  + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
+                    * pow(eta, -0.1e1 - eps)
+                    * (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1)))
+                    * eta
+                    / m)
+               / eta
+               / (pow(eta, -0.1e1 - eps) * pow(m, 0.1e1 + eps)
+                  - 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
+                    * pow(eta, -0.1e1 - eps)
+                    * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps))
+                    * pow(m, eps)
+                  - pow(eta, -0.1e1 - eps) * pow(m, -0.4e1 * eps + 0.1e1)
+                  + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps) * (pow(m, 0.1e1 + eps) - pow(m, -0.4e1 - 0.4e1 * eps)));
 
-    double c = eta * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
-        - 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps)))
-            * pow(m, eps)
-        - pow(eta, (-1 - eps)) * pow(m, (-4 * eps + 1))
-        + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))));
+    double c = eta
+               * (pow(eta, (-1 - eps)) * pow(m, (1 + eps))
+                  - 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))) * pow(m, eps)
+                  - pow(eta, (-1 - eps)) * pow(m, (-4 * eps + 1))
+                  + 0.1e1 / (pow(m, (1 + eps)) - 0.1e1) * pow(eta, (-1 - eps)) * (pow(m, (1 + eps)) - pow(m, (-4 - 4 * eps))));
 
     double d = m * (-0.1e1 + pow(m, eps))
-        * (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
-            + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1) * pow(eta, -0.1e1 - eps)
-                * (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1))) * eta / m);
+               * (-0.1e1 / (-0.1e1 + pow(m, eps)) * pow(eta, -eps) * (pow(m, eps) - pow(m, -eps * (M - 1)))
+                  + 0.1e1 / (pow(m, 0.1e1 + eps) - 0.1e1)
+                    * pow(eta, -0.1e1 - eps)
+                    * (pow(m, 0.1e1 + eps) - pow(m, -(0.1e1 + eps) * (M - 1)))
+                    * eta
+                    / m);
 
     return -((a - b) * c) / d;
   }
@@ -259,6 +288,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     ExponentialPowerlawHawkesProcess process = new ExponentialPowerlawHawkesProcess(τ0, ε);
     process.T = T;
     return process;
+  }
+
+  @Override
+  public Bound[] getBounds()
+  {
+    return Parameter.values();
   }
 
 }

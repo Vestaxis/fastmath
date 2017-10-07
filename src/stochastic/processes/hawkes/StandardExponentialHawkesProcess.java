@@ -26,8 +26,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
     ;
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25,
-        eplhp.αS(), eplhp.βS());
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25, eplhp.αS(), eplhp.βS());
     eplhp.T = hp.T;
     exthp.T = hp.T;
     XYChart chart = new XYChart(800, 600);
@@ -114,7 +113,11 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   public String toString()
   {
     return String.format("HawkesProcess[lambda=%f, alpha=%s, beta=%s, branchingRatio=%f, unconditionalIntensity=%f]",
-        lambda, α, β, getBranchingRatio(), getUnconditionalIntensity());
+                         lambda,
+                         α,
+                         β,
+                         getBranchingRatio(),
+                         getUnconditionalIntensity());
   }
 
   private int P;
@@ -593,13 +596,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     return Parameter.values().length;
   }
 
-  @Override
-  public SimpleBounds getParameterBounds()
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  public Object clone() 
+  public Object clone()
   {
     StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(this);
     process.T = T;
@@ -609,7 +606,13 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   @Override
   public void assignParameters(double[] point)
   {
-    throw new UnsupportedOperationException( "implement me" ); 
+    throw new UnsupportedOperationException("implement me");
+  }
+
+  @Override
+  public Bound[] getBounds()
+  {
+    throw new UnsupportedOperationException("implement me");
   }
 
 }

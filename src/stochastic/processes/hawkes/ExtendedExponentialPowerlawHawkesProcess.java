@@ -10,7 +10,9 @@ import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.Serializable;
+import java.security.Policy.Parameters;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -99,7 +101,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   }
 
-  static enum Parameter
+  static enum Parameter implements Bound
   {
 
     b(-1, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
@@ -114,14 +116,35 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
     double max;
 
+    @Override
+    public double getMin()
+    {
+      return min;
+    }
+
+    @Override
+    public double getMax()
+    {
+      return max;
+    }
+
+    @Override
+    public String getName()
+    {
+      return name();
+    }
+
+
   };
 
+  
+
   @Override
-  public SimpleBounds getParameterBounds()
+  public Bound[] getBounds()
   {
-    final int paramCount = Parameter.values().length;
-    return new SimpleBounds(range(0, paramCount).mapToDouble(i -> Parameter.values()[i].min).toArray(),
-                            range(0, paramCount).mapToDouble(i -> Parameter.values()[i].max).toArray());
+   Parameter[] parameters = Parameter.values();
+   return parameters;
+   //return (Bound[]) Arrays.stream( parameters ).toArray();
   }
 
   /**
