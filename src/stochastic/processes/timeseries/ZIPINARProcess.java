@@ -1,4 +1,4 @@
-package stochastic.processes;
+package stochastic.processes.timeseries;
 
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;

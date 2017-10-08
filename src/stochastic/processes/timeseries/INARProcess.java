@@ -1,4 +1,4 @@
-package stochastic.processes;
+package stochastic.processes.timeseries;
 
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;

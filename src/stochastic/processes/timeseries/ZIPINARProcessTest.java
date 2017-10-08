@@ -1,4 +1,4 @@
-package stochastic.processes;
+package stochastic.processes.timeseries;
 
 import static java.lang.Math.pow;
 import static java.lang.System.out;
