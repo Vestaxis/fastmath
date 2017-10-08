@@ -42,6 +42,17 @@ import fastmath.optim.SolutionValidator;
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable, HawkesProcess
 {
 
+  /**
+   * 
+   * @return number of trajectories do generate during search for optimal
+   *         parameters
+   * 
+   */
+  public int getTrajectoryCount()
+  {
+    return Runtime.getRuntime().availableProcessors();
+  }
+
   @Override
   public double logLikelihood(Vector t)
   {
@@ -58,7 +69,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   {
     return (E) clone();
   }
-  
+
   protected abstract double α(int j);
 
   protected abstract double β(int j);
@@ -253,6 +264,37 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return (tn * λ0 + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
+  public Vector λvector()
+  {
+    final int n = T.size();
+    Vector intensity = new Vector(n);
+
+    if (recursive)
+    {
+      double S[] = new double[order()];
+      for (int i = 1; i < n; i++)
+      {
+        double t = T.get(i);
+        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+        double dt = t - T.get(i - 1);
+        double λ = evolveλ(dt, S);
+        intensity.set(i, λ);
+
+      }
+    }
+    else
+    {
+      for (int i = 1; i < n; i++)
+      {
+        double thist = T.get(i);
+        intensity.set(i - 1, λ(thist));
+      }
+
+    }
+
+    return intensity;
+  }
+
   /**
    * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
    * more uniformly distributed it is.
@@ -335,12 +377,12 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     InitialGuess initialGuess = getInitialGuess();
 
-    ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction((MultivariateFunction) this.clone());
+    ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
-    int numStarts = Runtime.getRuntime().availableProcessors() * 10;
+    int numStarts = getTrajectoryCount();
 
     SolutionValidator validator = point -> {
       ExponentialHawkesProcess process = newProcess(point);
@@ -411,11 +453,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return 1 - ksStatistic;
   }
 
-  public static double sigma(double m, double v)
-  {
-    return 1 - sqrt(pow((m - 1), 2) + pow(v - 1, 2));
-  }
-
   /**
    * functions which takes its minimum when the mean and the variance of the
    * compensator is closer to 1
@@ -482,10 +519,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   public Field getField(String name)
   {
-    // Field field;
-
-    // if (field == null)
-    // {
     Class<? extends Object> oClass = getClass();
     NoSuchFieldException nsfe = null;
     try
@@ -511,14 +544,25 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     {
       throw new RuntimeException(oClass.getName() + ": " + e.getMessage(), e);
     }
-    // }
-
-    // return field;
   }
 
   Field[] parameterFields = null;
 
   public Vector getParameters()
+  {
+    return new Vector(Arrays.stream(getParameterFields()).mapToDouble(field -> {
+      try
+      {
+        return field.getDouble(this);
+      }
+      catch (IllegalArgumentException | IllegalAccessException e)
+      {
+        throw new RuntimeException(e.getMessage(), e);
+      }
+    }));
+  }
+
+  public Field[] getParameterFields()
   {
     if (parameterFields == null)
     {
@@ -530,17 +574,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
         parameterFields[i++] = getField(param.getName());
       }
     }
-
-    return new Vector(Arrays.stream(parameterFields).mapToDouble(field -> {
-      try
-      {
-        return field.getDouble(this);
-      }
-      catch (IllegalArgumentException | IllegalAccessException e)
-      {
-        throw new RuntimeException(e.getMessage(), e);
-      }
-    }));
+    return parameterFields;
   }
 
   private Vector calculateInitialGuess(Vector durations)
@@ -560,7 +594,24 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     chart.addSeries(name, X.toArray(), Y.toArray());
   }
 
-  public abstract void assignParameters(double[] point);
+  public final void assignParameters(double[] point)
+  {
+    BoundedParameter[] params = getBoundedParameters();
+    Field[] fields = getParameterFields();
+    assert fields.length == params.length;
+
+    for (int i = 0; i < fields.length; i++)
+    {
+      try
+      {
+        fields[i].setDouble(this, point[params[i].getOrdinal()]);
+      }
+      catch (IllegalArgumentException | IllegalAccessException e)
+      {
+        throw new RuntimeException(e.getMessage(), e);
+      }
+    }
+  }
 
   public abstract BoundedParameter[] getBoundedParameters();
 

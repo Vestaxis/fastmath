@@ -18,8 +18,8 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   {
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.15);
 
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.getη(),
-                                                                                                  eplhp.getε(),
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.τ0,
+                                                                                                  eplhp.ε,
                                                                                                   eplhp.αS(),
                                                                                                   eplhp.βS());
 
@@ -90,24 +90,23 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double ε = 0.25;
     double τ0 = 1;
     ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
-    Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0).setName("data");
+    Vector data = MatFile.loadMatrix("/home/stephen/git/fastmath/SPY.mat", "SPY").col(0).setName("data");
 
     int midpoint = data.size() / 2;
     data = data.slice(midpoint - 5000, midpoint + 5000);
     data = data.copy().subtract(data.get(0));
 
-    process.normalize = true;
     process.T = data;
 
     int evals = process.estimateParameters(15);
     out.println(evals + " iterations");
 
     Vector compensator = process.Λ().setName("compensator");
-    
+    Vector intensities = process.λvector().setName("intensity");
 
     File outputFile = new File("comp.mat");
-    out.println("storing compensator to " + outputFile.getAbsolutePath());
-    MatFile.write(outputFile, compensator.createMiMatrix(), data.createMiMatrix() );
+    out.println("storing compensator, data, and intensity to " + outputFile.getAbsolutePath());
+    MatFile.write(outputFile, compensator.createMiMatrix(), data.createMiMatrix(), intensities.createMiMatrix() );
   }
   //
   // public void testEstimateParmeters2() throws IOException

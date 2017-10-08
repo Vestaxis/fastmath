@@ -125,17 +125,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess i
     return pow(1 / (τ0 * pow(m, i)), 1 + ε);
   }
 
-  public double getη()
-  {
-    return τ0;
-  }
-
-  @Override
-  public void assignParameters(double[] point)
-  {
-    this.ε = point[Parameter.ε.ordinal()];
-    this.τ0 = point[Parameter.τ0.ordinal()];
-  }
+//  @Override
+//  public void assignParameters(double[] point)
+//  {
+//    this.ε = point[Parameter.ε.ordinal()];
+//    this.τ0 = point[Parameter.τ0.ordinal()];
+//  }
 
   public Vector initializeParameterVectors()
   {

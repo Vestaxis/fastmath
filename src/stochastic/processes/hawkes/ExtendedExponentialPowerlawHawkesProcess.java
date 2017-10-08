@@ -57,14 +57,14 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   };
 
-  @Override
-  public void assignParameters(double[] point)
-  {
-    this.ε = point[Parameter.ε.ordinal()];
-    this.τ0 = point[Parameter.τ0.ordinal()];
-    this.b = point[Parameter.b.ordinal()];
-    this.τ = point[Parameter.τ.ordinal()];
-  }
+//  @Override
+//  public void assignParameters(double[] point)
+//  {
+//    this.ε = point[Parameter.ε.ordinal()];
+//    this.τ0 = point[Parameter.τ0.ordinal()];
+//    this.b = point[Parameter.b.ordinal()];
+//    this.τ = point[Parameter.τ.ordinal()];
+//  }
 
   public ExponentialPowerlawHawkesProcess clone()
   {
@@ -262,5 +262,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
     // return b;
   }
+
 
 }

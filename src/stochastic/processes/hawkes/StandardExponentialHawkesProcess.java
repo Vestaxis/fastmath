@@ -1,38 +1,70 @@
 package stochastic.processes.hawkes;
 
+import static java.lang.Math.min;
 import static java.lang.System.out;
+
+import java.io.IOException;
 
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
+import org.knowm.xchart.style.XYStyler;
 
 import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
+import fastmath.matfile.MatFile;
 import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess implements HawkesProcess
 {
-  public static void main(String args[]) throws InterruptedException
+  public static void main(String args[]) throws InterruptedException, IOException
+  {
+//    Vector data = new Vector(new double[]
+//    { 1.3, 1.4, 1.9, 2.5, 3.3, 3.9, 4.2, 4.5 });
+//    data.add(10);
+
+    Vector data = MatFile.loadMatrix("SPY.mat", "SPY").col(0).setName("data");
+
+    int midpoint = data.size() / 2;
+    data = data.slice(midpoint - 500, midpoint + 500);
+    data = data.copy().subtract(data.get(0));
+
+    chartData(data);
+
+    while (true)
+    {
+      Thread.sleep(1000);
+    }
+  }
+
+  public static void chartData(Vector data)
   {
     double[] alpha = new double[]
     { 0.1, 0.4 };
     double[] beta = new double[]
     { 1.3, 1.7 };
     StandardExponentialHawkesProcess hp = new StandardExponentialHawkesProcess(0.1, alpha, beta);
-    hp.T = new Vector(new double[]
-    { 1.3, 1.4, 1.9, 2.5, 3.3, 3.9, 4.2, 4.5 });
+    hp.T = data;
 
     ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
-    ;
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(1.6, 0.25, eplhp.αS(), eplhp.βS());
+
+    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess();
+    exthp.assignParameters(new double[]
+    { 1.8203268780766264, 0.36780828690270007, 7.677090977790245E-8, 3.9448590148594826 });
+
     eplhp.T = hp.T;
     exthp.T = hp.T;
     XYChart chart = new XYChart(800, 600);
-
-    double W = hp.T.getRightmostValue();
-    double dt = 0.001;
-    int n = (int) (W / dt);
+    XYStyler styler = chart.getStyler();
+    double minT = hp.T.fmin();
+    double maxT = hp.T.fmax();
+    double W = (maxT - minT) * 3;
+    styler.setXAxisMin(minT);
+    double maxX = minT + W;
+    styler.setXAxisMax(maxX);
+    double dt = 0.01;
+    int n = min( 10000, (int) (W / dt) );
 
     int idx = 0;
 
@@ -41,19 +73,25 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     Vector Y3 = new Vector(n);
     Vector extY = new Vector(n);
     Vector Svector = new Vector(n);
+    double t = 0;
     for (int i = 0; i < X.size(); i++)
     {
-      double t = i * dt;
+      if ( i % 10 == 0 )
+      {
+        out.println( i + "/" + X.size() );
+      }
+      t = minT + i * dt;
       X.set(i, t);
       Y1.set(i, hp.λ(t));
       Y3.set(i, eplhp.λ(t));
       extY.set(i, exthp.λ(t));
     }
+    out.println("last t is " + t + " maxX is " + maxX);
     addSeriesToChart(chart, "λexp", X, Y1);
     addSeriesToChart(chart, "λepl", X, Y3);
     addSeriesToChart(chart, "λext", X, extY);
 
-    chart.getStyler().setMarkerSize(1);
+    styler.setMarkerSize(1);
 
     n = hp.T.size();
     X = new Vector(n);
@@ -81,19 +119,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
       Svector.set(i, eplλ);
       Y5.set(i, eplhp.λ(hp.T.get(i)));
     }
-    out.println("Y1=" + Y1);
-    out.println("Y4=" + Svector);
-    out.println("Y5=" + Y5);
+
 
     addSeriesToChart(chart, "R[i]", X, Y1);
     addSeriesToChart(chart, "S[i]", X, Svector);
 
     new SwingWrapper<>(chart).displayChart();
-
-    while (true)
-    {
-      Thread.sleep(1000);
-    }
   }
 
   @Override
@@ -577,12 +608,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   {
     return "α=" + α + " β=" + β;
   }
-//
-//  @Override
-//  public Vector getParameters()
-//  {
-//    throw new UnsupportedOperationException();
-//  }
+  //
+  // @Override
+  // public Vector getParameters()
+  // {
+  // throw new UnsupportedOperationException();
+  // }
 
   @Override
   public int getParamCount()
@@ -597,11 +628,11 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     return process;
   }
 
-  @Override
-  public void assignParameters(double[] point)
-  {
-    throw new UnsupportedOperationException("implement me");
-  }
+//  @Override
+//  public void assignParameters(double[] point)
+//  {
+//    throw new UnsupportedOperationException("implement me");
+//  }
 
   @Override
   public BoundedParameter[] getBoundedParameters()
