@@ -65,10 +65,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     return 1 / τ0 / pow(m, i);
   }
 
-  /**
-   * precision of approximation
-   */
-  protected double m = 5;
+ double m = 5;
 
 
   public ExponentialPowerlawHawkesProcess()

@@ -180,6 +180,10 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     this.T = hp.T;
   }
 
+  public StandardExponentialHawkesProcess()
+  {
+  }
+
   public Vector getAlpha()
   {
     return α;
