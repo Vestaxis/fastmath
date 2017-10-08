@@ -16,7 +16,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 {
   public void testKernel()
   {
-    ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.15);
+    ConstrainedExponentialPowerlawHawkesProcess eplhp = new ConstrainedExponentialPowerlawHawkesProcess(1.6, 0.15);
 
     ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.τ0,
                                                                                                   eplhp.ε,

@@ -14,7 +14,6 @@ import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
 import fastmath.matfile.MatFile;
-import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess implements HawkesProcess
 {
@@ -47,7 +46,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     StandardExponentialHawkesProcess hp = new StandardExponentialHawkesProcess(0.1, alpha, beta);
     hp.T = data;
 
-    ExponentialPowerlawHawkesProcess eplhp = new ExponentialPowerlawHawkesProcess(1.6, 0.25);
+    ExponentialPowerlawHawkesProcess eplhp = new ConstrainedExponentialPowerlawHawkesProcess(1.6, 0.25);
 
     ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess();
     exthp.assignParameters(new double[]
@@ -608,31 +607,6 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   {
     return "α=" + α + " β=" + β;
   }
-  //
-  // @Override
-  // public Vector getParameters()
-  // {
-  // throw new UnsupportedOperationException();
-  // }
-
-  @Override
-  public int getParamCount()
-  {
-    return Parameter.values().length;
-  }
-
-  public Object clone()
-  {
-    StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(this);
-    process.T = T;
-    return process;
-  }
-
-//  @Override
-//  public void assignParameters(double[] point)
-//  {
-//    throw new UnsupportedOperationException("implement me");
-//  }
 
   @Override
   public BoundedParameter[] getBoundedParameters()

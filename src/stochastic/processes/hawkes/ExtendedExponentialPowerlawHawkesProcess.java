@@ -13,7 +13,8 @@ import fastmath.Vector;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess implements MultivariateFunction, Serializable
+public class ExtendedExponentialPowerlawHawkesProcess extends ConstrainedExponentialPowerlawHawkesProcess
+    implements MultivariateFunction, Serializable
 {
   static enum Parameter implements BoundedParameter
   {
@@ -54,32 +55,9 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
       return ordinal();
     }
 
-
   };
 
-//  @Override
-//  public void assignParameters(double[] point)
-//  {
-//    this.ε = point[Parameter.ε.ordinal()];
-//    this.τ0 = point[Parameter.τ0.ordinal()];
-//    this.b = point[Parameter.b.ordinal()];
-//    this.τ = point[Parameter.τ.ordinal()];
-//  }
-
-  public ExponentialPowerlawHawkesProcess clone()
-  {
-    ExtendedExponentialPowerlawHawkesProcess clonedProcess = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
-    clonedProcess.T = T;
-    return clonedProcess;
-  }
-
   private double ρ;
-
-  @Override
-  public int getParamCount()
-  {
-    return Parameter.values().length;
-  }
 
   /**
    * 
@@ -104,7 +82,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     this.τ = τ;
     this.ε = ε;
     this.b = b;
-    initializeParameterVectors();
 
   }
 
@@ -112,7 +89,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
   public ExtendedExponentialPowerlawHawkesProcess()
   {
-    initializeParameterVectors();
   }
 
   private double[] getParameterArray()
@@ -120,37 +96,18 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
     return getParameters().toArray();
   }
 
-  public String getParamString()
-  {
-    return Arrays.asList(Parameter.values()).toString() + "=" + getTransformedParameters().toString();
-
-  }
-
-
-  
-
   @Override
   public BoundedParameter[] getBoundedParameters()
   {
-   Parameter[] parameters = Parameter.values();
-   return parameters;
-   //return (Bound[]) Arrays.stream( parameters ).toArray();
+    Parameter[] parameters = Parameter.values();
+    return parameters;
+    // return (Bound[]) Arrays.stream( parameters ).toArray();
   }
-
-  /**
-   * range of the approximation
-   */
-  int M = 15;
 
   /**
    * powerlaw scale
    */
   private double τ;
-
-  /**
-   * precision of approximation
-   */
-  private double m = 5;
 
   private double b;
 
@@ -161,7 +118,6 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
    */
   public double Z()
   {
-    if (!normalize) { return 1; }
     if (ε == 0)
     {
       return M * b * τ + M;
@@ -190,27 +146,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
            / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
-
-  public Vector initializeParameterVectors()
-  {
-    params = getParameters();
-    return params;
-  }
-
   private int iterations = 0;
-
-  Vector params;
-
-//  public Vector getParameters()
-//  {
-//    int paramCount = Parameter.values().length;
-//    params = new Vector(paramCount);
-//    params.set(Parameter.b.ordinal(), b);
-//    params.set(Parameter.ε.ordinal(), ε);
-//    params.set(Parameter.τ.ordinal(), τ);
-//    params.set(Parameter.τ0.ordinal(), τ0);
-//    return params;
-//  }
 
   public Vector getTransformedParameters()
   {
@@ -262,6 +198,5 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ExponentialPowerla
 
     // return b;
   }
-
 
 }

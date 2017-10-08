@@ -5,7 +5,6 @@ import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
@@ -38,6 +37,7 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable, HawkesProcess
 {
@@ -62,7 +62,21 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   }
 
   @Override
-  public abstract Object clone();
+  public final Object clone()
+  {
+    try
+    {
+      ExponentialHawkesProcess spawn = getClass().newInstance();
+      spawn.assignParameters(getParameters().toArray());
+      spawn.T = T;
+      return spawn;
+    }
+    catch (InstantiationException | IllegalAccessException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+
+  }
 
   @SuppressWarnings("unchecked")
   public final <E extends ExponentialHawkesProcess> E copy()
@@ -235,8 +249,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
-  public abstract String getParamString();
-
   /**
    * n-th compensated point
    * 
@@ -327,12 +339,12 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   }
 
-  static enum ScoringMethod
+  public static enum ScoringMethod
   {
     LikelihoodMaximization, MomentMatching
   }
 
-  ScoringMethod scoringMethod = ScoringMethod.MomentMatching;
+  private ScoringMethod scoringMethod = ScoringMethod.MomentMatching;
 
   @Override
   public final double value(double[] point)
@@ -343,18 +355,16 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     if (scoringMethod == ScoringMethod.LikelihoodMaximization)
     {
-
       score = logLik();
-
-      if (Double.isNaN(score))
-      {
-        score = Double.NEGATIVE_INFINITY;
-      }
     }
     else if (scoringMethod == ScoringMethod.MomentMatching)
     {
       score = σ();
-      return score;
+    }
+    else
+    {
+      throw new IllegalStateException("unhandled scoringMethod");
+
     }
 
     if (verbose)
@@ -362,7 +372,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
       out.println(Thread.currentThread().getName() + " score{" + getParamString() + "}=" + score);
     }
 
-    throw new IllegalStateException("unhandled scoringMethod");
+    return score;
 
   }
 
@@ -517,7 +527,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
                             range(0, paramCount).mapToDouble(i -> bounds[i].getMax()).toArray());
   }
 
-  public Field getField(String name)
+  public final Field getField(String name)
   {
     Class<? extends Object> oClass = getClass();
     NoSuchFieldException nsfe = null;
@@ -548,7 +558,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   Field[] parameterFields = null;
 
-  public Vector getParameters()
+  public final Vector getParameters()
   {
     return new Vector(Arrays.stream(getParameterFields()).mapToDouble(field -> {
       try
@@ -562,7 +572,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     }));
   }
 
-  public Field[] getParameterFields()
+  public final Field[] getParameterFields()
   {
     if (parameterFields == null)
     {
@@ -585,15 +595,18 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     // return null;
   }
 
-  // public abstract Vector getParameters();
-
-  public abstract int getParamCount();
-
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
     chart.addSeries(name, X.toArray(), Y.toArray());
   }
 
+  /**
+   * Uses this{@link #getParameterFields()} to assign values from an array to the
+   * specified Java fields
+   * 
+   * @param array
+   *          of values ordered according to this{@link #getBoundedParameters()}
+   */
   public final void assignParameters(double[] point)
   {
     BoundedParameter[] params = getBoundedParameters();
@@ -615,4 +628,24 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   public abstract BoundedParameter[] getBoundedParameters();
 
+  public ScoringMethod getScoringMethod()
+  {
+    return scoringMethod;
+  }
+
+  public void setScoringMethod(ScoringMethod scoringMethod)
+  {
+    this.scoringMethod = scoringMethod;
+  }
+
+  public final int getParamCount()
+  {
+    return getBoundedParameters().length;
+  }
+
+  public String getParamString()
+  {
+    return Arrays.asList(Parameter.values()).toString() + "=" + getParameters().toString();
+
+  }
 }
