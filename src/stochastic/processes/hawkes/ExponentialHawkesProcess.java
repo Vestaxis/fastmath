@@ -52,7 +52,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors();
+    return Runtime.getRuntime().availableProcessors() * 3;
   }
 
   @Override
@@ -430,7 +430,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     assignParameters(optimum.getKey());
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
-
+    
     return multiopt;
   }
 

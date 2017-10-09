@@ -32,7 +32,7 @@ public class HawkesProcessEstimator
 
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
-    ExponentialHawkesProcessFactory.Type type = Type.ExtendedExponentialPowerlawApproximation;
+    ExponentialHawkesProcessFactory.Type type = Type.ApproximatePowerlaw;
 
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
     if (args.length > 1)
@@ -57,6 +57,11 @@ public class HawkesProcessEstimator
     ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
     Vector data = loadData(filename, "SPY");
+    Vector autocor = data.diff().autocorVector(50);
+    
+    out.println("autocor(data)=" + autocor );
+    double absoluteAutocorrelation = autocor.abs().sum() - 1;
+    out.println("sum(abs(autocor(data)))=" + absoluteAutocorrelation );
     HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     estimator.estimate(data);
   }
@@ -80,10 +85,16 @@ public class HawkesProcessEstimator
     MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix());
 
     Vector comp = process.Λ();
-    out.println("comp mean=" + comp.mean());
-    out.println("comp var=" + comp.variance());
+    out.println("mean(Λ)=" + comp.mean());
+    out.println("var(Λ)=" + comp.variance());
+    Vector compAutocor = comp.autocorVector(50);
+    out.println( "autocor(Λ)=" + compAutocor );
+    double absoluteAutocorrelation = compAutocor.abs().sum() - 1;
+    out.println("sum(abs(autocor(Λ)))=" + absoluteAutocorrelation );
 
-    out.println(optimizer.getIterations() + " iterations");
+    /**
+     * TODO: Ljung-Box test
+     */
   }
 
   public TextTable printResults(ParallelMultistartMultivariateOptimizer multiopt)
@@ -94,7 +105,7 @@ public class HawkesProcessEstimator
 
     BoundedParameter[] params = process.getBoundedParameters();
 
-    println("estimatied parameters for " + process.getClass().getSimpleName()
+    println("estimated parameters for " + process.getClass().getSimpleName()
             + "["
             + Arrays.stream(params).map(param -> param.getName()).collect(Collectors.joining(","))
             + "]");
