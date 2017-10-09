@@ -51,7 +51,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors();
+    return Runtime.getRuntime().availableProcessors() * 5;
   }
 
   @Override
@@ -381,12 +381,12 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public final int estimateParameters()
+  public final ParallelMultistartMultivariateOptimizer estimateParameters()
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
 
-    InitialGuess initialGuess = getInitialGuess();
+   // InitialGuess initialGuess = getInitialGuess();
 
     ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
@@ -419,7 +419,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
                                                momentMatchingComparator,
                                                validator,
                                                maxEval,
-                                               initialGuess,
                                                objectiveFunctionSupplier,
                                                simpleBounds);
     double stopTime = currentTimeMillis();
@@ -429,49 +428,23 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     assignParameters(optimum.getKey());
 
-    String[] columnNames =
-    { "First Name", "Last Name", "Sport", "# of Years", "Vegetarian" };
+    out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
 
-    Object[][] data =
-    {
-      { "Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false) },
-      { "John", "Doe", "Rowing", new Integer(3), new Boolean(true) },
-      { "Sue", "Black", "Knitting", new Integer(2), new Boolean(false) },
-      { "Jane", "White", "Speed reading", new Integer(20), new Boolean(true) },
-      { "Joe", "Brown", "Pool", new Integer(10), new Boolean(false) } };
-
-    TextTable tt = new TextTable(columnNames, data);
-    
-    // this adds the numbering on the left
-    tt.setAddRowNumbering(true);
-    // sort by the first column
-    tt.setSort(0);
-    tt.printTable();
-
-    for (PointValuePair point : multiopt.getOptima())
-    {
-      evaluateParameters(point);
-    }
-
-    out.format("estimated parameters: %s in %f minutes at %f evals/sec\n", getParamString(), minutesElapsed, evaluationsPerSecond);
-
-    return multiopt.getEvaluations();
-
+    return multiopt;
   }
 
-  public void evaluateParameters(PointValuePair point)
+
+  public Object[] evaluateParameters(PointValuePair point)
   {
     ExponentialHawkesProcess process = newProcess(point);
     double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
 
     Vector compensated = process.Λ();
-    out.format("tried %s LL=%f 1-KS=%f mean(Λ)=%f var(Λ)=%f σ=%f\n",
-               Arrays.toString(point.getKey()),
-               process.logLik(),
-               ksStatistic,
-               compensated.mean(),
-               compensated.variance(),
-               process.σ());
+
+    // TODO: Ljung-Box statistic
+    
+    return new Object[]
+    { Arrays.toString(point.getKey()), process.logLik(), ksStatistic, compensated.mean(), compensated.variance(), process.σ() };
   }
 
   public double getCompensatorKolmogorovSmirnovStatistic()

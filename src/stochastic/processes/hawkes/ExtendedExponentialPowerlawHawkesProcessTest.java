@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
+import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
 
 @SuppressWarnings(
@@ -98,7 +99,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
     process.T = data;
 
-    int evals = process.estimateParameters();
+    ParallelMultistartMultivariateOptimizer evals = process.estimateParameters();
     out.println(evals + " iterations");
 
     Vector compensator = process.Λ().setName("compensator");

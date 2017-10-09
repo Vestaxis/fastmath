@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
+import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
 
 public class ExponentialPowerlawHawkesProcessTest extends TestCase
@@ -40,7 +41,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 
 		process.T = data;
 		process.recursive = true;
-		int evals = process.estimateParameters();
+		ParallelMultistartMultivariateOptimizer evals = process.estimateParameters();
 		File testFile = new File("test.mat");
 		Vector compensator = process.Λ().setName("comp");
 		out.println( "writing timestamp data and compensator to " + testFile.getAbsolutePath() );

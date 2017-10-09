@@ -81,10 +81,9 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     return totalEvaluations.get();
   }
 
-
   /** Found optima. */
   TreeSet<PointValuePair> optima = null;
-  
+
   @SuppressWarnings("unchecked")
   protected PointValuePair doOptimize()
   {
@@ -99,10 +98,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     ObjectiveFunctionSupplier objectiveFunctionSupplier = null;
     SolutionValidator validator = null;
     PointValuePairComparator pairComparator = null;
-    
+
     for (int i = 0; i < optimData.length; i++)
     {
-      if ( optimData[i] instanceof PointValuePairComparator )
+      if (optimData[i] instanceof PointValuePairComparator)
       {
         pairComparator = (PointValuePairComparator) optimData[i];
       }
@@ -127,15 +126,19 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       }
     }
     if (maxEvalIndex == -1) { throw new IllegalArgumentException("MaxEval not specified"); }
-    if (initialGuessIndex == -1) { throw new IllegalArgumentException("InitialGuess not specified"); }
+    if (initialGuessIndex == -1)
+    {
+      optimData = Arrays.copyOf(optimData, optimData.length + 1);
+      initialGuessIndex = optimData.length - 1;
+    }
     if (objectiveFunctionIndex == -1) { throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified"); }
-    if ( pairComparator == null )
+    if (pairComparator == null)
     {
       pairComparator = new AbstractPointValuePairComparator(goalType);
     }
     optima = new TreeSet<PointValuePair>(pairComparator);
-    
-    RuntimeException lastException = null;    
+
+    RuntimeException lastException = null;
 
     final AtomicInteger iterationCounter = new AtomicInteger();
     final int maxEval = getMaxEvaluations();
@@ -148,8 +151,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     final int _objectiveFunctionIndex = objectiveFunctionIndex;
     final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
     final SolutionValidator _validator = validator;
-
-   
 
     // Multi-start loop.
     range(0, starts).parallel().forEach(i -> {
@@ -182,8 +183,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       }
       catch (Exception e)
       {
-        err.print( Thread.currentThread().getName() + " " );
-        e.printStackTrace( err);
+        err.print(Thread.currentThread().getName() + " ");
+        e.printStackTrace(err);
       }
 
       int evalCount = totalEvaluations.addAndGet(optimizer.getEvaluations());
@@ -200,7 +201,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   {
     // New start value.
     double[] s = null;
-    if (i == 0)
+    if (i == 0 && startPoint != null)
     {
       s = startPoint;
     }
@@ -231,9 +232,6 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
-
- 
-  
 
   public boolean isVerbose()
   {
