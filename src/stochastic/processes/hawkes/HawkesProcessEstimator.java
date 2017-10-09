@@ -67,7 +67,7 @@ public class HawkesProcessEstimator
   {
     if (verbose)
     {
-      println("spawning " + process.getClass().getSimpleName());
+      println("spawning " + process.getTrajectoryCount() + " " + process.getClass().getSimpleName() + "es");
     }
 
     process.T = data;
@@ -94,7 +94,7 @@ public class HawkesProcessEstimator
 
     BoundedParameter[] params = process.getBoundedParameters();
 
-    println("estimating parameters for " + process.getClass().getSimpleName()
+    println("estimatied parameters for " + process.getClass().getSimpleName()
             + "["
             + Arrays.stream(params).map(param -> param.getName()).collect(Collectors.joining(","))
             + "]");
@@ -105,6 +105,17 @@ public class HawkesProcessEstimator
                                    .collect(Collectors.toList())
                                    .toArray(new String[0]);
 
+    Object[][] data = evaluateStatisticsForEachLocalOptima(optima, columnHeaders);
+
+    TextTable tt = new TextTable(columnHeaders, data);
+
+    tt.setAddRowNumbering(true);
+    tt.printTable();
+    return tt;
+  }
+
+  public Object[][] evaluateStatisticsForEachLocalOptima(PointValuePair[] optima, String[] columnHeaders)
+  {
     Object[][] data = new Object[optima.length][columnHeaders.length];
 
     for (int i = 0; i < optima.length; i++)
@@ -116,12 +127,7 @@ public class HawkesProcessEstimator
         data[i][j] = row[j];
       }
     }
-
-    TextTable tt = new TextTable(columnHeaders, data);
-
-    tt.setAddRowNumbering(true);
-    tt.printTable();
-    return tt;
+    return data;
   }
 
   public static Vector loadData(String filename, String symbol) throws IOException
