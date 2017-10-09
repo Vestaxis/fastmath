@@ -5,7 +5,6 @@ import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 

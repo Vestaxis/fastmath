@@ -32,10 +32,9 @@ import fastmath.exceptions.FastMathException;
 import fastmath.matfile.MiDouble;
 import fastmath.matfile.MiMatrix;
 import fastmath.matfile.Writable;
-import math.Set;
 
 @Persistent
-public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Set
+public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>
 {
 
   public Vector()
@@ -1389,7 +1388,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public double autocor(int lag)
+  public double autocorAtLag(int lag)
   {
     int N = size();
     final double Mean = mean();
@@ -1406,9 +1405,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return autocov / Variance;
   }
 
-  public Vector autocorVector(int maxLag)
+  public Vector autocor(int maxLag)
   {
-    return new Vector(rangeClosed(0, maxLag).mapToDouble(lag -> autocor(lag)).toArray());
+    return new Vector(rangeClosed(0, maxLag).mapToDouble(lag -> autocorAtLag(lag)).toArray());
   }
 
+  public double getLjungBoxStatistic(int maxLag)
+  {
+    Vector ac = autocor(maxLag);
+    int n = size();
+    return n * (n + 2) * Functions.sum(k -> Math.pow(ac.get(k), 2) / (n - k), 1, maxLag);
+  }
 }

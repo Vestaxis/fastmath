@@ -3,12 +3,10 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
-import java.io.File;
 import java.io.IOException;
 
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
-import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
 
 public class ExponentialPowerlawHawkesProcessTest extends TestCase
@@ -29,31 +27,7 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		// out.println( "x=" + x );
 	}
 
-	public void testEstimateParmeters2() throws IOException, CloneNotSupportedException
-	{
-		double ε = 0.16710;
-		double η = 1.58128;
-		ExponentialPowerlawHawkesProcess process = new ConstrainedExponentialPowerlawHawkesProcess(η, ε);
-		Vector data = MatFile.loadMatrix("/home/stephen/git/fastmath/SPY.mat", "SPY").col(0).setName("data");
-		process.T = data;
-		int midpoint = data.size() / 2;
-		data = data.slice(midpoint - 5000, midpoint + 5000);
 
-		process.T = data;
-		process.recursive = true;
-		ParallelMultistartMultivariateOptimizer evals = process.estimateParameters();
-		File testFile = new File("test.mat");
-		Vector compensator = process.Λ().setName("comp");
-		out.println( "writing timestamp data and compensator to " + testFile.getAbsolutePath() );
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix());
-
-		Vector comp = process.Λ();
-		out.println( "comp mean=" + comp.mean() );
-		out.println( "comp var=" + comp.variance() );
-		
-		 out.println( evals + " iterations");
-
-	}
 
 //	public void testLogLik() throws IOException
 //	{
@@ -79,6 +53,14 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		StandardExponentialHawkesProcessTest.doTest(process, data);
 
+	}
+	
+	public void testMean()
+	{
+    double ε = 0.5;
+    double τ0 = 8.915;
+    ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(ε, τ0);
+	  out.println( "hmm mean is " + process.mean() );
 	}
 
 }

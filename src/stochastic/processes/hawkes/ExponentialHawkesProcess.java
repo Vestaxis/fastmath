@@ -5,6 +5,7 @@ import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
@@ -32,7 +33,6 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.knowm.xchart.XYChart;
 
-import dnl.utils.text.table.TextTable;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
@@ -44,16 +44,6 @@ import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable, HawkesProcess
 {
 
-  /**
-   * 
-   * @return number of trajectories do generate during search for optimal
-   *         parameters
-   * 
-   */
-  public int getTrajectoryCount()
-  {
-    return Runtime.getRuntime().availableProcessors() * 3;
-  }
 
   @Override
   public double logLikelihood(Vector t)
@@ -361,7 +351,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     }
     else if (scoringMethod == ScoringMethod.MomentMatching)
     {
-      score = σ();
+      score = momentMatchingMeasure();
     }
     else
     {
@@ -382,7 +372,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public final ParallelMultistartMultivariateOptimizer estimateParameters()
+  public final ParallelMultistartMultivariateOptimizer estimateParameters( int numStarts )
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
@@ -393,8 +383,6 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
-
-    int numStarts = getTrajectoryCount();
 
     SolutionValidator validator = point -> {
       ExponentialHawkesProcess process = newProcess(point.getPoint());
@@ -410,8 +398,8 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      double σa = processA.σ();
-      double σb = processB.σ();
+      double σa = processA.momentMatchingMeasure();
+      double σb = processB.momentMatchingMeasure();
       return Double.compare(σb, σa);
     };
 
@@ -430,9 +418,12 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     assignParameters(optimum.getKey());
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
-    
+
     return multiopt;
   }
+
+  public static String[] statisticNames =
+  { "E[X]", "E[X^2]", "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
@@ -441,10 +432,17 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     Vector compensated = process.Λ();
 
-    // TODO: add Ljung-Box statistic
+    out.println(compensated.autocor(30));
 
     Object[] statisticsVector = new Object[]
-    { process.logLik(), ksStatistic, compensated.mean(), compensated.variance(), process.σ() };
+    { process.mean(),
+      process.variance(),
+      process.logLik(),
+      ksStatistic,
+      compensated.mean(),
+      compensated.variance(),
+      process.momentMatchingMeasure(),
+      pow( compensated.getLjungBoxStatistic(10) - 8, 2) };
 
     return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
@@ -474,7 +472,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    * 
    * @return -sum((1-(Λ^i)/i!)^2,i=1..n)/n
    */
-  public double σ()
+  public double momentMatchingMeasure()
   {
     Vector compensator = Λ();
     DoubleAdder measure = new DoubleAdder();
@@ -486,7 +484,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
       double ratio = sampleMoment / desiredMoment;
       measure.add(pow(1 - ratio, 2));
     }
-    return -(measure.doubleValue()) / n;
+    return -((measure.doubleValue())) / n;
   }
 
   public ExponentialHawkesProcess newProcess(double[] point)
@@ -651,6 +649,24 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   public String getParamString()
   {
     return Arrays.asList(Parameter.values()).toString() + "=" + getParameters().toString();
-
   }
+
+  /**
+   * 
+   * @return theoretical mean
+   */
+  public final double mean()
+  {
+    return sum(i -> α(i) / pow(β(i), 2), 0, order() - 1) / Z();
+  }
+
+  /**
+   * 
+   * @return theoretical mean
+   */
+  public final double variance()
+  {
+    return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
+  }
+
 }

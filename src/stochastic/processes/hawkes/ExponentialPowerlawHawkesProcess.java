@@ -2,10 +2,16 @@ package stochastic.processes.hawkes;
 
 import static java.lang.Math.pow;
 
-import java.util.Arrays;
-
 public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 {
+
+
+  public ExponentialPowerlawHawkesProcess(double ε, double τ0)
+  {
+    super();
+    this.ε = ε;
+    this.τ0 = τ0;
+  }
 
   protected static enum Parameter implements BoundedParameter
   {
@@ -65,14 +71,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
     return 1 / τ0 / pow(m, i);
   }
 
- double m = 5;
-
+  double m = 5;
 
   public ExponentialPowerlawHawkesProcess()
   {
     super();
   }
-
 
   @Override
   public BoundedParameter[] getBoundedParameters()
@@ -85,7 +89,6 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   {
     throw new UnsupportedOperationException("TODO: unconditional λ");
   }
-
 
   @Override
   public int order()

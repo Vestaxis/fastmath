@@ -2,17 +2,13 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Console.println;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.range;
-import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.optim.PointValuePair;
 
 import dnl.utils.text.table.TextTable;
@@ -32,7 +28,7 @@ public class HawkesProcessEstimator
 
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
-    ExponentialHawkesProcessFactory.Type type = Type.ApproximatePowerlaw;
+    ExponentialHawkesProcessFactory.Type type = Type.ExtendedExponentialPowerlawApproximation;
 
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
     if (args.length > 1)
@@ -57,26 +53,37 @@ public class HawkesProcessEstimator
     ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
     Vector data = loadData(filename, "SPY");
-    Vector autocor = data.diff().autocorVector(50);
-    
-    out.println("autocor(data)=" + autocor );
+    Vector autocor = data.diff().autocor(50);
+
+    out.println("autocor(data)=" + autocor);
     double absoluteAutocorrelation = autocor.abs().sum() - 1;
-    out.println("sum(abs(autocor(data)))=" + absoluteAutocorrelation );
+    out.println("sum(abs(autocor(data)))=" + absoluteAutocorrelation);
     HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     estimator.estimate(data);
   }
 
   private boolean verbose = true;
 
+  /**
+   * 
+   * @return number of trajectories do generate during search for optimal
+   *         parameters
+   * 
+   */
+  public int getTrajectoryCount()
+  {
+    return Runtime.getRuntime().availableProcessors() * 3;
+  }
+
   public void estimate(Vector data) throws IOException
   {
     if (verbose)
     {
-      println("spawning " + process.getTrajectoryCount() + " " + process.getClass().getSimpleName() + "es");
+      println("spawning " + getTrajectoryCount() + " " + process.getClass().getSimpleName() + "es");
     }
 
     process.T = data;
-    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters();
+    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
     printResults(optimizer);
 
     File testFile = new File("test.mat");
@@ -84,24 +91,10 @@ public class HawkesProcessEstimator
     out.println("writing timestamp data and compensator to " + testFile.getAbsolutePath());
     MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix());
 
-    Vector comp = process.Λ();
-    out.println("mean(Λ)=" + comp.mean());
-    out.println("var(Λ)=" + comp.variance());
-    Vector compAutocor = comp.autocorVector(50);
-    out.println( "autocor(Λ)=" + compAutocor );
-    double absoluteAutocorrelation = compAutocor.abs().sum() - 1;
-    out.println("sum(abs(autocor(Λ)))=" + absoluteAutocorrelation );
-
-    /**
-     * TODO: Ljung-Box test
-     */
   }
 
   public TextTable printResults(ParallelMultistartMultivariateOptimizer multiopt)
   {
-
-    String[] statisticNames =
-    { "Log-Lik", "1-KS", "mean(Λ)", "var(Λ)", "σ" };
 
     BoundedParameter[] params = process.getBoundedParameters();
 
@@ -112,7 +105,9 @@ public class HawkesProcessEstimator
 
     PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
 
-    String[] columnHeaders = Stream.concat(Arrays.stream(params).map(param -> param.getName()), Arrays.asList(statisticNames).stream())
+    String[] columnHeaders = Stream
+                                   .concat(Arrays.stream(params).map(param -> param.getName()),
+                                           Arrays.asList(ExponentialHawkesProcess.statisticNames).stream())
                                    .collect(Collectors.toList())
                                    .toArray(new String[0]);
 
@@ -122,6 +117,7 @@ public class HawkesProcessEstimator
 
     tt.setAddRowNumbering(true);
     tt.printTable();
+
     return tt;
   }
 

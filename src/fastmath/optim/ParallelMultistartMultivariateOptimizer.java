@@ -166,18 +166,20 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       try
       {
         final PointValuePair result = optimizer.optimize(instanceOptimData);
+        String iterString = String.format("#%d/%d", iterationCounter.incrementAndGet(), starts);
+        
         synchronized (optima)
         {
           boolean valid = _validator == null || _validator.apply(result);
           if (valid)
           {
-            out.println(Thread.currentThread().getName() + " Storing " + Arrays.toString(result.getKey()));
+            out.println(Thread.currentThread().getName() + " " + iterString + " Storing " + Arrays.toString(result.getKey()));
 
             optima.add(result);
           }
           else
           {
-            out.println(Thread.currentThread().getName() + " Rejecting " + Arrays.toString(result.getKey()));
+            out.println(Thread.currentThread().getName() + " " + iterString + " Rejecting " + Arrays.toString(result.getKey()));
           }
         }
       }
@@ -188,10 +190,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       }
 
       int evalCount = totalEvaluations.addAndGet(optimizer.getEvaluations());
-      if (verbose)
-      {
-        out.format("#%d/%d\n", iterationCounter.incrementAndGet(), starts);
-      }
+
     });
 
     return optima.first();
