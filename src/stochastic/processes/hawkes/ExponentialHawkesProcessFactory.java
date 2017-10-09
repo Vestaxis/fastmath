@@ -4,7 +4,7 @@ public class ExponentialHawkesProcessFactory
 {
   public static enum Type
   {
-    Standard, ExponentialPowerlawApproximation, ConstraintedExponentialPowerlawApproximation, ExtendedExponentialPowerlawApproximation
+    Standard, ApproximatePowerlaw, ConstraintedExponentialPowerlawApproximation, ExtendedExponentialPowerlawApproximation
   };
 
   public static ExponentialHawkesProcess spawnNewProcess(Type type)
@@ -13,7 +13,7 @@ public class ExponentialHawkesProcessFactory
     {
     case Standard:
       return new StandardExponentialHawkesProcess();
-    case ExponentialPowerlawApproximation:
+    case ApproximatePowerlaw:
       return new ExponentialPowerlawHawkesProcess();
     case ConstraintedExponentialPowerlawApproximation:
       return new ConstrainedExponentialPowerlawHawkesProcess();

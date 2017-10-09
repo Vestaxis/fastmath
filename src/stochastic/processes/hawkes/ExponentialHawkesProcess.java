@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
@@ -51,7 +52,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors() * 5;
+    return Runtime.getRuntime().availableProcessors();
   }
 
   @Override
@@ -386,7 +387,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
 
-   // InitialGuess initialGuess = getInitialGuess();
+    // InitialGuess initialGuess = getInitialGuess();
 
     ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
@@ -396,7 +397,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     int numStarts = getTrajectoryCount();
 
     SolutionValidator validator = point -> {
-      ExponentialHawkesProcess process = newProcess(point);
+      ExponentialHawkesProcess process = newProcess(point.getPoint());
       return process.Λ().mean() > 0;
     };
 
@@ -407,8 +408,8 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
-      ExponentialHawkesProcess processA = newProcess(a);
-      ExponentialHawkesProcess processB = newProcess(b);
+      ExponentialHawkesProcess processA = newProcess(a.getPoint());
+      ExponentialHawkesProcess processB = newProcess(b.getPoint());
       double σa = processA.σ();
       double σb = processB.σ();
       return Double.compare(σb, σa);
@@ -433,18 +434,31 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return multiopt;
   }
 
-
-  public Object[] evaluateParameters(PointValuePair point)
+  public Object[] evaluateParameterStatistics(double[] point)
   {
     ExponentialHawkesProcess process = newProcess(point);
     double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
 
     Vector compensated = process.Λ();
 
-    // TODO: Ljung-Box statistic
-    
-    return new Object[]
-    { Arrays.toString(point.getKey()), process.logLik(), ksStatistic, compensated.mean(), compensated.variance(), process.σ() };
+    // TODO: add Ljung-Box statistic
+
+    Object[] statisticsVector = new Object[]
+    { process.logLik(), ksStatistic, compensated.mean(), compensated.variance(), process.σ() };
+
+    return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+  }
+
+  public double getFieldValue(Field param)
+  {
+    try
+    {
+      return param.getDouble(this);
+    }
+    catch (IllegalArgumentException | IllegalAccessException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
   public double getCompensatorKolmogorovSmirnovStatistic()
@@ -475,10 +489,10 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return -(measure.doubleValue()) / n;
   }
 
-  public ExponentialHawkesProcess newProcess(PointValuePair point)
+  public ExponentialHawkesProcess newProcess(double[] point)
   {
     ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
-    process.assignParameters(point.getKey());
+    process.assignParameters(point);
     return process;
   }
 
@@ -563,7 +577,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     }));
   }
 
-  public final Field[] getParameterFields()
+  public synchronized final Field[] getParameterFields()
   {
     if (parameterFields == null)
     {

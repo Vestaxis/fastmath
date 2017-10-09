@@ -2,10 +2,18 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Console.println;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.optim.PointValuePair;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.Vector;
@@ -48,8 +56,8 @@ public class HawkesProcessEstimator
     }
     ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
-    HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     Vector data = loadData(filename, "SPY");
+    HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     estimator.estimate(data);
   }
 
@@ -80,19 +88,36 @@ public class HawkesProcessEstimator
 
   public TextTable printResults(ParallelMultistartMultivariateOptimizer multiopt)
   {
-    // TODO: dont print the parameters as one string of text but use the cool
-    // textfield table thing
-    
-    println("estimated parameters for " + process.getClass().getSimpleName());
 
-    String parameterNames = Arrays.toString(Arrays.stream(process.getBoundedParameters()).map(param -> param.getName()).toArray());
+    String[] statisticNames =
+    { "Log-Lik", "1-KS", "mean(Λ)", "var(Λ)", "σ" };
 
-    String[] columnNames =
-    { "Parameters " + parameterNames, "Log-Lik", "1-KS", "mean(Λ)", "var(Λ)", "σ" };
+    BoundedParameter[] params = process.getBoundedParameters();
 
-    Object[][] data = (Object[][]) multiopt.getOptima().stream().map(point -> process.evaluateParameters(point)).toArray(Object[][]::new);
+    println("estimating parameters for " + process.getClass().getSimpleName()
+            + "["
+            + Arrays.stream(params).map(param -> param.getName()).collect(Collectors.joining(","))
+            + "]");
 
-    TextTable tt = new TextTable(columnNames, data);
+    PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
+
+    String[] columnHeaders = Stream.concat(Arrays.stream(params).map(param -> param.getName()), Arrays.asList(statisticNames).stream())
+                                   .collect(Collectors.toList())
+                                   .toArray(new String[0]);
+
+    Object[][] data = new Object[optima.length][columnHeaders.length];
+
+    for (int i = 0; i < optima.length; i++)
+    {
+      Object[] row = process.evaluateParameterStatistics(optima[i].getPoint());
+
+      for (int j = 0; j < columnHeaders.length; j++)
+      {
+        data[i][j] = row[j];
+      }
+    }
+
+    TextTable tt = new TextTable(columnHeaders, data);
 
     tt.setAddRowNumbering(true);
     tt.printTable();
