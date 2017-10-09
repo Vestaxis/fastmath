@@ -193,10 +193,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       }
     });
 
-
-    // Return the best optimum.
     return optima.first();
-
   }
 
   private double[] getStartingPoint(int i, final double[] min, final double[] max, final double[] startPoint)

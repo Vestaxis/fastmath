@@ -98,7 +98,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
     process.T = data;
 
-    int evals = process.estimateParameters(15);
+    int evals = process.estimateParameters();
     out.println(evals + " iterations");
 
     Vector compensator = process.Λ().setName("compensator");

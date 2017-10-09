@@ -9,11 +9,14 @@ import com.sun.jna.Native;
 import com.sun.jna.Structure;
 
 /**
+ * 
  * http://arblib.org/arb.html
  *
  */
 public class Real extends Structure implements Comparable<Real>
 {
+
+  public static int bits = 256;
 
   public boolean overlaps( Real o )
   {
@@ -46,7 +49,6 @@ public class Real extends Structure implements Comparable<Real>
     return ArbLibrary.instance.arb_equal( this, x ) != 0;
   }
 
-  public static int bits = 256;
 
 
   @Override

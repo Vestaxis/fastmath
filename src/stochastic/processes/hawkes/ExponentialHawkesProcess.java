@@ -31,6 +31,7 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.knowm.xchart.XYChart;
 
+import dnl.utils.text.table.TextTable;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
@@ -94,7 +95,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   private double λ0;
 
-  private boolean verbose = true;
+  private boolean verbose = false;
 
   public ExponentialHawkesProcess()
   {
@@ -380,9 +381,9 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public final int estimateParameters(int digits) throws CloneNotSupportedException
+  public final int estimateParameters()
   {
-
+    int digits = 15;
     int maxIters = Integer.MAX_VALUE;
 
     InitialGuess initialGuess = getInitialGuess();
@@ -405,11 +406,9 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
                                                                                                    numStarts,
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
-    PointValuePairComparator discriminator = (a, b) -> {
+    PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a);
       ExponentialHawkesProcess processB = newProcess(b);
-      // double σa = processA.getCompensatorKolmogorovSmirnovStatistic();
-      // double σb = processB.getCompensatorKolmogorovSmirnovStatistic();
       double σa = processA.σ();
       double σb = processB.σ();
       return Double.compare(σb, σa);
@@ -417,7 +416,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     double startTime = currentTimeMillis();
     PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
-                                               discriminator,
+                                               momentMatchingComparator,
                                                validator,
                                                maxEval,
                                                initialGuess,
@@ -429,6 +428,25 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     double minutesElapsed = secondsElapsed / 60;
 
     assignParameters(optimum.getKey());
+
+    String[] columnNames =
+    { "First Name", "Last Name", "Sport", "# of Years", "Vegetarian" };
+
+    Object[][] data =
+    {
+      { "Kathy", "Smith", "Snowboarding", new Integer(5), new Boolean(false) },
+      { "John", "Doe", "Rowing", new Integer(3), new Boolean(true) },
+      { "Sue", "Black", "Knitting", new Integer(2), new Boolean(false) },
+      { "Jane", "White", "Speed reading", new Integer(20), new Boolean(true) },
+      { "Joe", "Brown", "Pool", new Integer(10), new Boolean(false) } };
+
+    TextTable tt = new TextTable(columnNames, data);
+    
+    // this adds the numbering on the left
+    tt.setAddRowNumbering(true);
+    // sort by the first column
+    tt.setSort(0);
+    tt.printTable();
 
     for (PointValuePair point : multiopt.getOptima())
     {
