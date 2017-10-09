@@ -2,11 +2,10 @@ package stochastic.processes.hawkes;
 
 import static java.lang.Math.pow;
 
-public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
+public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 {
 
-
-  public ExponentialPowerlawHawkesProcess(double ε, double τ0)
+  public ApproximatePowerlawHawkesProcess(double ε, double τ0)
   {
     super();
     this.ε = ε;
@@ -16,7 +15,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ε(0, 0.5), τ0(0, 30);
+    ρ(0, 1), ε(0, 0.5), τ0(0, 30);
 
     private double min;
     private double max;
@@ -73,7 +72,12 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
 
   double m = 5;
 
-  public ExponentialPowerlawHawkesProcess()
+  /**
+   * branching rate
+   */
+  private double ρ = 1;
+
+  public ApproximatePowerlawHawkesProcess()
   {
     super();
   }
@@ -99,7 +103,7 @@ public class ExponentialPowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double Z()
   {
-    return 1 / (pow(m, ε) - 1) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)));
+    return ρ / (pow(m, ε) - 1) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)));
   }
 
 }

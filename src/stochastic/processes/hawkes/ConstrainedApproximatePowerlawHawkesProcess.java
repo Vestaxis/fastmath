@@ -17,18 +17,18 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ConstrainedExponentialPowerlawHawkesProcess extends ExponentialPowerlawHawkesProcess
+public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowerlawHawkesProcess
     implements MultivariateFunction, Serializable
 {
   private static final long serialVersionUID = 1L;
 
-  public ConstrainedExponentialPowerlawHawkesProcess(double τ0, double ε)
+  public ConstrainedApproximatePowerlawHawkesProcess(double τ0, double ε)
   {
     this.τ0 = τ0;
     this.ε = ε;
   }
 
-  public ConstrainedExponentialPowerlawHawkesProcess()
+  public ConstrainedApproximatePowerlawHawkesProcess()
   {
   }
 

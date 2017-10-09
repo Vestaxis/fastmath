@@ -14,11 +14,11 @@ public class ExponentialHawkesProcessFactory
     case Standard:
       return new StandardExponentialHawkesProcess();
     case ApproximatePowerlaw:
-      return new ExponentialPowerlawHawkesProcess();
+      return new ApproximatePowerlawHawkesProcess();
     case ConstrainedApproximatePowerlaw:
-      return new ConstrainedExponentialPowerlawHawkesProcess();
+      return new ConstrainedApproximatePowerlawHawkesProcess();
     case ExtendedExponentialPowerlawApproximation:
-      return new ExtendedExponentialPowerlawHawkesProcess();
+      return new ExtendedApproximatePowerlawHawkesProcess();
     default:
       throw new UnsupportedOperationException("TODO: " + type);
     }

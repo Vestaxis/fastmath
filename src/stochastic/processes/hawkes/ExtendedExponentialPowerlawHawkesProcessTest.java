@@ -17,9 +17,9 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 {
   public void testKernel()
   {
-    ConstrainedExponentialPowerlawHawkesProcess eplhp = new ConstrainedExponentialPowerlawHawkesProcess(1.6, 0.15);
+    ConstrainedApproximatePowerlawHawkesProcess eplhp = new ConstrainedApproximatePowerlawHawkesProcess(1.6, 0.15);
 
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess(eplhp.τ0,
+    ExtendedApproximatePowerlawHawkesProcess exthp = new ExtendedApproximatePowerlawHawkesProcess(eplhp.τ0,
                                                                                                   eplhp.ε,
                                                                                                   eplhp.αS(),
                                                                                                   eplhp.βS());
@@ -44,7 +44,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ = 0.34;
     double ε = 0;
     double τ0 = 1;
-    ExtendedExponentialPowerlawHawkesProcess process = new ExtendedExponentialPowerlawHawkesProcess(τ0, ε, b, τ);
+    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
     assertEquals(20.1, process.Z(), pow(10, -13));
 
   }

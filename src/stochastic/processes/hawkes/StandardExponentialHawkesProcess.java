@@ -46,9 +46,9 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
     StandardExponentialHawkesProcess hp = new StandardExponentialHawkesProcess(0.1, alpha, beta);
     hp.T = data;
 
-    ExponentialPowerlawHawkesProcess eplhp = new ConstrainedExponentialPowerlawHawkesProcess(1.6, 0.25);
+    ApproximatePowerlawHawkesProcess eplhp = new ConstrainedApproximatePowerlawHawkesProcess(1.6, 0.25);
 
-    ExtendedExponentialPowerlawHawkesProcess exthp = new ExtendedExponentialPowerlawHawkesProcess();
+    ExtendedApproximatePowerlawHawkesProcess exthp = new ExtendedApproximatePowerlawHawkesProcess();
     exthp.assignParameters(new double[]
     { 1.8203268780766264, 0.36780828690270007, 7.677090977790245E-8, 3.9448590148594826 });
 

@@ -12,7 +12,7 @@ import fastmath.Vector;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedExponentialPowerlawHawkesProcess extends ConstrainedExponentialPowerlawHawkesProcess
+public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproximatePowerlawHawkesProcess
     implements MultivariateFunction, Serializable
 {
   static enum Parameter implements BoundedParameter
@@ -71,7 +71,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ConstrainedExponen
    * @param τ
    *          power multiplier
    */
-  public ExtendedExponentialPowerlawHawkesProcess(double τ0, double ε, double b, double τ)
+  public ExtendedApproximatePowerlawHawkesProcess(double τ0, double ε, double b, double τ)
   {
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
     assert τ0 > 0 : "η must be positive";
@@ -86,7 +86,7 @@ public class ExtendedExponentialPowerlawHawkesProcess extends ConstrainedExponen
 
   private static final long serialVersionUID = 1L;
 
-  public ExtendedExponentialPowerlawHawkesProcess()
+  public ExtendedApproximatePowerlawHawkesProcess()
   {
   }
 

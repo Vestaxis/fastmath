@@ -2,6 +2,7 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
+import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
@@ -10,6 +11,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
+import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorialDouble;
 
 import java.lang.reflect.Field;
@@ -39,11 +41,10 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
-import stochastic.processes.hawkes.ExponentialPowerlawHawkesProcess.Parameter;
+import stochastic.processes.hawkes.ApproximatePowerlawHawkesProcess.Parameter;
 
 public abstract class ExponentialHawkesProcess implements MultivariateFunction, Cloneable, HawkesProcess
 {
-
 
   @Override
   public double logLikelihood(Vector t)
@@ -372,7 +373,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public final ParallelMultistartMultivariateOptimizer estimateParameters( int numStarts )
+  public final ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
@@ -442,7 +443,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
       compensated.mean(),
       compensated.variance(),
       process.momentMatchingMeasure(),
-      pow( compensated.getLjungBoxStatistic(10) - 8, 2) };
+      sqrt(abs(compensated.getLjungBoxStatistic(10) - 8)) };
 
     return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
@@ -651,6 +652,26 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
     return Arrays.asList(Parameter.values()).toString() + "=" + getParameters().toString();
   }
 
+  /**
+   * 
+   * @return n'th (raw) moment E[X^n]
+   */
+  public final double nthMoment(int n)
+  {
+    return sum(i -> (α(i) / pow(β(i), n + 1)) * (double) factorial(n), 0, order() - 1) / Z();
+  }
+
+  /**
+   * FIXME: I think this is something other than the factorial moment measure
+   * 
+   * @return n'th (raw) factorial moment E[X^n]/n!
+   */
+  public final double nthFactorialMoment(int n)
+  {
+    return sum(i -> (α(i) / pow(β(i), n + 1)) , 0, order() - 1) / Z();
+  }
+
+  
   /**
    * 
    * @return theoretical mean
