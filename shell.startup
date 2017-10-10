@@ -1,0 +1,13 @@
+import java.util.Map;
+import fastmath.*;
+import fastmath.matfile.MatFile;
+import static fastmath.matfile.MatFile.loadMatrix;
+import stochastic.processes.hawkes.*;
+import static java.lang.Math.*;
+
+Map<String,DoubleColMatrix> vars = new MatFile( "test.mat").matrixMap();
+Vector data = vars.get( "data" ).asVector();
+Vector comp = vars.get( "comp" ).asVector();
+Vector d = data.diff();
+
+

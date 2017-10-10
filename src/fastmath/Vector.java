@@ -256,10 +256,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     return stream().map(x -> Math.pow(x, n)).average().getAsDouble();
   }
-  
+
   public Vector moments(int n)
   {
-    return new Vector( rangeClosed(1, n).mapToDouble( i -> moment(n) ) );
+    return new Vector(rangeClosed(1, n).mapToDouble(i -> moment(n)));
   }
 
   /**
@@ -1161,6 +1161,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
+    if (getName() != null)
+    {
+      pw.append(getName() + " = ");
+    }
     asRowMatrix().print(pw, digits);
     pw.flush();
     return sw.toString();
