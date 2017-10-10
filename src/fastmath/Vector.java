@@ -254,6 +254,21 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    */
   public double moment(int n)
   {
+    return stream().map(x -> Math.pow(x, n)).average().getAsDouble();
+  }
+  
+  public Vector moments(int n)
+  {
+    return new Vector( rangeClosed(1, n).mapToDouble( i -> moment(n) ) );
+  }
+
+  /**
+   * 
+   * @param n
+   * @return
+   */
+  public double centralMoment(int n)
+  {
     switch (n)
     {
     case 1:

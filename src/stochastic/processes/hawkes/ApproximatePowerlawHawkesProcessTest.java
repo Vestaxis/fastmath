@@ -10,7 +10,7 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
 
-public class ExponentialPowerlawHawkesProcessTest extends TestCase
+public class ApproximatePowerlawHawkesProcessTest extends TestCase
 {
   public void testΨ()
   {

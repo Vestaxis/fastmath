@@ -55,6 +55,8 @@ public class HawkesProcessEstimator
     Vector data = loadData(filename, "SPY");
     Vector autocor = data.diff().autocor(50);
 
+    Vector moments = data.moments(process.getParamCount());
+    out.println( "moments=" + moments );
     out.println("autocor(data)=" + autocor);
     double absoluteAutocorrelation = autocor.abs().sum() - 1;
     out.println("sum(abs(autocor(data)))=" + absoluteAutocorrelation);
