@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: fastmath.arb.ComplexIntegralTest
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.578 sec - in fastmath.arb.ComplexIntegralTest
