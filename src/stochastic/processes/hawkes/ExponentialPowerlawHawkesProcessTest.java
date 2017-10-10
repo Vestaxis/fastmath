@@ -63,8 +63,10 @@ public class ExponentialPowerlawHawkesProcessTest extends TestCase
     out.println("mean is " + process.mean());
     out.println("variance is " + process.variance());
     Vector moments = new Vector(rangeClosed(0, 4).mapToDouble(n -> process.nthMoment(n))).setName("moments");
+    Vector normalizedMoments = new Vector(rangeClosed(0, 4).mapToDouble(n -> process.nthNormalizedMoment(n))).setName("moments");
 
     out.println("first " + moments.size() + " moments are " + moments);
+    out.println("first " + moments.size() + " normalized moments are " + normalizedMoments);
   }
 
 }
