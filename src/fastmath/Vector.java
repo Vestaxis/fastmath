@@ -259,7 +259,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 
   public Vector moments(int n)
   {
-    return new Vector(rangeClosed(1, n).mapToDouble(i -> moment(n)));
+    return new Vector(rangeClosed(1, n).mapToDouble(i -> moment(i)));
   }
 
   /**
