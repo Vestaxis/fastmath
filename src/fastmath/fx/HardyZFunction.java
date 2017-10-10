@@ -547,8 +547,9 @@ public class HardyZFunction extends Application
 
   public static double getTextWidth( GraphicsContext gc, String maxString )
   {
-    double textWidth = com.sun.javafx.tk.Toolkit.getToolkit().getFontLoader().computeStringWidth( maxString, gc.getFont() );
-    return textWidth;
+    throw new UnsupportedOperationException( "TODO" );
+    //double textWidth = com.sun.javafx.tk.Toolkit.getToolkit().getFontLoader().computeStringWidth( maxString, gc.getFont() );
+    //return textWidth;
   }
 
   protected void drawRectangle( GraphicsContext gc, double x1, double y1, double x2, double y2, Paint paint )

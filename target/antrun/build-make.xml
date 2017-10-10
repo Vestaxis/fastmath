@@ -2,6 +2,6 @@
 <project name="maven-antrun-" default="make"  >
 <target name="make">
   <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath"/>
-  <exec failonerror="true" dir="/home/stephen/fastmath/cpp/fastmath" executable="make"/>
+  <exec failonerror="true" dir="/home/stephen/git/fastmath/cpp/fastmath" executable="make"/>
 </target>
 </project>

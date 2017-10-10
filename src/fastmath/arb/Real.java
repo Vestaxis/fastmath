@@ -83,9 +83,10 @@ public class Real extends Structure implements Comparable<Real>
 
   public Real W()
   {
-    Real res = new Real();
-    ArbLibrary.instance.arb_lambertw( res, this, 0, Real.bits );
-    return res;
+    throw new UnsupportedOperationException();
+    //Real res = new Real();
+    //ArbLibrary.instance.arb_lambertw( res, this, 0, Real.bits );
+    //return res;
   }
 
   public Real pi()
