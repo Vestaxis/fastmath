@@ -18,7 +18,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   static enum Parameter implements BoundedParameter
   {
 
-    b(-2, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
+    b(-2, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10), m(0.1,10);
 
     Parameter(double min, double max)
     {

@@ -48,4 +48,16 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     assertEquals(20.1, process.Z(), pow(10, -13));
 
   }
+  
+  public void testMeanVariance()
+  {
+    double b = 1.5;
+    double τ = 0.34;
+    double ε = 0.25;
+    double τ0 = 1.3;
+    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
+    double mean = process.nthNormalizedMoment(1);
+    double stdev = process.nthNormalizedMoment(2);
+    out.println( "m=" + mean + " sd=" + stdev );
+  }
 }

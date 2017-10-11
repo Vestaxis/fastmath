@@ -87,7 +87,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
   private double λ0;
 
-  private boolean verbose = false;
+  private boolean verbose = true;
 
   public ExponentialHawkesProcess()
   {
@@ -424,7 +424,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   }
 
   public static String[] statisticNames =
-  { "E[X]", "E[X^2]", "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2" };
+  { "E[X]", "sqrt(E[X^2])", "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
@@ -433,11 +433,11 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
 
     Vector compensated = process.Λ();
 
-    out.println(compensated.autocor(30));
+   // out.println(compensated.autocor(30));
 
     Object[] statisticsVector = new Object[]
     { process.mean(),
-      process.variance(),
+      process.nthNormalizedMoment(2),
       process.logLik(),
       ksStatistic,
       compensated.mean(),
@@ -476,10 +476,11 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
   public double momentMatchingMeasure()
   {
     Vector dT = T.diff();
-    Vector normalizedSampleMoments = dT.normalizedMoments(getParamCount());
-    Vector parametricMoments = normalizedMoments(getParamCount());
-    
-    throw new UnsupportedOperationException("TODO");
+    Vector normalizedSampleMoments = dT.normalizedMoments(2);
+    Vector parametricMoments = normalizedMoments(2);
+    return -(parametricMoments.divide(normalizedSampleMoments).subtract(1).pow(2).sum());
+    //return -( Math.pow( dT.normalizedMoments(1) - nthMoment(1), 2 ) );e
+    //throw new UnsupportedOperationException("TODO");
     // Vector sampleMoments = T.moments(10);
     //
     //// Vector compensator = Λ();
@@ -680,7 +681,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public final double nthNormalizedMoment(int n)
   {
-    return pow( sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z(), 1 / n );
+    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
   }
 
   /**
