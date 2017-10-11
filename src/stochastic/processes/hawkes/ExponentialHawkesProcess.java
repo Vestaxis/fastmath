@@ -475,20 +475,29 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public double momentMatchingMeasure()
   {
-    throw new UnsupportedOperationException("TODO"); 
-  // Vector sampleMoments = T.moments(10);
-  //
-  //// Vector compensator = Λ();
-  //// DoubleAdder measure = new DoubleAdder();
-  //// int n = getParamCount();
-  // for (int i = 1; i <= n; i++)
-  // {
-  // double sampleMoment = compensator.copy().pow(i).mean();
-  // double desiredMoment = factorialDouble(i);
-  // double ratio = sampleMoment / desiredMoment;
-  // measure.add(pow(1 - ratio, 2));
-  // }
-  // return -((measure.doubleValue())) / n;
+    Vector dT = T.diff();
+    Vector normalizedSampleMoments = dT.normalizedMoments(getParamCount());
+    Vector parametricMoments = normalizedMoments(getParamCount());
+    
+    throw new UnsupportedOperationException("TODO");
+    // Vector sampleMoments = T.moments(10);
+    //
+    //// Vector compensator = Λ();
+    //// DoubleAdder measure = new DoubleAdder();
+    //// int n = getParamCount();
+    // for (int i = 1; i <= n; i++)
+    // {
+    // double sampleMoment = compensator.copy().pow(i).mean();
+    // double desiredMoment = factorialDouble(i);
+    // double ratio = sampleMoment / desiredMoment;
+    // measure.add(pow(1 - ratio, 2));
+    // }
+    // return -((measure.doubleValue())) / n;
+  }
+
+  private Vector normalizedMoments(int n )
+  {
+    return new Vector(rangeClosed(1, n).mapToDouble(i -> nthNormalizedMoment(i)));
   }
 
   public ExponentialHawkesProcess newProcess(double[] point)
@@ -671,7 +680,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    */
   public final double nthNormalizedMoment(int n)
   {
-    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
+    return pow( sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z(), 1 / n );
   }
 
   /**
