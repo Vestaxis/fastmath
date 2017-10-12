@@ -1,9 +1,17 @@
 package stochastic.processes.hawkes;
 
+import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
+import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
 public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 {
+
+  @Override
+  public double nthMoment(int n)
+  {
+    return ( factorial(n) * sum(i -> pow(m, (n * (M - 1 - i) + i * ε)), 0, M - 1)) * pow(ε, n) / sum(i -> pow(m, ((M - i) * ε)), 1, M);
+  }
 
   public ApproximatePowerlawHawkesProcess(double ε, double τ0)
   {
@@ -15,7 +23,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ρ(0, 1), ε(0, 0.5), τ0(0, 30);
+    ε(0, 0.5), τ0(0, 30);
 
     private double min;
     private double max;

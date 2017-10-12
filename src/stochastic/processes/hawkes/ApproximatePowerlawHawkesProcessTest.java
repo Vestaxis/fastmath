@@ -57,9 +57,9 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
 
   public void testMean()
   {
-    double ε = 0.5;
-    double τ0 = 8.915;
-    ExponentialHawkesProcess process = new ApproximatePowerlawHawkesProcess(ε, τ0);
+    double ε = .4674039567;
+    double τ0 = 57.02008734;
+    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(ε, τ0);
     out.println("mean is " + process.mean());
     out.println("variance is " + process.variance());
     Vector moments = new Vector(rangeClosed(0, 4).mapToDouble(n -> process.nthMoment(n))).setName("moments");

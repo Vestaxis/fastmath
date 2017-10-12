@@ -669,7 +669,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    * 
    * @return n'th (raw) moment E[X^n]
    */
-  public final double nthMoment(int n)
+  public double nthMoment(int n)
   {
     return nthNormalizedMoment(n) * factorial(n);
   }
@@ -679,7 +679,7 @@ public abstract class ExponentialHawkesProcess implements MultivariateFunction, 
    * 
    * @return n'th (raw) factorial moment E[X^n]/n!
    */
-  public final double nthNormalizedMoment(int n)
+  public double nthNormalizedMoment(int n)
   {
     return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
   }
