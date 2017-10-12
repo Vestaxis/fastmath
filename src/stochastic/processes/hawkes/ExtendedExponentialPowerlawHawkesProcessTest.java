@@ -3,12 +3,6 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
-import java.io.File;
-import java.io.IOException;
-
-import fastmath.Vector;
-import fastmath.matfile.MatFile;
-import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
 
 @SuppressWarnings(

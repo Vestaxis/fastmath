@@ -6,6 +6,9 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +22,22 @@ import stochastic.processes.hawkes.ExponentialHawkesProcessFactory.Type;
 
 public class HawkesProcessEstimator
 {
+  public static final class TerseThreadFactory implements ForkJoinWorkerThreadFactory
+  {
+    @Override           
+    public ForkJoinWorkerThread newThread(ForkJoinPool pool)
+    {
+        final ForkJoinWorkerThread worker = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+        worker.setName("thread-" + worker.getPoolIndex());
+        return worker;
+    }
+  }
+  
+  static
+  {
+    System.setProperty( "java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
+  }
+
   private ExponentialHawkesProcess process;
 
   public HawkesProcessEstimator(ExponentialHawkesProcess process)
@@ -28,6 +47,7 @@ public class HawkesProcessEstimator
 
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
+    
     ExponentialHawkesProcessFactory.Type type = Type.ExtendedExponentialPowerlawApproximation;
 
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
@@ -55,11 +75,9 @@ public class HawkesProcessEstimator
     Vector data = loadData(filename, "SPY");
     Vector autocor = data.diff().autocor(50);
 
-    Vector moments = data.moments(process.getParamCount());
-    out.println( "moments=" + moments );
-    out.println("autocor(data)=" + autocor);
-    double absoluteAutocorrelation = autocor.abs().sum() - 1;
-    out.println("sum(abs(autocor(data)))=" + absoluteAutocorrelation);
+    double lb = autocor.getLjungBoxStatistic(10);
+    
+    out.println("LjungBox(dT,10)=" + lb);
     HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     estimator.estimate(data);
   }
@@ -106,7 +124,7 @@ public class HawkesProcessEstimator
             + "]");
 
     Vector normalizedMoments = process.T.diff().normalizedMoments(4);
-    out.println( "normalized moments=" + normalizedMoments );
+    out.println("normalized moments=" + normalizedMoments);
     PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
 
     String[] columnHeaders = Stream

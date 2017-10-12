@@ -1,19 +1,14 @@
 package stochastic.processes.hawkes;
 
 import static java.lang.Math.pow;
-import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
 public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 {
 
   @Override
-  public double nthMoment(int n)
+  public double nthNormalizedMoment(int n)
   {
-    return -factorial(n) / (pow(m, ε) - pow(m, n))
-           * (-pow(m, ε * M) + pow(m, n * M))
-           * pow(τ0, n)
-           * (-1 + pow(m, ε))
-           / (-1 + pow(m, ε * M));
+    return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
   }
 
   public ApproximatePowerlawHawkesProcess(double ε, double τ0)
