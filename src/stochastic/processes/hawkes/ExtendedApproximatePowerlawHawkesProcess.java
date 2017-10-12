@@ -18,7 +18,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   static enum Parameter implements BoundedParameter
   {
 
-    b(-1, 2), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
+    b(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10), m(0.01,10);
 
     Parameter(double min, double max)
     {
@@ -152,21 +152,6 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
     return getParameters();
   }
 
-  public double getΕ()
-  {
-    return ε;
-  }
-
-  public void setε(double ε)
-  {
-    this.ε = ε;
-  }
-
-  public void setτ0(double η)
-  {
-    this.τ0 = η;
-  }
-
   @Override
   public int order()
   {
@@ -185,17 +170,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   public double αS()
   {
     return b;
-    // return -pow(η, (-1 - ε))
-    // * ((pow(m, (-ε * M + 2 * ε + 2)) * η - pow(m, (2 + 2 * ε)) * η - pow(m, (-ε *
-    // M + ε + 1)) * η
-    // + pow(m, (1 + ε)) * η) * C + pow(m, (2 + 2 * ε)) - pow(m, (-ε * M - M + 2 * ε
-    // + 2)) - pow(m, (2 + ε))
-    // + pow(m, (-ε * M - M + ε + 2)))
-    // / ((pow(m, (1 + 2 * ε)) * η - pow(m, (1 + ε)) * η - pow(m, ε) * η + η) * C -
-    // pow(m, (2 + 2 * ε))
-    // + pow(m, (2 + ε)) + pow(m, (1 + ε)) - m);
-
-    // return b;
+   
   }
 
 }

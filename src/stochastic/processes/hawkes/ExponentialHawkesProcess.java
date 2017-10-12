@@ -364,9 +364,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      double σa = processA.compensatorMomentMeasure();
-      double σb = processB.compensatorMomentMeasure();
-      return Double.compare(σb, σa);
+      double σa = pow( processA.Λ().getLjungBoxStatistic(10) - 8, 2 );
+      double σb = pow( processB.Λ().getLjungBoxStatistic(10) - 8, 2 );
+      return Double.compare(σa, σb);
     };
 
     double startTime = currentTimeMillis();
@@ -389,7 +389,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   }
 
   public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LjungBox(Λ,10)" };
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
@@ -406,7 +406,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       compensated.mean(),
       compensated.variance(),
       process.compensatorMomentMeasure(),
-      compensated.getLjungBoxStatistic(10) };
+      pow( compensated.getLjungBoxStatistic(10) - 8, 2 ) };
 
     return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }

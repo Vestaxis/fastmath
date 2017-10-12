@@ -6,9 +6,6 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
-import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,20 +16,10 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.hawkes.ExponentialHawkesProcessFactory.Type;
+import util.TerseThreadFactory;
 
 public class HawkesProcessEstimator
 {
-  public static final class TerseThreadFactory implements ForkJoinWorkerThreadFactory
-  {
-    @Override           
-    public ForkJoinWorkerThread newThread(ForkJoinPool pool)
-    {
-        final ForkJoinWorkerThread worker = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-        worker.setName("thread-" + worker.getPoolIndex());
-        return worker;
-    }
-  }
-  
   static
   {
     System.setProperty( "java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
@@ -92,7 +79,7 @@ public class HawkesProcessEstimator
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors() * 3;
+    return Runtime.getRuntime().availableProcessors() * 10;
   }
 
   public void estimate(Vector data) throws IOException
@@ -123,8 +110,6 @@ public class HawkesProcessEstimator
             + Arrays.stream(params).map(param -> param.getName()).collect(Collectors.joining(","))
             + "]");
 
-    Vector normalizedMoments = process.T.diff().normalizedMoments(4);
-    out.println("normalized moments=" + normalizedMoments);
     PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
 
     String[] columnHeaders = Stream
