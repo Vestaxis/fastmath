@@ -41,6 +41,12 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 {
 
   @Override
+  public String toString()
+  {
+    return getClass().getSimpleName() + getParamString();
+  }
+
+  @Override
   public double logLikelihood(Vector t)
   {
     ExponentialHawkesProcess spawn = copy();

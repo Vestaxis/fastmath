@@ -3,6 +3,7 @@ import fastmath.*;
 import fastmath.matfile.MatFile;
 import static fastmath.matfile.MatFile.loadMatrix;
 import stochastic.processes.hawkes.*;
+import stochastic.processes.point.*;
 import static java.lang.Math.*;
 
 Map<String,DoubleColMatrix> vars = new MatFile( "test.mat").matrixMap();

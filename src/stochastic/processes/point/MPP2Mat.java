@@ -1,4 +1,4 @@
-package stochastic.processes.pointprocesses;
+package stochastic.processes.point;
 
 import static java.lang.System.out;
 

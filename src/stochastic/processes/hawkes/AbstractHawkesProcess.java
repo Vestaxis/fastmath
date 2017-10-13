@@ -146,8 +146,16 @@ public abstract class AbstractHawkesProcess
 
   public String getParamString()
   {
-    return Arrays.asList(getParameterFields()).stream().map(param -> param.getName()).collect(Collectors.joining(",")).toString() + "="
-           + getParameters().toString();
+    return "[" + Arrays.asList(getParameterFields()).stream().map(param -> {
+      try
+      {
+        return param.getName() + "=" + param.getDouble(this);
+      }
+      catch (IllegalArgumentException | IllegalAccessException e)
+      {
+        throw new RuntimeException(e.getMessage(), e);
+      }
+    }).collect(Collectors.joining(",")) + "]";
   }
 
   public double getFieldValue(Field param)

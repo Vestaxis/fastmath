@@ -60,9 +60,9 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 
   public int M = 15;
 
-  protected double τ0;
+  public double τ0;
 
-  protected double ε;
+  public double ε;
 
   @Override
   public double α(int i)
@@ -76,7 +76,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
     return 1 / τ0 / pow(m, i);
   }
 
-  double m = 5;
+  public double m = 5;
 
   /**
    * branching rate
