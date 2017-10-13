@@ -1,6 +1,8 @@
 import java.util.Map;
 import fastmath.*;
 import fastmath.matfile.MatFile;
+import fastmath.optim.*;
+import static java.util.Arrays.*;
 import static fastmath.matfile.MatFile.loadMatrix;
 import stochastic.processes.hawkes.*;
 import stochastic.processes.point.*;
