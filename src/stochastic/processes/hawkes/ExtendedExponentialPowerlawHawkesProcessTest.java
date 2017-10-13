@@ -2,7 +2,12 @@ package stochastic.processes.hawkes;
 
 import static java.lang.Math.pow;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.rangeClosed;
 
+import java.io.IOException;
+import java.util.function.IntToDoubleFunction;
+
+import fastmath.Vector;
 import junit.framework.TestCase;
 
 @SuppressWarnings(
@@ -43,15 +48,17 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
   }
   
-  public void testMeanVariance()
+  public void testPrediction() throws IOException
   {
     double b = 1.5;
     double τ = 0.34;
     double ε = 0.25;
     double τ0 = 1.3;
     ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
-    double mean = process.nthNormalizedMoment(1);
-    double stdev = process.nthNormalizedMoment(2);
-    out.println( "m=" + mean + " sd=" + stdev );
+
+    Vector T = HawkesProcessEstimator.loadData("/home/stephen/git/fastmath/SPY.mat", "SPY");
+    double nextPoint = process.predict();
+    
+    
   }
 }

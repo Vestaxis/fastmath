@@ -592,9 +592,14 @@ public class Functions
     z[1] = g.getImaginary().sixtyFourBitValue();
   }
 
-  public static double sum( IntToDoubleFunction summand, int lowerIndex, int upperIndex )
+  public static double sum( IntToDoubleFunction elements, int lowerIndex, int upperIndex )
   {
-    return rangeClosed( lowerIndex, upperIndex ).parallel().mapToDouble( summand ).sum();
+    return rangeClosed( lowerIndex, upperIndex ).mapToDouble( elements ).sum();
   }
 
+  public static double prod( IntToDoubleFunction elements, int lowerIndex, int upperIndex )
+  {
+    return rangeClosed( lowerIndex, upperIndex ).mapToDouble( elements ).sum();
+  }
+  
 }

@@ -1,5 +1,6 @@
 package stochastic.processes.hawkes;
 
+import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
@@ -12,10 +13,13 @@ import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.analysis.BivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.optim.InitialGuess;
@@ -32,6 +36,8 @@ import org.knowm.xchart.XYChart;
 
 import fastmath.Pair;
 import fastmath.Vector;
+import fastmath.functions.PentavariateFunction;
+import fastmath.functions.QuadvariateFunction;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
@@ -54,21 +60,31 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return spawn.logLik();
   }
 
-  /** 
-   * @return predicted time of next point of the process given the list-history {@link #T}
+  /**
+   * @return predicted time of next point of the process given the list-history
+   *         {@link #T}
    */
   public double predict()
   {
-    throw new UnsupportedOperationException( "TODO: invert compensator and integrate over standard exponential distribution" );
+    final double υ = prod(k -> β(k), 0, order() - 1);
+    final double w = sum(k -> β(k), 0, order() - 1);
+    double maxT = T.fmax();
+    UnivariateFunction η = t -> exp((t + maxT) * w);
+    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
+    PentavariateFunction σ = ( m, k, t, s, ε ) -> 0;
+    
+    throw new UnsupportedOperationException("TODO: find the worksheet where σ(m,k,t,s) function is defined and what ϕ[m] is");
   }
-  
+
   protected abstract double α(int j);
 
   protected abstract double β(int j);
 
   protected boolean recursive = true;
 
-  private double λ0;
+  private double κ = 0;
+
+  private UnivariateFunction λ0 = t -> κ;
 
   public boolean verbose = false;
 
@@ -126,9 +142,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
   }
 
-  protected final double evolveλ(double dt, double[] S)
+  protected final double evolveλ(double dt, double t, double[] S)
   {
-    double λ = λ0;
+    double λ = λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
       S[j] = exp(-β(j) * dt) * (1 + S[j]);
@@ -137,9 +153,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return λ / Z();
   }
 
-  protected final double evolveΛ(double prevdt, double dt, double[] A)
+  protected final double evolveΛ(double prevdt, double dt, double t, double[] A)
   {
-    double Λ = dt * λ0;
+    double Λ = dt * λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
       double a = α(j);
@@ -160,7 +176,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     {
       double dtprev = i == 0 ? 0 : durations.get(i - 1);
       double dt = durations.get(i);
-      compensator.set(i, evolveΛ(dtprev, dt, A));
+      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
     }
     return compensator;
   }
@@ -189,8 +205,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
         double t = T.get(i);
         double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
         double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, S);
-        double Λ = evolveΛ(prevdt, dt, A);
+        double λ = evolveλ(dt, T.get(i), S);
+        double Λ = evolveΛ(prevdt, dt, T.get(i), A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -249,7 +265,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0 + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
+    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
   public Vector λvector()
@@ -265,7 +281,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
         double t = T.get(i);
         double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
         double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, S);
+        double λ = evolveλ(dt, T.get(i), S);
         intensity.set(i, λ);
 
       }
@@ -378,8 +394,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      double σa = pow( processA.Λ().getLjungBoxStatistic(10) - 8, 2 );
-      double σb = pow( processB.Λ().getLjungBoxStatistic(10) - 8, 2 );
+      double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
+      double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
       return Double.compare(σa, σb);
     };
 
@@ -420,7 +436,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       compensated.mean(),
       compensated.variance(),
       process.compensatorMomentMeasure(),
-      pow( compensated.getLjungBoxStatistic(10) - 8, 2 ) };
+      pow(compensated.getLjungBoxStatistic(10) - 8, 2) };
 
     return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
@@ -436,7 +452,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    * functions which takes its minimum when the mean and the variance of the
    * compensator is closer to 1
    * 
-   * @return measure which is greater the closer the first two moments of the compensator are to unity
+   * @return measure which is greater the closer the first two moments of the
+   *         compensator are to unity
    */
   public double compensatorMomentMeasure()
   {
@@ -444,7 +461,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     Vector normalizedSampleMoments = dT.normalizedMoments(2);
     Vector parametricMoments = normalizedMoments(2);
     return -(parametricMoments.subtract(normalizedSampleMoments).pow(2).sum());
-    
+
   }
 
   private Vector normalizedMoments(int n)
