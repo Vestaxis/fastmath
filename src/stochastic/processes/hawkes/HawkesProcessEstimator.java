@@ -79,7 +79,7 @@ public class HawkesProcessEstimator
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors() * 10;
+    return Runtime.getRuntime().availableProcessors() * 4;
   }
 
   public void estimate(Vector data) throws IOException

@@ -54,6 +54,14 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return spawn.logLik();
   }
 
+  /** 
+   * @return predicted time of next point of the process given the list-history {@link #T}
+   */
+  public double predict()
+  {
+    throw new UnsupportedOperationException( "TODO: invert compensator and integrate over standard exponential distribution" );
+  }
+  
   protected abstract double α(int j);
 
   protected abstract double β(int j);
