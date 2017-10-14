@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.function.IntToDoubleFunction;
 
 import org.apache.commons.math3.analysis.function.Min;
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
@@ -54,21 +55,22 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
 
   }
 
-  public static void main(String args[]) throws IOException
+  public void testIntegralOfKernel()
   {
-    double b = 1.3621739959112;
-    double τ = 0.35043405476410616;
-    double ε = 0.016225473443095387;
-    double τ0 = 3.116820765602559;
+    double b = 1;
+    double τ = 1;
+    double ε = 0.25;
+    double τ0 = 1;
     ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
-    process.m = 5.2671868072744745;
-    Vector T = HawkesProcessEstimator.loadData("/home/stephen/git/fastmath/SPY.mat", "SPY", 25 );
-    T = T.copy().subtract(T.get(0));
-    process.T = T;
-    // double nextPoint = process.predict();
-
-    // Plotter.plot("ψ(t)", t -> process.ψ(t), 0, 50);
-    plot("λ(t)", t -> process.λ(t), 0, T.fmax(), 5000 );
-
+    RombergIntegrator integrator = new RombergIntegrator();
+    double integral = integrator.integrate(500000, process::ψ, 0, 5000);
+    out.println( "integral=" + integral );
+    assertEquals( process.ρ, integral, pow(10,-4));
+    process.ρ = 0.5;
+    integral = integrator.integrate(500000, process::ψ, 0, 50000);
+    assertEquals( process.ρ, integral, pow(10,-4));
+    out.println( "integral=" + integral );    
   }
+
+
 }

@@ -6,6 +6,8 @@ import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.IOException;
 
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
+
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
@@ -36,6 +38,23 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     assertEquals(.18284483319013261698230044979325998875927092907043, x, pow(10, -9));
     // out.println( "x=" + x );
   }
+  
+  public void testIntegralOfKernel()
+  {
+
+    double ε = 0.25;
+    double τ0 = 1;
+    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
+    RombergIntegrator integrator = new RombergIntegrator();
+    double integral = integrator.integrate(500000, process::ψ, 0, 5000);
+    out.println( "integral=" + integral );
+    assertEquals( process.ρ, integral, pow(10,-4));
+    process.ρ = 0.5;
+    integral = integrator.integrate(500000, process::ψ, 0, 5000);
+    assertEquals( process.ρ, integral, pow(10,-4));
+    out.println( "integral=" + integral );    
+  }
+
 
   // public void testLogLik() throws IOException
   // {

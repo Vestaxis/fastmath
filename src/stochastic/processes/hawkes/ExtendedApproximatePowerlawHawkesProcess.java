@@ -56,7 +56,6 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
 
   };
 
-  private double ρ;
 
   /**
    * 
@@ -117,17 +116,19 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    */
   public double Z()
   {
+    double z = 0;
     if (ε == 0)
     {
-      return M * b * τ + M;
+      z= M * b * τ + M;
     }
     else
     {
       double a = pow(m, (-ε * M + ε + 1)) - pow(m, (1 + ε));
       double b = pow(m, ε) - 1;
       double c = pow(τ0, -1 - ε);
-      return -τ0 * a / m / b * c - αS() * τ0 / m;
+      z= -τ0 * a / m / b * c - αS() * τ0 / m;
     }
+    return z * ρ;
   }
 
   /**
@@ -161,7 +162,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   @Override
   public double βS()
   {
-    return τ;
+    return 1/τ;
     // double tau = exp(τ);
     // return tau;
   }
