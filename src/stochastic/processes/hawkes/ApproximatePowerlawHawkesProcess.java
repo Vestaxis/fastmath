@@ -21,7 +21,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ε(0, 0.5), τ0(0, 30);
+    κ(0, 5), ε(0, 0.5), τ0(0, 30);
 
     private double min;
     private double max;

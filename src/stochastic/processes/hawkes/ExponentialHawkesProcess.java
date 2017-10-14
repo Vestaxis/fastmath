@@ -118,6 +118,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   public final double λ(double t)
   {
     DoubleAdder sum = new DoubleAdder();
+    sum.add(λ0.value(t));
     double s;
     for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
     {
