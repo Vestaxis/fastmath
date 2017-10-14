@@ -30,9 +30,9 @@ public class Functions
   // return z[0];
   // }
   //
-  public static final double δ( double z )
+  public static final double δ(double z)
   {
-    return ( z == 0.0 ? 1.0 : 0.0 );
+    return (z == 0.0 ? 1.0 : 0.0);
   };
 
   /**
@@ -42,9 +42,9 @@ public class Functions
    * @param y
    * @param z
    */
-  public static void Γ( double x, double y, double[] z )
+  public static void Γ(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.Gamma();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -57,9 +57,9 @@ public class Functions
    * @param y
    * @param z
    */
-  public static void lnΓ( double x, double y, double[] z )
+  public static void lnΓ(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.lnGamma();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -72,17 +72,17 @@ public class Functions
    * @param y
    * @return
    */
-  public static void Ψ( double x, double y, double[] z )
+  public static void Ψ(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.DiGamma();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
   }
 
-  public static void ζ( double x, double y, double[] z )
+  public static void ζ(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.Zeta();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -122,7 +122,7 @@ public class Functions
    * @param y
    * @param z
    */
-  public static void Z( double x, double y, double[] z )
+  public static void Z(double x, double y, double[] z)
   {
     // if ( y > 0 )
     // {
@@ -130,7 +130,7 @@ public class Functions
     // z[1] = -z[1];
     // return;
     // }
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.HardyZ();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -143,7 +143,7 @@ public class Functions
    * @param y
    * @param z
    */
-  public static void Zd( double x, double y, double[] z )
+  public static void Zd(double x, double y, double[] z)
   {
     // if ( y > 0 )
     // {
@@ -151,7 +151,7 @@ public class Functions
     // z[1] = -z[1];
     // return;
     // }
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.HardyZDerivative();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -165,48 +165,47 @@ public class Functions
    * @param z
    * @param h
    */
-  public static void ZNewton( double x, double y, double[] z )
+  public static void ZNewton(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.HardyZNewton();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
   }
 
   /**
-   * A relaxed Newton-like iteration of the Hardy Z-function.
-   * t-h*tanh(Z(t)/Z'(t))
+   * A relaxed Newton-like iteration of the Hardy Z-function. t-h*tanh(Z(t)/Z'(t))
    * 
    * @param x
    *          real part of complex coordinate
    * @param y
    *          imaginary part of complex coordinate
    * @param z
-   *          2d-array that holds the real and imaginary parts of the value of
-   *          the function evaluated at the point (x,y)
+   *          2d-array that holds the real and imaginary parts of the value of the
+   *          function evaluated at the point (x,y)
    * @param h
    *          relaxation constant
    */
-  public static void ZHTNewton( double x, double y, double[] z, double h )
+  public static void ZHTNewton(double x, double y, double[] z, double h)
   {
-    Complex p = new Complex( x, y );
-    Complex g = p.HardyZRelaxedTanhNewton( new Real( h ) );
+    Complex p = new Complex(x, y);
+    Complex g = p.HardyZRelaxedTanhNewton(new Real(h));
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
 
   }
 
-  public static Real approximationZero( int n )
+  public static Real approximationZero(int n)
   {
-    final Complex ndx = new Complex( ( ( 8.0 * n - 11.0 ) / ( 8.0 * exp( 1 ) ) ), 0 );
+    final Complex ndx = new Complex(((8.0 * n - 11.0) / (8.0 * exp(1))), 0);
     final Complex w = ndx.W();
-    final Complex top = new Complex( PI * ( 8 * n - 11 ), 0 );
-    return top.divide( ( w.multiply( 4 ) ) ).getReal();
+    final Complex top = new Complex(PI * (8 * n - 11), 0);
+    return top.divide((w.multiply(4))).getReal();
   }
 
-  public static double W( double d )
+  public static double W(double d)
   {
-    return new Complex( d, 0 ).W().getReal().sixtyFourBitValue();
+    return new Complex(d, 0).W().getReal().sixtyFourBitValue();
   }
 
   /**
@@ -219,9 +218,9 @@ public class Functions
    * @param z
    *          upon return is set to [Re(ϑ(x+iy)),Im(ϑ(x+iy))]
    */
-  public static void ϑ( double x, double y, double[] z )
+  public static void ϑ(double x, double y, double[] z)
   {
-    Complex p = new Complex( x, y );
+    Complex p = new Complex(x, y);
     Complex g = p.vartheta();
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
@@ -237,9 +236,9 @@ public class Functions
    * @param z
    *          upon return is set to [Re(ϑ(x+iy)),Im(ϑ(x+iy))]
    */
-  public static native void ϑd( double x, double y, double[] z );
+  public static native void ϑd(double x, double y, double[] z);
 
-  public static void main( String args[] )
+  public static void main(String args[])
   {
   }
 
@@ -253,9 +252,9 @@ public class Functions
    * @param t
    * @return
    */
-  public static long trimMilli( long t )
+  public static long trimMilli(long t)
   {
-    return t - ( t % 1000 );
+    return t - (t % 1000);
   }
 
   /**
@@ -265,10 +264,10 @@ public class Functions
    * @param decimals
    * @return
    */
-  public static double round( double x, int decimals )
+  public static double round(double x, int decimals)
   {
-    double y = Math.pow( 10, decimals );
-    return Math.round( x * y ) / y;
+    double y = Math.pow(10, decimals);
+    return Math.round(x * y) / y;
   }
 
   /**
@@ -277,9 +276,9 @@ public class Functions
    * @param x
    * @return
    */
-  public static boolean isReal( double x )
+  public static boolean isReal(double x)
   {
-    return !Double.isInfinite( x ) && !Double.isNaN( x );
+    return !Double.isInfinite(x) && !Double.isNaN(x);
   }
 
   /**
@@ -290,9 +289,9 @@ public class Functions
    *          -6 for CST
    * @return
    */
-  public static double unixTimeToHours( double x, double timezoneOffset )
+  public static double unixTimeToHours(double x, double timezoneOffset)
   {
-    return ( ( x % ( 1000 * 60 * 60 * 24 ) ) / 1000 / 60 / 60 ) + timezoneOffset;
+    return ((x % (1000 * 60 * 60 * 24)) / 1000 / 60 / 60) + timezoneOffset;
   }
 
   /**
@@ -303,9 +302,9 @@ public class Functions
    *          -6 for CST
    * @return
    */
-  public static double unixTimeToMinutes( double x, double timezoneOffset )
+  public static double unixTimeToMinutes(double x, double timezoneOffset)
   {
-    return ( ( x % ( 1000 * 60 * 60 * 24 ) ) / 1000 / 60 ) + ( timezoneOffset * 60 );
+    return ((x % (1000 * 60 * 60 * 24)) / 1000 / 60) + (timezoneOffset * 60);
   }
 
   /**
@@ -314,9 +313,9 @@ public class Functions
    * @param x
    * @return
    */
-  public static int sign( double x )
+  public static int sign(double x)
   {
-    return ( x == 0 ) ? 0 : ( x > 0 ) ? 1 : -1;
+    return (x == 0) ? 0 : (x > 0) ? 1 : -1;
   }
 
   /**
@@ -325,9 +324,9 @@ public class Functions
    * @param x
    * @return
    */
-  public static double roundToZero( double x )
+  public static double roundToZero(double x)
   {
-    return Math.signum( x ) >= 0 ? Math.floor( x ) : Math.ceil( x );
+    return Math.signum(x) >= 0 ? Math.floor(x) : Math.ceil(x);
   }
 
   /**
@@ -336,15 +335,15 @@ public class Functions
    * @param x
    * @return
    */
-  public static double frac( double x )
+  public static double frac(double x)
   {
-    return x - Math.floor( x );
+    return x - Math.floor(x);
   }
 
-  public static double Γ( double x )
+  public static double Γ(double x)
   {
     double z[] = new double[2];
-    Γ( x, 0, z );
+    Γ(x, 0, z);
     return z[0];
     // return exp( logGamma( x ) );
   }
@@ -353,9 +352,9 @@ public class Functions
    * @param range
    * @return random number uniformly distributed within range
    */
-  public static double uniformRandom( Pair<Double, Double> range )
+  public static double uniformRandom(Pair<Double, Double> range)
   {
-    return Math.random() * ( range.right - range.left ) + range.left;
+    return Math.random() * (range.right - range.left) + range.left;
   }
 
   /**
@@ -365,27 +364,27 @@ public class Functions
    * @param b
    * @return
    */
-  public static DoubleMatrix outerProduct( Vector a, Vector b )
+  public static DoubleMatrix outerProduct(Vector a, Vector b)
   {
     DoubleMatrix amatrix = a.asMatrix().trans();
     DoubleMatrix bmatrix = b.asMatrix();
     // log.info(amatrix + " times " + bmatrix );
-    return amatrix.prod( bmatrix );
+    return amatrix.prod(bmatrix);
   }
 
-  public static Vector range( double xmin, double xmax, double step )
+  public static Vector range(double xmin, double xmax, double step)
   {
-    return range( xmin, xmax, step, (int) ( ( xmax - xmin ) / step ) + 1 );
+    return range(xmin, xmax, step, (int) ((xmax - xmin) / step) + 1);
   }
 
-  public static Vector range( double xmin, double xmax, double step, int n )
+  public static Vector range(double xmin, double xmax, double step, int n)
   {
     assert step > 0;
-    Vector data = new Vector( n );
+    Vector data = new Vector(n);
     double t = xmin;
-    for ( int row = 0; row < n; row++ )
+    for (int row = 0; row < n; row++)
     {
-      data.set( row, t );
+      data.set(row, t);
       t += step;
     }
     return data;
@@ -398,10 +397,10 @@ public class Functions
    * @param n
    * @return n*n identity matrix
    */
-  public static DoubleColMatrix eye( int n )
+  public static DoubleColMatrix eye(int n)
   {
-    DoubleColMatrix eye = new DoubleColMatrix( n, n );
-    eye.diag().assign( 1.0 );
+    DoubleColMatrix eye = new DoubleColMatrix(n, n);
+    eye.diag().assign(1.0);
     return eye;
   }
 
@@ -411,10 +410,10 @@ public class Functions
    * @param n
    * @return n*n identity matrix
    */
-  public static DoubleColMatrix eye( int n, DoubleColMatrix eye )
+  public static DoubleColMatrix eye(int n, DoubleColMatrix eye)
   {
-    eye.assign( 0.0 );
-    eye.diag().assign( 1.0 );
+    eye.assign(0.0);
+    eye.diag().assign(1.0);
     return eye;
   }
 
@@ -429,33 +428,24 @@ public class Functions
    * @param h
    * @return
    */
-  public static int iterate( Iteration map, int n, double initRe, double initIm, double z[], double h )
+  public static int iterate(Iteration map, int n, double initRe, double initIm, double z[], double h)
   {
     double lasterr = Double.MAX_VALUE;
     double[] pz = new double[]
-    {
-      Double.NaN,
-      Double.NaN
-    };
+    { Double.NaN, Double.NaN };
 
     z[0] = initRe;
     z[1] = initIm;
-    for ( int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       pz[0] = z[0];
       pz[1] = z[1];
-      map.value( z[0], z[1], z, h );
-      final double err = abs( pz[0] - z[0] );
+      map.value(z[0], z[1], z, h);
+      final double err = abs(pz[0] - z[0]);
       lasterr = err;
-      if ( err > lasterr )
-      {
-        throw new IllegalArgumentException( "diverged from " + lasterr + " to " + err );
-      }
+      if (err > lasterr) { throw new IllegalArgumentException("diverged from " + lasterr + " to " + err); }
 
-      if ( err < pow( 10, -17 ) )
-      {
-        return i;
-      }
+      if (err < pow(10, -17)) { return i; }
     }
     return n;
   }
@@ -471,26 +461,20 @@ public class Functions
    * @param h
    * @return
    */
-  public static Complex iterate( Function<Complex, Complex> map, Complex init, int n )
+  public static Complex iterate(Function<Complex, Complex> map, Complex init, int n)
   {
     double lasterr = Double.MAX_VALUE;
     Complex pz;
     Complex z = init;
-    for ( int i = 0; i < n; i++ )
+    for (int i = 0; i < n; i++)
     {
       pz = z;
-      z = map.apply( z );
+      z = map.apply(z);
       // println( "wtf z[" + i + "]=" + z );
-      if ( z.isInfinite() )
-      {
-        return pz;
-      }
-      final double err = pz.subtract( z ).abs().sixtyFourBitValue();
+      if (z.isInfinite()) { return pz; }
+      final double err = pz.subtract(z).abs().sixtyFourBitValue();
       lasterr = err;
-      if ( err > lasterr )
-      {
-        throw new IllegalArgumentException( "diverged from " + lasterr + " to " + err );
-      }
+      if (err > lasterr) { throw new IllegalArgumentException("diverged from " + lasterr + " to " + err); }
 
       // if ( err < pow( 10, -17 ) )
       // {
@@ -516,40 +500,34 @@ public class Functions
    *          relaxation constant
    * @return iteration count
    */
-  public static int convergeToZHTNewtonLimit( double initx, double inity, double[] z, double h )
+  public static int convergeToZHTNewtonLimit(double initx, double inity, double[] z, double h)
   {
-    return iterate( Iteration.ZHTNewton, 20, initx, inity, z, h );
+    return iterate(Iteration.ZHTNewton, 20, initx, inity, z, h);
   }
 
-  public static DoubleRowMatrix iterateAlongPath( Iteration map, double initx, double inity, double h )
+  public static DoubleRowMatrix iterateAlongPath(Iteration map, double initx, double inity, double h)
   {
-    DoubleRowMatrix sequence = new DoubleRowMatrix( 0, 2 );
+    DoubleRowMatrix sequence = new DoubleRowMatrix(0, 2);
 
     double prevδnorm = Double.NEGATIVE_INFINITY;
-    for ( int i = 0; i < 100; i++ )
+    for (int i = 0; i < 100; i++)
     {
       Vector lastz = sequence.lastRow();
-      if ( lastz == null )
+      if (lastz == null)
       {
-        lastz = new Vector( new double[]
-        {
-          initx,
-          inity
-        } );
-        sequence.appendRow( lastz );
+        lastz = new Vector(new double[]
+        { initx, inity });
+        sequence.appendRow(lastz);
       }
       Vector z = sequence.appendRow();
       double to[] = new double[2];
-      map.value( lastz.get( 0 ), lastz.get( 1 ), to, h );
-      z.set( to );
+      map.value(lastz.get(0), lastz.get(1), to, h);
+      z.set(to);
 
-      double δnorm = ( abs( z.get( 0 ) - lastz.get( 0 ) ) );
-      double δ2norm = abs( δnorm - prevδnorm );
+      double δnorm = (abs(z.get(0) - lastz.get(0)));
+      double δ2norm = abs(δnorm - prevδnorm);
 
-      if ( δnorm < pow( 10, -13 ) || Double.isNaN( δ2norm ) )
-      {
-        return sequence;
-      }
+      if (δnorm < pow(10, -13) || Double.isNaN(δ2norm)) { return sequence; }
       prevδnorm = δnorm;
     }
     return sequence;
@@ -562,9 +540,9 @@ public class Functions
    * @param n
    * @return
    */
-  public static double almostGramPoint( int n )
+  public static double almostGramPoint(int n)
   {
-    return ( -7 + 8 * n ) * PI / ( 4 * W( ( -7 + 8 * n ) / ( 8 * exp( 1 ) ) ) );
+    return (-7 + 8 * n) * PI / (4 * W((-7 + 8 * n) / (8 * exp(1))));
   }
 
   /**
@@ -576,30 +554,40 @@ public class Functions
    *          t-lambda*(Z(t)*(Z(t)/(Z(t+Z(t))-Z(t))))
    * 
    */
-  public static void ZSteffensen( double x, double y, double[] z, double h )
+  public static void ZSteffensen(double x, double y, double[] z, double h)
   {
-    Complex t = new Complex( x, y );
-    Complex g = t.ZSteffensen( h );
+    Complex t = new Complex(x, y);
+    Complex g = t.ZSteffensen(h);
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
   }
 
-  public static void ZSteffensenTanh( double x, double y, double[] z, double h )
+  public static void ZSteffensenTanh(double x, double y, double[] z, double h)
   {
-    Complex t = new Complex( x, y );
-    Complex g = t.ZSteffensenTanh( h );
+    Complex t = new Complex(x, y);
+    Complex g = t.ZSteffensenTanh(h);
     z[0] = g.getReal().sixtyFourBitValue();
     z[1] = g.getImaginary().sixtyFourBitValue();
   }
 
-  public static double sum( IntToDoubleFunction elements, int lowerIndex, int upperIndex )
+  public static double sum(IntToDoubleFunction elements, int lowerIndex, int upperIndex)
   {
-    return rangeClosed( lowerIndex, upperIndex ).mapToDouble( elements ).sum();
+    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).sum();
   }
 
-  public static double prod( IntToDoubleFunction elements, int lowerIndex, int upperIndex )
+  public static double sumExcluding(IntToDoubleFunction elements, int lowerIndex, int upperIndex, int excluding)
   {
-    return rangeClosed( lowerIndex, upperIndex ).mapToDouble( elements ).sum();
+    return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).sum();
   }
-  
+
+  public static double prod(IntToDoubleFunction elements, int lowerIndex, int upperIndex)
+  {
+    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).reduce(1, (a, b) -> a * b);
+  }
+
+  public static double prodExcluding(IntToDoubleFunction elements, int lowerIndex, int upperIndex, int excluding)
+  {
+    return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).reduce(1, (a, b) -> a * b);
+  }
+
 }

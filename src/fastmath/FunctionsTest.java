@@ -22,7 +22,22 @@ public class FunctionsTest extends TestCase
   private static double ε10 = pow( 10, -10 );
 
   private static double ε7 = pow( 10, -7 );
+  
+  public void testProd()
+  {
+    double a[] = new double[] { 1,2,4};
+    double x = Functions.prod( i->a[i] , 0,2);
+    assertEquals(8.0, x);
+  }
 
+  public void testProdExcluding()
+  {
+    double a[] = new double[] { 1,2,4,5};
+    double x = Functions.prodExcluding( i->a[i] , 0,3,2);
+    assertEquals(10.0, x);
+  }
+
+  
   public void testRealGamma()
   {
     assertEquals( 0.88817765859688764895, Γ( 1.54 ), pow( 10, -15 ) );

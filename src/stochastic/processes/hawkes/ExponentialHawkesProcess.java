@@ -14,6 +14,7 @@ import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.DoubleFunction;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -71,9 +72,10 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     double maxT = T.fmax();
     UnivariateFunction η = t -> exp((t + maxT) * w);
     BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
-    PentavariateFunction σ = ( m, k, t, s, ε ) -> 0;
-    
-    throw new UnsupportedOperationException("TODO: find the worksheet where σ(m,k,t,s) function is defined and what ϕ[m] is");
+    IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
+    PentavariateFunction σ = (m, k, t, s, ε) -> 0;
+
+    throw new UnsupportedOperationException("TODO: finish implementing and checking formulas");
   }
 
   protected abstract double α(int j);
