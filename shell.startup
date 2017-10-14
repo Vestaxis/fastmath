@@ -8,6 +8,7 @@ import static fastmath.matfile.MatFile.loadMatrix;
 import stochastic.processes.hawkes.*;
 import stochastic.processes.point.*;
 import static java.lang.Math.*;
+import static stochastic.processes.point.MarkedPointProcessIterator.ls;
 
 Map<String,DoubleColMatrix> vars = new MatFile( "test.mat").matrixMap();
 Vector data = vars.get( "data" ).asVector();

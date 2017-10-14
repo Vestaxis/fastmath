@@ -23,26 +23,35 @@ public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>,
 
   public MarkedPointProcessIterator(File directory, String... symbolList) throws IOException
   {
-    symbols.addAll( Arrays.asList( symbolList ) );
-    Stream<File> mppFiles = Files.find( Paths.get( directory.toURI() ), 2, ( p, bfa ) ->
-    {
+    symbols.addAll(Arrays.asList(symbolList));
+    Stream<File> mppFiles = Files.find(Paths.get(directory.toURI()), 2, (p, bfa) -> {
       String filename = p.getFileName().toString();
-      String[] tokens = filename.split( "-" );
-      boolean matchesSymbol = tokens.length > 0 && symbols.contains( tokens[0] );
+      String[] tokens = filename.split("-");
+      boolean matchesSymbol = tokens.length > 0 && symbols.contains(tokens[0]);
       int tokenCount = tokens.length;
-      boolean isDateSubdir = ( bfa.isDirectory() || bfa.isSymbolicLink() ) && tokenCount == 3;
-      boolean isMPPfile = filename.endsWith( ".mpp" );
+      boolean isDateSubdir = (bfa.isDirectory() || bfa.isSymbolicLink()) && tokenCount == 3;
+      boolean isMPPfile = filename.endsWith(".mpp");
       boolean isMPPArchive = matchesSymbol && isMPPfile;
       return isMPPArchive || isDateSubdir;
-    }, FileVisitOption.FOLLOW_LINKS ).sorted().map( path -> path.toFile() );
-    List<File> files = mppFiles.collect( Collectors.toList() );
-    List<File> mppList = files.stream().filter( file -> file.isFile() ).collect( Collectors.toList() );
+    }, FileVisitOption.FOLLOW_LINKS).sorted().map(path -> path.toFile());
+    List<File> files = mppFiles.collect(Collectors.toList());
+    List<File> mppList = files.stream().filter(file -> file.isFile()).collect(Collectors.toList());
     markedPointProcesses = mppList.iterator();
+  }
+
+  public MarkedPointProcessIterator(String dir, String... symbolList) throws IOException
+  {
+    this(new File(dir), symbolList);
+  }
+
+  public static List<MarkedPointProcess> ls(String... symbols) throws IOException
+  {
+    return new MarkedPointProcessIterator("/data", symbols).stream().collect(Collectors.toList());
   }
 
   public Stream<MarkedPointProcess> stream()
   {
-    return StreamSupport.stream( spliterator(), false );
+    return StreamSupport.stream(spliterator(), false);
   }
 
   @Override
@@ -66,21 +75,21 @@ public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>,
     try
     {
       mppFile = markedPointProcesses.next();
-      symbol = mppFile.getName().split( "-" )[0];
-      mpp.left = new RandomAccessFile( mppFile, "r" );
-      mpp.right = new RandomAccessFile( new File( mppFile.getAbsolutePath() + ".idx" ), "r" );
+      symbol = mppFile.getName().split("-")[0];
+      mpp.left = new RandomAccessFile(mppFile, "r");
+      mpp.right = new RandomAccessFile(new File(mppFile.getAbsolutePath() + ".idx"), "r");
     }
-    catch( Exception e )
+    catch (Exception e)
     {
-      throw new RuntimeException( e.getMessage(), e );
+      throw new RuntimeException(e.getMessage(), e);
     }
     try
     {
-      return new MarkedPointProcess( mpp, mppFile, symbol );
+      return new MarkedPointProcess(mpp, mppFile, symbol);
     }
-    catch( IOException e )
+    catch (IOException e)
     {
-      throw new RuntimeException( e.getMessage(), e );
+      throw new RuntimeException(e.getMessage(), e);
     }
   }
 

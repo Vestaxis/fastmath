@@ -45,6 +45,11 @@ public abstract class ArchivableEvent implements HasSymbol, Serializable
     return hod;
   }
 
+  public double getTimeOfDay( TimeUnit units )
+  {
+    return DateUtils.convertTimeUnits(getTimestamp(), TimeUnit.MILLISECONDS, units);   
+  }
+  
   /**
    * 1 thousand, 4 zeros
    */

@@ -1,6 +1,7 @@
 package stochastic.processes.point;
 
 import static java.lang.System.err;
+import static java.lang.System.out;
 
 import java.io.EOFException;
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import fastmath.DoubleColMatrix;
+import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
 import stochastic.processes.pointprocesses.finance.ArchivableEvent;
@@ -215,5 +217,33 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       }
     }
     return A;
+  }
+
+  public DoubleRowMatrix getTradeMatrix()
+  {
+    DoubleRowMatrix tradeMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_trades");
+
+    final Vector lastt = new Vector(1);
+    tradeStream().forEach(event -> {
+      Vector point = new Vector(event.getMarks());
+      double fractionalHourOfDay = event.getTimeOfDay();
+      double t = event.getTimeOfDay(TimeUnit.SECONDS);
+      //double t = fractionalHourOfDay;
+      //double t = DateUtils.convertTimeUnits(fractionalHourOfDay, TimeUnit.MILLISECONDS, timeUnits);
+      point.set(0, t );
+      double prevt = lastt.get(0);
+      if (prevt == t)
+      {
+        return;
+      }
+
+      if (fractionalHourOfDay >= openTime && fractionalHourOfDay <= closeTime)
+      {
+        lastt.set(0, t);
+        tradeMatrix.appendRow(point);
+      }
+    });
+    
+    return tradeMatrix;
   }
 }
