@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 import org.apache.commons.math3.optim.PointValuePair;
 
 import dnl.utils.text.table.TextTable;
+import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
@@ -79,7 +80,7 @@ public class HawkesProcessEstimator
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors() * 4;
+    return Runtime.getRuntime().availableProcessors() * 3;
   }
 
   public void estimate(Vector data) throws IOException
@@ -151,7 +152,8 @@ public class HawkesProcessEstimator
   
   public static Vector loadData(String filename, String symbol, int n) throws IOException
   {
-    Vector data = MatFile.loadMatrix(filename, symbol).col(0).setName("data");
+    DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
+    Vector data = matrix.col(0).setName("data");
     int midpoint = data.size() / 2;
     data = data.slice(midpoint - n, midpoint + n);
     return data;

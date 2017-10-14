@@ -20,7 +20,7 @@ public class MPP2Mat
 
 	private static double openTime = 9.5;
 
-	final static TimeUnit timeUnits = TimeUnit.SECONDS;
+	final static TimeUnit timeUnits = TimeUnit.MILLISECONDS;
 
 	public static void main(String[] args) throws FileNotFoundException, IOException
 	{

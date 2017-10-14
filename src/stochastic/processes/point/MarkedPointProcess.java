@@ -221,7 +221,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
   public DoubleRowMatrix getTradeMatrix()
   {
-    DoubleRowMatrix tradeMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_trades");
+    DoubleRowMatrix tradeMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol );
 
     final Vector lastt = new Vector(1);
     tradeStream().forEach(event -> {
