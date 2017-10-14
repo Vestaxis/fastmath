@@ -17,6 +17,6 @@ public interface QuadvariateFunction
    * 
    * @return the value.
    */
-  double value(double w, double x, double y, double z);
+  double value(int m, int k, double y, double z);
 
 }

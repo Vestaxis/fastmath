@@ -19,6 +19,6 @@ public interface PentavariateFunction
    * 
    * @return the value.
    */
-  double value(double v, double w, double x, double y, double z);
+  double value(int v, int w, double x, double y, double z);
 
 }

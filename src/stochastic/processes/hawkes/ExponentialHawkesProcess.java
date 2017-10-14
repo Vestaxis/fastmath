@@ -2,6 +2,7 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
+import static fastmath.Functions.sumExcluding;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -70,11 +71,13 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     final double υ = prod(k -> β(k), 0, order() - 1);
     final double w = sum(k -> β(k), 0, order() - 1);
     double maxT = T.fmax();
+    int N = T.size();
     UnivariateFunction η = t -> exp((t + maxT) * w);
     BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
-    PentavariateFunction σ = (m, k, t, s, ε) -> 0;
-
+    QuadvariateFunction σ = (m, k, t, s) -> β(m)*(s+T.get(k))+sumExcluding(j->β(j)*(t+s), 0, order()-1, m);
+    
+    BivariateFunction φ = (t,ε) -> τ.value(t,ε)+sum( j->Φ.apply(j) * sum( k-> σ.value(j,k,t,t) - σ.value(j, k, t, maxT), 0,N) , 0, order() - 1 );
     throw new UnsupportedOperationException("TODO: finish implementing and checking formulas");
   }
 
