@@ -21,7 +21,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    κ(0, 1), ε(0, 0.5), τ0(0, 1), ρ(0,1);   
+    α(0.1, 10), κ(0, 1), ε(0, 0.5), τ0(0, 10), ρ(0, 1);
 
     private double min;
     private double max;
@@ -81,7 +81,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   /**
    * branching rate
    */
-  private double ρ = 1;
+  public double ρ = 1;
 
   public ApproximatePowerlawHawkesProcess()
   {
@@ -109,7 +109,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double Z()
   {
-    return ρ / (pow(m, ε) - 1) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)));
+    return ( 1 / (pow(m, ε) - 1) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) ) / ρ;
   }
 
 }

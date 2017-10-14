@@ -219,7 +219,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     return A;
   }
 
-  public DoubleRowMatrix getTradeMatrix()
+  public DoubleRowMatrix getTradeMatrix(TimeUnit timeUnit)
   {
     DoubleRowMatrix tradeMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol );
 
@@ -227,7 +227,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     tradeStream().forEach(event -> {
       Vector point = new Vector(event.getMarks());
       double fractionalHourOfDay = event.getTimeOfDay();
-      double t = event.getTimeOfDay(TimeUnit.SECONDS);
+      double t = event.getTimeOfDay(timeUnit);
       //double t = fractionalHourOfDay;
       //double t = DateUtils.convertTimeUnits(fractionalHourOfDay, TimeUnit.MILLISECONDS, timeUnits);
       point.set(0, t );

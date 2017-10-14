@@ -12,6 +12,15 @@ import junit.framework.TestCase;
 
 public class ApproximatePowerlawHawkesProcessTest extends TestCase
 {
+  public void testBranchingRatio()
+  {
+    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(1.4, 0.25);
+    assertEquals( 1.0, process.getBranchingRatio() );
+    process.ρ = 0.5;
+    assertEquals( 0.5, process.getBranchingRatio() );
+    
+  }
+  
   public void testΨ()
   {
     ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(1.4, 0.25);

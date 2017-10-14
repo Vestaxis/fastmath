@@ -54,11 +54,16 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return getClass().getSimpleName() + getParamString();
   }
 
+  /**
+   * linear time-scaling parameter
+   */
+  public double α = 1;
+
   @Override
   public double logLikelihood(Vector t)
   {
     ExponentialHawkesProcess spawn = copy();
-    spawn.T = t;
+    spawn.T = α == 1 ? t : t.copy().multiply(α);
     return spawn.logLik();
   }
 

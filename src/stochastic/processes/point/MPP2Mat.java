@@ -25,7 +25,7 @@ public class MPP2Mat
 	public static void main(String[] args) throws FileNotFoundException, IOException
 	{
 		MarkedPointProcess mpp = loadMppFile(args[0]);
-		DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix();
+		DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
 		MatFile.write(args[1], tradeMatrix.createMiMatrix());
 	}
 
