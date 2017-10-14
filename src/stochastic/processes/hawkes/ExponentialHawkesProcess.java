@@ -75,9 +75,10 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     UnivariateFunction η = t -> exp((t + maxT) * w);
     BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
-    QuadvariateFunction σ = (m, k, t, s) -> β(m)*(s+T.get(k))+sumExcluding(j->β(j)*(t+s), 0, order()-1, m);
-    
-    BivariateFunction φ = (t,ε) -> τ.value(t,ε)+sum( j->Φ.apply(j) * sum( k-> σ.value(j,k,t,t) - σ.value(j, k, t, maxT), 0,N) , 0, order() - 1 );
+    QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
+    BivariateFunction φ =
+                        (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N), 0, order() - 1);
+                        
     throw new UnsupportedOperationException("TODO: finish implementing and checking formulas");
   }
 
