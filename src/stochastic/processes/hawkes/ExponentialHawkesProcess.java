@@ -79,7 +79,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     BivariateFunction φ =
                         (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N), 0, order() - 1);
                         
-    throw new UnsupportedOperationException("TODO: finish implementing and checking formulas");
+    throw new UnsupportedOperationException("TODO: for each exponentially distributed ε find the critical point t which maximizes the score φ(t,ε) ");
   }
 
   protected abstract double α(int j);
