@@ -2,6 +2,7 @@ import java.util.Map;
 import fastmath.*;
 import fastmath.matfile.MatFile;
 import fastmath.optim.*;
+import static util.Plotter.*;
 import static java.util.Arrays.*;
 import static fastmath.matfile.MatFile.loadMatrix;
 import stochastic.processes.hawkes.*;
