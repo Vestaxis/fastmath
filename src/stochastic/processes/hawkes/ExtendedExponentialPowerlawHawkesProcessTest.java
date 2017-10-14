@@ -3,6 +3,7 @@ package stochastic.processes.hawkes;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
+import static util.Plotter.plot;
 
 import java.io.IOException;
 import java.util.function.IntToDoubleFunction;
@@ -61,11 +62,13 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ0 = 3.116820765602559;
     ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
     process.m = 5.2671868072744745;
-    Vector T = HawkesProcessEstimator.loadData("/home/stephen/git/fastmath/SPY.mat", "SPY");
+    Vector T = HawkesProcessEstimator.loadData("/home/stephen/git/fastmath/SPY.mat", "SPY", 25 );
+    T = T.copy().subtract(T.get(0));
     process.T = T;
     // double nextPoint = process.predict();
 
-    Plotter.plot("ψ(t)", t -> process.ψ(t), 0, 50);
+    // Plotter.plot("ψ(t)", t -> process.ψ(t), 0, 50);
+    plot("λ(t)", t -> process.λ(t), 0, T.fmax(), 5000 );
 
   }
 }

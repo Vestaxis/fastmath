@@ -146,9 +146,15 @@ public class HawkesProcessEstimator
 
   public static Vector loadData(String filename, String symbol) throws IOException
   {
+    return loadData( filename, symbol, 5000 );
+  }
+  
+  public static Vector loadData(String filename, String symbol, int n) throws IOException
+  {
     Vector data = MatFile.loadMatrix(filename, symbol).col(0).setName("data");
     int midpoint = data.size() / 2;
-    data = data.slice(midpoint - 5000, midpoint + 5000);
+    data = data.slice(midpoint - n, midpoint + n);
     return data;
   }
+
 }

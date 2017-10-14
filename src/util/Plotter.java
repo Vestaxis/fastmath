@@ -17,6 +17,7 @@ public class Plotter
     XYChart chart = new XYChart(800, 600);
     chart.getStyler().setXAxisMin(left);
     chart.getStyler().setXAxisMax(right);
+    chart.getStyler().setMarkerSize(0);
     double W = right - left;
     double dt = W / n;
     double t = left;
