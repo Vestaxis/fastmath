@@ -76,7 +76,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
     assert τ0 > 0 : "η must be positive";
     assert τ > 0 : "τ must be positive";
     assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
-    this.η = τ0;
+    this.τ0 = τ0;
     this.τ = τ;
     this.ε = ε;
     this.b = b;
@@ -123,7 +123,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
     else
     {
       double inner = pow(m, -ε * (M - 1)) + pow(m, ε);
-      return (b * τ - ( ( pow(η, -ε) * inner ) / (pow(m, ε) - 1) )) / ρ;
+      return (b * τ - ( ( pow(τ0, -ε) * inner ) / (pow(m, ε) - 1) )) / ρ;
     }
   }
 
@@ -136,10 +136,10 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    */
   public double iψ(double t)
   {
-    double x = sum(i -> -pow(η, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / η * pow(m, -i)), 0, M - 1);
+    double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
     return t * ρ
-           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
-           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1) * t);
+           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
+           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
   private int iterations = 0;

@@ -15,7 +15,7 @@ public class ConstrainedApproximatePowerlawHawkesProcessTest extends TestCase
     double τ0 = 1;
     ConstrainedApproximatePowerlawHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(τ0, ε);
     RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(5000000, process::ψ, 0, 500000);
+    double integral = integrator.integrate(5000000, process::ψ, 0, 50000);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
     assertEquals( process.ρ, integral, pow(10,-4));
     process.ρ = 0.5;
