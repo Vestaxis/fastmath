@@ -11,6 +11,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
+import static util.Plotter.plot;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
@@ -59,6 +60,12 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    */
   public double α = 1;
 
+
+  /**
+   * branching rate
+   */
+  public double ρ = 1;
+
   @Override
   public double logLikelihood(Vector t)
   {
@@ -93,7 +100,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 
   protected boolean recursive = true;
 
-  private double κ = 0;
+  public double κ = 0;
 
   private UnivariateFunction λ0 = t -> κ;
 
@@ -426,6 +433,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     assignParameters(optimum.getKey());
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
+
+    plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
 
     return multiopt;
   }

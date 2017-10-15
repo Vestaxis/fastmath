@@ -45,6 +45,11 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     double ε = 0.25;
     double τ0 = 1;
     ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
+    testHawkesProcess(process);    
+  }
+
+  private void testHawkesProcess(ExponentialHawkesProcess process)
+  {
     RombergIntegrator integrator = new RombergIntegrator();
     double integral = integrator.integrate(500000, process::ψ, 0, 5000);
     out.println( "integral=" + integral );
@@ -52,9 +57,8 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     process.ρ = 0.5;
     integral = integrator.integrate(500000, process::ψ, 0, 5000);
     assertEquals( process.ρ, integral, pow(10,-4));
-    out.println( "integral=" + integral );    
+    out.println( "integral=" + integral );
   }
-
 
   // public void testLogLik() throws IOException
   // {

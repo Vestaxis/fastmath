@@ -15,6 +15,7 @@ public abstract class AbstractHawkesProcess
 
   public Vector T;
 
+
   @Override
   public final Object clone()
   {

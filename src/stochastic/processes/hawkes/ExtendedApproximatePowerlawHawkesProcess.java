@@ -7,6 +7,7 @@ import static java.lang.Math.pow;
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.analysis.function.Abs;
 
 import fastmath.Vector;
 
@@ -18,7 +19,7 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   static enum Parameter implements BoundedParameter
   {
 
-    b(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10), m(0.01,10);
+    b(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
 
     Parameter(double min, double max)
     {
@@ -56,11 +57,10 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
 
   };
 
-
   /**
    * 
    * @param ρ
-   *          TODO
+   *          branching rate
    * @param τ0
    *          exponential multiplier
    * @param ε
@@ -76,11 +76,11 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
     assert τ0 > 0 : "η must be positive";
     assert τ > 0 : "τ must be positive";
     assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
-    this.τ0 = τ0;
+    this.η = τ0;
     this.τ = τ;
     this.ε = ε;
     this.b = b;
-
+    this.κ = 0;
   }
 
   private static final long serialVersionUID = 1L;
@@ -110,25 +110,21 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   private double b;
 
   /**
-   * normalization factor such that the branching rate is equal to this{@link #ρ}
    * 
-   * @return M * b * τ + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1)
+   * @returnnormalization factor such that the branching rate is equal to
+   *                      this{@link #ρ}
    */
   public double Z()
   {
-    double z = 0;
-    if (ε == 0)
+    if (Math.abs(ε-pow(10,-15)) < 0)
     {
-      z= M * b * τ + M;
+      return (b * τ + M) / ρ;
     }
     else
     {
-      double a = pow(m, (-ε * M + ε + 1)) - pow(m, (1 + ε));
-      double b = pow(m, ε) - 1;
-      double c = pow(τ0, -1 - ε);
-      z= -τ0 * a / m / b * c - αS() * τ0 / m;
+      double inner = pow(m, -ε * (M - 1)) + pow(m, ε);
+      return (b * τ - ( ( pow(η, -ε) * inner ) / (pow(m, ε) - 1) )) / ρ;
     }
-    return z * ρ;
   }
 
   /**
@@ -140,18 +136,14 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    */
   public double iψ(double t)
   {
-    double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
+    double x = sum(i -> -pow(η, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / η * pow(m, -i)), 0, M - 1);
     return t * ρ
-           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
-           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
+           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
+           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(η, -ε) * (pow(m, -ε * M) - 1) * t);
   }
 
   private int iterations = 0;
 
-  public Vector getTransformedParameters()
-  {
-    return getParameters();
-  }
 
   @Override
   public int order()
@@ -162,16 +154,16 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   @Override
   public double βS()
   {
-    return 1/τ;
-    // double tau = exp(τ);
-    // return tau;
+    return 1 / τ;
+    // double τ = exp(τ);
+    // return τ;
   }
 
   @Override
   public double αS()
   {
     return b;
-   
+
   }
 
 }

@@ -5,6 +5,7 @@ import fastmath.optim.*;
 import static util.Plotter.*;
 import static java.util.Arrays.*;
 import static fastmath.matfile.MatFile.loadMatrix;
+import static fastmath.matfile.MatFile.write;
 import stochastic.processes.hawkes.*;
 import stochastic.processes.point.*;
 import static java.lang.Math.*;

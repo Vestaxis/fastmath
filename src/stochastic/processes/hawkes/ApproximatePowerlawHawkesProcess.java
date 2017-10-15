@@ -8,14 +8,14 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double nthNormalizedMoment(int n)
   {
-    return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
+    return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(η, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
   }
 
   public ApproximatePowerlawHawkesProcess(double ε, double τ0)
   {
     super();
     this.ε = ε;
-    this.τ0 = τ0;
+    this.η = τ0;
   }
 
   protected static enum Parameter implements BoundedParameter
@@ -60,28 +60,23 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 
   public int M = 15;
 
-  public double τ0;
+  public double η;
 
   public double ε;
 
   @Override
   public double α(int i)
   {
-    return pow(1 / (τ0 * pow(m, i)), 1 + ε);
+    return pow(1 / (η * pow(m, i)), 1 + ε);
   }
 
   @Override
   public double β(int i)
   {
-    return 1 / τ0 / pow(m, i);
+    return 1 / ( η * pow(m, i) );
   }
 
   public double m = 5;
-
-  /**
-   * branching rate
-   */
-  public double ρ = 1;
 
   public ApproximatePowerlawHawkesProcess()
   {
@@ -109,7 +104,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double Z()
   {
-    return ( 1 / (pow(m, ε) - 1) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) ) / ρ;
+    return ( 1 / (pow(m, ε) - 1) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) ) / ρ;
   }
 
 }

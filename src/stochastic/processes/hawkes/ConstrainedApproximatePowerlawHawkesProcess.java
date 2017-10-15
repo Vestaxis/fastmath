@@ -24,7 +24,7 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
 
   public ConstrainedApproximatePowerlawHawkesProcess(double τ0, double ε)
   {
-    this.τ0 = τ0;
+    this.η = τ0;
     this.ε = ε;
   }
 
@@ -37,8 +37,8 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   {
     double a = pow(m, (-ε * M + ε + 1)) - pow(m, (1 + ε));
     double b = pow(m, ε) - 1;
-    double c = pow(τ0, -1 - ε);
-    return -τ0 * a / m / b * c - αS() * τ0 / m;
+    double c = pow(η, -1 - ε);
+    return -η * a / m / b * c - αS() * η / m;
   }
 
   @Override
@@ -55,12 +55,12 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
 
   public double αS()
   {
-    return (pow(τ0, -1 - ε) * (pow(m, -(1 + ε) * (M - 1)) - pow(m, (1 + ε)))) / (pow(m, 1 + ε) - 1);
+    return (pow(η, -1 - ε) * (pow(m, -(1 + ε) * (M - 1)) - pow(m, (1 + ε)))) / (pow(m, 1 + ε) - 1);
   }
 
   public double βS()
   {
-    return m / τ0;
+    return m / η;
   }
 
   /**
@@ -74,30 +74,30 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   public double iψ(double t)
   {
     double a = m * (-1 + pow(m, ε))
-               * (-sum(i -> pow(1 / τ0 / pow(m, i), 1 + ε) * τ0 * pow(m, i) * exp(-t / τ0 / pow(m, i)), 0, M - 1)
-                  + 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * τ0 / m * exp(-t / τ0 * m))
-               / τ0
-               / (pow(τ0, -1 - ε) * pow(m, 1 + ε)
-                  - 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)) * pow(m, ε)
-                  - pow(τ0, -1 - ε) * pow(m, -0.4e1 * ε + 1)
-                  + 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)));
+               * (-sum(i -> pow(1 / η / pow(m, i), 1 + ε) * η * pow(m, i) * exp(-t / η / pow(m, i)), 0, M - 1)
+                  + 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * η / m * exp(-t / η * m))
+               / η
+               / (pow(η, -1 - ε) * pow(m, 1 + ε)
+                  - 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)) * pow(m, ε)
+                  - pow(η, -1 - ε) * pow(m, -0.4e1 * ε + 1)
+                  + 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)));
     double b = m * (-1 + pow(m, ε))
-               * (-1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
-                  + 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * τ0 / m)
-               / τ0
-               / (pow(τ0, -1 - ε) * pow(m, 1 + ε)
-                  - 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)) * pow(m, ε)
-                  - pow(τ0, -1 - ε) * pow(m, -0.4e1 * ε + 1)
-                  + 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)));
+               * (-1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
+                  + 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * η / m)
+               / η
+               / (pow(η, -1 - ε) * pow(m, 1 + ε)
+                  - 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)) * pow(m, ε)
+                  - pow(η, -1 - ε) * pow(m, -0.4e1 * ε + 1)
+                  + 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -0.4e1 - 0.4e1 * ε)));
 
-    double c = τ0 * (pow(τ0, (-1 - ε)) * pow(m, (1 + ε))
-                     - 1 / (pow(m, (1 + ε)) - 1) * pow(τ0, (-1 - ε)) * (pow(m, (1 + ε)) - pow(m, (-4 - 4 * ε))) * pow(m, ε)
-                     - pow(τ0, (-1 - ε)) * pow(m, (-4 * ε + 1))
-                     + 1 / (pow(m, (1 + ε)) - 1) * pow(τ0, (-1 - ε)) * (pow(m, (1 + ε)) - pow(m, (-4 - 4 * ε))));
+    double c = η * (pow(η, (-1 - ε)) * pow(m, (1 + ε))
+                     - 1 / (pow(m, (1 + ε)) - 1) * pow(η, (-1 - ε)) * (pow(m, (1 + ε)) - pow(m, (-4 - 4 * ε))) * pow(m, ε)
+                     - pow(η, (-1 - ε)) * pow(m, (-4 * ε + 1))
+                     + 1 / (pow(m, (1 + ε)) - 1) * pow(η, (-1 - ε)) * (pow(m, (1 + ε)) - pow(m, (-4 - 4 * ε))));
 
     double d = m * (-1 + pow(m, ε))
-               * (-1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
-                  + 1 / (pow(m, 1 + ε) - 1) * pow(τ0, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * τ0 / m);
+               * (-1 / (-1 + pow(m, ε)) * pow(η, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))
+                  + 1 / (pow(m, 1 + ε) - 1) * pow(η, -1 - ε) * (pow(m, 1 + ε) - pow(m, -(1 + ε) * (M - 1))) * η / m);
 
     return -((a - b) * c) / d;
   }
