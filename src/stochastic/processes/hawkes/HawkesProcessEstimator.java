@@ -23,10 +23,11 @@ public class HawkesProcessEstimator
 {
   static
   {
-    System.setProperty( "java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
+    System.setProperty("java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
   }
 
   private ExponentialHawkesProcess process;
+  private int trajectoryCount = Runtime.getRuntime().availableProcessors();
 
   public HawkesProcessEstimator(ExponentialHawkesProcess process)
   {
@@ -35,59 +36,77 @@ public class HawkesProcessEstimator
 
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
-    
-    ExponentialHawkesProcessFactory.Type type = Type.ApproximatePowerlaw;
 
+    ExponentialHawkesProcessFactory.Type type = Type.ConstrainedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
+
+    int trajectoryCount = Runtime.getRuntime().availableProcessors();
     if (args.length > 1)
     {
-      int typeIndex = -1;
-      try
-      {
-        typeIndex = Integer.valueOf(args[1]);
-        if (typeIndex == -1)
-        {
-          typeIndex = Type.valueOf(args[1]).ordinal();
-        }
-      }
-      catch (Exception e)
-      {
-      }
-      if (typeIndex != -1)
-      {
-        type = Type.values()[typeIndex];
-      }
+      trajectoryCount = Integer.valueOf(args[1]);
     }
+
+    // if (args.length > 1)
+    // {
+    // int typeIndex = -1;
+    // try
+    // {
+    // typeIndex = Integer.valueOf(args[1]);
+    // if (typeIndex == -1)
+    // {
+    // typeIndex = Type.valueOf(args[1]).ordinal();
+    // }
+    // }
+    // catch (Exception e)
+    // {
+    // }
+    // if (typeIndex != -1)
+    // {
+    // type = Type.values()[typeIndex];
+    // }
+    // }
+    //
     ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
     Vector data = loadData(filename, "SPY");
     Vector autocor = data.diff().autocor(50);
 
     double lb = autocor.getLjungBoxStatistic(10);
-    
+
     out.println("LjungBox(dT,10)=" + lb);
     HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
+    estimator.setTrajectoryCount(trajectoryCount);
     estimator.estimate(data);
+  }
+
+  private void setTrajectoryCount(int trajectoryCount)
+  {
+    this.trajectoryCount = trajectoryCount;
   }
 
   private boolean verbose = true;
 
-  /**
+  /*
    * 
    * @return number of trajectories do generate during search for optimal
-   *         parameters
+   * parameters
    * 
    */
   public int getTrajectoryCount()
   {
-    return Runtime.getRuntime().availableProcessors() * 2;
+    return trajectoryCount;
   }
 
   public void estimate(Vector data) throws IOException
   {
     if (verbose)
     {
-      println("spawning " + getTrajectoryCount() + " " + process.getClass().getSimpleName() + "es");
+      println("spawning " + getTrajectoryCount()
+              + " "
+              + process.getClass().getSimpleName()
+              + "es having parameters ["
+              + Arrays.asList(process.getParameterFields()).stream().map(field -> field.getName()).collect(Collectors.joining(","))
+              + "]");
     }
 
     process.T = data;
@@ -147,9 +166,9 @@ public class HawkesProcessEstimator
 
   public static Vector loadData(String filename, String symbol) throws IOException
   {
-    return loadData( filename, symbol, 5000 );
+    return loadData(filename, symbol, 5000);
   }
-  
+
   public static Vector loadData(String filename, String symbol, int n) throws IOException
   {
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);

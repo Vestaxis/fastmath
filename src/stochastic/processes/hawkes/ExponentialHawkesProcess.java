@@ -434,7 +434,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
 
-    plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
+    // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
 
     return multiopt;
   }

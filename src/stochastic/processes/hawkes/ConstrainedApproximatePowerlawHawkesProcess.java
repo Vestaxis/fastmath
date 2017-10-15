@@ -8,6 +8,8 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import stochastic.processes.hawkes.ApproximatePowerlawHawkesProcess.Parameter;
+
 /**
  * Exponential power-law approximation kernel with the no-instantaneous-response
  * constaint ψ(0)=0
@@ -17,10 +19,56 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowerlawHawkesProcess
-    implements MultivariateFunction, Serializable
+public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowerlawHawkesProcess implements MultivariateFunction, Serializable
 {
   private static final long serialVersionUID = 1L;
+
+  @Override
+  public BoundedParameter[] getBoundedParameters()
+  {
+    return Parameter.values();
+  }
+
+  protected static enum Parameter implements BoundedParameter
+  {
+
+    
+    ρ(0,1), y(0, 2), ε(0, 0.5), τ0(0, 10);
+
+    private double min;
+    private double max;
+
+    Parameter(double min, double max)
+    {
+      this.min = min;
+      this.max = max;
+    }
+
+    @Override
+    public String getName()
+    {
+      return name();
+    }
+
+    @Override
+    public double getMin()
+    {
+      return min;
+    }
+
+    @Override
+    public double getMax()
+    {
+      return max;
+    }
+
+    @Override
+    public int getOrdinal()
+    {
+      return ordinal();
+    }
+
+  }
 
   public ConstrainedApproximatePowerlawHawkesProcess(double τ0, double ε)
   {
@@ -32,13 +80,20 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   {
   }
 
+  public double y;
+
   @Override
   public double Z()
   {
-    double a = pow(m, (-ε * M + ε + 1)) - pow(m, (1 + ε));
-    double b = pow(m, ε) - 1;
-    double c = pow(τ0, -1 - ε);
-    return -τ0 * a / m / b * c - αS() * τ0 / m;
+    return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε)
+            + (1 / (pow(m, (1 + ε)) - 1)
+               * pow(τ0, (-1 - ε))
+               * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
+               * ρ + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
+               - pow(τ0, -ε) * pow(m, ε) * y)
+              / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ0 * y - τ0 * y)
+              * τ0)
+           / ρ;
   }
 
   @Override
@@ -55,7 +110,13 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
 
   public double αS()
   {
-    return (pow(τ0, -1 - ε) * (pow(m, -(1 + ε) * (M - 1)) - pow(m, (1 + ε)))) / (pow(m, 1 + ε) - 1);
+    return m
+           * (1 / (pow(m, (1 + ε)) - 1)
+              * pow(τ0, (-1 - ε))
+              * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
+              * ρ + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
+              - pow(τ0, -ε) * pow(m, ε) * y)
+           / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ0 * y - τ0 * y);
   }
 
   public double βS()
@@ -73,8 +134,8 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   @Override
   public double iψ(double t)
   {
-  
-    throw new UnsupportedOperationException( "TODO" );
+
+    throw new UnsupportedOperationException("TODO");
   }
 
   @Override
@@ -82,6 +143,5 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   {
     return M + 1;
   }
-
 
 }
