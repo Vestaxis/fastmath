@@ -34,27 +34,27 @@ public class ComplexPolynomial extends Structure
   public ComplexPolynomial zetaSeries( ComplexPolynomial f )
   {
     ComplexPolynomial res = new ComplexPolynomial( f.length );
-    res.setCoeff( 0, new Complex() );
-    res.setCoeff( 1, new Complex() );
+    res.set( 0, new Complex() );
+    res.set( 1, new Complex() );
     Complex one = new Complex( 1, 0 );
     ArbLibrary.instance.acb_poly_zeta_series( res, f, one, 0, f.length, Real.bits );
 
     return res;
   }
 
-  public Complex getCoeff( long n )
+  public Complex get( long n )
   {
     Complex x = new Complex();
     ArbLibrary.instance.acb_poly_get_coeff_acb( x, this, n );
     return x;
   }
 
-  public void setCoeff( long n, Complex x )
+  public void set( long n, Complex x )
   {
     ArbLibrary.instance.acb_poly_set_coeff_acb( this, n, x );
   }
 
-  public void setCoeff( long n, long x )
+  public void set( long n, long x )
   {
     ArbLibrary.instance.acb_poly_set_coeff_si( this, n, x );
   }

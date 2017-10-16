@@ -520,19 +520,19 @@ public class Complex extends Structure
   public Complex HardyZTanhReduced2ndDerivative(Complex s)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 3, Real.bits);
-    Complex Z = res.getCoeff(0);
-    Complex Zd = res.getCoeff(1);
-    Complex Zdd = res.getCoeff(2).multiply(new Real(2));
-    Complex tminuss = this.subtract(s);
-    Complex c = ComplexONE.subtract(Z.tanh().pow(2));
-    Complex first = Zdd.multiply(c).divide(tminuss);
-    Complex second = Zd.pow(2).multiply(2).multiply(Z.tanh()).multiply(c).divide(tminuss);
-    Complex third = Zd.multiply(2).multiply(c).divide(tminuss.pow(2));
-    Complex fourth = Z.tanh().multiply(2).divide(tminuss.pow(3));
-    return (first.subtract(second).subtract(third).add(fourth));
+    Complex Z = res[0];
+    Complex Zd = res[1];
+    Complex Zdd = res[2] * 2;
+    Complex tminuss = this - s;
+    Complex c = ComplexONE - Z.tanh() ^ 2;
+    Complex first = Zdd * c / tminuss;
+    Complex second = (Zd ^ 2) * 2 * Z.tanh() * c / tminuss;
+    Complex third = Zd * 2 * c / tminuss ^ 2;
+    Complex fourth = Z.tanh() * 2 / tminuss ^ 3;
+    return (first - second - third + fourth);
   }
 
   public Complex HardyZTanhNewton()
@@ -578,20 +578,20 @@ public class Complex extends Structure
   public Complex HardyZDerivative()
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    return res.getCoeff(1);
+    return res.get(1);
   }
 
   public Complex HardyZDerivativeReduced(Complex s)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    Complex z = res.getCoeff(0);
-    Complex zd = res.getCoeff(1);
+    Complex z = res.get(0);
+    Complex zd = res.get(1);
     Complex tsubs = this.subtract(s).tanh();
     Complex tsubs2 = tsubs.pow(2);
     return zd.divide(tsubs).subtract(z.multiply(ComplexONE.subtract(tsubs2)).divide(tsubs2));
@@ -600,12 +600,12 @@ public class Complex extends Structure
   public Complex HardyZ2ndDerivativeReduced(Complex s)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 3, Real.bits);
-    Complex Z = res.getCoeff(0);
-    Complex Zd = res.getCoeff(1);
-    Complex Zdd = res.getCoeff(2).multiply(new Real(2));
+    Complex Z = res.get(0);
+    Complex Zd = res.get(1);
+    Complex Zdd = res.get(2).multiply(new Real(2));
     Complex sminust = s.subtract(this);
     Complex a = sminust.cosh();
     Complex b = sminust.sinh();
@@ -619,10 +619,10 @@ public class Complex extends Structure
   public Complex HardyZ2ndDerivative()
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 3, Real.bits);
-    Complex Zdd = res.getCoeff(2).multiply(2);
+    Complex Zdd = res.get(2).multiply(2);
     return Zdd;
   }
 
@@ -642,10 +642,10 @@ public class Complex extends Structure
   public Complex HardyZNewton()
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    final Complex quotient = res.getCoeff(0).divide(res.getCoeff(1));
+    final Complex quotient = res.get(0).divide(res.get(1));
     return this.subtract(quotient);
   }
 
@@ -657,8 +657,8 @@ public class Complex extends Structure
   public Complex HardyZReducedNewton(Complex[] roots)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
     Complex topProduct = Constants.ComplexONE;
     Complex bottomSumOfProducts = new Complex(0, 0);
@@ -675,9 +675,9 @@ public class Complex extends Structure
       }
       bottomSumOfProducts = bottomSumOfProducts.add(otherProduct);
     }
-    final Complex z = res.getCoeff(0); // the value of Z at the point t
-    final Complex zd = res.getCoeff(1); // the value of the derivative of Z at
-                                        // the point t
+    final Complex z = res.get(0); // the value of Z at the point t
+    final Complex zd = res.get(1); // the value of the derivative of Z at
+                                   // the point t
     final Complex numerator = z.divide(topProduct);
     final Complex denominator = zd.divide(bottomSumOfProducts);
     final Complex quotient = numerator.divide(denominator);
@@ -687,31 +687,31 @@ public class Complex extends Structure
   public Complex HardyZOverZDTanh()
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    final Complex quotient = res.getCoeff(0).divide(res.getCoeff(1));
+    final Complex quotient = res.get(0).divide(res.get(1));
     return quotient.tanh();
   }
 
   public Complex HardyZRelaxedNewton(Real h)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    final Complex quotient = res.getCoeff(0).divide(res.getCoeff(1));
+    final Complex quotient = res.get(0).divide(res.get(1));
     return this.subtract(quotient.multiply(h));
   }
 
   public Complex HardyZRelaxedTanhNewton(Real h)
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 2, Real.bits);
-    Complex val = res.getCoeff(0);
-    Complex deriv = res.getCoeff(1);
+    Complex val = res.get(0);
+    Complex deriv = res.get(1);
     final Complex quotient = val.divide(deriv).tanh();
     return this.subtract(quotient.multiply(h));
   }
@@ -719,12 +719,12 @@ public class Complex extends Structure
   public Complex HardyZAutoRelaxedTanhNewton()
   {
     final ComplexPolynomial res = new ComplexPolynomial(2);
-    res.setCoeff(0, this);
-    res.setCoeff(1, ComplexONE);
+    res.set(0, this);
+    res.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, res, null, null, 3, Real.bits);
-    Complex val = res.getCoeff(0);
-    Complex deriv = res.getCoeff(1);
-    Complex deriv2 = res.getCoeff(2).multiply(new Real(2));
+    Complex val = res.get(0);
+    Complex deriv = res.get(1);
+    Complex deriv2 = res.get(2).multiply(new Real(2));
     Complex quotient = val.divide(deriv);
     Complex cd = quotient.cosh().pow(2);
     Complex d2 = deriv.pow(2);
@@ -792,12 +792,12 @@ public class Complex extends Structure
   {
     final ComplexPolynomial poly = new ComplexPolynomial(2);
     final ComplexPolynomial res = new ComplexPolynomial(3);
-    poly.setCoeff(0, this);
-    poly.setCoeff(1, ComplexONE);
+    poly.set(0, this);
+    poly.set(1, ComplexONE);
     ArbLibrary.instance.acb_dirichlet_hardy_z_series(res, poly, null, null, 3, Real.bits);
-    final Complex f = res.getCoeff(0);
-    final Complex fd = res.getCoeff(1);
-    final Complex fd2 = res.getCoeff(2).multiply(2);
+    final Complex f = res.get(0);
+    final Complex fd = res.get(1);
+    final Complex fd2 = res.get(2).multiply(2);
     final Complex numerator = f.multiply(fd).multiply(2);
     final Complex divisorLeft = fd.pow(2).multiply(2);
     final Complex divisorRight = f.multiply(fd2);
