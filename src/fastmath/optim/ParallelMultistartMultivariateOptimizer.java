@@ -174,7 +174,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
           if (valid)
           {
             out.println(Thread.currentThread().getName() + " " + iterString + " Storing " + Arrays.toString(result.getKey()));
-
+            
             optima.add(result);
           }
           else

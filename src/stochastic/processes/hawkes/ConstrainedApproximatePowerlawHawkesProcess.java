@@ -33,7 +33,7 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
   {
 
     
-    y(0, 2), ε(0, 0.5), τ0(0, 10);
+    ρ( 0.25, 1 ), y(0.5, 0.6), ε(0, 0.5), τ0(0, 10);
 
     private double min;
     private double max;

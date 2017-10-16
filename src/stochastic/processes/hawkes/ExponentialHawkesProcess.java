@@ -84,6 +84,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     final double w = sum(k -> β(k), 0, order() - 1);
     double maxT = T.fmax();
     int N = T.size();
+    
     UnivariateFunction η = t -> exp((t + maxT) * w);
     BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
@@ -132,7 +133,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     DoubleAdder sum = new DoubleAdder();
     sum.add(λ0.value(t));
     double s;
-    for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
+    for (int i = 0; i < T.size() && (s = T[i]) < t; i++)
     {
       sum.add(ψ(t - s));
     }
@@ -193,9 +194,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      double dtprev = i == 0 ? 0 : durations.get(i - 1);
+      double dtprev = i == 0 ? 0 : durations[i - 1];
       double dt = durations.get(i);
-      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
+      compensator.set(i, evolveΛ(dtprev, dt, T[i], A));
     }
     return compensator;
   }
@@ -222,10 +223,10 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       for (int i = 1; i < n; i++)
       {
         double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
-        double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, T.get(i), S);
-        double Λ = evolveΛ(prevdt, dt, T.get(i), A);
+        double prevdt = i == 1 ? 0 : (T[i - 1] - T[i - 2]);
+        double dt = t - T[i - 1];
+        double λ = evolveλ(dt, T[i], S);
+        double Λ = evolveΛ(prevdt, dt, T[i], A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -242,7 +243,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     {
       for (int i = 1; i < n; i++)
       {
-        double thist = T.get(i);
+        double thist = T[i];
         ll += log(λ(thist)) - Λ(i);
       }
 
@@ -270,9 +271,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    */
   protected double Λ(int i)
   {
-    final double Ti = T.get(i);
+    final double Ti = T[i];
     return sum(k -> {
-      double Tk = T.get(k);
+      double Tk = T[k];
       return sum(j -> {
         double dt = Ti - Tk;
         return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
@@ -284,7 +285,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
+    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T[i]))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
   public Vector λvector()
@@ -297,20 +298,19 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       double S[] = new double[order()];
       for (int i = 1; i < n; i++)
       {
-        double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
-        double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, T.get(i), S);
-        intensity.set(i, λ);
-
+        double t = T[i];
+        double prevdt = i == 1 ? 0 : (T[i - 1] - T[i - 2]);
+        double dt = t - T[i - 1];
+        double λ = evolveλ(dt, T[i], S);
+        intensity[i]=λ;
       }
     }
     else
     {
       for (int i = 1; i < n; i++)
       {
-        double thist = T.get(i);
-        intensity.set(i - 1, λ(thist));
+        double thist = T[i];
+        intensity[i - 1] = λ(thist);
       }
 
     }
@@ -343,7 +343,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
-        integratedCompensator.set(i, Λ(i));
+        integratedCompensator[i] = Λ(i);
       }
       return integratedCompensator.diff();
     }
