@@ -1,5 +1,7 @@
 package stochastic.processes.point;
 
+import static java.lang.System.out;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,6 +34,7 @@ public class MPP2Mat
 
     Vector midPrice = new Vector(1);
     mpp.tradeAndQuoteStream().forEachOrdered(event -> {
+      out.println( event );
       if (event instanceof TwoSidedQuote)
       {
         TwoSidedQuote quote = (TwoSidedQuote) event;

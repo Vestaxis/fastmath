@@ -52,6 +52,21 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return Native.getDirectBufferPointer(buffer);
   }
 
+  public Vector xor( double p )
+  {
+    return pow(p);
+  }
+
+  public Vector xor( int p )
+  {
+    return pow(p);
+  }
+
+  public Vector negate()
+  {
+    return copy().multiply(-1);
+  }
+  
   public final class VectorSpliterator extends AbstractDoubleSpliterator
   {
     int n = 0;

@@ -126,7 +126,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
   public Stream<ArchivableEvent> tradeAndQuoteStream()
   {
-    return stream().filter(event -> event instanceof TradeTick || event instanceof Quote);
+    return stream().filter(event -> event instanceof TradeTick || event instanceof TwoSidedQuote);
   }
 
   @Override

@@ -451,11 +451,10 @@ public class Complex extends Structure
   public Real nthRiemannZeroArg(int n)
   {
     Real t = vartheta().divide(RealConstants.PI).getReal();
-    Real wtf = this.getReal() / ((RealConstants.PI.multiply(new Real(2)).multiply(RealConstants.HALF.exp())) / ((RealConstants.PI.multiply(2)))
-                                 + (new Real(7) / (new Real(8))).log());
-    Real x = this.getReal().multiply(wtf);
-    Real frac = getReal().subtract(t.floor());
-    Real branch = x.floor().subtract(new Real(n)).add(RealConstants.ONE);
+    Real wtf = getReal() / (((RealConstants.PI * 2) * (RealConstants.HALF.exp())) / ((RealConstants.PI * 2)) + (new Real(7) / (new Real(8))).log());
+    Real x = this.getReal() * (wtf);
+    Real frac = getReal() - t.floor();
+    Real branch = x.floor() - (new Real(n)) + (RealConstants.ONE);
     out.println("BRANCH = " + branch);
     return RealConstants.ONE.divide(2).subtract(frac).subtract(branch).multiply(RealConstants.PI);
   }

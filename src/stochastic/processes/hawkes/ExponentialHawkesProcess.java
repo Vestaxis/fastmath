@@ -70,7 +70,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   public double logLikelihood(Vector t)
   {
     ExponentialHawkesProcess spawn = copy();
-    spawn.T = α == 1 ? t : t.copy().multiply(α);
+    spawn.T = α == 1 ? t : ( t.copy() * α );
     return spawn.logLik();
   }
 
@@ -481,7 +481,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     Vector dT = Λ();
     Vector normalizedSampleMoments = dT.normalizedMoments(2);
     Vector parametricMoments = normalizedMoments(2);
-    return -(parametricMoments.subtract(normalizedSampleMoments).pow(2).sum());
+    return -(((parametricMoments - normalizedSampleMoments))^2).sum();
 
   }
 
@@ -495,14 +495,6 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
     process.assignParameters(point);
     return process;
-  }
-
-  public InitialGuess getInitialGuess()
-  {
-    double[] start = calculateInitialGuess(T).toArray();
-    InitialGuess initialGuess = new InitialGuess(start);
-    out.println("initialGuess=" + Arrays.toString(start));
-    return initialGuess;
   }
 
   public boolean trace = false;
@@ -530,14 +522,6 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   }
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
-
-  private Vector calculateInitialGuess(Vector durations)
-  {
-    final Vector vec = getParameters();
-
-    return vec;
-    // return null;
-  }
 
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
