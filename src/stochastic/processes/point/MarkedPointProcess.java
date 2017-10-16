@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -256,8 +257,45 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     return tradeMatrix;
   }
 
-  public DoubleRowMatrix getBuySellMatrix(TimeUnit timeUnit)
+  public Pair<DoubleRowMatrix, DoubleRowMatrix> getBuySellMatrix(TimeUnit timeUnit)
   {
-    throw new UnsupportedOperationException("Lee-Ready tick test");
+    DoubleRowMatrix buyMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_buys");
+    DoubleRowMatrix sellMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_sells");
+    AtomicInteger midPointTrades = new AtomicInteger(0);
+    Vector midPrice = new Vector(1);
+
+    tradeAndQuoteStream().forEachOrdered(event -> {
+      if (event instanceof TwoSidedQuote)
+      {
+        TwoSidedQuote quote = (TwoSidedQuote) event;
+        midPrice.set(0, quote.getMidPrice());
+
+      }
+      else if (event instanceof TradeTick)
+      {
+        TradeTick tick = (TradeTick) event;
+        int side = Double.compare(tick.getPrice(), midPrice[0]);
+        if (side == 0)
+        {
+          midPointTrades.incrementAndGet();
+        }
+        else if (side > 0)
+        {
+          buyMatrix.appendRow(tick.getMarks());
+        }
+        else if (side < 0)
+        {
+          sellMatrix.appendRow(tick.getMarks());
+        }
+        // out.println( event + " side=" + side + " midPrice=" + midPrice );
+
+      }
+    });
+
+    int midPointCount = midPointTrades.get();
+    double midPointRatio = ( double) midPointCount / (double)( buyMatrix.getRowCount() + sellMatrix.getRowCount() + midPointCount );
+    
+    out.println( "midPointPcnt=" + ( midPointRatio * 100 ) );
+    return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
 }

@@ -1,7 +1,5 @@
 package stochastic.processes.point;
 
-import static java.lang.System.out;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,8 +10,6 @@ import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
-import stochastic.processes.pointprocesses.finance.TradeTick;
-import stochastic.processes.pointprocesses.finance.TwoSidedQuote;
 
 /**
  * TODO: implement Lee-Ready tick test
@@ -33,25 +29,10 @@ public class MPP2Mat
     MarkedPointProcess mpp = loadMppFile(args[0]);
 
     Vector midPrice = new Vector(1);
-    mpp.tradeAndQuoteStream().forEachOrdered(event -> {
-      out.println( event );
-      if (event instanceof TwoSidedQuote)
-      {
-        TwoSidedQuote quote = (TwoSidedQuote) event;
-        midPrice.set(0, quote.getMidPrice());
+    Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 
-      }
-      else if (event instanceof TradeTick)
-      {
-        TradeTick tick = (TradeTick) event;
-        int side = Double.compare(midPrice[0], tick.getPrice());
-        
-       
-      }
-    });
-
-    DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
-    MatFile.write(args[1], tradeMatrix.createMiMatrix());
+    //DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
+    MatFile.write(args[1], buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix() );
   }
 
   private static double closeTime = 16;
