@@ -1,5 +1,7 @@
 package stochastic.processes.point;
 
+import static java.lang.System.out;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,13 +28,22 @@ public class MPP2Mat
 
   public static void main(String[] args) throws FileNotFoundException, IOException
   {
-    MarkedPointProcess mpp = loadMppFile(args[0]);
+    String mppFile = args[0];
+    String matFile = args[1];
+    mpp2mat(mppFile, matFile);
+  }
+
+  public static void mpp2mat(String mppFile, String matFile) throws FileNotFoundException, IOException
+  {
+    MarkedPointProcess mpp = loadMppFile(mppFile);
 
     Vector midPrice = new Vector(1);
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 
-    //DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
-    MatFile.write(args[1], buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix() );
+    DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
+    
+    out.println( "writing to " + matFile );
+    MatFile.write(matFile, buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix(), tradeMatrix.createMiMatrix() );
   }
 
   private static double closeTime = 16;
@@ -46,5 +57,6 @@ public class MPP2Mat
     String symbol = mppFile.getName().split("-")[0];
     return new MarkedPointProcess(mppDataIndexPair, mppFile, symbol);
   }
+  
 
 }
