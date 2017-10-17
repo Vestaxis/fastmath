@@ -239,7 +239,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       int type = event.getEventType();
       if (tk >= 0 && tk < m)
       {
-        A.set(tk, type, 1); // + A.get( tk, type ) );
+        A.set(tk, type, A.get(tk, type ) + 1 ); 
       }
     }
     return A;

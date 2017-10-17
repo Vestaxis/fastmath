@@ -10,10 +10,12 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import fastmath.DoubleColMatrix;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
+import util.DateUtils;
 
 /**
  * TODO: implement Lee-Ready tick test
@@ -45,6 +47,8 @@ public class MPP2Mat
     DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
     out.println( "bucketCounts=" + mpp.getBucketCounts() );
     out.println( "writing to " + matFile );
+    DoubleColMatrix counts = mpp.discretize(DateUtils.convertTimeUnits(0.5, TimeUnit.HOURS, TimeUnit.SECONDS ) );
+    out.println( "counts=" + counts );
     plot( "counts", mpp.getBucketCounts() );
     MatFile.write(matFile, buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix(), tradeMatrix.createMiMatrix() );
   }
