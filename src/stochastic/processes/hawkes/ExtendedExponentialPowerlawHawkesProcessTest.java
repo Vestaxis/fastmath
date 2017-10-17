@@ -31,7 +31,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
+    ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess process = new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(τ0, ε, b, τ);
     double z = process.Z();
     out.println( "z=" + z );
   }
@@ -42,14 +42,14 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
+    ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess process = new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(τ0, ε, b, τ);
     RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(5000000, process::ψ, 0, 50000);
+    double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
-    assertEquals( process.ρ, integral, pow(10,-4));
+    assertEquals( process.ρ, integral, 0.02);
     process.ρ = 0.5;
     integral = integrator.integrate(500000, process::ψ, 0, 50000);
-    assertEquals( process.ρ, integral, pow(10,-4));
+    assertEquals( process.ρ, integral, 0.02);
     out.println( "integral=" + integral );    
   }
 

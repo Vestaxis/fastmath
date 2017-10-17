@@ -1,25 +1,21 @@
 package stochastic.processes.hawkes;
 
-import static fastmath.Functions.sum;
-import static java.lang.Math.exp;
+import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.analysis.function.Abs;
-
-import fastmath.Vector;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproximatePowerlawHawkesProcess
+public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess extends ConstrainedApproximatePowerlawHawkesProcess
     implements MultivariateFunction, Serializable
 {
   static enum Parameter implements BoundedParameter
   {
 
-    b(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
+    s(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
 
     Parameter(double min, double max)
     {
@@ -70,10 +66,10 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    * @param τ
    *          power multiplier
    */
-  public ExtendedApproximatePowerlawHawkesProcess(double τ0, double ε, double b, double τ)
+  public ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(double τ0, double ε, double b, double τ)
   {
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
-    assert τ0 > 0 : "η must be positive";
+    assert τ0 > 0 : "τ0 must be positive";
     assert τ > 0 : "τ must be positive";
     assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
     this.τ0 = τ0;
@@ -83,9 +79,11 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
     this.κ = 0;
   }
 
+  public double s = 0;
+
   private static final long serialVersionUID = 1L;
 
-  public ExtendedApproximatePowerlawHawkesProcess()
+  public ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess()
   {
   }
 
@@ -116,14 +114,13 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    */
   public double Z()
   {
-    if (Math.abs(ε-pow(10,-15)) < 0)
+    if (abs(ε - pow(10, -15)) < 0)
     {
-      return (b * τ + M) / ρ;
+      return (M * τ + αS()) / (τ * ρ);
     }
     else
     {
-      double inner = pow(m, -ε * (M - 1)) + pow(m, ε);
-      return (b * τ - ( ( pow(τ0, -ε) * inner ) / (pow(m, ε) - 1) )) / ρ;
+      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε) + αS() / τ) / ρ;
     }
   }
 
@@ -132,18 +129,14 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
    * of this{@link #ρ}
    * 
    * @param t
-   * @return ∫this{@link #ψ(double)}(t)dt
+   * @return ∫this{@link #ψ}(t)dt
    */
   public double iψ(double t)
   {
-    double x = sum(i -> -pow(τ0, -ε) * pow(m, i) * pow(pow(m, -i), 1 + ε) * exp(-t / τ0 * pow(m, -i)), 0, M - 1);
-    return t * ρ
-           * (M * b * τ - τ * M * b * exp(-t / τ) + 1 / (-1 + pow(m, ε)) * pow(τ0, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1))) + x)
-           / (M * b * τ * t + 1 / (pow(m, -ε) - 1) * pow(τ0, -ε) * (pow(m, -ε * M) - 1) * t);
+    throw new UnsupportedOperationException("TODO");
   }
 
   private int iterations = 0;
-
 
   @Override
   public int order()
@@ -154,15 +147,18 @@ public class ExtendedApproximatePowerlawHawkesProcess extends ConstrainedApproxi
   @Override
   public double βS()
   {
-    return 1 / τ;
-    // double τ = exp(τ);
-    // return τ;
+    return τ;
   }
 
   @Override
   public double αS()
   {
-    return b;
+    return τ
+           * (-1 / (pow(m, (1 + ε)) - 1)
+              * pow(τ0, (-1 - ε))
+              * (pow(m, (1 + ε)) - pow(m, (1 + 2 * ε)) - pow(m, -((1 + ε) * (M - 1))) + pow(m, (-ε * M - M + 2 * ε + 1)))
+              * ρ + y * (pow(τ0, -ε) * pow(m, -(ε * (M - 1))) - pow(τ0, -ε) * pow(m, ε)))
+           / (pow(m, ε) * ρ * τ - pow(m, ε) * y - τ * ρ + y);
 
   }
 
