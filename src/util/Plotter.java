@@ -1,5 +1,7 @@
 package util;
 
+import static java.util.stream.IntStream.rangeClosed;
+
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
@@ -41,9 +43,19 @@ public class Plotter
     return chart;
   }
 
+  public static XYChart plot(Vector y)
+  {
+    return plot("A", y);
+  }
+
+  public static XYChart plot(String name, Vector y)
+  {
+    return plot(new Vector(rangeClosed(1, y.size()).mapToDouble(i -> i)), y, name);
+  }
+
   public static XYChart plot(Vector x, Vector y)
   {
-    return plot(x, y, "f" );
+    return plot(x, y, "f");
   }
 
   public static XYChart plot(Vector x, Vector y, String name)

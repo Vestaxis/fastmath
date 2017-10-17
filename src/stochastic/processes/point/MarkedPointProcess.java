@@ -44,19 +44,21 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   public static final double tradingDuration = closeTime - openTime;
 
   private double bucketLength = 0.5;
-  
-  private int buckets = (int) (( closeTime - openTime ) / bucketLength);
-  
+
+  private int buckets = (int) ((closeTime - openTime) / bucketLength);
+
   private int eventCount;
 
-  private int getBucket( double t )
+  private double openTimeMillis = DateUtils.convertTimeUnits(openTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS );
+
+  private int getBucket(double t)
   {
     double x = t - openTime;
     return (int) (x / bucketLength);
   }
-  
-  private int[] bucketCounts = new int[ buckets ];
-  
+
+  private Vector bucketCounts = new Vector(buckets);
+
   @Override
   public String toString()
   {
@@ -251,7 +253,8 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     tradeStream().forEach(event -> {
       Vector point = new Vector(event.getMarks());
       double fractionalHourOfDay = event.getTimeOfDay();
-      double t = event.getTimeOfDay(timeUnit);
+      
+      double t = event.getTimeOfDay();
       // double t = fractionalHourOfDay;
       // double t = DateUtils.convertTimeUnits(fractionalHourOfDay,
       // TimeUnit.MILLISECONDS, timeUnits);
@@ -263,7 +266,11 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       {
         lastt.set(0, t);
         tradeMatrix.appendRow(point);
-        bucketCounts[getBucket(t)]++;
+        int bucket = getBucket(t);
+        if (bucket < bucketCounts.size())
+        {
+          bucketCounts.set( bucket, bucketCounts.get(bucket) + 1 );
+        }
       }
     });
 
@@ -306,13 +313,13 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     });
 
     int midPointCount = midPointTrades.get();
-    double midPointRatio = ( double) midPointCount / (double)( buyMatrix.getRowCount() + sellMatrix.getRowCount() + midPointCount );
-    
-    out.println( "midPointPcnt=" + ( midPointRatio * 100 ) + "%" );
+    double midPointRatio = (double) midPointCount / (double) (buyMatrix.getRowCount() + sellMatrix.getRowCount() + midPointCount);
+
+    out.println("midPointPcnt=" + (midPointRatio * 100) + "%");
     return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
 
-  public int[] getBucketCounts()
+  public Vector getBucketCounts()
   {
     return bucketCounts;
   }
