@@ -43,8 +43,20 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   @Units(time = TimeUnit.HOURS)
   public static final double tradingDuration = closeTime - openTime;
 
+  private double bucketLength = 0.5;
+  
+  private int buckets = (int) (( closeTime - openTime ) / bucketLength);
+  
   private int eventCount;
 
+  private int getBucket( double t )
+  {
+    double x = t - openTime;
+    return (int) (x / bucketLength);
+  }
+  
+  private int[] bucketCounts = new int[ buckets ];
+  
   @Override
   public String toString()
   {
@@ -251,6 +263,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       {
         lastt.set(0, t);
         tradeMatrix.appendRow(point);
+        bucketCounts[getBucket(t)]++;
       }
     });
 
@@ -295,7 +308,13 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     int midPointCount = midPointTrades.get();
     double midPointRatio = ( double) midPointCount / (double)( buyMatrix.getRowCount() + sellMatrix.getRowCount() + midPointCount );
     
-    out.println( "midPointPcnt=" + ( midPointRatio * 100 ) );
+    out.println( "midPointPcnt=" + ( midPointRatio * 100 ) + "%" );
     return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
+
+  public int[] getBucketCounts()
+  {
+    return bucketCounts;
+  }
+
 }
