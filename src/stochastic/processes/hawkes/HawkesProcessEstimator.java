@@ -37,7 +37,7 @@ public class HawkesProcessEstimator
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
 
-    ExponentialHawkesProcessFactory.Type type = Type.ExtendedConstrainedExponentialPowerlawApproximation;
+    ExponentialHawkesProcessFactory.Type type = Type.ApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
 
     int trajectoryCount = Runtime.getRuntime().availableProcessors();

@@ -24,6 +24,8 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.math3.util.CombinatoricsUtils;
+
 import com.sleepycat.persist.model.Persistent;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -284,7 +286,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 
   private double normalizedMoment(int i)
   {
-    return Math.pow(moment(i), 1.0 / i);
+    return moment(i) / CombinatoricsUtils.factorial(i);
   }
 
   /**

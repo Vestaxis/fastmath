@@ -413,9 +413,11 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
-      double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
-      return Double.compare(σa, σb);
+      //double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
+      //double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
+      double mma = processA.compensatorMomentMeasure();
+      double mmb = processB.compensatorMomentMeasure();
+      return Double.compare(mma, mmb);
     };
 
     double startTime = currentTimeMillis();
@@ -479,9 +481,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   public double compensatorMomentMeasure()
   {
     Vector dT = Λ();
-    Vector normalizedSampleMoments = dT.normalizedMoments(2);
-    Vector parametricMoments = normalizedMoments(2);
-    return -(((parametricMoments - normalizedSampleMoments))^2).sum();
+    Vector moments = dT.normalizedMoments(2);
+    Vector normalizedSampleMoments = (moments.copy() - 1)^2;
+    return (((normalizedSampleMoments))).sum();
 
   }
 

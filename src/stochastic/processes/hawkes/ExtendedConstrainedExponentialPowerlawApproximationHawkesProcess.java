@@ -15,7 +15,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
   static enum Parameter implements BoundedParameter
   {
 
-    s(-4, 4), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 10);
+    y(0, 50), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 50);
 
     Parameter(double min, double max)
     {
@@ -78,8 +78,6 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
     this.b = b;
     this.κ = 0;
   }
-
-  public double s = 0;
 
   private static final long serialVersionUID = 1L;
 

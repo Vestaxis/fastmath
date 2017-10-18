@@ -31,13 +31,13 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     // out.println( "x=" + x );
   }
 
-  public void testiΨ()
-  {
-    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(1.4, 0.25);
-    double x = process.iψ(1.3);
-    assertEquals(.18284483319013261698230044979325998875927092907043, x, pow(10, -9));
-    // out.println( "x=" + x );
-  }
+//  public void testiΨ()
+//  {
+//    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(1.4, 0.25);
+//    double x = process.iψ(1.3);
+//    assertEquals(.18284483319013261698230044979325998875927092907043, x, pow(10, -9));
+//    // out.println( "x=" + x );
+//  }
   
   public void testIntegralOfKernel()
   {
@@ -45,7 +45,10 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     double ε = 0.25;
     double τ0 = 1;
     ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
-    testHawkesProcess(process);    
+    testHawkesProcess(process); 
+    process.κ = 0.1;
+    process.ρ = 0.5;
+    testHawkesProcess(process);     
   }
 
   private void testHawkesProcess(ExponentialHawkesProcess process)
@@ -77,15 +80,15 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
   // assertEquals( llNonRecursive, llRecursive, pow( 10, -10 ) );
   // }
 
-  public void testΛ() throws IOException
-  {
-    double ε = 0.15;
-    double η = 1.6;
-    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(η, ε);
-    Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-    StandardExponentialHawkesProcessTest.doTest(process, data);
-
-  }
+//  public void testΛ() throws IOException
+//  {
+//    double ε = 0.15;
+//    double η = 1.6;
+//    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(η, ε);
+//    Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
+//    StandardExponentialHawkesProcessTest.doTest(process, data);
+//
+//  }
 
   public void testMean()
   {
