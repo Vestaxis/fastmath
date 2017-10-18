@@ -60,7 +60,6 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    */
   public double α = 1;
 
-
   /**
    * branching rate
    */
@@ -70,7 +69,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   public double logLikelihood(Vector t)
   {
     ExponentialHawkesProcess spawn = copy();
-    spawn.T = α == 1 ? t : ( t.copy() * α );
+    spawn.T = α == 1 ? t : (t.copy() * α);
     return spawn.logLik();
   }
 
@@ -80,19 +79,31 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    */
   public double predict()
   {
-    final double υ = prod(k -> β(k), 0, order() - 1);
+    final double v = prod(k -> β(k), 0, order() - 1);
     final double w = sum(k -> β(k), 0, order() - 1);
     double maxT = T.fmax();
     int N = T.size();
-    
+
+    out.println("v=" + v);
+    out.println("w=" + w);
+
     UnivariateFunction η = t -> exp((t + maxT) * w);
-    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * υ * η.value(t);
+    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
     QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
-    BivariateFunction φ =
-                        (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N), 0, order() - 1);
-                        
-    throw new UnsupportedOperationException("TODO: for each exponentially distributed ε find the critical point t which maximizes the score φ(t,ε) ");
+    BivariateFunction φ = (t, ε) -> τ.value(t, ε)
+                                    + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
+
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    double ε = expDist.sample();
+    double fuck = τ.value(T.fmax(), ε);
+    double shit = φ.value(T.fmax() + 1, ε);
+    out.println("shit=" + shit + " fuck=" + fuck + " maxT=" + maxT);
+    // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
+    return 0;
+
+    // throw new UnsupportedOperationException("TODO: for each exponentially
+    // distributed ε find the critical point t which maximizes the score φ(t,ε) ");
   }
 
   protected abstract double α(int j);
@@ -302,7 +313,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
         double prevdt = i == 1 ? 0 : (T[i - 1] - T[i - 2]);
         double dt = t - T[i - 1];
         double λ = evolveλ(dt, T[i], S);
-        intensity[i]=λ;
+        intensity[i] = λ;
       }
     }
     else
@@ -413,8 +424,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      //double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
-      //double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
+      // double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
+      // double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
       double mma = processA.compensatorMomentMeasure();
       double mmb = processB.compensatorMomentMeasure();
       return Double.compare(mma, mmb);
@@ -482,7 +493,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
-    Vector normalizedSampleMoments = (moments.copy() - 1)^2;
+    Vector normalizedSampleMoments = (moments.copy() - 1) ^ 2;
     return (((normalizedSampleMoments))).sum();
 
   }

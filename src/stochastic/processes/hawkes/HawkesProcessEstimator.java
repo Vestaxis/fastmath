@@ -115,8 +115,9 @@ public class HawkesProcessEstimator
 
     File testFile = new File("test.mat");
     Vector compensator = process.Λ().setName("comp");
-    out.println("writing timestamp data and compensator to " + testFile.getAbsolutePath());
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix());
+    Vector intensity = process.λvector().setName("intensity");
+    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath());
+    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix() );
 
   }
 
