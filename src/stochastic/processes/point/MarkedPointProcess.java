@@ -298,6 +298,8 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
         if (side == 0)
         {
           midPointTrades.incrementAndGet();
+          buyMatrix.appendRow(tick.getMarks());
+          sellMatrix.appendRow(tick.getMarks());
         }
         else if (side > 0)
         {
