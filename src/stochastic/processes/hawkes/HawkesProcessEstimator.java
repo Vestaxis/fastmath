@@ -45,41 +45,52 @@ public class HawkesProcessEstimator
     {
       trajectoryCount = Integer.valueOf(args[1]);
     }
+    String symbol = "SPY";
 
-    // if (args.length > 1)
-    // {
-    // int typeIndex = -1;
-    // try
-    // {
-    // typeIndex = Integer.valueOf(args[1]);
-    // if (typeIndex == -1)
-    // {
-    // typeIndex = Type.valueOf(args[1]).ordinal();
-    // }
-    // }
-    // catch (Exception e)
-    // {
-    // }
-    // if (typeIndex != -1)
-    // {
-    // type = Type.values()[typeIndex];
-    // }
-    // }
-    //
+    estimateHawkesProcess(type, filename, trajectoryCount, symbol);
+  }
+
+  /**
+   * estimate the parameters of a Hawkes process model
+   * 
+   * @param type
+   * @param filename
+   * @param symbol
+   * @return
+   * @throws IOException
+   */
+  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, String symbol)
+      throws IOException
+
+  {
+    return estimateHawkesProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
+  }
+
+  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, int trajectoryCount,
+      String symbol) throws IOException
+  {
+    Vector data = loadData(filename, symbol);
+    return estimateHawkesProcess(type, trajectoryCount, data);
+  }
+
+  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, Vector data) throws IOException
+  {
+    return estimateHawkesProcess(type, Runtime.getRuntime().availableProcessors(), data);
+  }
+
+  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, int trajectoryCount, Vector data)
+      throws IOException
+  {
     ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
-    Vector data = loadData(filename, "SPY");
-    Vector autocor = data.diff().autocor(50);
-
-    double lb = autocor.getLjungBoxStatistic(10);
-
-    out.println("LjungBox(dT,10)=" + lb);
     HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
     estimator.setTrajectoryCount(trajectoryCount);
     estimator.estimate(data);
+
+    return process;
   }
 
-  private void setTrajectoryCount(int trajectoryCount)
+  public void setTrajectoryCount(int trajectoryCount)
   {
     this.trajectoryCount = trajectoryCount;
   }
@@ -117,7 +128,7 @@ public class HawkesProcessEstimator
     Vector compensator = process.Λ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
     out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath());
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix() );
+    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
 
   }
 
