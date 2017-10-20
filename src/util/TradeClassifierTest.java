@@ -8,7 +8,7 @@ public class TradeClassifierTest extends TestCase
 {
   public void testLimit()
   {
-    TradeClassifier classifier = new TradeClassifier();
+    TradeClassifier classifier = new TradeClassifier(50);
     classifier.record(8.19);
     out.println( "classifier=" + classifier );
     classifier.record(8.18);

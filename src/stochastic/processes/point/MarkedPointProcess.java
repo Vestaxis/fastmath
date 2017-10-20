@@ -28,10 +28,12 @@ import fastmath.Pair;
 import fastmath.Vector;
 import stochastic.processes.pointprocesses.finance.ArchivableEvent;
 import stochastic.processes.pointprocesses.finance.Quote;
+import stochastic.processes.pointprocesses.finance.Side;
 import stochastic.processes.pointprocesses.finance.TradeTick;
 import stochastic.processes.pointprocesses.finance.TwoSidedQuote;
 import stochastics.annotations.Units;
 import util.DateUtils;
+import util.TradeClassifier;
 
 public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<MarkedPointProcess>
 {
@@ -49,7 +51,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
   private int eventCount;
 
-  private double openTimeMillis = DateUtils.convertTimeUnits(openTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS );
+  private double openTimeMillis = DateUtils.convertTimeUnits(openTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
 
   private int getBucket(double t)
   {
@@ -239,7 +241,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       int type = event.getEventType();
       if (tk >= 0 && tk < m)
       {
-        A.set(tk, type, A.get(tk, type ) + 1 ); 
+        A.set(tk, type, A.get(tk, type) + 1);
       }
     }
     return A;
@@ -253,7 +255,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     tradeStream().forEach(event -> {
       Vector point = new Vector(event.getMarks());
       double fractionalHourOfDay = event.getTimeOfDay();
-      
+
       double t = event.getTimeOfDay();
       // double t = fractionalHourOfDay;
       // double t = DateUtils.convertTimeUnits(fractionalHourOfDay,
@@ -269,7 +271,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
         int bucket = getBucket(t);
         if (bucket < bucketCounts.size())
         {
-          bucketCounts.set( bucket, bucketCounts.get(bucket) + 1 );
+          bucketCounts.set(bucket, bucketCounts.get(bucket) + 1);
         }
       }
     });
@@ -283,7 +285,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     DoubleRowMatrix sellMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_sells");
     AtomicInteger midPointTrades = new AtomicInteger(0);
     Vector midPrice = new Vector(1);
-
+    TradeClassifier classifier = new TradeClassifier(100);
     tradeAndQuoteStream().forEachOrdered(event -> {
       if (event instanceof TwoSidedQuote)
       {
@@ -294,18 +296,21 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       else if (event instanceof TradeTick)
       {
         TradeTick tick = (TradeTick) event;
-        int side = Double.compare(tick.getPrice(), midPrice[0]);
-        if (side == 0)
+        // int side = Double.compare(tick.getPrice(), midPrice[0]);
+        Side side = classifier.classify(tick.getPrice());
+        classifier.record(tick.getPrice());
+        
+        if (side == Side.Unknown)
         {
           midPointTrades.incrementAndGet();
-          buyMatrix.appendRow(tick.getMarks());
-          sellMatrix.appendRow(tick.getMarks());
+          // buyMatrix.appendRow(tick.getMarks());
+          // sellMatrix.appendRow(tick.getMarks());
         }
-        else if (side > 0)
+        else if (side == Side.Buy)
         {
           buyMatrix.appendRow(tick.getMarks());
         }
-        else if (side < 0)
+        else if (side == Side.Sell)
         {
           sellMatrix.appendRow(tick.getMarks());
         }
@@ -314,10 +319,11 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       }
     });
 
-    int midPointCount = midPointTrades.get();
-    double midPointRatio = (double) midPointCount / (double) (buyMatrix.getRowCount() + sellMatrix.getRowCount() + midPointCount);
+    int unknownCount = midPointTrades.get();
+    double unknownRatio = (double) unknownCount / (double) (buyMatrix.getRowCount() + sellMatrix.getRowCount() + unknownCount);
 
-    out.println("midPointPcnt=" + (midPointRatio * 100) + "%");
+    out.println("unknownPcnt=" + (unknownRatio * 100) + "% unknoCount=" + unknownCount );
+
     return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
 
