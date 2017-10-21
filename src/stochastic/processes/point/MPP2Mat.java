@@ -41,14 +41,11 @@ public class MPP2Mat
   {
     MarkedPointProcess mpp = loadMppFile(mppFile);
 
-    Vector midPrice = new Vector(1);
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 
     DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
     out.println( "bucketCounts=" + mpp.getBucketCounts() );
     out.println( "writing to " + matFile );
-    DoubleColMatrix counts = mpp.discretize(DateUtils.convertTimeUnits(0.5, TimeUnit.HOURS, TimeUnit.SECONDS ) );
-    out.println( "counts=" + counts );
     plot( "counts", mpp.getBucketCounts() );
     MatFile.write(matFile, buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix(), tradeMatrix.createMiMatrix() );
   }
