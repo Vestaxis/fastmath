@@ -588,4 +588,23 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
   }
 
+  public Vector getSpectrum( int n )
+  {
+    return new Vector( rangeClosed(0, n - 1).mapToDouble( i-> autocor(n) ) );
+  }
+
+  /**
+   * 
+   * @param n
+   * @return
+   */
+  public double autocor(int n)
+  {
+    double μ = 0;
+    double π = Math.PI;
+    double β = 0;
+    double α = 0;
+    //double μstar = sum( j ->, 0 , order() - 1);
+    return μ / ( 2 * π )*(β/(β-α)*(1+α*(2*β-α)));
+  }
 }
