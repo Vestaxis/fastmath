@@ -1,19 +1,10 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.pow;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.rangeClosed;
-import static util.Plotter.plot;
 
-import java.io.IOException;
-import java.util.function.IntToDoubleFunction;
-
-import org.apache.commons.math3.analysis.function.Min;
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
-import fastmath.Vector;
 import junit.framework.TestCase;
-import util.Plotter;
 
 /**
  * This one is a little ill-specified... it needs to be reparamterized such that negative values of the response are not possible

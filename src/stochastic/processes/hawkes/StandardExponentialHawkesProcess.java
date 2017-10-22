@@ -1,19 +1,11 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.min;
 import static java.lang.System.out;
-
-import java.io.IOException;
-
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.style.XYStyler;
 
 import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
-import fastmath.matfile.MatFile;
 
 public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess implements HawkesProcess
 {

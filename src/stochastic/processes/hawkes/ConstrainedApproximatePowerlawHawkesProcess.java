@@ -1,14 +1,10 @@
 package stochastic.processes.hawkes;
 
-import static fastmath.Functions.sum;
-import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-
-import stochastic.processes.hawkes.ApproximatePowerlawHawkesProcess.Parameter;
 
 /**
  * Exponential power-law approximation kernel with the no-instantaneous-response

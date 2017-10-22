@@ -4,12 +4,9 @@ import static java.lang.Math.pow;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
-import java.io.IOException;
-
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
 import fastmath.Vector;
-import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
 
 public class ApproximatePowerlawHawkesProcessTest extends TestCase

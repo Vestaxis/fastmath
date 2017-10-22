@@ -1,11 +1,8 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.pow;
 import static java.lang.System.out;
 
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
-import org.apache.commons.math3.analysis.integration.LegendreGaussIntegrator;
-import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
 import junit.framework.TestCase;
 

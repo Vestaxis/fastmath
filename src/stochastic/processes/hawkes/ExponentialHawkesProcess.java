@@ -11,11 +11,9 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
-import static util.Plotter.plot;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
-import java.util.function.DoubleFunction;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -25,7 +23,6 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
-import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -39,7 +36,6 @@ import org.knowm.xchart.XYChart;
 
 import fastmath.Pair;
 import fastmath.Vector;
-import fastmath.functions.PentavariateFunction;
 import fastmath.functions.QuadvariateFunction;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
@@ -69,7 +65,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   public double logLikelihood(Vector t)
   {
     ExponentialHawkesProcess spawn = copy();
-    spawn.T = α == 1 ? t : (t.copy() * α);
+    spawn.T = α == 1 ? t : (t.copy().multiply(α));
     return spawn.logLik();
   }
 
@@ -144,7 +140,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     DoubleAdder sum = new DoubleAdder();
     sum.add(λ0.value(t));
     double s;
-    for (int i = 0; i < T.size() && (s = T[i]) < t; i++)
+    for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
     {
       sum.add(ψ(t - s));
     }
@@ -205,9 +201,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      double dtprev = i == 0 ? 0 : durations[i - 1];
+      double dtprev = i == 0 ? 0 : durations.get(i - 1);
       double dt = durations.get(i);
-      compensator.set(i, evolveΛ(dtprev, dt, T[i], A));
+      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
     }
     return compensator;
   }
@@ -234,10 +230,10 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       for (int i = 1; i < n; i++)
       {
         double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T[i - 1] - T[i - 2]);
-        double dt = t - T[i - 1];
-        double λ = evolveλ(dt, T[i], S);
-        double Λ = evolveΛ(prevdt, dt, T[i], A);
+        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+        double dt = t - T.get(i - 1);
+        double λ = evolveλ(dt, T.get(i), S);
+        double Λ = evolveΛ(prevdt, dt, T.get(i), A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -254,7 +250,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     {
       for (int i = 1; i < n; i++)
       {
-        double thist = T[i];
+        double thist = T.get(i);
         ll += log(λ(thist)) - Λ(i);
       }
 
@@ -282,9 +278,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
    */
   protected double Λ(int i)
   {
-    final double Ti = T[i];
+    final double Ti = T.get(i);
     return sum(k -> {
-      double Tk = T[k];
+      double Tk = T.get(k);
       return sum(j -> {
         double dt = Ti - Tk;
         return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
@@ -296,7 +292,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T[i]))), 0, order() - 1), 0, T.size() - 1)) / Z();
+    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
   public Vector λvector()
@@ -309,19 +305,19 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       double S[] = new double[order()];
       for (int i = 1; i < n; i++)
       {
-        double t = T[i];
-        double prevdt = i == 1 ? 0 : (T[i - 1] - T[i - 2]);
-        double dt = t - T[i - 1];
-        double λ = evolveλ(dt, T[i], S);
-        intensity[i] = λ;
+        double t = T.get(i);
+        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+        double dt = t - T.get(i - 1);
+        double λ = evolveλ(dt, T.get(i), S);
+        intensity.set(i, λ);
       }
     }
     else
     {
       for (int i = 1; i < n; i++)
       {
-        double thist = T[i];
-        intensity[i - 1] = λ(thist);
+        double thist = T.get(i);
+        intensity.set(i - 1, λ(thist));
       }
 
     }
@@ -354,7 +350,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
-        integratedCompensator[i] = Λ(i);
+        integratedCompensator.set(i, Λ(i) );
       }
       return integratedCompensator.diff();
     }
@@ -493,7 +489,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
-    Vector normalizedSampleMoments = (moments.copy() - 1) ^ 2;
+    Vector normalizedSampleMoments = (moments.copy().subtract(1)).pow(2);
     return (((normalizedSampleMoments))).sum();
 
   }
@@ -588,9 +584,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
   }
 
-  public Vector getSpectrum( int n )
+  public Vector getSpectrum(int n)
   {
-    return new Vector( rangeClosed(0, n - 1).mapToDouble( i-> autocor(n) ) );
+    return new Vector(rangeClosed(0, n - 1).mapToDouble(i -> autocor(n)));
   }
 
   /**
@@ -604,7 +600,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     double π = Math.PI;
     double β = 0;
     double α = 0;
-    //double μstar = sum( j ->, 0 , order() - 1);
-    return μ / ( 2 * π )*(β/(β-α)*(1+α*(2*β-α)));
+    // double μstar = sum( j ->, 0 , order() - 1);
+    return μ / (2 * π) * (β / (β - α) * (1 + α * (2 * β - α)));
   }
 }

@@ -2,7 +2,6 @@ package stochastic.processes.point;
 
 import static java.lang.System.err;
 import static java.lang.System.out;
-import static java.util.Arrays.asList;
 
 import java.io.EOFException;
 import java.io.File;
@@ -13,12 +12,9 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel.MapMode;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -27,7 +23,6 @@ import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
 import stochastic.processes.pointprocesses.finance.ArchivableEvent;
-import stochastic.processes.pointprocesses.finance.Quote;
 import stochastic.processes.pointprocesses.finance.Side;
 import stochastic.processes.pointprocesses.finance.TradeTick;
 import stochastic.processes.pointprocesses.finance.TwoSidedQuote;

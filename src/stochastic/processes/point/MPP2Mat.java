@@ -7,15 +7,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import fastmath.DoubleColMatrix;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
-import fastmath.Vector;
 import fastmath.matfile.MatFile;
-import util.DateUtils;
 
 /**
  * TODO: implement Lee-Ready tick test

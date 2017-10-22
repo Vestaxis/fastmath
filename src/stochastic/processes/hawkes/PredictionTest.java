@@ -11,7 +11,7 @@ public class PredictionTest
     process.ε = 0.32;
     process.τ0 = 3.42;
     process.T = HawkesProcessEstimator.loadData("SPY.mat", "SPY").slice(0, 10).copy();
-    process.T = process.T - process.T.fmin();
+    process.T = process.T.subtract( process.T.fmin() );
     process.predict();
     Thread.sleep(10000000);
     // TODO Auto-generated method stub
