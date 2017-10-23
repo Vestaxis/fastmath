@@ -28,7 +28,7 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
     // t.evaluate("lcovarsol(1);");
     // t.evaluate("lcovarsol(2);");
-    List solutions = (List) t.evaluate("map(tolist,map(x->denom(op(2,x)),tolist(lcovarsol(2)))):");
+    List solutions = (List) t.evaluate("map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2))):");
     Algebraic first = solutions.select(1);
     Algebraic second = solutions.select(2);
     String firstSol = replaceChars(first.toString());
@@ -42,6 +42,6 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
   public static String replaceChars(String first)
   {
-    return first.replace("beta", "B").replace("alpha", "A");
+    return first.replace("beta", "β").replace("alpha", "α");
   }
 }
