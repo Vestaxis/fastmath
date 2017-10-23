@@ -1,0 +1,3 @@
+#!/bin/sh
+
+( echo target/classes && cat class.path ) | sed -e 's/:/\n/g' | xargs -n 1 winepath -w |  tr '\n' ';'

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+FMDIR=$(dirname $(readlink -f $0))/..
+
+( echo $FMDIR/target/classes && cat $FMDIR/class.path ) | sed -e 's/:/\n/g' | xargs -n 1 winepath -w |  tr '\n' ';'
