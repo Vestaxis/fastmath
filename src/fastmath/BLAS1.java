@@ -40,7 +40,11 @@ public class BLAS1
   /**
    * compute y := alpha * x + y where alpha is a scalar and x and y are n-vectors.
    */
-  public native static void daxpy(int N, double alpha, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY);
+  public static void daxpy(int N, double alpha, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY)
+  {
+    throw new UnsupportedOperationException( "TODO");   
+    //BLASLibrary.instance.daxpy(N, alpha, X.asDoubleBuffer().position(offX), incX, Y.asDoubleBuffer().position(offY), incY);
+  }
 
   public native static double dlassq(int N, ByteBuffer X, int offX, int incX);
 
@@ -164,7 +168,6 @@ public class BLAS1
   {
     assert X.size() == Y.size() : "Dimensions of X and Y must be the same";
 
-    
     daxpy(X.size(), alpha, X.getBuffer(), X.getOffset(0), X.getIncrement(), Y.getBuffer(), Y.getOffset(0), Y.getIncrement());
   }
 
