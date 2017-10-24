@@ -2,6 +2,11 @@ package stochastic.processes.hawkes.solvers;
 
 import static java.lang.String.format;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.rangeClosed;
+
+import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.maplesoft.externalcall.MapleException;
 import com.maplesoft.openmaple.Algebraic;
@@ -15,7 +20,6 @@ public class ExponentialHawkesProcessAutocovarianceSolver
   {
     String a[];
     Engine t;
-    int i;
     a = new String[1];
     a[0] = "java";
     String libDir = "c:\\\\research";
@@ -28,9 +32,16 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
     // t.evaluate("lcovarsol(1);");
     // t.evaluate("lcovarsol(2);");
-    List solutions = (List) t.evaluate("map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2))):");
-    Algebraic first = solutions.select(1);
-    Algebraic second = solutions.select(2);
+    List solutions = (List) t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(3)))):");
+    List first = (List) solutions.select(1);
+    List second = (List) solutions.select(2);
+    int i = 0;
+    for (Algebraic term : listIterator(first))
+    {
+      List expanded = (List) t.evaluate( "expandPow( tolist(" + term.toString() + ")):");
+      String expandedListString = replaceChars( listIterator(expanded).stream().map( expression -> expression.toString() ).collect(Collectors.joining(",")) );
+      out.println(  ++i + ": " + expandedListString );
+    }
     String firstSol = replaceChars(first.toString());
     // String ass = firstSol.replace("beta", "β");
     out.println("P=" + solutions.length());
@@ -38,6 +49,21 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     out.println("second=" + replaceChars(second.toString()));
 
     System.out.println("Goodbye");
+  }
+
+  public static  java.util.List<Algebraic> listIterator(List first) throws MapleException
+  {
+    java.util.List<Algebraic> list = rangeClosed(1, first.length()).mapToObj(i -> {
+      try
+      {
+        return first.select(i);
+      }
+      catch (MapleException e)
+      {
+        throw new RuntimeException(e.getMessage(), e);
+      }
+    }).collect(Collectors.toList());
+    return list;
   }
 
   public static String replaceChars(String first)
