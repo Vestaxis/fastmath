@@ -4,9 +4,9 @@ import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.maplesoft.externalcall.MapleException;
 import com.maplesoft.openmaple.Algebraic;
@@ -36,12 +36,19 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     List first = (List) solutions.select(1);
     List second = (List) solutions.select(2);
     int i = 0;
-    for (Algebraic term : listIterator(first))
+    java.util.List<Algebraic> rows = listIterator(first);
+    for (Algebraic term : rows)
     {
-      List expanded = (List) t.evaluate( "expandPow( tolist(" + term.toString() + ")):");
-      String expandedListString = replaceChars( listIterator(expanded).stream().map( expression -> expression.toString() ).collect(Collectors.joining(",")) );
-      out.println(  ++i + ": " + expandedListString );
+      List expanded = (List) t.evaluate("expandPow( tolist(" + term.toString() + ")):");
+      java.util.List<Algebraic> terms = listIterator(expanded).stream().collect(Collectors.toList());
+
+      
     }
+    
+//    String expandedListString = replaceChars(terms.stream().map(expression -> expression.toString()).collect(Collectors.joining(",")));
+//    out.println(++i + ": " + expandedListString);
+    
+    //rows.sort(new TermComparator());
     String firstSol = replaceChars(first.toString());
     // String ass = firstSol.replace("beta", "β");
     out.println("P=" + solutions.length());
@@ -51,7 +58,31 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     System.out.println("Goodbye");
   }
 
-  public static  java.util.List<Algebraic> listIterator(List first) throws MapleException
+  public class TermComparator implements Comparator<java.util.List<Algebraic>>
+  {
+
+    @Override
+    public int compare(java.util.List<Algebraic> a, java.util.List<Algebraic> b)
+    {
+      int n = a.size();
+      assert n == b.size();
+
+      for (int i = 0; i < n; i++)
+      {
+        Algebraic aterm = a.get(i);
+        Algebraic bterm = b.get(i);
+        String aStr = aterm.toString();
+        String bStr = bterm.toString();
+        int cmp = aStr.compareTo(bStr);
+        if (cmp != 0) { return cmp; }
+
+      }
+      return 0;
+    }
+
+  }
+
+  public static java.util.List<Algebraic> listIterator(List first) throws MapleException
   {
     java.util.List<Algebraic> list = rangeClosed(1, first.length()).mapToObj(i -> {
       try
