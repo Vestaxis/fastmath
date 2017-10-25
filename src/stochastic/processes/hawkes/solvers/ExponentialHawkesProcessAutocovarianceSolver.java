@@ -34,9 +34,17 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     t.evaluate("lcovareq:=proc (k, P) options operator, arrow; eval(mustar(s) = lcovar(P), s = beta[k]) end proc:");
     t.evaluate("lcovarsol:=proc (P) options operator, arrow; solve(cl:-toset(cl:-flist(proc (k) options operator, arrow; lcovareq(k, P) end proc, 1 .. P)), cl:-toset(cl:-flist(proc (k) options operator, arrow; mustar(beta[k]) end proc, 1 .. P))) end proc:");
 
-    // t.evaluate("lcovarsol(1);");
-    // t.evaluate("lcovarsol(2);");
-    List solutions = (List) t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
+    exploreSolutions(t, 2);
+
+    System.out.println("Goodbye");
+  }
+
+  public static void exploreSolutions(Engine t, int P) throws MapleException
+  {
+    String solutionString = t.evaluate(format("lcovarsol(%d):", P)).toString();
+    out.println(replaceChars(solutionString));
+    List solutions = (List) t.evaluate(format("map(tolist,map(x->tolist(denom(op(2,x))),tolist(%s))):", solutionString ));
+    
     List first = (List) solutions.select(1);
     List second = (List) solutions.select(2);
     int i = 0;
@@ -59,7 +67,7 @@ public class ExponentialHawkesProcessAutocovarianceSolver
                                          .filter(expr -> expr.toString().contains("["))
                                          .forEach(expr -> referenceCounts.getOrCreate(expr.toString()).getAndIncrement()));
 
-    out.println("referenceCounts=" + replaceChars( referenceCounts.toString() ) );
+    out.println("referenceCounts=" + replaceChars(referenceCounts.toString()));
 
     // summands.sort(new TermComparator() );
 
@@ -68,8 +76,6 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     out.println("P=" + solutions.length());
     // out.println("first=" + firstSol);
     // out.println("second=" + replaceChars(second.toString()));
-
-    System.out.println("Goodbye");
   }
 
   static List evaluateList(Engine t, String expr)
@@ -134,6 +140,6 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
   public static String replaceChars(String first)
   {
-    return first.replace("beta", "β").replace("alpha", "α");
+    return first.replace("beta", "β").replace("alpha", "α").replace("mu", "μ").replace("star", "*");
   }
 }
