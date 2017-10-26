@@ -4,12 +4,9 @@ import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.maplesoft.externalcall.MapleException;
 import com.maplesoft.openmaple.Algebraic;
@@ -71,7 +68,7 @@ public class ExponentialHawkesProcessAutocovarianceSolver
                     .map(list -> replaceChars(list.toString()))
                     .forEach(out::println);
 
-//    out.println("SORTED");
+ //   out.println("SORTED");
 
 //    AtomicInteger counter = new AtomicInteger();
 //    expandedSummands.stream()
