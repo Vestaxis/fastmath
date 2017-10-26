@@ -5,6 +5,7 @@ import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import com.maplesoft.openmaple.Engine;
 import com.maplesoft.openmaple.EngineCallBacksDefault;
 import com.maplesoft.openmaple.List;
 
+import fastmath.NativeUtils;
 import util.AutoHashMap;
 
 public class ExponentialHawkesProcessAutocovarianceSolver
@@ -26,7 +28,9 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     Engine t;
     a = new String[1];
     a[0] = "java";
-    String libDir = "c:\\\\research";
+    String libDir =
+                  NativeUtils.isTerribleExcuseForAnOperatingSystem() ? "c:\\\\research"
+                                                                     : "/home/stephen/research";
     t = new Engine(a, new EngineCallBacksDefault(), null, null);
     t.evaluate(format("libname:=libname,\"%s\":", libDir));
     t.evaluate("with(cl):");
@@ -36,40 +40,56 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
     // t.evaluate("lcovarsol(1);");
     // t.evaluate("lcovarsol(2);");
-    List solutions = (List) t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
+    List solutions =
+                   (List) t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
+    // List solutions = (List)
+    // t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
     List first = (List) solutions.select(1);
     List second = (List) solutions.select(2);
     int i = 0;
-    java.util.List<Algebraic> summands = list2list(first);
-    java.util.List<java.util.List<Algebraic>> expandedSummands = summands.stream()
-                                                                         .map(row -> evaluateList(t, "expandPow( tolist(" + row.toString() + ")):"))
-                                                                         .map(list -> list2list(list))
-                                                                         .collect(Collectors.toList());
-
-    expandedSummands.stream().map(list -> replaceChars(list.toString())).forEach(out::println);
-
-    out.println("SORTED");
-
-    expandedSummands.stream().sorted(new TermComparator()).map(list -> replaceChars(list.toString())).forEach(out::println);
-
-    AutoHashMap<String, AtomicInteger> referenceCounts = new AutoHashMap<String, AtomicInteger>(AtomicInteger.class);
-
-    expandedSummands.stream()
-                    .forEach(list -> list.stream()
-                                         .filter(expr -> expr.toString().contains("["))
-                                         .forEach(expr -> referenceCounts.getOrCreate(expr.toString()).getAndIncrement()));
-
-    out.println("referenceCounts=" + replaceChars( referenceCounts.toString() ) );
+    expand(t, list2list(t, first));
 
     // summands.sort(new TermComparator() );
 
-    String firstSol = replaceChars(first.toString());
-    // String ass = firstSol.replace("beta", "β");
-    out.println("P=" + solutions.length());
-    // out.println("first=" + firstSol);
-    // out.println("second=" + replaceChars(second.toString()));
 
     System.out.println("Goodbye");
+  }
+
+  private static void expand(Engine t, java.util.List<Algebraic> summands)
+  {
+    java.util.List<java.util.List<Algebraic>> expandedSummands =
+                                                               summands.stream()
+                                                                       .map(row -> evaluateList(t,
+                                                                                                "expandPow( tolist("
+                                                                                                   + row.toString()
+                                                                                                   + ")):"))
+                                                                       .map(list -> list2list(t,
+                                                                                              list))
+                                                                       .collect(Collectors.toList());
+
+    expandedSummands.stream()
+                    .map(list -> replaceChars(list.toString()))
+                    .forEach(out::println);
+
+//    out.println("SORTED");
+
+//    AtomicInteger counter = new AtomicInteger();
+//    expandedSummands.stream()
+//                    .sorted(new TermComparator())
+//                    .map(list -> replaceChars(list.toString()))
+//                    .forEach( line -> out.println( counter.incrementAndGet() + " " + line ));
+
+    AutoHashMap<String, AtomicInteger> referenceCounts =
+                                                       new AutoHashMap<String, AtomicInteger>(AtomicInteger.class);
+
+    expandedSummands.stream()
+                    .forEach(list -> list.stream()
+                                         .filter(expr -> expr.toString()
+                                                             .contains("["))
+                                         .forEach(expr -> referenceCounts.getOrCreate(expr.toString())
+                                                                         .getAndIncrement()));
+
+    out.println("referenceCounts=" + replaceChars(referenceCounts.toString()));
   }
 
   static List evaluateList(Engine t, String expr)
@@ -84,11 +104,13 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     }
   }
 
-  public static class TermComparator implements Comparator<java.util.List<? extends Algebraic>>
+  public static class TermComparator
+      implements Comparator<java.util.List<? extends Algebraic>>
   {
 
     @Override
-    public int compare(java.util.List<? extends Algebraic> a, java.util.List<? extends Algebraic> b)
+    public int compare(java.util.List<? extends Algebraic> a,
+        java.util.List<? extends Algebraic> b)
     {
       int n = a.size();
       assert n == b.size();
@@ -108,7 +130,7 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
   }
 
-  public static java.util.List<Algebraic> list2list(List first)
+  public static java.util.List<Algebraic> list2list(Engine t, List first)
   {
     int n = 0;
     try

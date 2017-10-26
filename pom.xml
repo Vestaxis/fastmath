@@ -302,6 +302,11 @@
 			<artifactId>commons-math3</artifactId>
 			<version>3.6</version>
 		</dependency>
+ <dependency>
+      <groupId>com.github.dakusui</groupId>
+      <artifactId>combinatoradix</artifactId>
+      <version>0.8.2</version>
+    </dependency>		
 	</dependencies>
 
 
