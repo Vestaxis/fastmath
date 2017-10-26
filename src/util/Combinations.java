@@ -3,7 +3,6 @@ package util;
 import static java.lang.System.out;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,10 @@ public class Combinations
 
   public static void main(String[] args) throws MapleException
   {
-    ExponentialHawkesProcessAutocovarianceSolver.main(args);
+    ExponentialHawkesProcessAutocovarianceSolver.enumerate().forEach( out::println );
+    
+    out.println( "....");
+    
     List<String> vars = Arrays.asList("α1", "α2", "β1", "β2");
     int n = (int) CombinatoricsUtils.binomialCoefficient(3, 2);
 

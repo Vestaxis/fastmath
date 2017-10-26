@@ -7,6 +7,7 @@ import static java.util.stream.IntStream.rangeClosed;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.maplesoft.externalcall.MapleException;
 import com.maplesoft.openmaple.Algebraic;
@@ -20,6 +21,23 @@ import util.AutoHashMap;
 public class ExponentialHawkesProcessAutocovarianceSolver
 {
   public static void main(String args[]) throws MapleException
+  {
+    enumerate().forEach(out::println);
+
+    System.out.println("Goodbye");
+  }
+
+  public static Stream<java.util.List<String>> enumerate() throws MapleException
+  {
+    return enumerateAlgebra().stream()
+                             .map(row -> row.subList(1, row.size()))
+                             .map(algRow -> algRow.stream()
+                                                  .map(alg -> replaceChars(alg.toString()))
+                                                  .collect(Collectors.toList()));
+  }
+
+  public static java.util.List<java.util.List<Algebraic>> enumerateAlgebra()
+      throws MapleException
   {
     String a[];
     Engine t;
@@ -44,15 +62,16 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     List first = (List) solutions.select(1);
     List second = (List) solutions.select(2);
     int i = 0;
-    expand(t, list2list(t, first));
 
-    // summands.sort(new TermComparator() );
-
-
-    System.out.println("Goodbye");
+    java.util.List<java.util.List<Algebraic>> expansion =
+                                                        expand(t,
+                                                               list2list(t,
+                                                                         first));
+    return expansion;
   }
 
-  private static void expand(Engine t, java.util.List<Algebraic> summands)
+  private static java.util.List<java.util.List<Algebraic>> expand(Engine t,
+      java.util.List<Algebraic> summands)
   {
     java.util.List<java.util.List<Algebraic>> expandedSummands =
                                                                summands.stream()
@@ -64,17 +83,13 @@ public class ExponentialHawkesProcessAutocovarianceSolver
                                                                                               list))
                                                                        .collect(Collectors.toList());
 
-    expandedSummands.stream()
-                    .map(list -> replaceChars(list.toString()))
-                    .forEach(out::println);
+    // out.println("SORTED");
 
- //   out.println("SORTED");
-
-//    AtomicInteger counter = new AtomicInteger();
-//    expandedSummands.stream()
-//                    .sorted(new TermComparator())
-//                    .map(list -> replaceChars(list.toString()))
-//                    .forEach( line -> out.println( counter.incrementAndGet() + " " + line ));
+    // AtomicInteger counter = new AtomicInteger();
+    // expandedSummands.stream()
+    // .sorted(new TermComparator())
+    // .map(list -> replaceChars(list.toString()))
+    // .forEach( line -> out.println( counter.incrementAndGet() + " " + line ));
 
     AutoHashMap<String, AtomicInteger> referenceCounts =
                                                        new AutoHashMap<String, AtomicInteger>(AtomicInteger.class);
@@ -87,6 +102,8 @@ public class ExponentialHawkesProcessAutocovarianceSolver
                                                                          .getAndIncrement()));
 
     out.println("referenceCounts=" + replaceChars(referenceCounts.toString()));
+
+    return expandedSummands;
   }
 
   static List evaluateList(Engine t, String expr)
@@ -153,6 +170,9 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 
   public static String replaceChars(String first)
   {
-    return first.replace("beta", "β").replace("alpha", "α");
+    return first.replace("beta", "β")
+                .replace("alpha", "α")
+                .replaceAll("\\[", "")
+                .replaceAll("\\]", "");
   }
 }
