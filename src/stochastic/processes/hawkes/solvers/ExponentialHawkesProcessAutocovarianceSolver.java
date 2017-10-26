@@ -5,6 +5,7 @@ import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -22,22 +23,28 @@ public class ExponentialHawkesProcessAutocovarianceSolver
 {
   public static void main(String args[]) throws MapleException
   {
-    enumerate().forEach(out::println);
+    HashSet<java.util.List<String>> present = new HashSet<>();
+
+    enumerate(2).forEach(row -> {
+      out.println(row);
+      present.add(row);
+    });
 
     System.out.println("Goodbye");
   }
 
-  public static Stream<java.util.List<String>> enumerate() throws MapleException
+  public static Stream<java.util.List<String>> enumerate(int P)
+      throws MapleException
   {
-    return enumerateAlgebra().stream()
-                             .map(row -> row.subList(1, row.size()))
-                             .map(algRow -> algRow.stream()
-                                                  .map(alg -> replaceChars(alg.toString()))
-                                                  .collect(Collectors.toList()));
+    return enumerateAlgebra(P).stream()
+                              .map(row -> row.subList(1, row.size()))
+                              .map(algRow -> algRow.stream()
+                                                   .map(alg -> replaceChars(alg.toString()))
+                                                   .collect(Collectors.toList()));
   }
 
-  public static java.util.List<java.util.List<Algebraic>> enumerateAlgebra()
-      throws MapleException
+  public static java.util.List<java.util.List<Algebraic>> enumerateAlgebra(
+      int P) throws MapleException
   {
     String a[];
     Engine t;
@@ -56,7 +63,8 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     // t.evaluate("lcovarsol(1);");
     // t.evaluate("lcovarsol(2);");
     List solutions =
-                   (List) t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
+                   (List) t.evaluate(format("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(%d)))):",
+                                            P));
     // List solutions = (List)
     // t.evaluate("map(tolist,map(x->tolist(denom(op(2,x))),tolist(lcovarsol(2)))):");
     List first = (List) solutions.select(1);

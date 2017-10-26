@@ -1,7 +1,10 @@
 package util;
 
 import static java.lang.System.out;
+import static java.util.stream.IntStream.rangeClosed;
+import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -22,24 +25,50 @@ public class Combinations
 
   public static void main(String[] args) throws MapleException
   {
-    ExponentialHawkesProcessAutocovarianceSolver.enumerate().forEach( out::println );
+
+    HashSet<java.util.List<String>> present = new HashSet<>();
+
+    int P = 3;
+    ExponentialHawkesProcessAutocovarianceSolver.enumerate(P).forEach(row -> {
+      out.println(row);
+      present.add(row);
+    });
+
+    out.println("....");
+
+    List<String> vars = Stream
+                              .concat(rangeClosed(1, P).mapToObj(i -> "α" + i),
+                                      rangeClosed(1, P).mapToObj(i -> "β" + i))
+                              .collect(Collectors.toList());
     
-    out.println( "....");
-    
-    List<String> vars = Arrays.asList("α1", "α2", "β1", "β2");
-    int n = (int) CombinatoricsUtils.binomialCoefficient(3, 2);
+    int n = (int) CombinatoricsUtils.binomialCoefficient(P + 1, 2);
 
     StreamSupport.stream(new HomogeniousCombinator<>(vars, n).spliterator(),
                          false)
                  .filter(l -> {
-                   Stream<String> chars =
-                                        l.stream()
-                                         .map(x -> String.valueOf(x.charAt(0)));
-                   Set<String> charSet = chars.collect(Collectors.toSet());
-                   return new HashSet<String>(l).size() > 1
-                          && charSet.contains("β");
+                   boolean twoVarsPresent = new HashSet<String>(l).size() > 1;
+                   boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
+
+                   return twoVarsPresent && moreThanOneIndexPresent
+                          && getCharSet(l).contains("β");
                  })
-                 .forEach(out::println);
+                 .forEach(row -> out.println(row + " "
+                                             + (present.contains(row) ? ""
+                                                                      : "*")));
+  }
+
+  public static Set<String> getIndexSet(List<String> l)
+  {
+    Stream<String> chars = l.stream().map(x -> x.substring(1, x.length()));
+    Set<String> charSet = chars.collect(Collectors.toSet());
+    return charSet;
+  }
+
+  public static Set<String> getCharSet(List<String> l)
+  {
+    Stream<String> chars = l.stream().map(x -> String.valueOf(x.charAt(0)));
+    Set<String> charSet = chars.collect(Collectors.toSet());
+    return charSet;
   }
 
 }
