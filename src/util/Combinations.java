@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -40,8 +41,11 @@ public class Combinations
                               .concat(rangeClosed(1, P).mapToObj(i -> "α" + i),
                                       rangeClosed(1, P).mapToObj(i -> "β" + i))
                               .collect(Collectors.toList());
-    
+
     int n = (int) CombinatoricsUtils.binomialCoefficient(P + 1, 2);
+
+    AtomicInteger thereCount = new AtomicInteger();
+    AtomicInteger extraCount = new AtomicInteger();
 
     StreamSupport.stream(new HomogeniousCombinator<>(vars, n).spliterator(),
                          false)
@@ -52,9 +56,20 @@ public class Combinations
                    return twoVarsPresent && moreThanOneIndexPresent
                           && getCharSet(l).contains("β");
                  })
-                 .forEach(row -> out.println(row + " "
-                                             + (present.contains(row) ? ""
-                                                                      : "*")));
+                 .forEach(row -> {
+                   boolean there = present.contains(row);
+                   if ( there )
+                   {
+                     thereCount.incrementAndGet();
+                   }
+                   else
+                   {
+                     extraCount.incrementAndGet();
+                   }
+                  out.println(row + " " + (there ? "" : "*"));
+                 });
+    out.println( "matching count " + thereCount );
+    out.println( "extra count " + extraCount );
   }
 
   public static Set<String> getIndexSet(List<String> l)
