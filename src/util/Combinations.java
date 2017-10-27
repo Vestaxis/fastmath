@@ -58,7 +58,7 @@ public class Combinations
                  })
                  .forEach(row -> {
                    boolean there = present.contains(row);
-                   if ( there )
+                   if (there)
                    {
                      thereCount.incrementAndGet();
                    }
@@ -66,10 +66,17 @@ public class Combinations
                    {
                      extraCount.incrementAndGet();
                    }
-                  out.println(row + " " + (there ? "" : "*"));
+                   AutoHashMap<String, AtomicInteger> multiplicities =
+                                                                     new AutoHashMap<>(AtomicInteger.class);
+
+                   row.forEach(var -> multiplicities.getOrCreate(var)
+                                                    .getAndIncrement());
+
+                   out.println(row + " " + (there ? " " : "*" ) + " multiplicities=" + multiplicities );
+                   
                  });
-    out.println( "matching count " + thereCount );
-    out.println( "extra count " + extraCount );
+    out.println("matching count " + thereCount);
+    out.println("extra count " + extraCount + " (starred)");
   }
 
   public static Set<String> getIndexSet(List<String> l)
