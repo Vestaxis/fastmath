@@ -603,4 +603,10 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     // double μstar = sum( j ->, 0 , order() - 1);
     return μ / (2 * π) * (β / (β - α) * (1 + α * (2 * β - α)));
   }
+  
+  @Override
+  public double λ()
+  {
+    return κ / ( 1 - getBranchingRatio() );
+  }
 }
