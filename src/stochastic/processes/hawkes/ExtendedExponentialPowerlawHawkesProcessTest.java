@@ -18,11 +18,11 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   
   public void testNormalization()
   {
-    double b = 1;
-    double τ = 1;
-    double ε = 0.25;
-    double τ0 = 1;
-    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
+    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess();
+    process.b = 1;
+    process.η = 1;
+    process.ε = 0.25;
+    process.τ0 = 1;
     double z = process.Z();
     out.println( "z=" + z );
   }
