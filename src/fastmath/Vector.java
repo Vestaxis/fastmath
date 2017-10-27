@@ -852,13 +852,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public native Vector multiply(Vector x);
 
   /*
-   * Element wise pow
+   * Element-wise pow
    * 
    * @return this
    */
-  public native Vector pow(double x);
-
-  public Vector powJava(double x)
+  public Vector pow(double x)
   {
     for (int i = 0; i < size; i++)
     {
@@ -1107,7 +1105,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public native double sum();
+  public double sum()
+  {
+    return stream().sum();
+  }
 
   public double sumOfSquares()
   {
