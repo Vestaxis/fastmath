@@ -55,19 +55,24 @@ public class Combinations
                    boolean twoVarsPresent = new HashSet<String>(l).size() > 1;
                    boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
 
+                   TreeMap<String, AtomicInteger> multiplicities =
+                                                                 getTermMultiplicities(l);
                    int maxMultiplicity =
-                                       getMultiplicities(l).values()
-                                                           .stream()
-                                                           .mapToInt(atom -> atom.get())
-                                                           .max()
-                                                           .getAsInt();
+                                       multiplicities.values()
+                                                     .stream()
+                                                     .mapToInt(atom -> atom.get())
+                                                     .max()
+                                                     .getAsInt();
 
                    boolean containsAtLeastOneβ = getCharSet(l).contains("β");
                    boolean maxMultiplicityNoGreaterThanP = maxMultiplicity <= P;
+                   boolean atLeastPTermsPresent = multiplicities.keySet()
+                                                                .size() >= P;
 
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
-                          && maxMultiplicityNoGreaterThanP;
+                          && maxMultiplicityNoGreaterThanP
+                          && atLeastPTermsPresent;
                  })
                  .forEach(row -> {
                    boolean there = present.contains(row);
@@ -82,20 +87,34 @@ public class Combinations
 
                    out.println(row + " "
                                + (there ? " " : "*")
-                               + " multiplicities="
-                               + getMultiplicities(row));
+                               + " termMultiplicities="
+                               + getTermMultiplicities(row)
+                               + " variableMultiplicities="
+                               + getVariableMultiplicities(row));
 
                  });
     out.println("matching count " + thereCount);
     out.println("extra count " + extraCount + " (starred)");
   }
 
-  public static TreeMap<String, AtomicInteger> getMultiplicities(List<String> l)
+  public static TreeMap<String, AtomicInteger> getTermMultiplicities(
+      List<String> l)
   {
     AutoHashMap<String, AtomicInteger> multiplicities =
                                                       new AutoHashMap<>(AtomicInteger.class);
 
     l.forEach(var -> multiplicities.getOrCreate(var).getAndIncrement());
+    return new TreeMap<String, AtomicInteger>(multiplicities);
+  }
+
+  public static TreeMap<String, AtomicInteger> getVariableMultiplicities(
+      List<String> l)
+  {
+    AutoHashMap<String, AtomicInteger> multiplicities =
+                                                      new AutoHashMap<>(AtomicInteger.class);
+
+    l.forEach(var -> multiplicities.getOrCreate(String.valueOf(var.charAt(0)))
+                                   .getAndIncrement());
     return new TreeMap<String, AtomicInteger>(multiplicities);
   }
 
