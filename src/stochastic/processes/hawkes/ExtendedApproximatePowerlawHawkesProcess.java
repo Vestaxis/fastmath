@@ -31,7 +31,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ρ(0.25, 1), b(0.5, 0.6), ε(0, 0.5), τ0(0, 10);
+    ρ(0.25, 1), η(0,10), b(0.5, 0.6), ε(0, 0.5), τ0(0, 10);
 
     private double min;
     private double max;
@@ -68,11 +68,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
 
   }
 
-  public ExtendedApproximatePowerlawHawkesProcess(double τ0, double ε)
-  {
-    this.τ0 = τ0;
-    this.ε = ε;
-  }
+  
 
   public ExtendedApproximatePowerlawHawkesProcess()
   {
@@ -80,6 +76,8 @@ public class ExtendedApproximatePowerlawHawkesProcess
 
   public double b;
 
+  public double η;
+  
   @Override
   public double Z()
   {

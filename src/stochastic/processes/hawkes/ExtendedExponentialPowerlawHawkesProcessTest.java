@@ -22,7 +22,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess process = new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(τ0, ε, b, τ);
+    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess(τ0, ε, b, τ);
     double z = process.Z();
     out.println( "z=" + z );
   }
