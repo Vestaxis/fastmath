@@ -53,8 +53,19 @@ public class Combinations
                    boolean twoVarsPresent = new HashSet<String>(l).size() > 1;
                    boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
 
+                   int maxMultiplicity =
+                                       getMultiplicities(l).values()
+                                                           .stream()
+                                                           .mapToInt(atom -> atom.get())
+                                                           .max()
+                                                           .getAsInt();
+
+                   boolean containsAtLeastOneβ = getCharSet(l).contains("β");
+                   boolean maxMultiplicityNoGreaterThanP = maxMultiplicity <= P;
+
                    return twoVarsPresent && moreThanOneIndexPresent
-                          && getCharSet(l).contains("β");
+                          && containsAtLeastOneβ
+                          && maxMultiplicityNoGreaterThanP;
                  })
                  .forEach(row -> {
                    boolean there = present.contains(row);
@@ -66,17 +77,25 @@ public class Combinations
                    {
                      extraCount.incrementAndGet();
                    }
-                   AutoHashMap<String, AtomicInteger> multiplicities =
-                                                                     new AutoHashMap<>(AtomicInteger.class);
 
-                   row.forEach(var -> multiplicities.getOrCreate(var)
-                                                    .getAndIncrement());
+                   out.println(row + " "
+                               + (there ? " " : "*")
+                               + " multiplicities="
+                               + getMultiplicities(row));
 
-                   out.println(row + " " + (there ? " " : "*" ) + " multiplicities=" + multiplicities );
-                   
                  });
     out.println("matching count " + thereCount);
     out.println("extra count " + extraCount + " (starred)");
+  }
+
+  public static AutoHashMap<String, AtomicInteger> getMultiplicities(
+      List<String> l)
+  {
+    AutoHashMap<String, AtomicInteger> multiplicities =
+                                                      new AutoHashMap<>(AtomicInteger.class);
+
+    l.forEach(var -> multiplicities.getOrCreate(var).getAndIncrement());
+    return multiplicities;
   }
 
   public static Set<String> getIndexSet(List<String> l)
