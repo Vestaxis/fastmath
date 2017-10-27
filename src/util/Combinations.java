@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,14 +90,13 @@ public class Combinations
     out.println("extra count " + extraCount + " (starred)");
   }
 
-  public static AutoHashMap<String, AtomicInteger> getMultiplicities(
-      List<String> l)
+  public static TreeMap<String, AtomicInteger> getMultiplicities(List<String> l)
   {
     AutoHashMap<String, AtomicInteger> multiplicities =
                                                       new AutoHashMap<>(AtomicInteger.class);
 
     l.forEach(var -> multiplicities.getOrCreate(var).getAndIncrement());
-    return multiplicities;
+    return new TreeMap<String, AtomicInteger>(multiplicities);
   }
 
   public static Set<String> getIndexSet(List<String> l)
