@@ -35,13 +35,13 @@ public class Combinations
       int[] aMultiples = getTermMultiplicitiesArray(a, P);
       int[] bMultiples = getTermMultiplicitiesArray(b, P);
 
-      for (int i = 0; i < P; i++)
+      for (int i = 0; i < P * 2; i++)
       {
         if (aMultiples[i] < bMultiples[i])
         {
-          return -1;
+          return -(i+1);
         }
-        else if (aMultiples[i] > bMultiples[i]) { return 1; }
+        else if (aMultiples[i] > bMultiples[i]) { return i+1; }
       }
       return 0;
     };
@@ -54,10 +54,12 @@ public class Combinations
 
     int P = 3;
     out.print("Actual solution computed via Maple:");
-    ExponentialHawkesProcessAutocovarianceSolver.enumerate(P).forEach(row -> {
-      printRow(row, true, P);
-      present.add(row);
-    });
+    ExponentialHawkesProcessAutocovarianceSolver.enumerate(P)
+                                                .sorted(getTermMultipleComparator(P))
+                                                .forEach(row -> {
+                                                  printRow(row, true, P);
+                                                  present.add(row);
+                                                });
 
     out.println("In-progress solution computed by filtering of a HomogeniousCombinator: ");
 
