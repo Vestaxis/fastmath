@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,25 @@ import stochastic.processes.hawkes.solvers.ExponentialHawkesProcessAutocovarianc
 
 public class Combinations
 {
+
+  public static Comparator<? super List<String>> getTermMultipleComparator(
+      int P)
+  {
+    return (a, b) -> {
+      int[] aMultiples = getTermMultiplicitiesArray(a, P);
+      int[] bMultiples = getTermMultiplicitiesArray(b, P);
+
+      for (int i = 0; i < P; i++)
+      {
+        if (aMultiples[i] < bMultiples[i])
+        {
+          return -1;
+        }
+        else if (aMultiples[i] > bMultiples[i]) { return 1; }
+      }
+      return 0;
+    };
+  };
 
   public static void main(String[] args) throws MapleException
   {
@@ -80,6 +100,7 @@ public class Combinations
                           && atLeastPTermsPresent
                           && everyIndexPresent;
                  })
+                 .sorted(getTermMultipleComparator(P))
                  .forEach(row -> {
                    boolean there = present.contains(row);
                    if (there)
@@ -98,7 +119,10 @@ public class Combinations
     out.println("matching count " + thereCount);
     out.println("extra count " + extraCount + " (starred)");
     out.println("TERMS TO BE FILTERED:");
-    extraTerms.forEach(row -> printRow(row, false, P));
+
+    extraTerms.stream()
+              .sorted(getTermMultipleComparator(P))
+              .forEach(row -> printRow(row, false, P));
   }
 
   public static void printRow(List<String> row, boolean there, int P)
