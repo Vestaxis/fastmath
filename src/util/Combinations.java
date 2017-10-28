@@ -21,6 +21,7 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 import com.github.dakusui.combinatoradix.HomogeniousCombinator;
 import com.maplesoft.externalcall.MapleException;
 
+import fastmath.Vector;
 import stochastic.processes.hawkes.solvers.ExponentialHawkesProcessAutocovarianceSolver;
 
 public class Combinations
@@ -34,7 +35,7 @@ public class Combinations
     int P = 3;
     out.print("Actual solution computed via Maple:");
     ExponentialHawkesProcessAutocovarianceSolver.enumerate(P).forEach(row -> {
-      printRow(row, true);
+      printRow(row, true, P);
       present.add(row);
     });
 
@@ -91,21 +92,19 @@ public class Combinations
                      extraCount.incrementAndGet();
                    }
 
-                   printRow(row, there);
+                   printRow(row, there, P);
 
                  });
     out.println("matching count " + thereCount);
     out.println("extra count " + extraCount + " (starred)");
     out.println("TERMS TO BE FILTERED:");
-    extraTerms.forEach(row -> printRow(row, false));
+    extraTerms.forEach(row -> printRow(row, false, P));
   }
 
-  public static void printRow(List<String> row, boolean there)
+  public static void printRow(List<String> row, boolean there, int P)
   {
-    out.println(row + " "
-                + (there ? " " : "*")
-                + " termMultiplicities="
-                + getTermMultiplicities(row)
+    out.println((there ? " " : "*") + " termMultiplicities="
+                + Arrays.toString( getTermMultiplicitiesArray(row, P) )
                 + " variableMultiplicities="
                 + getVariableMultiplicities(row)
                 + " indexRepetitions="
@@ -122,6 +121,29 @@ public class Combinations
                                                                            var.length())))
                                 .getAndIncrement());
     return new TreeMap<Integer, AtomicInteger>(repetitions);
+  }
+
+  public static int[] getTermMultiplicitiesArray(List<String> l, int P)
+  {
+    List<String> vars = Stream
+                              .concat(rangeClosed(1, P).mapToObj(i -> "α" + i),
+                                      rangeClosed(1, P).mapToObj(i -> "β" + i))
+                              .collect(Collectors.toList());
+
+    TreeMap<String, AtomicInteger> m = getTermMultiplicities(l);
+
+    int r[] = new int[P * 2];
+    for (int i = 0; i < r.length; i++)
+    {
+      String ithVarName = vars.get(i);
+      AtomicInteger ithVarCounter = m.get(ithVarName);
+      if (ithVarCounter != null)
+      {
+        r[i] = ithVarCounter.get();
+      }
+    }
+    return r;
+
   }
 
   public static TreeMap<String, AtomicInteger> getTermMultiplicities(
