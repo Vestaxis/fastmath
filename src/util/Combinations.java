@@ -32,12 +32,13 @@ public class Combinations
     HashSet<java.util.List<String>> present = new HashSet<>();
 
     int P = 3;
+    out.print("Actual solution computed via Maple:");
     ExponentialHawkesProcessAutocovarianceSolver.enumerate(P).forEach(row -> {
-      out.println(row);
+      printRow(row, true);
       present.add(row);
     });
 
-    out.println("....");
+    out.println("In-progress solution computed by filtering of a HomogeniousCombinator: ");
 
     List<String> vars = Stream
                               .concat(rangeClosed(1, P).mapToObj(i -> "α" + i),
@@ -48,13 +49,15 @@ public class Combinations
 
     AtomicInteger thereCount = new AtomicInteger();
     AtomicInteger extraCount = new AtomicInteger();
+    ArrayList<ArrayList<String>> extraTerms = new ArrayList<>();
 
     StreamSupport.stream(new HomogeniousCombinator<>(vars, n).spliterator(),
                          false)
                  .filter(l -> {
                    boolean twoVarsPresent = new HashSet<String>(l).size() > 1;
                    boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
-
+                   TreeMap<Integer, AtomicInteger> indexRepetitions =
+                                                                    getIndexRepetitions(l);
                    TreeMap<String, AtomicInteger> multiplicities =
                                                                  getTermMultiplicities(l);
                    int maxMultiplicity =
@@ -68,11 +71,13 @@ public class Combinations
                    boolean maxMultiplicityNoGreaterThanP = maxMultiplicity <= P;
                    boolean atLeastPTermsPresent = multiplicities.keySet()
                                                                 .size() >= P;
+                   boolean everyIndexPresent = indexRepetitions.size() == P;
 
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
                           && maxMultiplicityNoGreaterThanP
-                          && atLeastPTermsPresent;
+                          && atLeastPTermsPresent
+                          && everyIndexPresent;
                  })
                  .forEach(row -> {
                    boolean there = present.contains(row);
@@ -82,19 +87,41 @@ public class Combinations
                    }
                    else
                    {
+                     extraTerms.add(new ArrayList<>(row));
                      extraCount.incrementAndGet();
                    }
 
-                   out.println(row + " "
-                               + (there ? " " : "*")
-                               + " termMultiplicities="
-                               + getTermMultiplicities(row)
-                               + " variableMultiplicities="
-                               + getVariableMultiplicities(row));
+                   printRow(row, there);
 
                  });
     out.println("matching count " + thereCount);
     out.println("extra count " + extraCount + " (starred)");
+    out.println("TERMS TO BE FILTERED:");
+    extraTerms.forEach(row -> printRow(row, false));
+  }
+
+  public static void printRow(List<String> row, boolean there)
+  {
+    out.println(row + " "
+                + (there ? " " : "*")
+                + " termMultiplicities="
+                + getTermMultiplicities(row)
+                + " variableMultiplicities="
+                + getVariableMultiplicities(row)
+                + " indexRepetitions="
+                + getIndexRepetitions(row));
+  }
+
+  public static TreeMap<Integer, AtomicInteger> getIndexRepetitions(
+      List<String> l)
+  {
+    AutoHashMap<Integer, AtomicInteger> repetitions =
+                                                    new AutoHashMap<>(AtomicInteger.class);
+
+    l.forEach(var -> repetitions.getOrCreate(Integer.valueOf(var.substring(1,
+                                                                           var.length())))
+                                .getAndIncrement());
+    return new TreeMap<Integer, AtomicInteger>(repetitions);
   }
 
   public static TreeMap<String, AtomicInteger> getTermMultiplicities(
