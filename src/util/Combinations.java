@@ -103,12 +103,11 @@ public class Combinations
 
   public static void printRow(List<String> row, boolean there, int P)
   {
-    out.println((there ? " " : "*") + " termMultiplicities="
-                + Arrays.toString( getTermMultiplicitiesArray(row, P) )
-                + " variableMultiplicities="
-                + getVariableMultiplicities(row)
-                + " indexRepetitions="
-                + getIndexRepetitions(row));
+    out.format("%s termMultiples=%s varMultiples=%12s indexReps=%s\n",
+               (there ? " " : "*"),
+               Arrays.toString(getTermMultiplicitiesArray(row, P)),
+               getVariableMultiplicities(row),
+               getIndexRepetitions(row));
   }
 
   public static TreeMap<Integer, AtomicInteger> getIndexRepetitions(
