@@ -165,14 +165,17 @@ public class Combinations
     TreeMap<Integer, AtomicInteger> indexReps = getIndexRepetitions(row);
     boolean possibleExtra = Arrays.equals(termCounts, new int[]
     { 3, 1, 1, 1, 0, 0 });
-    out.format("%s%s term#s=%s var#s=%12s idx#s=%s term#=%s\n",
+    TreeMap<String, AtomicInteger> varMults = getVariableMultiplicities(row);
+    int varMultsArray[] = new int[]
+    { varMults.get("α") == null ? 0 : varMults.get("α").get(),
+      varMults.get("β").get() };
+    out.format("%s%s term#s%s var#s%s idx#s%s term#%s\n",
                (there ? " " : "*"),
                possibleExtra ? "X" : " ",
                Arrays.toString(multiplicities),
-               getVariableMultiplicities(row),
+               Arrays.toString(varMultsArray),
                indexReps,
-               Arrays.toString(termCounts)
-               );
+               Arrays.toString(termCounts));
   }
 
   public static TreeMap<Integer, AtomicInteger> getIndexRepetitions(
