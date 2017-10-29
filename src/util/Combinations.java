@@ -102,13 +102,22 @@ public class Combinations
                    boolean noIndiciesAppearMoreThanPTimes =
                                                           indexCounts.stream()
                                                                      .allMatch(i -> i <= P);
+                   TreeMap<String, AtomicInteger> varMult =
+                                                          getVariableMultiplicities(l);
+
+                   AtomicInteger αcounter = varMult.get("α");
+                   int αcount = αcounter == null ? 0 : αcounter.get();
+                   AtomicInteger βcounter = varMult.get("β");
+                   int βcount = βcounter == null ? 0 : βcounter.get();
+                   boolean αcountLessThanOrEqualtToβCount = αcount <= βcount;
 
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
                           && maxMultiplicityNoGreaterThanP
                           && atLeastPTermsPresent
                           && everyIndexPresent
-                          && noIndiciesAppearMoreThanPTimes;
+                          && noIndiciesAppearMoreThanPTimes
+                          && αcountLessThanOrEqualtToβCount;
                  })
                  .sorted(getTermMultipleComparator(P))
                  .forEach(row -> {
