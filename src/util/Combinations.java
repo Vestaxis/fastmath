@@ -109,6 +109,7 @@ public class Combinations
                    int αcount = αcounter == null ? 0 : αcounter.get();
                    AtomicInteger βcounter = varMult.get("β");
                    int βcount = βcounter == null ? 0 : βcounter.get();
+                   
                    boolean αcountLessThanOrEqualtToβCount = αcount <= βcount;
 
                    return twoVarsPresent && moreThanOneIndexPresent
