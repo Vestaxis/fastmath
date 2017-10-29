@@ -163,13 +163,16 @@ public class Combinations
     }).toArray();
 
     TreeMap<Integer, AtomicInteger> indexReps = getIndexRepetitions(row);
-    
-    out.format("%s termMultiples=%s varMultiples=%12s indexReps=%s termCounts=%s\n",
+    boolean possibleExtra = Arrays.equals(termCounts, new int[]
+    { 3, 1, 1, 1, 0, 0 });
+    out.format("%s%s term#s=%s var#s=%12s idx#s=%s term#=%s\n",
                (there ? " " : "*"),
+               possibleExtra ? "X" : " ",
                Arrays.toString(multiplicities),
                getVariableMultiplicities(row),
                indexReps,
-               Arrays.toString(termCounts));
+               Arrays.toString(termCounts)
+               );
   }
 
   public static TreeMap<Integer, AtomicInteger> getIndexRepetitions(
