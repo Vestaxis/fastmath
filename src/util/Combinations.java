@@ -7,12 +7,14 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -109,7 +111,7 @@ public class Combinations
                    int αcount = αcounter == null ? 0 : αcounter.get();
                    AtomicInteger βcounter = varMult.get("β");
                    int βcount = βcounter == null ? 0 : βcounter.get();
-                   
+
                    boolean αcountLessThanOrEqualtToβCount = αcount <= βcount;
 
                    return twoVarsPresent && moreThanOneIndexPresent
@@ -147,11 +149,27 @@ public class Combinations
 
   public static void printRow(List<String> row, boolean there, int P)
   {
-    out.format("%s termMultiples=%s varMultiples=%12s indexReps=%s\n",
+    AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
+                                                               new AutoHashMap<>(AtomicInteger.class);
+    int[] multiplicities = getTermMultiplicitiesArray(row, P);
+
+    rangeClosed(0,
+                2 * P - 1)
+                          .forEach(pos -> termMultiplicityCounts.getOrCreate(multiplicities[pos])
+                                                                .incrementAndGet());
+    int[] termCounts = rangeClosed(0, P * 2 - 1).map(i -> {
+      AtomicInteger atom = termMultiplicityCounts.get(i);
+      return atom == null ? 0 : atom.get();
+    }).toArray();
+
+    TreeMap<Integer, AtomicInteger> indexReps = getIndexRepetitions(row);
+    
+    out.format("%s termMultiples=%s varMultiples=%12s indexReps=%s termCounts=%s\n",
                (there ? " " : "*"),
-               Arrays.toString(getTermMultiplicitiesArray(row, P)),
+               Arrays.toString(multiplicities),
                getVariableMultiplicities(row),
-               getIndexRepetitions(row));
+               indexReps,
+               Arrays.toString(termCounts));
   }
 
   public static TreeMap<Integer, AtomicInteger> getIndexRepetitions(
