@@ -59,7 +59,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   /**
    * branching rate
    */
-  public double ρ = 1;
+  public abstract double getρ();
 
   @Override
   public double logLikelihood(Vector t)
@@ -605,7 +605,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   }
   
   @Override
-  public double λ()
+  public double getStationaryλ()
   {
     return κ / ( 1 - getBranchingRatio() );
   }

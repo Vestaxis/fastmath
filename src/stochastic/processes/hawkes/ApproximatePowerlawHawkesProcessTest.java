@@ -11,14 +11,6 @@ import junit.framework.TestCase;
 
 public class ApproximatePowerlawHawkesProcessTest extends TestCase
 {
-  public void testBranchingRatio()
-  {
-    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(1.4, 0.25);
-    assertEquals( 1.0, process.getBranchingRatio() );
-    process.ρ = 0.5;
-    assertEquals( 0.5, process.getBranchingRatio() );
-    
-  }
   
   public void testΨ()
   {
@@ -44,20 +36,33 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
     ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
     testHawkesProcess(process); 
     process.κ = 0.1;
-    process.ρ = 0.5;
     testHawkesProcess(process);     
   }
 
+  public void testMeanStationaryIntensity()
+  {
+    double ε = 0.25;
+    double τ0 = 1;
+    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
+    process.κ = 1.0 / 1000;
+    process.y = 300;
+    double stationaryMeanIntensity = process.getStationaryλ();
+    assertEquals( process.getρ(), process.getBranchingRatio(), pow( 10, -13 ) );
+    assertEquals( 1.0 / process.y, stationaryMeanIntensity );
+  }
+  
+  
+  
   private void testHawkesProcess(ExponentialHawkesProcess process)
   {
-    RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(500000, process::ψ, 0, 5000);
-    out.println( "integral=" + integral );
-    assertEquals( process.ρ, integral, pow(10,-4));
-    process.ρ = 0.5;
-    integral = integrator.integrate(500000, process::ψ, 0, 5000);
-    assertEquals( process.ρ, integral, pow(10,-4));
-    out.println( "integral=" + integral );
+//    RombergIntegrator integrator = new RombergIntegrator();
+//    double integral = integrator.integrate(500000, process::ψ, 0, 5000);
+//    out.println( "integral=" + integral );
+//    assertEquals( process.getBranchingRatio(), integral, pow(10,-4));
+//    process.y = 0.5;
+//    integral = integrator.integrate(500000, process::ψ, 0, 5000);
+//    assertEquals( process.getρ(), integral, pow(10,-4));
+//    out.println( "integral=" + integral );
   }
 
   // public void testLogLik() throws IOException

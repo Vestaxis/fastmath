@@ -31,7 +31,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
                          α,
                          β,
                          getBranchingRatio(),
-                         λ());
+                         getStationaryλ());
   }
 
   private int P;
@@ -133,7 +133,7 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   }
 
   @Override
-  public double λ()
+  public double getStationaryλ()
   {
     return lambda / (1 - getBranchingRatio());
   }
@@ -501,6 +501,12 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
   public BoundedParameter[] getBoundedParameters()
   {
     throw new UnsupportedOperationException("implement me");
+  }
+
+  @Override
+  public double getρ()
+  {
+    return 1;
   }
 
 }

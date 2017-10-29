@@ -85,11 +85,11 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
             + (1 / (pow(m, (1 + ε)) - 1)
                * pow(τ0, (-1 - ε))
                * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-               * ρ + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
+               * getρ() + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
                - pow(τ0, -ε) * pow(m, ε) * y)
-              / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ0 * y - τ0 * y)
+              / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ0 * y - τ0 * y)
               * τ0)
-           / ρ;
+           / getρ();
   }
 
   @Override
@@ -110,9 +110,9 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
            * (1 / (pow(m, (1 + ε)) - 1)
               * pow(τ0, (-1 - ε))
               * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-              * ρ + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
+              * getρ() + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
               - pow(τ0, -ε) * pow(m, ε) * y)
-           / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ0 * y - τ0 * y);
+           / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ0 * y - τ0 * y);
   }
 
   public double βS()

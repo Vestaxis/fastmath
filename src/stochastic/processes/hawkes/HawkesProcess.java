@@ -13,7 +13,7 @@ public interface HawkesProcess
    * 
    * @return unconditional mean intensity
    */
-  double λ();
+  double getStationaryλ();
 
   /**
    * 

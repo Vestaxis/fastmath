@@ -37,11 +37,11 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     RombergIntegrator integrator = new RombergIntegrator();
     double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
-    assertEquals( process.ρ, integral, 0.02);
-    process.ρ = 0.5;
-    integral = integrator.integrate(500000, process::ψ, 0, 50000);
-    assertEquals( process.ρ, integral, 0.02);
-    out.println( "integral=" + integral );    
+//    assertEquals( process.ρ, integral, 0.02);
+//    process.ρ = 0.5;
+//    integral = integrator.integrate(500000, process::ψ, 0, 50000);
+//    assertEquals( process.ρ, integral, 0.02);
+//    out.println( "integral=" + integral );    
   }
 
 

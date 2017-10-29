@@ -71,7 +71,6 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
     assert τ0 > 0 : "τ0 must be positive";
     assert τ > 0 : "τ must be positive";
-    assert 0 <= ρ && ρ <= 1 : "ρ must be in [0,1]";
     this.τ0 = τ0;
     this.τ = τ;
     this.ε = ε;
@@ -114,11 +113,11 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
   {
     if (abs(ε - pow(10, -15)) < 0)
     {
-      return (M * τ + αS()) / (τ * ρ);
+      return (M * τ + αS()) / (τ * getρ());
     }
     else
     {
-      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε) + αS() / τ) / ρ;
+      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε) + αS() / τ) / getρ();
     }
   }
 
@@ -155,8 +154,8 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
            * (-1 / (pow(m, (1 + ε)) - 1)
               * pow(τ0, (-1 - ε))
               * (pow(m, (1 + ε)) - pow(m, (1 + 2 * ε)) - pow(m, -((1 + ε) * (M - 1))) + pow(m, (-ε * M - M + 2 * ε + 1)))
-              * ρ + y * (pow(τ0, -ε) * pow(m, -(ε * (M - 1))) - pow(τ0, -ε) * pow(m, ε)))
-           / (pow(m, ε) * ρ * τ - pow(m, ε) * y - τ * ρ + y);
+              * getρ() + y * (pow(τ0, -ε) * pow(m, -(ε * (M - 1))) - pow(τ0, -ε) * pow(m, ε)))
+           / (pow(m, ε) * getρ() * τ - pow(m, ε) * y - τ * getρ() + y);
 
   }
 
