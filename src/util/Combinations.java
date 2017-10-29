@@ -39,9 +39,9 @@ public class Combinations
       {
         if (aMultiples[i] < bMultiples[i])
         {
-          return -(i+1);
+          return -(i + 1);
         }
-        else if (aMultiples[i] > bMultiples[i]) { return i+1; }
+        else if (aMultiples[i] > bMultiples[i]) { return i + 1; }
       }
       return 0;
     };
@@ -81,6 +81,10 @@ public class Combinations
                    boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
                    TreeMap<Integer, AtomicInteger> indexRepetitions =
                                                                     getIndexRepetitions(l);
+                   HashSet<Integer> indexCounts = new HashSet<>();
+                   indexRepetitions.values()
+                                   .forEach(atom -> indexCounts.add(atom.get()));
+
                    TreeMap<String, AtomicInteger> multiplicities =
                                                                  getTermMultiplicities(l);
                    int maxMultiplicity =
@@ -95,12 +99,16 @@ public class Combinations
                    boolean atLeastPTermsPresent = multiplicities.keySet()
                                                                 .size() >= P;
                    boolean everyIndexPresent = indexRepetitions.size() == P;
+                   boolean noIndiciesAppearMoreThanPTimes =
+                                                          indexCounts.stream()
+                                                                     .allMatch(i -> i <= P);
 
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
                           && maxMultiplicityNoGreaterThanP
                           && atLeastPTermsPresent
-                          && everyIndexPresent;
+                          && everyIndexPresent
+                          && noIndiciesAppearMoreThanPTimes;
                  })
                  .sorted(getTermMultipleComparator(P))
                  .forEach(row -> {
