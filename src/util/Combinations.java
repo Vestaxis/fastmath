@@ -1,20 +1,17 @@
 package util;
 
 import static java.lang.System.out;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,7 +21,6 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 import com.github.dakusui.combinatoradix.HomogeniousCombinator;
 import com.maplesoft.externalcall.MapleException;
 
-import fastmath.Vector;
 import stochastic.processes.hawkes.solvers.ExponentialHawkesProcessAutocovarianceSolver;
 
 public class Combinations
@@ -113,18 +109,54 @@ public class Combinations
                    int βcount = βcounter == null ? 0 : βcounter.get();
 
                    boolean αcountLessThanOrEqualtToβCount = αcount <= βcount;
+                   AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
+                                                                              getTermMultiplicityCounts(l,
+                                                                                                        P);
 
+                   int[] termCounts = rangeClosed(0, P * 2 - 1).map(i -> {
+                     AtomicInteger atom = termMultiplicityCounts.get(i);
+                     return atom == null ? 0 : atom.get();
+                   }).toArray();
+
+                   TreeMap<Integer, AtomicInteger> indexReps =
+                                                             getIndexRepetitions(l);
+
+                   int[] termMultiplicities = getTermMultiplicitiesArray(l, P);
+
+                   boolean excluded = Arrays.equals(termCounts, new int[]
+                   { P,
+                     1,
+                     1,
+                     1,
+                     0,
+                     0 }) && range(0,
+                                   P).allMatch(i -> termMultiplicities[i] < P)
+                                      && αcount == βcount;
+                
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
                           && maxMultiplicityNoGreaterThanP
                           && atLeastPTermsPresent
                           && everyIndexPresent
                           && noIndiciesAppearMoreThanPTimes
-                          && αcountLessThanOrEqualtToβCount;
+                          && αcountLessThanOrEqualtToβCount
+                          && !excluded;
                  })
                  .sorted(getTermMultipleComparator(P))
                  .forEach(row -> {
+                   AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
+                                                                              getTermMultiplicityCounts(row,
+                                                                                                        P);
+
+                   int[] termCounts = rangeClosed(0, P * 2 - 1).map(i -> {
+                     AtomicInteger atom = termMultiplicityCounts.get(i);
+                     return atom == null ? 0 : atom.get();
+                   }).toArray();
+
+                   int[] multiplicities = getTermMultiplicitiesArray(row, P);
+
                    boolean there = present.contains(row);
+
                    if (there)
                    {
                      thereCount.incrementAndGet();
@@ -147,6 +179,20 @@ public class Combinations
               .forEach(row -> printRow(row, false, P));
   }
 
+  public static AutoHashMap<Integer, AtomicInteger> getTermMultiplicityCounts(
+      List<String> row, int P)
+  {
+    AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
+                                                               new AutoHashMap<>(AtomicInteger.class);
+    int[] multiplicities = getTermMultiplicitiesArray(row, P);
+
+    rangeClosed(0,
+                2 * P - 1)
+                          .forEach(pos -> termMultiplicityCounts.getOrCreate(multiplicities[pos])
+                                                                .incrementAndGet());
+    return termMultiplicityCounts;
+  }
+
   public static void printRow(List<String> row, boolean there, int P)
   {
     AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
@@ -163,12 +209,21 @@ public class Combinations
     }).toArray();
 
     TreeMap<Integer, AtomicInteger> indexReps = getIndexRepetitions(row);
-    boolean possibleExtra = Arrays.equals(termCounts, new int[]
-    { 3, 1, 1, 1, 0, 0 });
+
     TreeMap<String, AtomicInteger> varMults = getVariableMultiplicities(row);
     int varMultsArray[] = new int[]
     { varMults.get("α") == null ? 0 : varMults.get("α").get(),
       varMults.get("β").get() };
+
+    AtomicInteger αcounter = varMults.get("α");
+    int αcount = αcounter == null ? 0 : αcounter.get();
+    AtomicInteger βcounter = varMults.get("β");
+    int βcount = βcounter == null ? 0 : βcounter.get();
+
+    boolean possibleExtra = Arrays.equals(termCounts, new int[]
+    { P, 1, 1, 1, 0, 0 }) && range(0, P).allMatch(i -> multiplicities[i] < P)
+                            && αcount == βcount;
+
     out.format("%s%s term#s%s var#s%s idx#s%s term#%s\n",
                (there ? " " : "*"),
                possibleExtra ? "X" : " ",

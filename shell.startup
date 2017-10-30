@@ -13,6 +13,8 @@ import stochastic.processes.point.*;
 import static java.lang.Math.*;
 import static stochastic.processes.point.MarkedPointProcessIterator.ls;
 import static stochastic.processes.point.MPP2Mat.mpp2mat;
+import static java.util.stream.IntStream.range;
+import static java.util.stream.IntStream.rangeClosed;
 Map<String,DoubleColMatrix> vars = new MatFile( "test.mat").matrixMap();
 Vector data = vars.get( "data" ).asVector();
 Vector comp = vars.get( "comp" ).asVector();
