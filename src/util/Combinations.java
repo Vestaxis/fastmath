@@ -132,7 +132,16 @@ public class Combinations
                      0 }) && range(0,
                                    P).allMatch(i -> termMultiplicities[i] < P)
                                       && αcount == βcount;
-                
+
+                   // boolean excluded = Arrays.equals(termCounts, new int[]
+                   // { P,
+                   // 1,
+                   // 1,
+                   // 1,
+                   // 0,
+                   // 0 }) && range(0, P).anyMatch(i -> termCounts[i] == P)
+                   // && αcount == βcount;
+
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
                           && maxMultiplicityNoGreaterThanP
