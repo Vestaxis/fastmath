@@ -113,6 +113,23 @@ public class Combinations
                    int βcount = βcounter == null ? 0 : βcounter.get();
 
                    boolean αcountLessThanOrEqualtToβCount = αcount <= βcount;
+                   int[] termMultiplicities = getTermMultiplicitiesArray(l, P);
+
+                   AutoHashMap<Integer, AtomicInteger> termMultiplicityCounts =
+                                                                              new AutoHashMap<>(AtomicInteger.class);
+
+                   rangeClosed(0,
+                               2 * P - 1)
+                                         .forEach(pos -> termMultiplicityCounts.getOrCreate(termMultiplicities[pos])
+                                                                               .incrementAndGet());
+
+                   int[] termCounts = rangeClosed(0, P * 2 - 1).map(i -> {
+                     AtomicInteger atom = termMultiplicityCounts.get(i);
+                     return atom == null ? 0 : atom.get();
+                   }).toArray();
+                   boolean notPossibleExtra = !(Arrays.equals(termCounts,
+                                                              new int[]
+                   { 3, 1, 1, 1, 0, 0 }) && αcount == βcount);
 
                    return twoVarsPresent && moreThanOneIndexPresent
                           && containsAtLeastOneβ
@@ -163,12 +180,12 @@ public class Combinations
     }).toArray();
 
     TreeMap<Integer, AtomicInteger> indexReps = getIndexRepetitions(row);
-    boolean possibleExtra = Arrays.equals(termCounts, new int[]
-    { 3, 1, 1, 1, 0, 0 });
     TreeMap<String, AtomicInteger> varMults = getVariableMultiplicities(row);
     int varMultsArray[] = new int[]
     { varMults.get("α") == null ? 0 : varMults.get("α").get(),
       varMults.get("β").get() };
+    boolean possibleExtra = Arrays.equals(termCounts, new int[]
+    { 3, 1, 1, 1, 0, 0 }) && varMultsArray[0] == varMultsArray[1];
     out.format("%s%s term#s%s var#s%s idx#s%s term#%s\n",
                (there ? " " : "*"),
                possibleExtra ? "X" : " ",
