@@ -78,6 +78,13 @@ public class ExponentialHawkesProcessAutocovarianceSolver
     return expansion;
   }
 
+  /**
+   * TODO: multipliers
+   * 
+   * @param t
+   * @param summands
+   * @return
+   */
   private static java.util.List<java.util.List<Algebraic>> expand(Engine t,
       java.util.List<Algebraic> summands)
   {
