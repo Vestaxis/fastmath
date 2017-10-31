@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -23,7 +24,6 @@ import com.maplesoft.externalcall.MapleException;
 public class Combinations
 {
 
-
   public static void main(String[] args) throws MapleException
   {
     int P = 3;
@@ -35,7 +35,13 @@ public class Combinations
      */
     int n = (int) CombinatoricsUtils.binomialCoefficient(P + 1, 2);
 
-    StreamSupport.stream(new HomogeniousCombinator<>(vars, n).spliterator(), false).filter(l -> {
+    /**
+     * This predicate filters the output of HomogeniousCombinator so that a subset is retained according 
+     * to various rules regarding the multiplicities,  indices, powers, degees, etc. 
+     * 
+     * TODO: generalize the last rule "excluded" so it works for P != 3
+     */
+    Predicate<? super List<String>> predicate = l -> {
       boolean twoVarsPresent = new HashSet<String>(l).size() > 1;
       boolean moreThanOneIndexPresent = getIndexSet(l).size() > 1;
       TreeMap<Integer, AtomicInteger> indexRepetitions = getIndexRepetitions(l);
@@ -74,9 +80,14 @@ public class Combinations
              && noIndiciesAppearMoreThanPTimes
              && αcountLessThanOrEqualtToβCount
              && !excluded;
-    }).sorted(getTermMultipleComparator(vars, P)).forEach(row -> {
-      printRow(vars, row, P);
-    });
+    };
+
+    StreamSupport.stream(new HomogeniousCombinator<>(vars, n).spliterator(), false)
+                 .filter(predicate)
+                 .sorted(getTermMultipleComparator(vars, P))
+                 .forEach(row -> {
+                   printRow(vars, row, P);
+                 });
 
   }
 
