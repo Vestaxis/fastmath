@@ -136,8 +136,11 @@ public abstract class AbstractHawkesProcess
         throw new RuntimeException(e.getMessage(), e);
       }
     }
+    cachedρ = Double.NaN;
   }
 
+  protected double cachedρ = Double.NaN;
+  
   public abstract BoundedParameter[] getBoundedParameters();
 
   public final int getParamCount()

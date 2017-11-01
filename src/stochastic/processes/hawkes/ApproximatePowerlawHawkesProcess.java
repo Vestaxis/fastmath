@@ -1,5 +1,7 @@
 package stochastic.processes.hawkes;
 
+import static fastmath.Functions.prod;
+import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
 
 public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
@@ -8,11 +10,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double nthNormalizedMoment(int n)
   {
-    return -1 / (pow(m, ε) - pow(m, n))
-           * (-pow(m, ε * M) + pow(m, n * M))
-           * pow(τ0, n)
-           * (-1 + pow(m, ε))
-           / (-1 + pow(m, ε * M));
+    return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
   }
 
   public ApproximatePowerlawHawkesProcess(double ε, double τ0)
@@ -25,7 +23,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    y(1.0 / 300.0, 1.0 / 350.0), ε(0, 0.5), τ0(0, 10);
+    ε(0, 0.5), τ0(0, 10);
 
     private double min;
     private double max;
@@ -82,11 +80,6 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
 
   public double m = 5;
 
-  /**
-   * expected intensity
-   */
-  public double y;
-
   public ApproximatePowerlawHawkesProcess()
   {
     super();
@@ -107,15 +100,30 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double Z()
   {
-    return ((1 / (pow(m, ε) - 1)
-            * pow(τ0, -ε)
-            * (pow(m, ε) - pow(m, -ε * (M - 1)))))/getρ();
+    return sum( j-> α(j) / β(j), 0, order() - 1 ) / getρ();
   }
 
+  
+  public double getNormalizedρ()
+  {
+    return sum( j-> α(j) / β(j), 0, order() - 1 ) / Z();    
+  }
+  
+  /**`
+   * @return the branching rate which will result in k/(1-r)=this{@link #mean()}
+   */
   @Override
   public double getρ()
   {
-    return 1.0/(κ / (1 + (κ - y) / y));
+    if ( !Double.isNaN( cachedρ ))
+    {
+      return cachedρ;
+    }
+    double x = sum(j -> prod(k -> k == j ? α(j) : pow( β(j), 2 ), 0, order() - 1), 0, order() - 1);
+    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
+    cachedρ = res;
+    return res;
+
   }
 
 }

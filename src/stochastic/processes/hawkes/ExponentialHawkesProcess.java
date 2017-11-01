@@ -557,13 +557,12 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   }
 
   /**
-   * FIXME: I think this is something other than the factorial moment measure
    * 
    * @return n'th (raw) factorial moment E[X^n]/n!
    */
   public double nthNormalizedMoment(int n)
   {
-    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
+    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1);
   }
 
   /**

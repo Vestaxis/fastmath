@@ -1,110 +1,34 @@
 package stochastic.processes.hawkes;
 
-import static java.lang.Math.pow;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.rangeClosed;
 
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
-import fastmath.Vector;
 import junit.framework.TestCase;
 
 public class ApproximatePowerlawHawkesProcessTest extends TestCase
 {
-  
-  public void testΨ()
-  {
-    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(1.4, 0.25);
-    double x = process.ψ(1.3);
-    // assertEquals(0.11591305818947, x, pow(10,-9));
-    // out.println( "x=" + x );
-  }
 
-//  public void testiΨ()
-//  {
-//    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(1.4, 0.25);
-//    double x = process.iψ(1.3);
-//    assertEquals(.18284483319013261698230044979325998875927092907043, x, pow(10, -9));
-//    // out.println( "x=" + x );
-//  }
-  
   public void testIntegralOfKernel()
   {
 
     double ε = 0.25;
     double τ0 = 1;
-    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
-    testHawkesProcess(process); 
-    process.κ = 0.1;
-    testHawkesProcess(process);     
-  }
+    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(ε, τ0 );
+    process.κ = 0.01;
 
-  public void testMeanStationaryIntensity()
-  {
-    double ε = 0.25;
-    double τ0 = 1;
-    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(τ0, ε);
-    process.κ = 1.0 / 1000;
-    process.y = 300;
-    double stationaryMeanIntensity = process.getStationaryλ();
-    assertEquals( process.getρ(), process.getBranchingRatio(), pow( 10, -13 ) );
-    assertEquals( 1.0 / process.y, stationaryMeanIntensity );
-  }
-  
-  
-  
-  private void testHawkesProcess(ExponentialHawkesProcess process)
-  {
-//    RombergIntegrator integrator = new RombergIntegrator();
-//    double integral = integrator.integrate(500000, process::ψ, 0, 5000);
-//    out.println( "integral=" + integral );
-//    assertEquals( process.getBranchingRatio(), integral, pow(10,-4));
-//    process.y = 0.5;
-//    integral = integrator.integrate(500000, process::ψ, 0, 5000);
-//    assertEquals( process.getρ(), integral, pow(10,-4));
-//    out.println( "integral=" + integral );
-  }
-
-  // public void testLogLik() throws IOException
-  // {
-  //
-  // double ε = 0.16710;
-  // double η = 1.58128;
-  // ExponentialHawkesProcess process = new ExponentialPowerlawHawkesProcess(η,
-  // ε);
-  // Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-  // int midpoint = data.size() / 2;
-  // data = data.slice(midpoint - 250, midpoint + 250);
-  // process.T = data;
-  // double llNonRecursive = process.logLik();
-  // process.recursive = true;
-  // double llRecursive = process.logLik();
-  // assertEquals( llNonRecursive, llRecursive, pow( 10, -10 ) );
-  // }
-
-//  public void testΛ() throws IOException
-//  {
-//    double ε = 0.15;
-//    double η = 1.6;
-//    ExponentialHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(η, ε);
-//    Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
-//    StandardExponentialHawkesProcessTest.doTest(process, data);
-//
-//  }
-
-  public void testMean()
-  {
-    double ε = .4674039567;
-    double τ0 = 57.02008734;
-    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(ε, τ0);
-    process.M = 5;
-    out.println("mean is " + process.mean());
-    out.println("variance is " + process.variance());
-    Vector moments = new Vector(rangeClosed(0, 4).mapToDouble(n -> process.nthMoment(n))).setName("moments");
-    Vector normalizedMoments = new Vector(rangeClosed(0, 4).mapToDouble(n -> process.nthNormalizedMoment(n))).setName("moments");
-
-    out.println("first " + moments.size() + " moments are " + moments);
-    out.println("first " + moments.size() + " normalized moments are " + normalizedMoments);
+    double RHO = process.getρ();
+    out.println("ρ=" + RHO);
+    
+    double mean = process.mean();
+    out.println( "mean=" + mean );
+    
+    RombergIntegrator integrator = new RombergIntegrator();
+    double integral = integrator.integrate(5000000, t ->  process.ψ(t), 0, 100000);
+    out.println("integral=" + integral);
+    
+    double hmm = process.κ / ( 1 - RHO );
+    assertEquals( mean, hmm );
   }
 
 }
