@@ -1,5 +1,6 @@
 package stochastic.processes.hawkes;
 
+import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
 
@@ -31,7 +32,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ρ(0.25, 1), η(0,10), b(0.5, 0.6), ε(0, 0.5), τ0(0, 10);
+    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 10);
 
     private double min;
     private double max;
@@ -81,7 +82,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
   @Override
   public double Z()
   {
-    return M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1);
+    return ( M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1) ) / getρ();
   }
 
   @Override
@@ -126,4 +127,17 @@ public class ExtendedApproximatePowerlawHawkesProcess
     return M + 1;
   }
 
+  @Override
+  public double getρ()
+  {
+    if ( !Double.isNaN( cachedρ ))
+    {
+      return cachedρ;
+    }
+    double x = sum(j -> prod(k -> k == j ? α(j) : pow( β(j), 2 ), 0, order() - 1), 0, order() - 1);
+    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
+    cachedρ = res;
+    return res;
+
+  }
 }
