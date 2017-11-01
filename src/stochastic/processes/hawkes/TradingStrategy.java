@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
+import fastmath.Vector;
 import stochastic.processes.point.MarkedPointProcess;
+import util.DateUtils;
 
 public class TradingStrategy
 {
@@ -17,8 +19,16 @@ public class TradingStrategy
     MarkedPointProcess mpp = MarkedPointProcess.loadMppFile(args.length > 0 ? args[0] : "/data/2016-05-20/SPY-2016-05-20.mpp");
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(TimeUnit.MILLISECONDS);
     DoubleRowMatrix trades = mpp.getTradeMatrix(TimeUnit.MILLISECONDS);
+    Vector times = trades.col(0);
+    double firstTime = DateUtils.convertTimeUnits( times.get(0), TimeUnit.MILLISECONDS, TimeUnit.HOURS );
+    out.println( "time " + firstTime + " " + times.get(0));
+   // System.exit(1);
+//    for ( int i = 0; i < times; i++ )
+//    {
+//      
+//    }
     ExtendedApproximatePowerlawHawkesProcess model = new ExtendedApproximatePowerlawHawkesProcess();
-    model.T = trades.col(0);
+    model.T = times;
     model.κ = 0.17171745708245348;
     model.η = 6.2285292213796675;
     model.b = 1.7066834288042811;

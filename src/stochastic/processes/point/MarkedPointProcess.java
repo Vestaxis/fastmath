@@ -252,10 +252,9 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       Vector point = new Vector(event.getMarks());
       double fractionalHourOfDay = event.getTimeOfDay();
 
-      double t = event.getTimeOfDay();
+      // double t = event.getTimeOfDay();
       // double t = fractionalHourOfDay;
-      // double t = DateUtils.convertTimeUnits(fractionalHourOfDay,
-      // TimeUnit.MILLISECONDS, timeUnits);
+      double t = DateUtils.convertTimeUnits(fractionalHourOfDay, TimeUnit.MILLISECONDS, timeUnit);
       point.set(0, t);
       double prevt = lastt.get(0);
       if (prevt == t) { return; }
@@ -295,7 +294,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
         // int side = Double.compare(tick.getPrice(), midPrice[0]);
         Side side = classifier.classify(tick.getPrice());
         classifier.record(tick.getPrice());
-        
+
         if (side == Side.Unknown)
         {
           midPointTrades.incrementAndGet();
@@ -318,7 +317,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     int unknownCount = midPointTrades.get();
     double unknownRatio = (double) unknownCount / (double) (buyMatrix.getRowCount() + sellMatrix.getRowCount() + unknownCount);
 
-    out.println("unknownPcnt=" + (unknownRatio * 100) + "% unknoCount=" + unknownCount );
+    out.println("unknownPcnt=" + (unknownRatio * 100) + "% unknoCount=" + unknownCount);
 
     return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
@@ -332,7 +331,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   {
     Pair<RandomAccessFile, RandomAccessFile> mppDataIndexPair = new Pair<>(new RandomAccessFile(mppFilename, "r"),
                                                                            new RandomAccessFile(mppFilename + ".idx", "r"));
-  
+
     File mppFile = new File(mppFilename);
     String symbol = mppFile.getName().split("-")[0];
     return new MarkedPointProcess(mppDataIndexPair, mppFile, symbol);
