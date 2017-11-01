@@ -32,7 +32,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 10);
+    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 1);
 
     private double min;
     private double max;

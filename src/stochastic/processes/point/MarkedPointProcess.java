@@ -5,6 +5,7 @@ import static java.lang.System.out;
 
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -325,6 +326,16 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   public Vector getBucketCounts()
   {
     return bucketCounts;
+  }
+
+  public static MarkedPointProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
+  {
+    Pair<RandomAccessFile, RandomAccessFile> mppDataIndexPair = new Pair<>(new RandomAccessFile(mppFilename, "r"),
+                                                                           new RandomAccessFile(mppFilename + ".idx", "r"));
+  
+    File mppFile = new File(mppFilename);
+    String symbol = mppFile.getName().split("-")[0];
+    return new MarkedPointProcess(mppDataIndexPair, mppFile, symbol);
   }
 
 }

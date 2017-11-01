@@ -3,10 +3,8 @@ package stochastic.processes.point;
 import static java.lang.System.out;
 import static util.Plotter.plot;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.concurrent.TimeUnit;
 
 import fastmath.DoubleRowMatrix;
@@ -33,9 +31,9 @@ public class MPP2Mat
     mpp2mat(mppFile, matFile);
   }
 
-  public static void mpp2mat(String mppFile, String matFile) throws FileNotFoundException, IOException
+  public static DoubleRowMatrix mpp2mat(String mppFile, String matFile) throws FileNotFoundException, IOException
   {
-    MarkedPointProcess mpp = loadMppFile(mppFile);
+    MarkedPointProcess mpp = MarkedPointProcess.loadMppFile(mppFile);
 
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 
@@ -44,19 +42,10 @@ public class MPP2Mat
     out.println( "writing to " + matFile );
     plot( "counts", mpp.getBucketCounts() );
     MatFile.write(matFile, buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix(), tradeMatrix.createMiMatrix() );
+    return tradeMatrix;
   }
 
   private static double closeTime = 16;
-
-  private static MarkedPointProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
-  {
-    Pair<RandomAccessFile, RandomAccessFile> mppDataIndexPair = new Pair<>(new RandomAccessFile(mppFilename, "r"),
-                                                                           new RandomAccessFile(mppFilename + ".idx", "r"));
-
-    File mppFile = new File(mppFilename);
-    String symbol = mppFile.getName().split("-")[0];
-    return new MarkedPointProcess(mppDataIndexPair, mppFile, symbol);
-  }
   
 
 }

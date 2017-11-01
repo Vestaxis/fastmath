@@ -34,10 +34,17 @@ public class HawkesProcessEstimator
     this.process = process;
   }
 
+  /**
+   * TODO: split the data into 30 minute chunks and estimate parameters on each one
+   * 
+   * @param args
+   * @throws IOException
+   * @throws CloneNotSupportedException
+   */
   public static void main(String[] args) throws IOException, CloneNotSupportedException
   {
 
-    ExponentialHawkesProcessFactory.Type type = Type.ApproximatePowerlaw;
+    ExponentialHawkesProcessFactory.Type type = Type.ExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
 
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * 5;
@@ -70,6 +77,7 @@ public class HawkesProcessEstimator
       String symbol) throws IOException
   {
     Vector data = loadData(filename, symbol);
+    
     return estimateHawkesProcess(type, trajectoryCount, data);
   }
 
