@@ -252,10 +252,10 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       Vector point = new Vector(event.getMarks());
       double fractionalHourOfDay = event.getTimeOfDay();
 
-      // double t = event.getTimeOfDay();
-      // double t = fractionalHourOfDay;      
+      
       double t = DateUtils.convertTimeUnits(event.getTimeOfDay(), TimeUnit.HOURS, timeUnit);
       point.set(0, t);
+      
       double prevt = lastt.get(0);
       if (prevt == t) { return; }
 
