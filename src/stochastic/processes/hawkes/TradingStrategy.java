@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
+import fastmath.Vector.Condition;
 import stochastic.processes.point.MarkedPointProcess;
 import util.DateUtils;
 
@@ -21,12 +22,17 @@ public class TradingStrategy
     DoubleRowMatrix trades = mpp.getTradeMatrix(TimeUnit.MILLISECONDS);
     Vector times = trades.col(0);
     double firstTime = DateUtils.convertTimeUnits( times.get(0), TimeUnit.MILLISECONDS, TimeUnit.HOURS );
-    out.println( "time " + firstTime + " " + times.get(0));
+    
+    // TODO: fix the fucking bug here
+    //out.println( "time " + firstTime + " " + times.get(0) + " fuck " + times.g
    // System.exit(1);
-//    for ( int i = 0; i < times; i++ )
-//    {
-//      
-//    }
+    for ( int i = 1; i < 13; i++ )
+    {
+      double t = DateUtils.convertTimeUnits(9.5 + ( i * 0.5 ), TimeUnit.HOURS, TimeUnit.MILLISECONDS );
+      int idx = times.find(t, Condition.GTE, 0);
+      out.println( "idx=" + idx + " t=" + t );
+    }
+    
     ExtendedApproximatePowerlawHawkesProcess model = new ExtendedApproximatePowerlawHawkesProcess();
     model.T = times;
     model.κ = 0.17171745708245348;

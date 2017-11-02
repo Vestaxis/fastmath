@@ -254,7 +254,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
       // double t = event.getTimeOfDay();
       // double t = fractionalHourOfDay;
-      double t = DateUtils.convertTimeUnits(fractionalHourOfDay, TimeUnit.MILLISECONDS, timeUnit);
+      double t = DateUtils.convertTimeUnits(event.getTimestampInMilliseconds(), TimeUnit.MILLISECONDS, timeUnit);
       point.set(0, t);
       double prevt = lastt.get(0);
       if (prevt == t) { return; }
