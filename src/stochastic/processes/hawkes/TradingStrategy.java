@@ -22,10 +22,11 @@ public class TradingStrategy
     DoubleRowMatrix trades = mpp.getTradeMatrix(TimeUnit.MILLISECONDS);
     Vector times = trades.col(0);
     double firstTime = DateUtils.convertTimeUnits( times.get(0), TimeUnit.MILLISECONDS, TimeUnit.HOURS );
-    
+    double otherFuckingWay = DateUtils.convertTimeUnits( firstTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
     // TODO: fix the fucking bug here
-    //out.println( "time " + firstTime + " " + times.get(0) + " fuck " + times.g
-   // System.exit(1);
+    out.println( "time " + firstTime + " " + times.get(0) + " fuck " + otherFuckingWay );
+    // System.exit(1);
+    out.println( "total number of times " + times.size() );
     for ( int i = 1; i < 13; i++ )
     {
       double t = DateUtils.convertTimeUnits(9.5 + ( i * 0.5 ), TimeUnit.HOURS, TimeUnit.MILLISECONDS );
