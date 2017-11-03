@@ -19,7 +19,7 @@ public class ExponentialHawkesProcessFactory
       case ConstrainedApproximatePowerlaw:
         return "capl";
       case ExtendedConstrainedExponentialPowerlawApproximation:
-        return "ecepl";
+        return "ecpl";
       default:
         throw new UnsupportedOperationException("TODO: " + this);
       }

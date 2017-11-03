@@ -7,7 +7,9 @@ import static java.util.stream.Collectors.joining;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,9 +18,11 @@ import org.apache.commons.math3.optim.PointValuePair;
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
+import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.hawkes.ExponentialHawkesProcessFactory.Type;
+import util.DateUtils;
 import util.TerseThreadFactory;
 
 public class HawkesProcessEstimator
@@ -58,11 +62,13 @@ public class HawkesProcessEstimator
     String symbol = "SPY";
 
     out.println("Estimating parameters for " + filename);
-    ExponentialHawkesProcess process = estimateHawkesProcess(type, filename, trajectoryCount, symbol);
-    File modelFile = new File(filename + type.getFilenameExtension() + ".model");
-    out.println("Storing estimated parameters in " + modelFile);
-    process.storeParameters(modelFile);
-    
+    ArrayList<ExponentialHawkesProcess> process = estimateHawkesProcess(type, filename, trajectoryCount, symbol);
+    for (int i = 0; i < process.size(); i++)
+    {
+      File modelFile = new File(filename + "." + type.getFilenameExtension() + "." + i + ".model");
+      out.println("Storing estimated parameters in " + modelFile);
+      process.get(i).storeParameters(modelFile);
+    }
 
   }
 
@@ -75,38 +81,60 @@ public class HawkesProcessEstimator
    * @return
    * @throws IOException
    */
-  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, String symbol) throws IOException
+  public static ArrayList<ExponentialHawkesProcess> estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, String symbol)
+      throws IOException
 
   {
     return estimateHawkesProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
   }
 
-  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, int trajectoryCount, String symbol)
-      throws IOException
+  public static ArrayList<ExponentialHawkesProcess> estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, String filename, int trajectoryCount,
+      String symbol) throws IOException
   {
     Vector data = loadData(filename, symbol);
 
-    return estimateHawkesProcess(type, trajectoryCount, data);
+    return estimateHawkesProcesses(type, trajectoryCount, data);
   }
 
-  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, Vector data) throws IOException
+  public static ArrayList<ExponentialHawkesProcess> estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, Vector data) throws IOException
   {
-    return estimateHawkesProcess(type, Runtime.getRuntime().availableProcessors(), data);
+    return estimateHawkesProcesses(type, Runtime.getRuntime().availableProcessors(), data);
   }
 
-  public static ExponentialHawkesProcess estimateHawkesProcess(ExponentialHawkesProcessFactory.Type type, int trajectoryCount, Vector data) throws IOException
+  public static ArrayList<ExponentialHawkesProcess> estimateHawkesProcesses(ExponentialHawkesProcessFactory.Type type, int trajectoryCount, Vector data)
+      throws IOException
   {
-    ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
 
     double Edt = data.diff().mean();
 
     out.println("E[dt]=" + Edt);
 
-    HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
-    estimator.setTrajectoryCount(trajectoryCount);
-    estimator.estimate(data);
+    int indexes[] = new int[13];
 
-    return process;
+    ArrayList<ExponentialHawkesProcess> processes = new ArrayList<>();
+    for (int i = 1; i <= 13; i++)
+    {
+      double halfHour = 9.5 + (i * 0.5);
+      double t = DateUtils.convertTimeUnits(halfHour, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
+      int idx = data.find(t, Condition.GTE, 0);
+      if (i == 13 && idx == -1)
+      {
+        idx = data.size() - 1;
+      }
+      indexes[i - 1] = idx;
+    }
+
+    for (int i = 1; i <= 13; i++)
+    {
+      Vector slice = data.slice(indexes[i - 1], indexes[i]);
+      ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
+      HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
+      estimator.setTrajectoryCount(trajectoryCount);
+      estimator.estimate(data);
+      processes.add(process);
+    }
+
+    return processes;
   }
 
   public void setTrajectoryCount(int trajectoryCount)
@@ -134,9 +162,11 @@ public class HawkesProcessEstimator
       println("spawning " + getTrajectoryCount()
               + " "
               + process.getClass().getSimpleName()
-              + "es having parameters ["
+              + "es to estimate the model parameters ["
               + asList(process.getParameterFields()).stream().map(field -> field.getName()).collect(joining(","))
-              + "]");
+              + "] most likely to have generated the observed sequence of "
+              + data.size()
+              + " timestamps");
     }
 
     process.T = data;
@@ -195,15 +225,10 @@ public class HawkesProcessEstimator
 
   public static Vector loadData(String filename, String symbol) throws IOException
   {
-    return loadData(filename, symbol, 5000);
-  }
 
-  public static Vector loadData(String filename, String symbol, int n) throws IOException
-  {
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
     Vector data = matrix.col(0).setName("data");
-    int midpoint = data.size() / 2;
-    data = data.slice(midpoint - n, midpoint + n);
+   
     return data;
   }
 
