@@ -108,10 +108,6 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
     return sum(j -> α(j) / β(j), 0, order() - 1) / getρ();
   }
 
-  public double getNormalizedρ()
-  {
-    return sum(j -> α(j) / β(j), 0, order() - 1) / Z();
-  }
 
   /**
    * `

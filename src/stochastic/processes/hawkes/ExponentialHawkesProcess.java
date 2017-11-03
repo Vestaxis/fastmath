@@ -453,7 +453,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   }
 
   public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2" };
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
@@ -470,7 +470,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       compensated.mean(),
       compensated.variance(),
       process.compensatorMomentMeasure(),
-      pow(compensated.getLjungBoxStatistic(10) - 8, 2) };
+      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
+      process.mean() };
 
     return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
@@ -618,7 +619,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     FileOutputStream fileOutputStream = new FileOutputStream(file, false);
     DataOutputStream dos = new DataOutputStream(fileOutputStream);
     Vector params = getParameters();
-    for ( int i = 0; i < getParamCount(); i++ )
+    for (int i = 0; i < getParamCount(); i++)
     {
       dos.writeDouble(params.get(i));
     }
@@ -631,14 +632,14 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     FileInputStream fileInputStream = new FileInputStream(file);
     DataInputStream dis = new DataInputStream(fileInputStream);
     Vector params = new Vector((int) (file.length() / Double.BYTES));
-    for ( int i = 0; i < params.size(); i++ )
+    for (int i = 0; i < params.size(); i++)
     {
-      params.set(i, dis.readDouble() );
+      params.set(i, dis.readDouble());
     }
     dis.close();
     fileInputStream.close();
     double[] ass = params.toArray();
-    out.println( Arrays.toString( ass ));
+    out.println(Arrays.toString(ass));
     assignParameters(ass);
   }
 }

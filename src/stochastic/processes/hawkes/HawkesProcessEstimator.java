@@ -59,9 +59,10 @@ public class HawkesProcessEstimator
 
     out.println("Estimating parameters for " + filename);
     ExponentialHawkesProcess process = estimateHawkesProcess(type, filename, trajectoryCount, symbol);
-    File modelFile = new File(filename + ".model");
+    File modelFile = new File(filename + type.getFilenameExtension() + ".model");
     out.println("Storing estimated parameters in " + modelFile);
     process.storeParameters(modelFile);
+    
 
   }
 

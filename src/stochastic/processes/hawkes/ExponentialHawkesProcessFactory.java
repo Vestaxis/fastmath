@@ -4,7 +4,26 @@ public class ExponentialHawkesProcessFactory
 {
   public static enum Type
   {
-    Standard, ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation
+    Standard, ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation;
+
+    public String getFilenameExtension()
+    {
+      switch (this)
+      {
+      case Standard:
+        return "stdexp";
+      case ApproximatePowerlaw:
+        return "apl";
+      case ExtendedApproximatePowerlaw:
+        return "eapl";
+      case ConstrainedApproximatePowerlaw:
+        return "capl";
+      case ExtendedConstrainedExponentialPowerlawApproximation:
+        return "ecepl";
+      default:
+        throw new UnsupportedOperationException("TODO: " + this);
+      }
+    }
   };
 
   public static ExponentialHawkesProcess spawnNewProcess(Type type)
