@@ -33,7 +33,7 @@ import util.TradeClassifier;
 
 public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<MarkedPointProcess>
 {
-  private static double openTime = 9.5;
+  public static double openTime = 9.5;
 
   @Units(time = TimeUnit.HOURS)
   public final static double closeTime = 16;

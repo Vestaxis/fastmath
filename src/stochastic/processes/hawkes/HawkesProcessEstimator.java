@@ -22,11 +22,16 @@ import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.hawkes.ExponentialHawkesProcessFactory.Type;
+import stochastic.processes.point.MarkedPointProcess;
+import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
 
 public class HawkesProcessEstimator
 {
+  @Units(time = TimeUnit.HOURS)
+  private static final double W = 0.5 ; // one tenth of a half hour
+
   static
   {
     System.setProperty("java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
@@ -109,12 +114,14 @@ public class HawkesProcessEstimator
 
     out.println("E[dt]=" + Edt);
 
-    int indexes[] = new int[13];
 
     ArrayList<ExponentialHawkesProcess> processes = new ArrayList<>();
-    for (int i = 1; i <= 13; i++)
+    int n = (int) (MarkedPointProcess.tradingDuration / W);
+    int indexes[] = new int[n];
+    out.println( "Estimaing " + n + " pieces");
+    for (int i = 1; i <= n; i++)
     {
-      double halfHour = 9.5 + (i * 0.5);
+      double halfHour = MarkedPointProcess.openTime + (i * W);
       double t = DateUtils.convertTimeUnits(halfHour, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = data.find(t, Condition.GTE, 0);
       if (i == 13 && idx == -1)
@@ -124,13 +131,13 @@ public class HawkesProcessEstimator
       indexes[i - 1] = idx;
     }
 
-    for (int i = 1; i <= 13; i++)
+    for (int i = 1; i <= n; i++)
     {
       Vector slice = data.slice(indexes[i - 1], indexes[i]);
       ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
       HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
-      estimator.estimate(data);
+      estimator.estimate(slice);
       processes.add(process);
     }
 
@@ -228,7 +235,7 @@ public class HawkesProcessEstimator
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
     Vector data = matrix.col(0).setName("data");
-   
+
     return data;
   }
 
