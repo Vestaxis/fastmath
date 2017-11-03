@@ -2,6 +2,9 @@ package stochastic.processes.hawkes;
 
 import static java.lang.System.out;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
 import junit.framework.TestCase;
@@ -27,6 +30,21 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     out.println( "z=" + z );
   }
   
+  public void testSaveLoad() throws IOException
+  {
+    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess();
+    process.b = 1;
+    process.η = 1;
+    process.ε = 0.25;
+    process.τ0 = 1;
+    File tempFile = File.createTempFile("test","params");
+    out.println( "Wrote params to " + tempFile.getAbsolutePath() );
+    process.storeParameters(tempFile);
+    ExtendedApproximatePowerlawHawkesProcess loaded = new ExtendedApproximatePowerlawHawkesProcess();
+    loaded.loadParameters(tempFile);
+    assertEquals( process.getParameters(), loaded.getParameters() );
+  }
+  
   public void testIntegralOfKernel()
   {
     double b = 1;
@@ -34,9 +52,9 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double ε = 0.25;
     double τ0 = 1;
     ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess process = new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(τ0, ε, b, τ);
-    RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
-    out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
+//    RombergIntegrator integrator = new RombergIntegrator();
+//    double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
+//    out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
 //    assertEquals( process.ρ, integral, 0.02);
 //    process.ρ = 0.5;
 //    integral = integrator.integrate(500000, process::ψ, 0, 50000);

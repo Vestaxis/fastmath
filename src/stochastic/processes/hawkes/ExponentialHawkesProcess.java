@@ -12,6 +12,16 @@ import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
@@ -87,8 +97,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
     QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
-    BivariateFunction φ = (t, ε) -> τ.value(t, ε)
-                                    + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
+    BivariateFunction φ = (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
 
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double ε = expDist.sample();
@@ -350,7 +359,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
-        integratedCompensator.set(i, Λ(i) );
+        integratedCompensator.set(i, Λ(i));
       }
       return integratedCompensator.diff();
     }
@@ -428,12 +437,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     };
 
     double startTime = currentTimeMillis();
-    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
-                                               momentMatchingComparator,
-                                               validator,
-                                               maxEval,
-                                               objectiveFunctionSupplier,
-                                               simpleBounds);
+    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
     double stopTime = currentTimeMillis();
     double secondsElapsed = (stopTime - startTime) / 1000;
     double evaluationsPerSecond = multiopt.getEvaluations() / secondsElapsed;
@@ -513,9 +517,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return () -> {
       try
       {
-        double[] point = rangeClosed(0, bounds.getLower().length - 1).mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim],
-                                                                                                                  bounds.getUpper()[dim])))
-                                                                     .toArray();
+        double[] point = rangeClosed(0,
+                                     bounds.getLower().length - 1).mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim])))
+                                                                  .toArray();
         if (trace)
         {
           out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
@@ -602,10 +606,39 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     // double μstar = sum( j ->, 0 , order() - 1);
     return μ / (2 * π) * (β / (β - α) * (1 + α * (2 * β - α)));
   }
-  
+
   @Override
   public double getStationaryλ()
   {
-    return κ / ( 1 - getBranchingRatio() );
+    return κ / (1 - getBranchingRatio());
+  }
+
+  public void storeParameters(File file) throws IOException
+  {
+    FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+    DataOutputStream dos = new DataOutputStream(fileOutputStream);
+    Vector params = getParameters();
+    for ( int i = 0; i < getParamCount(); i++ )
+    {
+      dos.writeDouble(params.get(i));
+    }
+    dos.close();
+    fileOutputStream.close();
+  }
+
+  public void loadParameters(File file) throws IOException
+  {
+    FileInputStream fileInputStream = new FileInputStream(file);
+    DataInputStream dis = new DataInputStream(fileInputStream);
+    Vector params = new Vector((int) (file.length() / Double.BYTES));
+    for ( int i = 0; i < params.size(); i++ )
+    {
+      params.set(i, dis.readDouble() );
+    }
+    dis.close();
+    fileInputStream.close();
+    double[] ass = params.toArray();
+    out.println( Arrays.toString( ass ));
+    assignParameters(ass);
   }
 }
