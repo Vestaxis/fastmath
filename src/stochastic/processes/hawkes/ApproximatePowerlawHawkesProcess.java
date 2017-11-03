@@ -2,6 +2,8 @@ package stochastic.processes.hawkes;
 
 import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
 public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
@@ -23,7 +25,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    ε(0, 0.5), τ0(0, 1);
+    κ(0, 1), ε(0, 0.5), τ0(0, 2);
 
     private double min;
     private double max;
@@ -78,7 +80,10 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
     return 1 / (τ0 * pow(m, i));
   }
 
-  public double m = 2;
+  /**
+   * choose m such that m^M=1 minute, in milliseconds
+   */
+  public double m = exp(log(60000) / M);
 
   public ApproximatePowerlawHawkesProcess()
   {
@@ -100,26 +105,24 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
   @Override
   public double Z()
   {
-    return sum( j-> α(j) / β(j), 0, order() - 1 ) / getρ();
+    return sum(j -> α(j) / β(j), 0, order() - 1) / getρ();
   }
 
-  
   public double getNormalizedρ()
   {
-    return sum( j-> α(j) / β(j), 0, order() - 1 ) / Z();    
+    return sum(j -> α(j) / β(j), 0, order() - 1) / Z();
   }
-  
-  /**`
+
+  /**
+   * `
+   * 
    * @return the branching rate which will result in k/(1-r)=this{@link #mean()}
    */
   @Override
   public double getρ()
   {
-    if ( !Double.isNaN( cachedρ ))
-    {
-      return cachedρ;
-    }
-    double x = sum(j -> prod(k -> k == j ? α(j) : pow( β(j), 2 ), 0, order() - 1), 0, order() - 1);
+    if (!Double.isNaN(cachedρ)) { return cachedρ; }
+    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
     double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
     cachedρ = res;
     return res;

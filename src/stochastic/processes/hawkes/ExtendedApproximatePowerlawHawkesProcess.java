@@ -8,13 +8,7 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
-/**
- * Exponential power-law approximation kernel with the no-instantaneous-response
- * constaint ψ(0)=0
- * 
- * @author stephen
- *
- */
+
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
 public class ExtendedApproximatePowerlawHawkesProcess
@@ -32,7 +26,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 1);
+    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 2);
 
     private double min;
     private double max;

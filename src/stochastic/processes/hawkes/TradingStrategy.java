@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import fastmath.DoubleMatrix;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
@@ -44,6 +45,11 @@ public class TradingStrategy
         idx = trades.getRowCount() - 1;
       }
       indexes[i - 1] = idx;
+    }
+    for ( int i = 1; i <= 13; i++ )
+    {
+      DoubleMatrix slice = trades.sliceRows(indexes[i-1], indexes[i]);
+      
     }
     out.println("indexes=" + Arrays.toString(indexes));
 
