@@ -117,6 +117,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public double κ = 0;
 
+  /**
+   * background rate is just a fixed-constant per time-interval now
+   * 
+   */
   private UnivariateFunction λ0 = t -> κ;
 
   public boolean verbose = false;
