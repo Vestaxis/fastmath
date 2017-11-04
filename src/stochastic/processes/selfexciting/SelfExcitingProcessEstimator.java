@@ -1,4 +1,4 @@
-package stochastic.processes.hawkes;
+package stochastic.processes.selfexciting;
 
 import static fastmath.Console.println;
 import static java.lang.System.out;
@@ -21,8 +21,8 @@ import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
-import stochastic.processes.hawkes.ExponentialSelfExcitingProcessFactory.Type;
 import stochastic.processes.point.MarkedPointProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;

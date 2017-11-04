@@ -1,4 +1,4 @@
-package stochastic.processes.hawkes.solvers;
+package stochastic.processes.selfexciting.solvers;
 
 import java.util.ArrayList;
 import java.util.Collection;

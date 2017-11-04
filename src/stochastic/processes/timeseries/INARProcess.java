@@ -12,7 +12,7 @@ import fastmath.Vector;
 import fastmath.exceptions.IllegalValueError;
 import fastmath.exceptions.NotInvertableException;
 import fastmath.exceptions.SingularFactorException;
-import stochastic.processes.hawkes.SelfExcitingProcess;
+import stochastic.processes.selfexciting.SelfExcitingProcess;
 
 /**
  * the INAR(∞) process converges to the {@link SelfExcitingProcess} as dt ⟶ 0

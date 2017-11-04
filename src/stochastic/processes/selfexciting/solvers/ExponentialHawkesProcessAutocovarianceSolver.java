@@ -1,4 +1,4 @@
-package stochastic.processes.hawkes.solvers;
+package stochastic.processes.selfexciting.solvers;
 
 import static java.lang.String.format;
 import static java.lang.System.out;

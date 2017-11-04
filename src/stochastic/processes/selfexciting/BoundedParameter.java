@@ -1,4 +1,4 @@
-package stochastic.processes.hawkes;
+package stochastic.processes.selfexciting;
 
 public interface BoundedParameter
 {

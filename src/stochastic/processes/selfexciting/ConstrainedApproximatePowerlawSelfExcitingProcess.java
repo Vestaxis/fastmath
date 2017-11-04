@@ -1,4 +1,4 @@
-package stochastic.processes.hawkes;
+package stochastic.processes.selfexciting;
 
 import static java.lang.Math.pow;
 

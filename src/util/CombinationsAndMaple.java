@@ -21,7 +21,7 @@ import org.apache.commons.math3.util.CombinatoricsUtils;
 import com.github.dakusui.combinatoradix.HomogeniousCombinator;
 import com.maplesoft.externalcall.MapleException;
 
-import stochastic.processes.hawkes.solvers.ExponentialHawkesProcessAutocovarianceSolver;
+import stochastic.processes.selfexciting.solvers.ExponentialHawkesProcessAutocovarianceSolver;
 
 public class CombinationsAndMaple
 {
