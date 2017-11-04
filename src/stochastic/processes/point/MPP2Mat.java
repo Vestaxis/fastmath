@@ -11,12 +11,6 @@ import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.matfile.MatFile;
 
-/**
- * TODO: implement Lee-Ready tick test
- * 
- * @see https://www.acsu.buffalo.edu/~keechung/MGF743/Readings/Inferring%20trade%20direction%20from%20intraday%20data.pdf
- * 
- */
 public class MPP2Mat
 {
 
