@@ -32,9 +32,7 @@ public class MPP2Mat
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 
     DoubleRowMatrix tradeMatrix = mpp.getTradeMatrix(timeUnits);
-    out.println( "bucketCounts=" + mpp.getBucketCounts() );
     out.println( "writing to " + matFile );
-    plot( "counts", mpp.getBucketCounts() );
     MatFile.write(matFile, buySellMatrix.left.createMiMatrix(), buySellMatrix.right.createMiMatrix(), tradeMatrix.createMiMatrix() );
     return tradeMatrix;
   }

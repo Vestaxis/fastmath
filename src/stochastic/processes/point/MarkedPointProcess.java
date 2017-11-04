@@ -43,8 +43,6 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
   private double bucketLength = 0.5;
 
-  private int buckets = (int) ((closeTime - openTime) / bucketLength);
-
   private int eventCount;
 
   private double openTimeMillis = DateUtils.convertTimeUnits(openTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
@@ -54,8 +52,6 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     double x = t - openTime;
     return (int) (x / bucketLength);
   }
-
-  private Vector bucketCounts = new Vector(buckets);
 
   @Override
   public String toString()
@@ -263,11 +259,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
       {
         lastt.set(0, t);
         tradeMatrix.appendRow(point);
-        int bucket = getBucket(t);
-        if (bucket < bucketCounts.size())
-        {
-          bucketCounts.set(bucket, bucketCounts.get(bucket) + 1);
-        }
+       
       }
     });
 
@@ -322,10 +314,6 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     return new Pair<DoubleRowMatrix, DoubleRowMatrix>(buyMatrix, sellMatrix);
   }
 
-  public Vector getBucketCounts()
-  {
-    return bucketCounts;
-  }
 
   public static MarkedPointProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
   {
