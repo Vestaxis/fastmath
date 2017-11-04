@@ -10,7 +10,7 @@ import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.Vector;
 
-public abstract class AbstractHawkesProcess
+public abstract class AbstractSelfExcitingProcess
 {
 
   public Vector T;
@@ -21,7 +21,7 @@ public abstract class AbstractHawkesProcess
   {
     try
     {
-      AbstractHawkesProcess spawn = getClass().newInstance();
+      AbstractSelfExcitingProcess spawn = getClass().newInstance();
       spawn.assignParameters(getParameters().toArray());
       spawn.T = T;
       return spawn;
@@ -34,7 +34,7 @@ public abstract class AbstractHawkesProcess
   }
 
   @SuppressWarnings("unchecked")
-  public final <E extends AbstractHawkesProcess> E copy()
+  public final <E extends AbstractSelfExcitingProcess> E copy()
   {
     return (E) clone();
   }
@@ -78,7 +78,7 @@ public abstract class AbstractHawkesProcess
     }
   }
 
-  public AbstractHawkesProcess()
+  public AbstractSelfExcitingProcess()
   {
     super();
   }

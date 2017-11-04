@@ -16,12 +16,12 @@ import junit.framework.TestCase;
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
+public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 {
   
   public void testNormalization()
   {
-    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess();
+    ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
     process.b = 1;
     process.η = 1;
     process.ε = 0.25;
@@ -32,7 +32,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
   
   public void testSaveLoad() throws IOException
   {
-    ExtendedApproximatePowerlawHawkesProcess process = new ExtendedApproximatePowerlawHawkesProcess();
+    ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
     process.b = 1;
     process.η = 1;
     process.ε = 0.25;
@@ -40,7 +40,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     File tempFile = File.createTempFile("test","params");
     out.println( "Wrote params to " + tempFile.getAbsolutePath() );
     process.storeParameters(tempFile);
-    ExtendedApproximatePowerlawHawkesProcess loaded = new ExtendedApproximatePowerlawHawkesProcess();
+    ExtendedApproximatePowerlawSelfExcitingProcess loaded = new ExtendedApproximatePowerlawSelfExcitingProcess();
     loaded.loadParameters(tempFile);
     assertEquals( process.getParameters(), loaded.getParameters() );
   }
@@ -51,7 +51,7 @@ public class ExtendedExponentialPowerlawHawkesProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess process = new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(τ0, ε, b, τ);
+    ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess process = new ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess(τ0, ε, b, τ);
 //    RombergIntegrator integrator = new RombergIntegrator();
 //    double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
 //    out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );

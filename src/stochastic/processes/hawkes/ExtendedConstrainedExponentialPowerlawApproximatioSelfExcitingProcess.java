@@ -9,7 +9,7 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess extends ConstrainedApproximatePowerlawHawkesProcess
+public class ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess extends ConstrainedApproximatePowerlawSelfExcitingProcess
     implements MultivariateFunction, Serializable
 {
   static enum Parameter implements BoundedParameter
@@ -66,7 +66,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
    * @param τ
    *          power multiplier
    */
-  public ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess(double τ0, double ε, double b, double τ)
+  public ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess(double τ0, double ε, double b, double τ)
   {
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
     assert τ0 > 0 : "τ0 must be positive";
@@ -80,7 +80,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess ex
 
   private static final long serialVersionUID = 1L;
 
-  public ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess()
+  public ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess()
   {
   }
 

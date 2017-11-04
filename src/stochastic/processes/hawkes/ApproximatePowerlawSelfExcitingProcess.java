@@ -6,7 +6,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
-public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
+public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
 {
 
   @Override
@@ -15,7 +15,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
     return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
   }
 
-  public ApproximatePowerlawHawkesProcess(double ε, double τ0)
+  public ApproximatePowerlawSelfExcitingProcess(double ε, double τ0)
   {
     super();
     this.ε = ε;
@@ -85,7 +85,7 @@ public class ApproximatePowerlawHawkesProcess extends ExponentialHawkesProcess
    */
   public double m = exp(log(60000) / M);
 
-  public ApproximatePowerlawHawkesProcess()
+  public ApproximatePowerlawSelfExcitingProcess()
   {
     super();
   }

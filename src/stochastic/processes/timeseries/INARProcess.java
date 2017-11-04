@@ -12,10 +12,10 @@ import fastmath.Vector;
 import fastmath.exceptions.IllegalValueError;
 import fastmath.exceptions.NotInvertableException;
 import fastmath.exceptions.SingularFactorException;
-import stochastic.processes.hawkes.HawkesProcess;
+import stochastic.processes.hawkes.SelfExcitingProcess;
 
 /**
- * the INAR(∞) process converges to the {@link HawkesProcess} as dt ⟶ 0
+ * the INAR(∞) process converges to the {@link SelfExcitingProcess} as dt ⟶ 0
  *
  * @see An Estimation Procedure for the Hawkes Process
  */

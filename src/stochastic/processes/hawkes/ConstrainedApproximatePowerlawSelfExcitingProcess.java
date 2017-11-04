@@ -15,7 +15,7 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowerlawHawkesProcess implements MultivariateFunction, Serializable
+public class ConstrainedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
   private static final long serialVersionUID = 1L;
 
@@ -66,13 +66,13 @@ public class ConstrainedApproximatePowerlawHawkesProcess extends ApproximatePowe
 
   }
 
-  public ConstrainedApproximatePowerlawHawkesProcess(double τ0, double ε)
+  public ConstrainedApproximatePowerlawSelfExcitingProcess(double τ0, double ε)
   {
     this.τ0 = τ0;
     this.ε = ε;
   }
 
-  public ConstrainedApproximatePowerlawHawkesProcess()
+  public ConstrainedApproximatePowerlawSelfExcitingProcess()
   {
   }
 

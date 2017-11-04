@@ -11,8 +11,8 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedApproximatePowerlawHawkesProcess
-    extends ApproximatePowerlawHawkesProcess
+public class ExtendedApproximatePowerlawSelfExcitingProcess
+    extends ApproximatePowerlawSelfExcitingProcess
     implements MultivariateFunction, Serializable
 {
   private static final long serialVersionUID = 1L;
@@ -65,7 +65,7 @@ public class ExtendedApproximatePowerlawHawkesProcess
 
   
 
-  public ExtendedApproximatePowerlawHawkesProcess()
+  public ExtendedApproximatePowerlawSelfExcitingProcess()
   {
   }
 

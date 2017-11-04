@@ -10,7 +10,7 @@ import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 import junit.framework.TestCase;
 import math.DoublePair;
 
-public class ApproximatePowerlawHawkesProcessTest extends TestCase
+public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {
 
   public void testIntegralOfKernel()
@@ -18,7 +18,7 @@ public class ApproximatePowerlawHawkesProcessTest extends TestCase
 
     double ε = 0.25;
     double τ0 = 1.3;
-    ApproximatePowerlawHawkesProcess process = new ApproximatePowerlawHawkesProcess(ε, τ0);
+    ApproximatePowerlawSelfExcitingProcess process = new ApproximatePowerlawSelfExcitingProcess(ε, τ0);
     process.m = 5;
     process.κ = 0.01;
 

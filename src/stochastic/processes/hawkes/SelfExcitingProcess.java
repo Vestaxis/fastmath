@@ -2,7 +2,7 @@ package stochastic.processes.hawkes;
 
 import fastmath.Vector;
 
-public interface HawkesProcess
+public interface SelfExcitingProcess
 {
 
   double getBranchingRatio();

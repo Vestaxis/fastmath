@@ -9,7 +9,7 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
 
-public class StandardExponentialHawkesProcessTest extends TestCase
+public class StandardExponentialSelfExcitingProcessTest extends TestCase
 {
   public static final double ε = pow( 10, -13 );
 
@@ -19,13 +19,13 @@ public class StandardExponentialHawkesProcessTest extends TestCase
 		{ 0.1, 0.4 };
 		double[] β = new double[]
 		{ 1.3, 1.7 };
-		StandardExponentialHawkesProcess process = new StandardExponentialHawkesProcess(0.1, α, β);
+		StandardExponentialSelfExcitingProcess process = new StandardExponentialSelfExcitingProcess(0.1, α, β);
 		Vector data = MatFile.loadMatrix("/data/SPY.mat", "SPY").col(0);
 		doTest(process, data);
 
 	}
 
-  public static void doTest(ExponentialHawkesProcess process, Vector data)
+  public static void doTest(ExponentialSelfExcitingProcess process, Vector data)
   {
     int midpoint = data.size() / 2;
 		data = data.slice(midpoint - 50, midpoint + 50);

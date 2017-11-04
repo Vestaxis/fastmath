@@ -55,7 +55,7 @@ public class TradingStrategy
 
     // DoubleRowMatrix tradeSlice = trades.sliceRows(start, end)
 
-    ExtendedApproximatePowerlawHawkesProcess model = new ExtendedApproximatePowerlawHawkesProcess();
+    ExtendedApproximatePowerlawSelfExcitingProcess model = new ExtendedApproximatePowerlawSelfExcitingProcess();
     model.T = times;
     model.κ = 0.17171745708245348;
     model.η = 6.2285292213796675;

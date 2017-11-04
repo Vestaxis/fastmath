@@ -6,14 +6,14 @@ import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussInteg
 
 import junit.framework.TestCase;
 
-public class ConstrainedApproximatePowerlawHawkesProcessTest extends TestCase
+public class ConstrainedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {
   public void testIntegralOfKernel()
   {
     double ε = 0.45;
     double τ0 = 1;
     
-    ConstrainedApproximatePowerlawHawkesProcess process = new ConstrainedApproximatePowerlawHawkesProcess(τ0, ε);
+    ConstrainedApproximatePowerlawSelfExcitingProcess process = new ConstrainedApproximatePowerlawSelfExcitingProcess(τ0, ε);
     assertEquals( process.getρ(), process.getBranchingRatio() );
     process.y = 2;
     assertEquals( process.getρ(), process.getBranchingRatio() );

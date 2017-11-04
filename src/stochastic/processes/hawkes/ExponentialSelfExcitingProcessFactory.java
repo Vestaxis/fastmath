@@ -1,6 +1,6 @@
 package stochastic.processes.hawkes;
 
-public class ExponentialHawkesProcessFactory
+public class ExponentialSelfExcitingProcessFactory
 {
   public static enum Type
   {
@@ -26,20 +26,20 @@ public class ExponentialHawkesProcessFactory
     }
   };
 
-  public static ExponentialHawkesProcess spawnNewProcess(Type type)
+  public static ExponentialSelfExcitingProcess spawnNewProcess(Type type)
   {
     switch (type)
     {
     case Standard:
-      return new StandardExponentialHawkesProcess();
+      return new StandardExponentialSelfExcitingProcess();
     case ApproximatePowerlaw:
-      return new ApproximatePowerlawHawkesProcess();
+      return new ApproximatePowerlawSelfExcitingProcess();
     case ExtendedApproximatePowerlaw:
-      return new ExtendedApproximatePowerlawHawkesProcess();
+      return new ExtendedApproximatePowerlawSelfExcitingProcess();
     case ConstrainedApproximatePowerlaw:
-      return new ConstrainedApproximatePowerlawHawkesProcess();
+      return new ConstrainedApproximatePowerlawSelfExcitingProcess();
     case ExtendedConstrainedExponentialPowerlawApproximation:
-      return new ExtendedConstrainedExponentialPowerlawApproximationHawkesProcess();
+      return new ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess();
     default:
       throw new UnsupportedOperationException("TODO: " + type);
     }

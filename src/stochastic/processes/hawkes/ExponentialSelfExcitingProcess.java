@@ -9,19 +9,17 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
+import static java.util.Arrays.stream;
 import static java.util.stream.IntStream.rangeClosed;
+import static org.apache.commons.lang.ArrayUtils.addAll;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
@@ -52,7 +50,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 
-public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess implements MultivariateFunction, Cloneable, HawkesProcess
+public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
 
   @Override
@@ -74,7 +72,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
   @Override
   public double logLikelihood(Vector t)
   {
-    ExponentialHawkesProcess spawn = copy();
+    ExponentialSelfExcitingProcess spawn = copy();
     spawn.T = α == 1 ? t : (t.copy().multiply(α));
     return spawn.logLik();
   }
@@ -123,7 +121,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 
   public boolean verbose = false;
 
-  public ExponentialHawkesProcess()
+  public ExponentialSelfExcitingProcess()
   {
     super();
   }
@@ -416,7 +414,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     SimpleBounds simpleBounds = getParameterBounds();
 
     SolutionValidator validator = point -> {
-      ExponentialHawkesProcess process = newProcess(point.getPoint());
+      ExponentialSelfExcitingProcess process = newProcess(point.getPoint());
       return process.Λ().mean() > 0;
     };
 
@@ -427,8 +425,8 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
-      ExponentialHawkesProcess processA = newProcess(a.getPoint());
-      ExponentialHawkesProcess processB = newProcess(b.getPoint());
+      ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
+      ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
       double mma = processA.compensatorMomentMeasure();
       double mmb = processB.compensatorMomentMeasure();
       return Double.compare(mma, mmb);
@@ -455,7 +453,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
-    ExponentialHawkesProcess process = newProcess(point);
+    ExponentialSelfExcitingProcess process = newProcess(point);
     double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
 
     Vector compensated = process.Λ();
@@ -471,7 +469,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
       pow(compensated.getLjungBoxStatistic(10) - 8, 2),
       process.mean() };
 
-    return ArrayUtils.addAll(Arrays.stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
 
   public double getCompensatorKolmogorovSmirnovStatistic()
@@ -502,9 +500,9 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     return new Vector(rangeClosed(1, n).mapToDouble(i -> nthNormalizedMoment(i)));
   }
 
-  public ExponentialHawkesProcess newProcess(double[] point)
+  public ExponentialSelfExcitingProcess newProcess(double[] point)
   {
-    ExponentialHawkesProcess process = (ExponentialHawkesProcess) this.clone();
+    ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) this.clone();
     process.assignParameters(point);
     return process;
   }

@@ -7,7 +7,7 @@ import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
 
-public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess implements HawkesProcess
+public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcitingProcess implements SelfExcitingProcess
 {
 
 
@@ -36,14 +36,14 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
   private int P;
 
-  public StandardExponentialHawkesProcess(int order)
+  public StandardExponentialSelfExcitingProcess(int order)
   {
     α = new Vector(order);
     β = new Vector(order);
     this.P = order;
   }
 
-  public StandardExponentialHawkesProcess(double lambda2, Vector alpha2, Vector beta2)
+  public StandardExponentialSelfExcitingProcess(double lambda2, Vector alpha2, Vector beta2)
   {
     assert alpha2.size() == beta2.size() : "alpha and beta dimensions must agree";
     this.lambda = lambda2;
@@ -53,19 +53,19 @@ public class StandardExponentialHawkesProcess extends ExponentialHawkesProcess i
 
   }
 
-  public StandardExponentialHawkesProcess(double lambda, double[] alpha, double[] beta)
+  public StandardExponentialSelfExcitingProcess(double lambda, double[] alpha, double[] beta)
   {
     this(lambda, new Vector(alpha), new Vector(beta));
   }
 
-  public StandardExponentialHawkesProcess(StandardExponentialHawkesProcess hp)
+  public StandardExponentialSelfExcitingProcess(StandardExponentialSelfExcitingProcess hp)
   {
     this(hp.getLambda(), hp.getAlpha().copy(), hp.getBeta().copy());
     this.P = hp.P;
     this.T = hp.T;
   }
 
-  public StandardExponentialHawkesProcess()
+  public StandardExponentialSelfExcitingProcess()
   {
   }
 
