@@ -429,8 +429,6 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       ExponentialHawkesProcess processA = newProcess(a.getPoint());
       ExponentialHawkesProcess processB = newProcess(b.getPoint());
-      // double σa = pow(processA.Λ().getLjungBoxStatistic(10) - 8, 2);
-      // double σb = pow(processB.Λ().getLjungBoxStatistic(10) - 8, 2);
       double mma = processA.compensatorMomentMeasure();
       double mmb = processB.compensatorMomentMeasure();
       return Double.compare(mma, mmb);
@@ -590,22 +588,7 @@ public abstract class ExponentialHawkesProcess extends AbstractHawkesProcess imp
 
   public Vector getSpectrum(int n)
   {
-    return new Vector(rangeClosed(0, n - 1).mapToDouble(i -> autocor(n)));
-  }
-
-  /**
-   * 
-   * @param n
-   * @return
-   */
-  public double autocor(int n)
-  {
-    double μ = 0;
-    double π = Math.PI;
-    double β = 0;
-    double α = 0;
-    // double μstar = sum( j ->, 0 , order() - 1);
-    return μ / (2 * π) * (β / (β - α) * (1 + α * (2 * β - α)));
+    throw new UnsupportedOperationException("TODO: implement simulation then generate sample autocorrelation from simulated samples since the combinatorial complexixity of the analytic expression would require about 17 years to evaluate on even a really fast machine.");
   }
 
   @Override

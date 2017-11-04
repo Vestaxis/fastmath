@@ -145,9 +145,9 @@ public class HawkesProcessEstimator
       indexes[i] = idx;
     }
 
-    for (int i = 1; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-      Vector slice = data.slice(indexes[i - 1], indexes[i]);
+      Vector slice = data.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
       HawkesProcessEstimator estimator = new HawkesProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
