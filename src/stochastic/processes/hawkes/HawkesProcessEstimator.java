@@ -124,7 +124,7 @@ public class HawkesProcessEstimator
       double halfHour = MarkedPointProcess.openTime + (i * W);
       double t = DateUtils.convertTimeUnits(halfHour, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = data.find(t, Condition.GTE, 0);
-      if (i == 13 && idx == -1)
+      if (i == n && idx == -1)
       {
         idx = data.size() - 1;
       }
