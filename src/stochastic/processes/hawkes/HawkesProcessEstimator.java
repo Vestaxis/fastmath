@@ -30,7 +30,7 @@ import util.TerseThreadFactory;
 public class HawkesProcessEstimator
 {
   @Units(time = TimeUnit.HOURS)
-  private static final double W = 0.5 ; // one tenth of a half hour
+  private static final double W = 0.5; // one tenth of a half hour
 
   static
   {
@@ -114,11 +114,10 @@ public class HawkesProcessEstimator
 
     out.println("E[dt]=" + Edt);
 
-
     ArrayList<ExponentialHawkesProcess> processes = new ArrayList<>();
     int n = (int) (MarkedPointProcess.tradingDuration / W);
     int indexes[] = new int[n];
-    out.println( "Estimaing " + n + " pieces");
+    out.println("Estimaing " + n + " pieces");
     for (int i = 1; i <= n; i++)
     {
       double halfHour = MarkedPointProcess.openTime + (i * W);
@@ -139,9 +138,25 @@ public class HawkesProcessEstimator
       estimator.setTrajectoryCount(trajectoryCount);
       estimator.estimate(slice);
       processes.add(process);
+
+      File testFile = new File("test" + i + ".mat");
+      storeParameterEstimationResults(testFile, slice, process);
+
     }
 
     return processes;
+  }
+
+  public static void storeParameterEstimationResults(File testFile, Vector data, ExponentialHawkesProcess process) throws IOException
+  {
+    Vector compensator = process.Λ().setName("comp");
+    Vector intensity = process.λvector().setName("intensity");
+    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath()
+                + " E[data.dt]="
+                + data.diff().mean()
+                + " 1/k="
+                + (1 / process.κ));
+    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
   }
 
   public void setTrajectoryCount(int trajectoryCount)
@@ -162,7 +177,7 @@ public class HawkesProcessEstimator
     return trajectoryCount;
   }
 
-  public void estimate(Vector data) throws IOException
+  public ExponentialHawkesProcess estimate(Vector data) throws IOException
   {
     if (verbose)
     {
@@ -180,11 +195,7 @@ public class HawkesProcessEstimator
     ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
     printResults(optimizer);
 
-    File testFile = new File("test.mat");
-    Vector compensator = process.Λ().setName("comp");
-    Vector intensity = process.λvector().setName("intensity");
-    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath());
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
+    return process;
 
   }
 
