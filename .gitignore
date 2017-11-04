@@ -1,8 +1,6 @@
 /target/
-/hs_err_*.log
-/mvi.log
-/README.libfastmath~
+/*.log
 /*.mat
 /*.bak
 /*~
-/SPY.mateapl.model
+/*.model

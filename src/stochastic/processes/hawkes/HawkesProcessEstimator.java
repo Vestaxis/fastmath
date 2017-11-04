@@ -106,6 +106,19 @@ public class HawkesProcessEstimator
     return estimateHawkesProcesses(type, Runtime.getRuntime().availableProcessors(), data);
   }
 
+  /**
+   * Return an array of calibrated Hawkes processes by splitting the trading
+   * session up into windows of length this{@link #W}
+   * 
+   * @param type {@link Type} of self-exciting process to use
+   * 
+   * @param trajectoryCount
+   *          number of random starts for the multistart optimizer to use to
+   *          determine optimal parameters
+   * @param data
+   * @return
+   * @throws IOException
+   */
   public static ArrayList<ExponentialHawkesProcess> estimateHawkesProcesses(ExponentialHawkesProcessFactory.Type type, int trajectoryCount, Vector data)
       throws IOException
   {
@@ -118,19 +131,21 @@ public class HawkesProcessEstimator
     int n = (int) (MarkedPointProcess.tradingDuration / W);
     int indexes[] = new int[n];
     out.println("Estimaing " + n + " pieces");
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < n; i++)
     {
-      double halfHour = MarkedPointProcess.openTime + (i * W);
-      double t = DateUtils.convertTimeUnits(halfHour, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
+      double startPoint = MarkedPointProcess.openTime + ((i) * W);
+      double endPoint = MarkedPointProcess.openTime + ((i + 1) * W);
+
+      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = data.find(t, Condition.GTE, 0);
       if (i == n && idx == -1)
       {
         idx = data.size() - 1;
       }
-      indexes[i - 1] = idx;
+      indexes[i] = idx;
     }
 
-    for (int i = 1; i <= n; i++)
+    for (int i = 1; i < n; i++)
     {
       Vector slice = data.slice(indexes[i - 1], indexes[i]);
       ExponentialHawkesProcess process = ExponentialHawkesProcessFactory.spawnNewProcess(type);
