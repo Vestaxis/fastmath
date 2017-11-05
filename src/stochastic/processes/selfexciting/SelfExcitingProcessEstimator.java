@@ -5,13 +5,12 @@ import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Stream.concat;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.optim.PointValuePair;
 
@@ -23,6 +22,7 @@ import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.point.MarkedPointProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.gui.ModelViewer;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
@@ -30,7 +30,8 @@ import util.TerseThreadFactory;
 public class SelfExcitingProcessEstimator
 {
   @Units(time = TimeUnit.HOURS)
-  private static final double W = 0.5; // one tenth of a half hour
+  public
+  static final double W = 0.5; // one tenth of a half hour
 
   static
   {
@@ -226,12 +227,11 @@ public class SelfExcitingProcessEstimator
 
     PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
 
-    String[] columnHeaders = concat(stream(params).map(param -> param.getName()), asList(ExponentialSelfExcitingProcess.statisticNames).stream())
-                                   .collect(Collectors.toList())
-                                   .toArray(new String[0]);
+    String[] columnHeaders = process.getColumnHeaders();
 
     Object[][] data = evaluateStatisticsForEachLocalOptima(optima, columnHeaders);
 
+  
     TextTable tt = new TextTable(columnHeaders, data);
 
     tt.setAddRowNumbering(true);

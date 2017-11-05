@@ -9,8 +9,11 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
+import static java.util.stream.Stream.concat;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
 
@@ -24,6 +27,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.analysis.BivariateFunction;
@@ -626,5 +630,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double[] ass = params.toArray();
     out.println(Arrays.toString(ass));
     assignParameters(ass);
+  }
+
+  public String[] getColumnHeaders()
+  {
+    return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
   }
 }
