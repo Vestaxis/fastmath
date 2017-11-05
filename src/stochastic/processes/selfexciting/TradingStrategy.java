@@ -3,10 +3,14 @@ package stochastic.processes.selfexciting;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import fastmath.DoubleMatrix;
 import fastmath.DoubleRowMatrix;
@@ -14,6 +18,7 @@ import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import stochastic.processes.point.MarkedPointProcess;
+import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 
 public class TradingStrategy
@@ -33,24 +38,63 @@ public class TradingStrategy
     // System.exit(1);
     out.println("total number of times " + times.size());
 
-    int indexes[] = new int[13];
+    
+    final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
+    final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    for (int i = 1; i <= 13; i++)
+    
+    ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
+    int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
+    int indexes[] = new int[n];
+    
+    Vector data = SelfExcitingProcessEstimator.loadData(matFile, symbol);
+    out.println("Loading " + n + " pieces");
+    for (int i = 0; i < n; i++)
     {
-      double halfHour = 9.5 + (i * 0.5);
-      double t = DateUtils.convertTimeUnits(halfHour, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
-      int idx = times.find(t, Condition.GTE, 0);
-      if (i == 13 && idx == -1)
+      double startPoint = MarkedPointProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
+      double endPoint = MarkedPointProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
+
+      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
+      int idx = data.find(t, Condition.GTE, 0);
+      if (i == n && idx == -1)
       {
-        idx = trades.getRowCount() - 1;
+        idx = data.size() - 1;
       }
-      indexes[i - 1] = idx;
+      indexes[i] = idx;
     }
-    for ( int i = 1; i <= 13; i++ )
+
+    for (int i = 0; i < n; i++)
     {
-      DoubleMatrix slice = trades.sliceRows(indexes[i-1], indexes[i]);
-      
+      // TODO: cool also load from the test%d.mat files but they need to be renamed to something like symbol-piece-%d.mat first
+      Vector slice = data.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+      ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+      process.T = slice;
+      try
+      {
+        process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
+      }
+      catch (IOException e)
+      {
+        throw new RuntimeException( e.getMessage(), e );
+      }
+      processes.add(process);
+
     }
+    
+    List<Object[]> processStats = processes.stream().map( process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(Collectors.toList());
+    int M = processStats.size();
+    int N = processes.get(0).getColumnHeaders().length;
+    Object[][] stats = new Object[M][N];
+    for ( int i = 0; i < M; i++ )
+    {
+      for ( int j = 0; j < N; j++ )
+      {
+        stats[i][j] = processStats.get(i)[j];
+      }
+    }
+    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats );
+    viewer.show();
+   
     out.println("indexes=" + Arrays.toString(indexes));
 
     // DoubleRowMatrix tradeSlice = trades.sliceRows(start, end)
