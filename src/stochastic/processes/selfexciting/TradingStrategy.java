@@ -32,7 +32,6 @@ public class TradingStrategy
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
     int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
 
     DoubleColMatrix matrix = MatFile.loadMatrix(matFile, symbol);
@@ -45,13 +44,15 @@ public class TradingStrategy
     {
       double price = prices.get(i);
       Side side = classifier.classify(price);
+      classifier.record(price);
+      double t = times.get(i);
       if (side == Side.Buy)
       {
-        buyTimes.add(times.get(i));
+        buyTimes = buyTimes.append(t);
       }
       else if ( side == Side.Sell )
       {
-        sellTimes.add(times.get(i));
+        sellTimes = sellTimes.append(t);
       }
     }
 
@@ -60,34 +61,17 @@ public class TradingStrategy
     int[] buyIndexes = getIndices(buyTimes, n);
     int[] sellIndexes = getIndices(sellTimes, n);
 
-    for (int i = 0; i < n; i++)
-    {
-      Vector buyTimesSlice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+//    out.println( "buyTimes=" + buyTimes );
+//    out.println( "sellTimes=" + sellTimes );
+    
+    //ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, n, times, indexes);
+    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, n, times, indexes);
 
-      ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-      process.T = buyTimesSlice;
-      process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
-      processes.add(process);
-
-    }
-
-    List<Object[]> processStats = processes.stream()
-                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toArray()))
-                                           .collect(Collectors.toList());
-    int M = processStats.size();
-    int N = processes.get(0).getColumnHeaders().length;
-    Object[][] stats = new Object[M][N];
-    for (int i = 0; i < M; i++)
-    {
-      for (int j = 0; j < N; j++)
-      {
-        stats[i][j] = processStats.get(i)[j];
-      }
-    }
-    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats);
-    viewer.show();
+    showProcessStats(processes);
 
     out.println("indexes=" + Arrays.toString(indexes));
+    out.println("buyIndexes=" + Arrays.toString(buyIndexes));
+    out.println("sellIndexes=" + Arrays.toString(sellIndexes));
 
     // TODO: estimate model parameters for each 30 minute interval, where it is
     // intended that the point processes
@@ -120,6 +104,41 @@ public class TradingStrategy
 
   }
 
+  public static void showProcessStats(ArrayList<ExponentialSelfExcitingProcess> processes)
+  {
+    List<Object[]> processStats = processes.stream()
+                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toArray()))
+                                           .collect(Collectors.toList());
+    int M = processStats.size();
+    int N = processes.get(0).getColumnHeaders().length;
+    Object[][] stats = new Object[M][N];
+    for (int i = 0; i < M; i++)
+    {
+      for (int j = 0; j < N; j++)
+      {
+        stats[i][j] = processStats.get(i)[j];
+      }
+    }
+    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats);
+    viewer.show();
+  }
+
+  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, int n, Vector times, int[] indexes)
+  {
+    ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
+   for (int i = 0; i < n; i++)
+    {
+      Vector timeSlice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+
+      ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+      process.T = timeSlice;
+      process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
+      processes.add(process);
+
+    }
+    return processes;
+  }
+
   public static int[] getIndices(Vector times, int n)
   {
     int indexes[] = new int[n];
@@ -130,7 +149,7 @@ public class TradingStrategy
 
       double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = times.find(t, Condition.GTE, 0);
-      if (i == n && idx == -1)
+      if ( idx == -1)
       {
         idx = times.size() - 1;
       }

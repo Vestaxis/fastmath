@@ -1468,4 +1468,12 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     int n = size();
     return n * (n + 2) * Functions.sum(k -> Math.pow(ac.get(k), 2) / (n - k), 1, maxLag);
   }
+
+  public Vector append(double d)
+  {
+    int len = size();
+    Vector newVec = extend(1);
+    newVec.set(len,d);
+    return newVec;
+  }
 }
