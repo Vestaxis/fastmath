@@ -1,7 +1,6 @@
 package stochastic.processes.selfexciting;
 
 import static java.lang.System.out;
-import static java.util.stream.IntStream.rangeClosed;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,9 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fastmath.DoubleColMatrix;
-import fastmath.DoubleMatrix;
-import fastmath.DoubleRowMatrix;
-import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
