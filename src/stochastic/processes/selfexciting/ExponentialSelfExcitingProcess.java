@@ -21,16 +21,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.analysis.BivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -57,132 +54,122 @@ import fastmath.optim.SolutionValidator;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
-
-  @Override
-  public String toString()
+  public static enum ScoringMethod
   {
-    return getClass().getSimpleName() + getParamString();
+    LikelihoodMaximization, MomentMatching
   }
 
-  /**
-   * linear time-scaling parameter
-   */
-  public double α = 1;
+  final static ExponentialDistribution expDist = new ExponentialDistribution(1);
 
-  /**
-   * branching rate
-   */
-  public abstract double getρ();
+  final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  @Override
-  public double logLikelihood(Vector t)
+  public static String[] statisticNames =
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
+
+  public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
-    ExponentialSelfExcitingProcess spawn = copy();
-    spawn.T = α == 1 ? t : (t.copy().multiply(α));
-    return spawn.logLik();
+    chart.addSeries(name, X.toArray(), Y.toArray());
   }
 
-  /**
-   * @return predicted time of next point of the process given the list-history
-   *         {@link #T}
-   */
-  public double predict()
-  {
-    final double v = prod(k -> β(k), 0, order() - 1);
-    final double w = sum(k -> β(k), 0, order() - 1);
-    double maxT = T.fmax();
-    int N = T.size();
-
-    out.println("v=" + v);
-    out.println("w=" + w);
-
-    UnivariateFunction η = t -> exp((t + maxT) * w);
-    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
-    IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
-    QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
-    BivariateFunction φ = (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
-
-    ExponentialDistribution expDist = new ExponentialDistribution(1);
-    double ε = expDist.sample();
-    double fuck = τ.value(T.fmax(), ε);
-    double shit = φ.value(T.fmax() + 1, ε);
-    out.println("shit=" + shit + " fuck=" + fuck + " maxT=" + maxT);
-    // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
-    return 0;
-
-    // throw new UnsupportedOperationException("TODO: for each exponentially
-    // distributed ε find the critical point t which maximizes the score φ(t,ε) ");
-  }
-
-  protected abstract double α(int j);
-
-  protected abstract double β(int j);
+  private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
   protected boolean recursive = true;
 
+  private ScoringMethod scoringMethod = ScoringMethod.LikelihoodMaximization;
+
+  public boolean trace = false;
+
+  public boolean verbose = false;
+
+  /**
+   * constant baseline intensity
+   */
   public double κ = 0;
 
   /**
-   * background rate is just a fixed-constant per time-interval now
+   * background rate is just a fixed-constant per time-interval, for now
    * 
    */
   private UnivariateFunction λ0 = t -> κ;
 
-  public boolean verbose = false;
-
-  public ExponentialSelfExcitingProcess()
-  {
-    super();
-  }
-
-  public final double getBranchingRatio()
-  {
-    return sum(i -> α(i) / β(i), 0, order() - 1) / Z();
-  }
-
-  public abstract int order();
-
-  public abstract double Z();
-
   /**
-   * intensity function
+   * functions which takes its minimum when the mean and the variance of the
+   * compensator is closer to 1
    * 
-   * @param t
-   * 
-   * @return intensity at time t
+   * @return measure which is greater the closer the first two moments of the
+   *         compensator are to unity
    */
-  public final double λ(double t)
+  public double compensatorMomentMeasure()
   {
-    DoubleAdder sum = new DoubleAdder();
-    sum.add(λ0.value(t));
-    double s;
-    for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
-    {
-      sum.add(ψ(t - s));
-    }
-    return sum.doubleValue();
+    Vector dT = Λ();
+    Vector moments = dT.normalizedMoments(2);
+    Vector normalizedSampleMoments = (moments.copy().subtract(1)).pow(2);
+    return (((normalizedSampleMoments))).sum();
+
   }
 
-  /**
-   * kernel function
-   * 
-   * @param t
-   * @return
-   */
-  public final double ψ(double t)
+  public final ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
   {
-    return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
+    int digits = 15;
+    int maxIters = Integer.MAX_VALUE;
+
+    MaxEval maxEval = new MaxEval(maxIters);
+    SimpleBounds simpleBounds = getParameterBounds();
+
+    SolutionValidator validator = point -> {
+      ExponentialSelfExcitingProcess process = newProcess(point.getPoint());
+      return process.Λ().mean() > 0;
+    };
+
+    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
+
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
+                                                                                                   numStarts,
+                                                                                                   getRandomVectorGenerator(simpleBounds));
+
+    PointValuePairComparator momentMatchingComparator = (a, b) -> {
+      ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
+      ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
+      double mma = processA.compensatorMomentMeasure();
+      double mmb = processB.compensatorMomentMeasure();
+      return Double.compare(mma, mmb);
+    };
+
+    double startTime = currentTimeMillis();
+    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
+    double stopTime = currentTimeMillis();
+    double secondsElapsed = (stopTime - startTime) / 1000;
+    double evaluationsPerSecond = multiopt.getEvaluations() / secondsElapsed;
+    double minutesElapsed = secondsElapsed / 60;
+
+    assignParameters(optimum.getKey());
+
+    out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
+
+    // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
+
+    return multiopt;
   }
 
-  /**
-   * integrated kernel function
-   * 
-   * @param t
-   * @return
-   */
-  public double iψ(double t)
+  public Object[] evaluateParameterStatistics(double[] point)
   {
-    return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
+    ExponentialSelfExcitingProcess process = newProcess(point);
+    double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
+
+    Vector compensated = process.Λ();
+
+    // out.println(compensated.autocor(30));
+
+    Object[] statisticsVector = new Object[]
+    { process.logLik(),
+      ksStatistic,
+      compensated.mean(),
+      compensated.variance(),
+      process.compensatorMomentMeasure(),
+      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
+      process.mean() };
+
+    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
 
   protected final double evolveλ(double dt, double t, double[] S)
@@ -209,19 +196,98 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return Λ / Z();
   }
 
-  protected Vector recursiveΛ(final int n)
+  public final double getBranchingRatio()
   {
-    Vector durations = T.diff();
+    return sum(i -> α(i) / β(i), 0, order() - 1) / Z();
+  }
 
-    double A[] = new double[order()];
-    Vector compensator = new Vector(n);
-    for (int i = 0; i < n; i++)
+  public String[] getColumnHeaders()
+  {
+    return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
+  }
+
+  public double getCompensatorKolmogorovSmirnovStatistic()
+  {
+    Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
+    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
+    return 1 - ksStatistic;
+  }
+
+  protected RandomVectorGenerator getRandomVectorGenerator(SimpleBounds bounds)
+  {
+    return () -> {
+      try
+      {
+        double[] point = rangeClosed(0,
+                                     bounds.getLower().length - 1).mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim])))
+                                                                  .toArray();
+        if (trace)
+        {
+          out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
+        }
+        return point;
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace(System.err);
+        return null;
+      }
+    };
+  }
+
+  public ScoringMethod getScoringMethod()
+  {
+    return scoringMethod;
+  }
+
+  public Vector getSpectrum(int n)
+  {
+    throw new UnsupportedOperationException("TODO: implement simulation then generate sample autocorrelation from simulated samples since the combinatorial complexixity of the analytic expression would require about 17 years to evaluate on even a really fast machine.");
+  }
+
+  @Override
+  public double getStationaryλ()
+  {
+    return κ / (1 - getBranchingRatio());
+  }
+
+  /**
+   * branching rate
+   */
+  public abstract double getρ();
+
+  /**
+   * integrated kernel function
+   * 
+   * @param t
+   * @return
+   */
+  public double iψ(double t)
+  {
+    return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
+  }
+
+  public void loadParameters(File file)
+  {
+    try
     {
-      double dtprev = i == 0 ? 0 : durations.get(i - 1);
-      double dt = durations.get(i);
-      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
+      FileInputStream fileInputStream = new FileInputStream(file);
+      DataInputStream dis = new DataInputStream(fileInputStream);
+      Vector params = new Vector((int) (file.length() / Double.BYTES));
+      for (int i = 0; i < params.size(); i++)
+      {
+        params.set(i, dis.readDouble());
+      }
+      dis.close();
+      fileInputStream.close();
+      double[] ass = params.toArray();
+      out.println(Arrays.toString(ass));
+      assignParameters(ass);
     }
-    return compensator;
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
   /**
@@ -284,24 +350,124 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   }
 
-  /**
-   * n-th compensated point
-   * 
-   * @param i
-   *          >= 1 and <= n
-   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
-   *         i-1)
-   */
-  protected double Λ(int i)
+  @Override
+  public double logLikelihood(Vector t)
   {
-    final double Ti = T.get(i);
-    return sum(k -> {
-      double Tk = T.get(k);
-      return sum(j -> {
-        double dt = Ti - Tk;
-        return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
-      }, 0, order() - 1);
-    }, 0, i - 1) / Z();
+    ExponentialSelfExcitingProcess spawn = copy();
+    spawn.T = t;
+    return spawn.logLik();
+  }
+
+  /**
+   * 
+   * @return theoretical mean
+   */
+  public final double mean()
+  {
+    return nthNormalizedMoment(1);
+  }
+
+  public ExponentialSelfExcitingProcess newProcess(double[] point)
+  {
+    ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) this.clone();
+    process.assignParameters(point);
+    return process;
+  }
+
+  private Vector normalizedMoments(int n)
+  {
+    return new Vector(rangeClosed(1, n).mapToDouble(i -> nthNormalizedMoment(i)));
+  }
+
+  /**
+   * 
+   * @return n'th (raw) moment E[X^n]
+   */
+  public double nthMoment(int n)
+  {
+    return nthNormalizedMoment(n) * factorial(n);
+  }
+
+  /**
+   * 
+   * @return n'th (raw) factorial moment E[X^n]/n!
+   */
+  public double nthNormalizedMoment(int n)
+  {
+    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1);
+  }
+
+  public abstract int order();
+
+  /**
+   * @return predicted time of next point of the process given the list-history
+   *         {@link #T}
+   */
+  public double predict()
+  {
+    final double v = prod(k -> β(k), 0, order() - 1);
+    final double w = sum(k -> β(k), 0, order() - 1);
+    double maxT = T.fmax();
+    int N = T.size();
+
+    out.println("v=" + v);
+    out.println("w=" + w);
+
+    UnivariateFunction η = t -> exp((t + maxT) * w);
+    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
+    IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
+    QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
+    BivariateFunction φ = (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
+
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    double ε = expDist.sample();
+    double fuck = τ.value(T.fmax(), ε);
+    double shit = φ.value(T.fmax() + 1, ε);
+    out.println("shit=" + shit + " fuck=" + fuck + " maxT=" + maxT);
+    // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
+    return 0;
+
+    // throw new UnsupportedOperationException("TODO: for each exponentially
+    // distributed ε find the critical point t which maximizes the score φ(t,ε) ");
+  }
+
+  protected Vector recursiveΛ(final int n)
+  {
+    Vector durations = T.diff();
+
+    double A[] = new double[order()];
+    Vector compensator = new Vector(n);
+    for (int i = 0; i < n; i++)
+    {
+      double dtprev = i == 0 ? 0 : durations.get(i - 1);
+      double dt = durations.get(i);
+      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
+    }
+    return compensator;
+  }
+
+  public void setScoringMethod(ScoringMethod scoringMethod)
+  {
+    this.scoringMethod = scoringMethod;
+  }
+
+  public void storeParameters(File file) throws IOException
+  {
+    FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+    DataOutputStream dos = new DataOutputStream(fileOutputStream);
+    Vector params = getParameters();
+    for (int i = 0; i < getParamCount(); i++)
+    {
+      dos.writeDouble(params.get(i));
+    }
+    dos.close();
+    fileOutputStream.close();
+  }
+
+  @Override
+  public String toString()
+  {
+    return getClass().getSimpleName() + getParamString();
   }
 
   public double totalΛ()
@@ -311,34 +477,68 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
-  public Vector λvector()
+  @Override
+  public final double value(double[] point)
   {
-    final int n = T.size();
-    Vector intensity = new Vector(n);
+    assignParameters(point);
 
-    if (recursive)
+    double score = Double.NaN;
+
+    if (scoringMethod == ScoringMethod.LikelihoodMaximization)
     {
-      double S[] = new double[order()];
-      for (int i = 1; i < n; i++)
-      {
-        double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
-        double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, T.get(i), S);
-        intensity.set(i, λ);
-      }
+      score = logLik();
+    }
+    else if (scoringMethod == ScoringMethod.MomentMatching)
+    {
+      score = compensatorMomentMeasure();
     }
     else
     {
-      for (int i = 1; i < n; i++)
-      {
-        double thist = T.get(i);
-        intensity.set(i - 1, λ(thist));
-      }
+      throw new IllegalStateException("unhandled scoringMethod");
 
     }
 
-    return intensity;
+    if (verbose)
+    {
+      out.println(Thread.currentThread().getName() + " score{" + getParamString() + "}=" + score);
+    }
+
+    return score;
+
+  }
+
+  /**
+   * 
+   * @return theoretical mean
+   */
+  public final double variance()
+  {
+    return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
+  }
+
+  public abstract double Z();
+
+  protected abstract double α(int j);
+
+  protected abstract double β(int j);
+
+  /**
+   * intensity function
+   * 
+   * @param t
+   * 
+   * @return intensity at time t
+   */
+  public final double λ(double t)
+  {
+    DoubleAdder sum = new DoubleAdder();
+    sum.add(λ0.value(t));
+    double s;
+    for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
+    {
+      sum.add(ψ(t - s));
+    }
+    return sum.doubleValue();
   }
 
   /**
@@ -373,275 +573,64 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   }
 
-  public static enum ScoringMethod
+  /**
+   * n-th compensated point
+   * 
+   * @param i
+   *          >= 1 and <= n
+   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
+   *         i-1)
+   */
+  protected double Λ(int i)
   {
-    LikelihoodMaximization, MomentMatching
+    final double Ti = T.get(i);
+    return sum(k -> {
+      double Tk = T.get(k);
+      return sum(j -> {
+        double dt = Ti - Tk;
+        return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
+      }, 0, order() - 1);
+    }, 0, i - 1) / Z();
   }
 
-  private ScoringMethod scoringMethod = ScoringMethod.LikelihoodMaximization;
-
-  @Override
-  public final double value(double[] point)
+  public Vector λvector()
   {
-    assignParameters(point);
+    final int n = T.size();
+    Vector intensity = new Vector(n);
 
-    double score = Double.NaN;
-
-    if (scoringMethod == ScoringMethod.LikelihoodMaximization)
+    if (recursive)
     {
-      score = logLik();
-    }
-    else if (scoringMethod == ScoringMethod.MomentMatching)
-    {
-      score = compensatorMomentMeasure();
+      double S[] = new double[order()];
+      for (int i = 1; i < n; i++)
+      {
+        double t = T.get(i);
+        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+        double dt = t - T.get(i - 1);
+        double λ = evolveλ(dt, T.get(i), S);
+        intensity.set(i, λ);
+      }
     }
     else
     {
-      throw new IllegalStateException("unhandled scoringMethod");
-
-    }
-
-    if (verbose)
-    {
-      out.println(Thread.currentThread().getName() + " score{" + getParamString() + "}=" + score);
-    }
-
-    return score;
-
-  }
-
-  final static ExponentialDistribution expDist = new ExponentialDistribution(1);
-
-  final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
-
-  public final ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
-  {
-    int digits = 15;
-    int maxIters = Integer.MAX_VALUE;
-
-    MaxEval maxEval = new MaxEval(maxIters);
-    SimpleBounds simpleBounds = getParameterBounds();
-
-    SolutionValidator validator = point -> {
-      ExponentialSelfExcitingProcess process = newProcess(point.getPoint());
-      return process.Λ().mean() > 0;
-    };
-
-    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
-
-    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
-                                                                                                   numStarts,
-                                                                                                   getRandomVectorGenerator(simpleBounds));
-
-    PointValuePairComparator momentMatchingComparator = (a, b) -> {
-      ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
-      ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.compensatorMomentMeasure();
-      double mmb = processB.compensatorMomentMeasure();
-      return Double.compare(mma, mmb);
-    };
-
-    double startTime = currentTimeMillis();
-    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
-    double stopTime = currentTimeMillis();
-    double secondsElapsed = (stopTime - startTime) / 1000;
-    double evaluationsPerSecond = multiopt.getEvaluations() / secondsElapsed;
-    double minutesElapsed = secondsElapsed / 60;
-
-    assignParameters(optimum.getKey());
-
-    out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
-
-    // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
-
-    return multiopt;
-  }
-
-  public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
-
-  public Object[] evaluateParameterStatistics(double[] point)
-  {
-    ExponentialSelfExcitingProcess process = newProcess(point);
-    double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
-
-    Vector compensated = process.Λ();
-
-    // out.println(compensated.autocor(30));
-
-    Object[] statisticsVector = new Object[]
-    { process.logLik(),
-      ksStatistic,
-      compensated.mean(),
-      compensated.variance(),
-      process.compensatorMomentMeasure(),
-      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
-      process.mean() };
-
-    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
-  }
-
-  public double getCompensatorKolmogorovSmirnovStatistic()
-  {
-    Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
-    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
-    return 1 - ksStatistic;
-  }
-
-  /**
-   * functions which takes its minimum when the mean and the variance of the
-   * compensator is closer to 1
-   * 
-   * @return measure which is greater the closer the first two moments of the
-   *         compensator are to unity
-   */
-  public double compensatorMomentMeasure()
-  {
-    Vector dT = Λ();
-    Vector moments = dT.normalizedMoments(2);
-    Vector normalizedSampleMoments = (moments.copy().subtract(1)).pow(2);
-    return (((normalizedSampleMoments))).sum();
-
-  }
-
-  private Vector normalizedMoments(int n)
-  {
-    return new Vector(rangeClosed(1, n).mapToDouble(i -> nthNormalizedMoment(i)));
-  }
-
-  public ExponentialSelfExcitingProcess newProcess(double[] point)
-  {
-    ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) this.clone();
-    process.assignParameters(point);
-    return process;
-  }
-
-  public boolean trace = false;
-
-  protected RandomVectorGenerator getRandomVectorGenerator(SimpleBounds bounds)
-  {
-    return () -> {
-      try
+      for (int i = 1; i < n; i++)
       {
-        double[] point = rangeClosed(0,
-                                     bounds.getLower().length - 1).mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim])))
-                                                                  .toArray();
-        if (trace)
-        {
-          out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
-        }
-        return point;
+        double thist = T.get(i);
+        intensity.set(i - 1, λ(thist));
       }
-      catch (Exception e)
-      {
-        e.printStackTrace(System.err);
-        return null;
-      }
-    };
-  }
 
-  private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
-
-  public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
-  {
-    chart.addSeries(name, X.toArray(), Y.toArray());
-  }
-
-  public ScoringMethod getScoringMethod()
-  {
-    return scoringMethod;
-  }
-
-  public void setScoringMethod(ScoringMethod scoringMethod)
-  {
-    this.scoringMethod = scoringMethod;
-  }
-
-  /**
-   * 
-   * @return n'th (raw) moment E[X^n]
-   */
-  public double nthMoment(int n)
-  {
-    return nthNormalizedMoment(n) * factorial(n);
-  }
-
-  /**
-   * 
-   * @return n'th (raw) factorial moment E[X^n]/n!
-   */
-  public double nthNormalizedMoment(int n)
-  {
-    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1);
-  }
-
-  /**
-   * 
-   * @return theoretical mean
-   */
-  public final double mean()
-  {
-    return nthNormalizedMoment(1);
-  }
-
-  /**
-   * 
-   * @return theoretical mean
-   */
-  public final double variance()
-  {
-    return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
-  }
-
-  public Vector getSpectrum(int n)
-  {
-    throw new UnsupportedOperationException("TODO: implement simulation then generate sample autocorrelation from simulated samples since the combinatorial complexixity of the analytic expression would require about 17 years to evaluate on even a really fast machine.");
-  }
-
-  @Override
-  public double getStationaryλ()
-  {
-    return κ / (1 - getBranchingRatio());
-  }
-
-  public void storeParameters(File file) throws IOException
-  {
-    FileOutputStream fileOutputStream = new FileOutputStream(file, false);
-    DataOutputStream dos = new DataOutputStream(fileOutputStream);
-    Vector params = getParameters();
-    for (int i = 0; i < getParamCount(); i++)
-    {
-      dos.writeDouble(params.get(i));
     }
-    dos.close();
-    fileOutputStream.close();
+
+    return intensity;
   }
 
-  public void loadParameters(File file)
+  /**
+   * kernel function
+   * 
+   * @param t
+   * @return
+   */
+  public final double ψ(double t)
   {
-    try
-    {
-      FileInputStream fileInputStream = new FileInputStream(file);
-      DataInputStream dis = new DataInputStream(fileInputStream);
-      Vector params = new Vector((int) (file.length() / Double.BYTES));
-      for (int i = 0; i < params.size(); i++)
-      {
-        params.set(i, dis.readDouble());
-      }
-      dis.close();
-      fileInputStream.close();
-      double[] ass = params.toArray();
-      out.println(Arrays.toString(ass));
-      assignParameters(ass);
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
-  }
-
-  public String[] getColumnHeaders()
-  {
-    return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
+    return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
 }

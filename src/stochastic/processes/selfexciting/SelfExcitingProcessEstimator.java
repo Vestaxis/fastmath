@@ -99,7 +99,7 @@ public class SelfExcitingProcessEstimator
   public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcess(ExponentialSelfExcitingProcessFactory.Type type, String filename, int trajectoryCount,
       String symbol) throws IOException
   {
-    Vector data = loadData(filename, symbol);
+    Vector data = loadTimes(filename, symbol);
 
     return estimateHawkesProcesses(type, trajectoryCount, data);
   }
@@ -256,7 +256,7 @@ public class SelfExcitingProcessEstimator
     return data;
   }
 
-  public static Vector loadData(String filename, String symbol) throws IOException
+  public static Vector loadTimes(String filename, String symbol) throws IOException
   {
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);

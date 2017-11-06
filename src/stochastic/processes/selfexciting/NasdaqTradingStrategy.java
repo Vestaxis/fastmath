@@ -1,6 +1,7 @@
 package stochastic.processes.selfexciting;
 
 import static java.lang.System.out;
+import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,14 +22,13 @@ import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 import util.TradeClassifier;
 
-public class TradingStrategy
+public class NasdaqTradingStrategy
 {
   public static void main(String args[]) throws FileNotFoundException, IOException
   {
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
 
     DoubleColMatrix matrix = MatFile.loadMatrix(matFile, symbol);
     Vector times = matrix.col(0).setName("times");
@@ -46,67 +46,45 @@ public class TradingStrategy
       {
         buyTimes = buyTimes.append(t);
       }
-      else if ( side == Side.Sell )
+      else if (side == Side.Sell)
       {
         sellTimes = sellTimes.append(t);
       }
     }
 
-    out.println("Loading " + n + " pieces");
-    int[] indexes = getIndices(times, n);
-    int[] buyIndexes = getIndices(buyTimes, n);
-    int[] sellIndexes = getIndices(sellTimes, n);
+    int[] indexes = getIndices(times);
+    int[] buyIndexes = getIndices(buyTimes);
+    int[] sellIndexes = getIndices(sellTimes);
 
-//    out.println( "buyTimes=" + buyTimes );
-//    out.println( "sellTimes=" + sellTimes );
-    
-    //ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, n, times, indexes);
-    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, n, times, indexes);
+    // out.println( "buyTimes=" + buyTimes );
+    // out.println( "sellTimes=" + sellTimes );
 
-    showProcessStats(processes);
+    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, times, indexes);
+
+    launchModelViewer(processes);
 
     out.println("indexes=" + Arrays.toString(indexes));
     out.println("buyIndexes=" + Arrays.toString(buyIndexes));
     out.println("sellIndexes=" + Arrays.toString(sellIndexes));
 
-    // TODO: estimate model parameters for each 30 minute interval, where it is
-    // intended that the point processes
-    // in question are quasi-stationary over the length of the interval
-
-    // TODO: 1. use the same model calibrated on the trade process
-    // to calculate the buy and sell intensities.. that is, we do NOT need to
-    // calibrate on
-    // the buy and sell processes separately since these set memberships are
-    // inferred anyway.
-    // The technical term for this is "smoothing", when you revise past estimates
-    // based on new data.
-    // When you revise current estimates based on current information, its
-    // filtering, when you project future estimates based on current information,
-    // thats prediction
-
-    // Note: whatever the trade intensity is, we assume the buy intensity is half of
-    // that, and likewise the sell intensity is half of that
-    // This fact will be used to do do smoothing, filtering, and prediction of the
-    // buy and sell point processes using the Hawkes process
-    // calibrated on the trade intensity. This assumption is the random walk
-    // assumption that there is no prior supposition that the
-    // price would move up or down apriori.
-
+    // TODO: 1. implement the multivariate exponential self-exciting process code that
+    // was written before and adapt the exponential approximations of powerlaws so they
+    // work in a multivariate manner. In this case, bivariate process of buys/sells 
+    // were the superposition of the two inferred processes follows a known process.
+    
     // 2. Price direction expectation could be incorporated by introducing an
-    // asymmetry in the
-    // trigger for long/short position triggering.
+    // asymmetry in the trigger for long/short position triggering.
 
     // 3. determine some threshold to trigger trades and see if its profitable
 
   }
 
-  public static void showProcessStats(ArrayList<ExponentialSelfExcitingProcess> processes)
+  public static void launchModelViewer(ArrayList<ExponentialSelfExcitingProcess> processes)
   {
-    List<Object[]> processStats = processes.stream()
-                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toArray()))
-                                           .collect(Collectors.toList());
+    List<Object[]> processStats = processes.stream().map(process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(toList());
     int M = processStats.size();
-    int N = processes.get(0).getColumnHeaders().length;
+    String[] columnHeaders = processes.get(0).getColumnHeaders();
+    int N = columnHeaders.length;
     Object[][] stats = new Object[M][N];
     for (int i = 0; i < M; i++)
     {
@@ -115,14 +93,15 @@ public class TradingStrategy
         stats[i][j] = processStats.get(i)[j];
       }
     }
-    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats);
+    ModelViewer viewer = new ModelViewer(columnHeaders, stats);
     viewer.show();
   }
 
-  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, int n, Vector times, int[] indexes)
+  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, Vector times, int[] indexes)
   {
+    int n = indexes.length;
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
-   for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
       Vector timeSlice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
 
@@ -135,8 +114,22 @@ public class TradingStrategy
     return processes;
   }
 
-  public static int[] getIndices(Vector times, int n)
+  /**
+   * 
+   * @param times
+   *          a {@link Vector} of timestamps covering the span
+   *          {@link MarkedPointProcess#openTime} to
+   *          {@link MarkedPointProcess#closeTime}
+   * @return an array of offsets indicating the timestamp indexes which divides
+   *         the data into n windows of length
+   *         {@link SelfExcitingProcessEstimator#W} hours over the interval
+   *         {@link MarkedPointProcess#openTime} to
+   *         {@link MarkedPointProcess#closeTime}
+   */
+  public static int[] getIndices(Vector times )
   {
+    int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
+    out.println("Dividing the interval into " + n + " pieces");
     int indexes[] = new int[n];
     for (int i = 0; i < n; i++)
     {
@@ -145,7 +138,7 @@ public class TradingStrategy
 
       double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = times.find(t, Condition.GTE, 0);
-      if ( idx == -1)
+      if (idx == -1)
       {
         idx = times.size() - 1;
       }

@@ -22,6 +22,7 @@ import stochastic.processes.point.MarkedPointProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
+import stochastic.processes.selfexciting.NasdaqTradingStrategy;
 import util.DateUtils;
 
 public class ModelViewer
@@ -35,54 +36,13 @@ public class ModelViewer
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
-    int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
-    int indexes[] = new int[n];
+    Vector times = SelfExcitingProcessEstimator.loadTimes(matFile, symbol);
 
-    Vector data = SelfExcitingProcessEstimator.loadData(matFile, symbol);
-    out.println("Loading " + n + " pieces");
-    for (int i = 0; i < n; i++)
-    {
-      double startPoint = MarkedPointProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
-      double endPoint = MarkedPointProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
+    int indexes[] = NasdaqTradingStrategy.getIndices(times);
 
-      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
-      int idx = data.find(t, Condition.GTE, 0);
-      if (i == n && idx == -1)
-      {
-        idx = data.size() - 1;
-      }
-      indexes[i] = idx;
-    }
+    ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, times, indexes);
 
-    for (int i = 0; i < n; i++)
-    {
-      // TODO: cool also load from the test%d.mat files but they need to be renamed to
-      // something like symbol-piece-%d.mat first
-      Vector slice = data.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
-      ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-      process.T = slice;
-
-      process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
-      processes.add(process);
-
-    }
-
-    List<Object[]> processStats = processes.stream()
-                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toArray()))
-                                           .collect(Collectors.toList());
-    int M = processStats.size();
-    int N = processes.get(0).getColumnHeaders().length;
-    Object[][] stats = new Object[M][N];
-    for (int i = 0; i < M; i++)
-    {
-      for (int j = 0; j < N; j++)
-      {
-        stats[i][j] = processStats.get(i)[j];
-      }
-    }
-    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats);
-    viewer.show();
+    NasdaqTradingStrategy.launchModelViewer(processes);
 
   }
 
