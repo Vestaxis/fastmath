@@ -21,6 +21,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -616,20 +617,27 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     fileOutputStream.close();
   }
 
-  public void loadParameters(File file) throws IOException
+  public void loadParameters(File file)
   {
-    FileInputStream fileInputStream = new FileInputStream(file);
-    DataInputStream dis = new DataInputStream(fileInputStream);
-    Vector params = new Vector((int) (file.length() / Double.BYTES));
-    for (int i = 0; i < params.size(); i++)
+    try
     {
-      params.set(i, dis.readDouble());
+      FileInputStream fileInputStream = new FileInputStream(file);
+      DataInputStream dis = new DataInputStream(fileInputStream);
+      Vector params = new Vector((int) (file.length() / Double.BYTES));
+      for (int i = 0; i < params.size(); i++)
+      {
+        params.set(i, dis.readDouble());
+      }
+      dis.close();
+      fileInputStream.close();
+      double[] ass = params.toArray();
+      out.println(Arrays.toString(ass));
+      assignParameters(ass);
     }
-    dis.close();
-    fileInputStream.close();
-    double[] ass = params.toArray();
-    out.println(Arrays.toString(ass));
-    assignParameters(ass);
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
   public String[] getColumnHeaders()

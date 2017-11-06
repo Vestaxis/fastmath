@@ -35,11 +35,10 @@ public class ModelViewer
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
     int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
     int indexes[] = new int[n];
-    
+
     Vector data = SelfExcitingProcessEstimator.loadData(matFile, symbol);
     out.println("Loading " + n + " pieces");
     for (int i = 0; i < n; i++)
@@ -58,36 +57,33 @@ public class ModelViewer
 
     for (int i = 0; i < n; i++)
     {
-      // TODO: cool also load from the test%d.mat files but they need to be renamed to something like symbol-piece-%d.mat first
+      // TODO: cool also load from the test%d.mat files but they need to be renamed to
+      // something like symbol-piece-%d.mat first
       Vector slice = data.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
       process.T = slice;
-      try
-      {
-        process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
-      }
-      catch (IOException e)
-      {
-        throw new RuntimeException( e.getMessage(), e );
-      }
+
+      process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
       processes.add(process);
 
     }
-    
-    List<Object[]> processStats = processes.stream().map( process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(Collectors.toList());
+
+    List<Object[]> processStats = processes.stream()
+                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toArray()))
+                                           .collect(Collectors.toList());
     int M = processStats.size();
     int N = processes.get(0).getColumnHeaders().length;
     Object[][] stats = new Object[M][N];
-    for ( int i = 0; i < M; i++ )
+    for (int i = 0; i < M; i++)
     {
-      for ( int j = 0; j < N; j++ )
+      for (int j = 0; j < N; j++)
       {
         stats[i][j] = processStats.get(i)[j];
       }
     }
-    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats );
+    ModelViewer viewer = new ModelViewer(processes.get(0).getColumnHeaders(), stats);
     viewer.show();
-    
+
   }
 
   public ModelViewer(String[] columnHeaders, Object[][] data)

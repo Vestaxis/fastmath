@@ -7,7 +7,7 @@ import stochastic.processes.pointprocesses.finance.Side;
 
 public class TradeClassifier
 {
-  public TradeClassifier( int maxHistLength)
+  public TradeClassifier()
   {
     super();
   }

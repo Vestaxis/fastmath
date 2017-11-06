@@ -272,7 +272,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
     DoubleRowMatrix sellMatrix = new DoubleRowMatrix(0, TradeTick.FIELDCNT).setName(symbol + "_sells");
     AtomicInteger midPointTrades = new AtomicInteger(0);
     Vector midPrice = new Vector(1);
-    TradeClassifier classifier = new TradeClassifier(100);
+    TradeClassifier classifier = new TradeClassifier();
     tradeAndQuoteStream().forEachOrdered(event -> {
       if (event instanceof TwoSidedQuote)
       {
