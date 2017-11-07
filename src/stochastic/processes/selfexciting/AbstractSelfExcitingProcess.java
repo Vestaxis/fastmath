@@ -6,12 +6,13 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 
-public abstract class AbstractSelfExcitingProcess
+public abstract class AbstractSelfExcitingProcess implements MultivariateFunction
 {
 
   public Vector T;

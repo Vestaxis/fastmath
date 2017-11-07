@@ -2,30 +2,50 @@
 package stochastic.processes.selfexciting;
 
 import static fastmath.Functions.eye;
+import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static java.lang.System.currentTimeMillis;
 import static java.lang.System.err;
+import static java.lang.System.out;
+import static java.util.Arrays.asList;
+import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
+import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.LegendreGaussIntegrator;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.apache.commons.math3.optimization.PointValuePair;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
+import org.apache.commons.math3.random.RandomVectorGenerator;
 
 import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.EigenDecomposition;
+import fastmath.IntVector;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.VectorContainer;
 import fastmath.exceptions.FastMathException;
 import fastmath.exceptions.IllegalValueError;
 import fastmath.exceptions.SingularFactorException;
+import fastmath.optim.ObjectiveFunctionSupplier;
+import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import fastmath.optim.PointValuePairComparator;
+import fastmath.optim.SolutionValidator;
 
 /**
  * TODO: same thing I did with univariate exponential self exciting process
@@ -34,7 +54,7 @@ import fastmath.exceptions.SingularFactorException;
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public abstract class MultivariateExponentialSelfExcitingProcess
+public abstract class MultivariateExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess
 {
 
   private final int dim; // dimension
@@ -82,6 +102,119 @@ public abstract class MultivariateExponentialSelfExcitingProcess
 
   private Entry<Double, Integer>[][][] upperEntries;
 
+  Vector T;
+
+  IntVector K;
+
+  private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
+
+  public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
+  {
+    int digits = 15;
+    int maxIters = Integer.MAX_VALUE;
+    assert T.size() == K.size() : "times and types should be of same dimension";
+
+    final MultivariateFunction logLikelihoodFunction = new MultivariateFunction()
+    {
+
+      @Override
+      public double value(double[] paramArray)
+      {
+        Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair = getSubTimes(T, K);
+
+        Vector params = tmp0.getVector(paramArray.length).assign(paramArray).abs();
+
+        Vector mean = calculateMean();
+        double ll = 0;
+        Double compMeans[] = new Double[getDim()];
+
+        Double compVars[] = new Double[getDim()];
+        for (int i = 0; i < getDim(); i++)
+        {
+          final Vector intensity = calculateIntensity(timesSubPair, i);
+
+          // final Vector compensator =
+          // calculateCompensatorSlow(timesSubPair,
+          // i);
+          final Vector compensator = calculateCompensator(timesSubPair, i);
+          compMeans[i] = compensator.mean();
+          compVars[i] = compensator.variance();
+          // double fastMean = compensatorFast.mean();
+          // System.out.println("fastMean " + fastMean + " should equal " +
+          // compMeans[i]);
+
+          assert intensity.size() == compensator.size();
+          for (int j = 0; j < intensity.size(); j++)
+          {
+            ll += Math.log(intensity.get(j)) - compensator.get(j);
+          }
+        }
+
+        System.out.println("ll[" + params.toString().replace("\n", "")
+                           + "]="
+                           + ll
+                           + " compMeans="
+                           + asList(compMeans)
+                           + " compVars="
+                           + asList(compVars)
+                           + " mean="
+                           + mean);
+        return ll;
+      }
+
+    };
+
+    MaxEval maxEval = new MaxEval(maxIters);
+    SimpleBounds simpleBounds = getParameterBounds();
+
+    SolutionValidator validator = point -> {
+      MultivariateExponentialSelfExcitingProcess process = newProcess(point.getPoint());
+      return process.Λ().mean() > 0;
+    };
+
+    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
+
+    ParallelMultistartMultivariateOptimizer optimizer = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
+                                                                                                    numStarts,
+                                                                                                    getRandomVectorGenerator(simpleBounds));
+
+    PointValuePairComparator momentMatchingComparator = (a, b) -> {
+      MultivariateExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
+      MultivariateExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
+      double mma = processA.compensatorMomentMeasure();
+      double mmb = processB.compensatorMomentMeasure();
+      return Double.compare(mma, mmb);
+    };
+
+    double startTime = currentTimeMillis();
+    PointValuePair optimum = optimizer.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
+    double stopTime = currentTimeMillis();
+    double secondsElapsed = (stopTime - startTime) / 1000;
+    double evaluationsPerSecond = optimizer.getEvaluations() / secondsElapsed;
+    double minutesElapsed = secondsElapsed / 60;
+
+    assignParameters(optimum.getKey());
+
+    out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
+
+    return optimizer;
+  }
+
+  private double compensatorMomentMeasure()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  private MultivariateExponentialSelfExcitingProcess newProcess(double[] point)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  private Vector Λ()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
   /**
    * Given two Vectors (of times and types), calculate indices and partition
    * subsets of different types
@@ -90,21 +223,13 @@ public abstract class MultivariateExponentialSelfExcitingProcess
    * @param types
    * @return Pair<Vector times[dim],Map<time,type>[dim]>
    */
-  public Pair<Vector[], TreeMap<Double, Integer>[]> getSubTimes(final Vector times, final Vector types)
+  public Pair<Vector[], TreeMap<Double, Integer>[]> getSubTimes(final Vector times, final IntVector types)
   {
-    @SuppressWarnings("unchecked")
+    if (cachedSubTimes != null) { return cachedSubTimes; }
     final ArrayList<Double>[] timesSub = new ArrayList[getDim()];
     final Vector[] timeVectors = new Vector[getDim()];
-    Vector uniqueTypes = types.unique();
-    TreeMap<Double, Integer> typeMap = new TreeMap<Double, Integer>();
-    @SuppressWarnings("unchecked")
     TreeMap<Double, Integer>[] timeIndices = new TreeMap[getDim()];
 
-    int j = 0;
-    for (Double type : uniqueTypes)
-    {
-      typeMap.put(type, j++);
-    }
     for (int i = 0; i < getDim(); i++)
     {
       timesSub[i] = new ArrayList<Double>();
@@ -112,23 +237,25 @@ public abstract class MultivariateExponentialSelfExcitingProcess
     }
     for (int i = 0; i < times.size(); i++)
     {
-      timesSub[typeMap.get(types.get(i))].add(times.get(i));
+      timesSub[types.get(i)].add(times.get(i));
     }
     for (int i = 0; i < getDim(); i++)
     {
       ArrayList<Double> subTimes = timesSub[i];
       TreeMap<Double, Integer> subTimeIndices = timeIndices[i];
-      for (j = 0; j < subTimes.size(); j++)
+      for (int j = 0; j < subTimes.size(); j++)
       {
         subTimeIndices.put(subTimes.get(j), j);
       }
       timeVectors[i] = new Vector(timesSub[i]);
     }
-    return new Pair<Vector[], TreeMap<Double, Integer>[]>(timeVectors, timeIndices);
+    cachedSubTimes = new Pair<Vector[], TreeMap<Double, Integer>[]>(timeVectors, timeIndices);
+
+    return cachedSubTimes;
   }
 
   @SuppressWarnings("unused")
-  private Vector calculateInitialGuess(Vector times, Vector types)
+  private Vector calculateInitialGuess(Vector times, IntVector types)
   {
     final int matrixSize = getDim() * getDim();
     final Vector params = tmp0.getVector(getDim() + (matrixSize * order() * 2)).assign(0.0);
@@ -492,6 +619,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess
 
   private double lastInitialLambda2Guess = 0.0;
 
+  private Pair<Vector[], TreeMap<Double, Integer>[]> cachedSubTimes;
+
   /**
    *
    * @param timesSubPair
@@ -605,4 +734,27 @@ public abstract class MultivariateExponentialSelfExcitingProcess
     this.predictionIntegrationLimit = predictionIntegrationLimit;
   }
 
+  protected RandomVectorGenerator getRandomVectorGenerator(SimpleBounds bounds)
+  {
+    return () -> {
+      try
+      {
+        double[] point = rangeClosed(0,
+                                     bounds.getLower().length - 1).mapToDouble(dim -> uniformRandom(new Pair<>(bounds.getLower()[dim], bounds.getUpper()[dim])))
+                                                                  .toArray();
+        if (trace)
+        {
+          out.println(Thread.currentThread().getName() + " starting from " + Arrays.toString(point));
+        }
+        return point;
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace(System.err);
+        return null;
+      }
+    };
+  }
+
+  private boolean trace = false;
 }
