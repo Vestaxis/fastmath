@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
+import fastmath.IntVector;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
@@ -33,25 +34,34 @@ public class NasdaqTradingStrategy
     DoubleColMatrix markedPoints = MatFile.loadMatrix(matFile, symbol);
     Vector times = markedPoints.col(0).setName("times");
     Vector prices = markedPoints.col(1).setName("prices");
+    IntVector types = new IntVector( times.size() );
     TradeClassifier classifier = new TradeClassifier();
-    Vector buyTimes = new Vector();
-    Vector sellTimes = new Vector();
+    
+    Vector buyTimes = new Vector(times.size());
+    Vector sellTimes = new Vector(times.size());
+    int buyCount = 0;
+    int sellCount = 0;
     for (int i = 0; i < times.size(); i++)
     {
       double price = prices.get(i);
       Side side = classifier.classify(price);
+      types.set(i, side.ordinal() );
       classifier.record(price);
       double t = times.get(i);
       if (side == Side.Buy)
       {
         buyTimes = buyTimes.append(t);
+        buyCount++;
       }
       else if (side == Side.Sell)
       {
         sellTimes = sellTimes.append(t);
+        sellCount++;
       }
     }
-
+    buyTimes = buyTimes.slice(0, buyCount );
+    sellTimes = sellTimes.slice(0, sellCount );
+    
     int[] indexes = getIndices(times);
     int[] buyIndexes = getIndices(buyTimes);
     int[] sellIndexes = getIndices(sellTimes);

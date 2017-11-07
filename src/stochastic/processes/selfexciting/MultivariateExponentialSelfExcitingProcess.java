@@ -100,9 +100,13 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
 
   private Entry<Double, Integer>[][][] upperEntries;
 
-  Vector T;
+  public Vector T;
 
-  IntVector K;
+  /**
+   * integer-array indicating which dimension to which each point in
+   * this{@link #T} corresponds
+   */
+  public IntVector K;
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 

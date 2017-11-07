@@ -226,10 +226,7 @@ public class SelfExcitingProcessEstimator
     TextTable tt = new TextTable(columnHeaders, data);
 
     tt.setAddRowNumbering(true);
-    out.print(ansi().fgBlack().bgBright(Color.WHITE));
     tt.printTable();
-    out.flush();
-    out.print(ansi().reset());
 
     return tt;
   }

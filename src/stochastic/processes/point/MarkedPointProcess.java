@@ -47,12 +47,6 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
 
   private double openTimeMillis = DateUtils.convertTimeUnits(openTime, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
 
-  private int getBucket(double t)
-  {
-    double x = t - openTime;
-    return (int) (x / bucketLength);
-  }
-
   @Override
   public String toString()
   {
@@ -210,33 +204,6 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   public void setMppFile(File mppFile)
   {
     this.mppFile = mppFile;
-  }
-
-  /**
-   * 
-   * @param W
-   *          window length in units of seconds
-   * 
-   * @param dt
-   *          discretization size in units of seconds
-   * @return
-   */
-  public DoubleColMatrix discretize(final double dt)
-  {
-    int m = (int) (tradingDuration / DateUtils.convertToHours(TimeUnit.SECONDS, dt));
-    int n = ArchivableEvent.EventType.values().length;
-    DoubleColMatrix A = new DoubleColMatrix(m, n);
-    for (ArchivableEvent event : this)
-    {
-      double t = DateUtils.convertTimeUnits(event.getTimeOfDay() - openTime, TimeUnit.HOURS, TimeUnit.SECONDS);
-      int tk = (int) (t / dt);
-      int type = event.getEventType();
-      if (tk >= 0 && tk < m)
-      {
-        A.set(tk, type, A.get(tk, type) + 1);
-      }
-    }
-    return A;
   }
 
   public DoubleRowMatrix getTradeMatrix(TimeUnit timeUnit)
