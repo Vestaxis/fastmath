@@ -12,7 +12,14 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   @Override
   public double nthNormalizedMoment(int n)
   {
-    return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
+    if (ε == 0)
+    {
+      return (pow(m, n * M) - 1) / M / (pow(m, n) - 1) * pow(τ0, n);
+    }
+    else
+    {
+      return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
+    }
   }
 
   public ApproximatePowerlawSelfExcitingProcess(double ε, double τ0)
@@ -105,9 +112,8 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   @Override
   public double Z()
   {
-    return sum(j -> α(j) / β(j), 0, order() - 1) / getρ();
+    return sum(j -> α(j) / β(j), 0, order() - 1);
   }
-
 
   /**
    * `
@@ -117,11 +123,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   @Override
   public double getρ()
   {
-    if (!Double.isNaN(cachedρ)) { return cachedρ; }
-    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
-    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
-    cachedρ = res;
-    return res;
+    return 1;
 
   }
 

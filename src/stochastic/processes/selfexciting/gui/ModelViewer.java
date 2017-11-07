@@ -1,16 +1,10 @@
 package stochastic.processes.selfexciting.gui;
 
-import static java.lang.System.out;
-
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,12 +18,8 @@ import org.knowm.xchart.XYChart;
 
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
-import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
-import stochastic.processes.point.MarkedPointProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
-import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
 import stochastic.processes.selfexciting.NasdaqTradingStrategy;
 import util.DateUtils;
 
@@ -109,7 +99,7 @@ public class ModelViewer
     assert times.equals(firstProcess.X.col(0));
     Vector prices = firstProcess.X.col(1);
     chart.addSeries("price", times.toArray(), prices.toArray());
-    chart.setTitle( "time units=minutes");
+    chart.setTitle( "time units=hours");
     chart.getStyler().setMarkerSize(0);
 
     EventQueue.invokeLater(new Runnable()

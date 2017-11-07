@@ -63,8 +63,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
 
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
@@ -150,6 +148,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     return multiopt;
   }
+
+
+  public static String[] statisticNames =
+  { "Log-Lik",  "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {

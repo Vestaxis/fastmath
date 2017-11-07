@@ -104,11 +104,6 @@ public class SelfExcitingProcessEstimator
     return estimateHawkesProcesses(type, trajectoryCount, data);
   }
 
-  public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcess(ExponentialSelfExcitingProcessFactory.Type type, Vector data) throws IOException
-  {
-    return estimateHawkesProcesses(type, Runtime.getRuntime().availableProcessors(), data);
-  }
-
   /**
    * Return an array of calibrated Hawkes processes by splitting the trading
    * session up into windows of length this{@link #W}

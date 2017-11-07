@@ -74,7 +74,8 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   @Override
   public double Z()
   {
-    return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) / getρ();
+    //return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) / getρ();
+    return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) ;
   }
 
   @Override
