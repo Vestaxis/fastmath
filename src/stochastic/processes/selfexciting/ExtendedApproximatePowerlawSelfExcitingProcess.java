@@ -8,12 +8,11 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import fastmath.DoubleMatrix;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
-public class ExtendedApproximatePowerlawSelfExcitingProcess
-    extends ApproximatePowerlawSelfExcitingProcess
-    implements MultivariateFunction, Serializable
+public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
   private static final long serialVersionUID = 1L;
 
@@ -26,7 +25,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess
   protected static enum Parameter implements BoundedParameter
   {
 
-    κ(0, 1), η(0,10), b(0, 2), ε(0, 0.5), τ0(0, 3);
+    κ(0, 1), η(0, 10), b(0, 2), ε(0, 0.5), τ0(0, 3);
 
     private double min;
     private double max;
@@ -63,8 +62,6 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess
 
   }
 
-  
-
   public ExtendedApproximatePowerlawSelfExcitingProcess()
   {
   }
@@ -72,11 +69,12 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess
   public double b;
 
   public double η;
-  
+
+
   @Override
   public double Z()
   {
-    return ( M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1) ) / getρ();
+    return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) / getρ();
   }
 
   @Override
@@ -124,11 +122,8 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess
   @Override
   public double getρ()
   {
-    if ( !Double.isNaN( cachedρ ))
-    {
-      return cachedρ;
-    }
-    double x = sum(j -> prod(k -> k == j ? α(j) : pow( β(j), 2 ), 0, order() - 1), 0, order() - 1);
+    if (!Double.isNaN(cachedρ)) { return cachedρ; }
+    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
     double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
     cachedρ = res;
     return res;

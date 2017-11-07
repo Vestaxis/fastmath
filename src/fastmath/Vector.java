@@ -836,8 +836,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    */
   public Vector multiply(double x)
   {
-    BLAS1.dscal(this, x);
-
+    for (int i = 0; i < size; i++)
+    {
+      set(i, get(i) * x);
+    }
     return this;
   }
 

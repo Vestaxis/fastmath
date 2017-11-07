@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.optim.SimpleBounds;
 
+import fastmath.DoubleMatrix;
 import fastmath.Vector;
 
 public abstract class AbstractSelfExcitingProcess
@@ -15,6 +16,12 @@ public abstract class AbstractSelfExcitingProcess
 
   public Vector T;
 
+
+  /*
+   * The first column of this matrix is identical with T, the remaining columns,
+   * if any, are the marks associated with the timestamps in column 0
+   */
+  public DoubleMatrix X;
 
   @Override
   public final Object clone()

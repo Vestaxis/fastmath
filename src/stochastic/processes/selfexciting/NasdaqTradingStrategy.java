@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import fastmath.DoubleColMatrix;
+import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
@@ -29,9 +30,9 @@ public class NasdaqTradingStrategy
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    DoubleColMatrix matrix = MatFile.loadMatrix(matFile, symbol);
-    Vector times = matrix.col(0).setName("times");
-    Vector prices = matrix.col(1).setName("prices");
+    DoubleColMatrix markedPoints = MatFile.loadMatrix(matFile, symbol);
+    Vector times = markedPoints.col(0).setName("times");
+    Vector prices = markedPoints.col(1).setName("prices");
     TradeClassifier classifier = new TradeClassifier();
     Vector buyTimes = new Vector();
     Vector sellTimes = new Vector();
@@ -58,7 +59,7 @@ public class NasdaqTradingStrategy
     // out.println( "buyTimes=" + buyTimes );
     // out.println( "sellTimes=" + sellTimes );
 
-    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, times, indexes);
+    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, times, indexes, markedPoints);
 
     launchModelViewer(processes).frame.setTitle(ModelViewer.class.getSimpleName() + ": " + matFile);
 
@@ -94,20 +95,23 @@ public class NasdaqTradingStrategy
         stats[i][j] = processStats.get(i)[j];
       }
     }
-    ModelViewer viewer = new ModelViewer(columnHeaders, stats);
+    ModelViewer viewer = new ModelViewer(columnHeaders, stats, processes);
     viewer.show();
     return viewer;
   }
 
-  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, Vector times, int[] indexes)
+  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, Vector times, int[] indexes,
+      DoubleColMatrix markedPoints)
   {
     int n = indexes.length;
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
     for (int i = 0; i < n; i++)
     {
-      Vector timeSlice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+      DoubleMatrix pointSlice = markedPoints.sliceRows(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+      Vector timeSlice = pointSlice.col(0);
 
       ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+      process.X = pointSlice;
       process.T = timeSlice;
       process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
       processes.add(process);
