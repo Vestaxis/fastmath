@@ -12,9 +12,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
 
 import fastmath.Vector;
 import fastmath.Vector.Condition;
@@ -67,7 +72,7 @@ public class ModelViewer
   private void initialize()
   {
     frame = new JFrame();
-    frame.setBounds(100, 100, 983, 557);
+    frame.setBounds(100, 100, 2200, 1057);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     table = new JTable();
@@ -75,7 +80,17 @@ public class ModelViewer
     table.setColumnSelectionAllowed(true);
 
     JScrollPane scrollPane = new JScrollPane(table);
-    frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+    
+    
+    JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+    splitPane.setTopComponent(scrollPane);
+    splitPane.setDividerLocation(250);
+    JPanel bottomPanel = new JPanel();
+    splitPane.setBottomComponent(bottomPanel);
+    XYChart chart = new XYChart(1000, 500);
+    bottomPanel.add(new XChartPanel<XYChart>(chart));
+    
+    frame.getContentPane().add(splitPane, BorderLayout.CENTER);
   }
 
   public void show()

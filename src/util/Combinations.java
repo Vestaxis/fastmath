@@ -19,12 +19,11 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
 import com.github.dakusui.combinatoradix.HomogeniousCombinator;
-import com.maplesoft.externalcall.MapleException;
 
 public class Combinations
 {
 
-  public static void main(String[] args) throws MapleException
+  public static void main(String[] args) 
   {
     int P = 3;
 

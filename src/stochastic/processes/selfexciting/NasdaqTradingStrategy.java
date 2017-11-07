@@ -29,7 +29,6 @@ public class NasdaqTradingStrategy
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-
     DoubleColMatrix matrix = MatFile.loadMatrix(matFile, symbol);
     Vector times = matrix.col(0).setName("times");
     Vector prices = matrix.col(1).setName("prices");
@@ -61,17 +60,19 @@ public class NasdaqTradingStrategy
 
     ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, times, indexes);
 
-    launchModelViewer(processes);
+    launchModelViewer(processes).frame.setTitle(ModelViewer.class.getSimpleName() + ": " + matFile);
 
     out.println("indexes=" + Arrays.toString(indexes));
     out.println("buyIndexes=" + Arrays.toString(buyIndexes));
     out.println("sellIndexes=" + Arrays.toString(sellIndexes));
 
-    // TODO: 1. implement the multivariate exponential self-exciting process code that
-    // was written before and adapt the exponential approximations of powerlaws so they
-    // work in a multivariate manner. In this case, bivariate process of buys/sells 
+    // TODO: 1. implement the multivariate exponential self-exciting process code
+    // that
+    // was written before and adapt the exponential approximations of powerlaws so
+    // they
+    // work in a multivariate manner. In this case, bivariate process of buys/sells
     // were the superposition of the two inferred processes follows a known process.
-    
+
     // 2. Price direction expectation could be incorporated by introducing an
     // asymmetry in the trigger for long/short position triggering.
 
@@ -79,7 +80,7 @@ public class NasdaqTradingStrategy
 
   }
 
-  public static void launchModelViewer(ArrayList<ExponentialSelfExcitingProcess> processes)
+  public static ModelViewer launchModelViewer(ArrayList<ExponentialSelfExcitingProcess> processes)
   {
     List<Object[]> processStats = processes.stream().map(process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(toList());
     int M = processStats.size();
@@ -95,6 +96,7 @@ public class NasdaqTradingStrategy
     }
     ModelViewer viewer = new ModelViewer(columnHeaders, stats);
     viewer.show();
+    return viewer;
   }
 
   public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, Vector times, int[] indexes)
@@ -126,7 +128,7 @@ public class NasdaqTradingStrategy
    *         {@link MarkedPointProcess#openTime} to
    *         {@link MarkedPointProcess#closeTime}
    */
-  public static int[] getIndices(Vector times )
+  public static int[] getIndices(Vector times)
   {
     int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
     out.println("Dividing the interval into " + n + " pieces");
