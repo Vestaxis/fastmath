@@ -52,8 +52,6 @@ import fastmath.optim.SolutionValidator;
  * 
  *
  */
-@SuppressWarnings(
-{ "deprecation", "unused", "unchecked" })
 public abstract class MultivariateExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess
 {
 

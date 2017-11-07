@@ -5,24 +5,23 @@ import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
+import static org.fusesource.jansi.Ansi.ansi;
 
-import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.optim.PointValuePair;
+import org.fusesource.jansi.Ansi.Color;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
-import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.point.MarkedPointProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
-import stochastic.processes.selfexciting.gui.ModelViewer;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
@@ -30,8 +29,7 @@ import util.TerseThreadFactory;
 public class SelfExcitingProcessEstimator
 {
   @Units(time = TimeUnit.HOURS)
-  public
-  static final double W = 0.5; // one tenth of a half hour
+  public static final double W = 0.5; // half hour
 
   static
   {
@@ -96,8 +94,8 @@ public class SelfExcitingProcessEstimator
     return estimateHawkesProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
   }
 
-  public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcess(ExponentialSelfExcitingProcessFactory.Type type, String filename, int trajectoryCount,
-      String symbol) throws IOException
+  public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcess(ExponentialSelfExcitingProcessFactory.Type type, String filename,
+      int trajectoryCount, String symbol) throws IOException
   {
     Vector data = loadTimes(filename, symbol);
 
@@ -114,39 +112,25 @@ public class SelfExcitingProcessEstimator
    * @param trajectoryCount
    *          number of random starts for the multistart optimizer to use to
    *          determine optimal parameters
-   * @param data
+   * @param times
    * @return
    * @throws IOException
    */
-  public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcesses(ExponentialSelfExcitingProcessFactory.Type type, int trajectoryCount, Vector data)
-      throws IOException
+  public static ArrayList<ExponentialSelfExcitingProcess> estimateHawkesProcesses(ExponentialSelfExcitingProcessFactory.Type type, int trajectoryCount,
+      Vector times) throws IOException
   {
 
-    double Edt = data.diff().mean();
+    double Edt = times.diff().mean();
 
     out.println("E[dt]=" + Edt);
 
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
     int n = (int) (MarkedPointProcess.tradingDuration / W);
-    int indexes[] = new int[n];
-    out.println("Estimaing " + n + " pieces");
-    for (int i = 0; i < n; i++)
-    {
-      double startPoint = MarkedPointProcess.openTime + ((i) * W);
-      double endPoint = MarkedPointProcess.openTime + ((i + 1) * W);
-
-      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
-      int idx = data.find(t, Condition.GTE, 0);
-      if (i == n && idx == -1)
-      {
-        idx = data.size() - 1;
-      }
-      indexes[i] = idx;
-    }
+    int indexes[] = NasdaqTradingStrategy.getIndices(times);
 
     for (int i = 0; i < n; i++)
     {
-      Vector slice = data.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
+      Vector slice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       ExponentialSelfExcitingProcess process = ExponentialSelfExcitingProcessFactory.spawnNewProcess(type);
       SelfExcitingProcessEstimator estimator = new SelfExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
@@ -195,14 +179,27 @@ public class SelfExcitingProcessEstimator
   {
     if (verbose)
     {
-      println("spawning " + getTrajectoryCount()
-              + " "
-              + process.getClass().getSimpleName()
-              + "es to estimate the model parameters ["
-              + asList(process.getParameterFields()).stream().map(field -> field.getName()).collect(joining(","))
-              + "] most likely to have generated the observed sequence of "
-              + data.size()
-              + " timestamps");
+      println(ansi().fgRed()
+                    .bgBright(Color.WHITE)
+                    .a("spawning ")
+                    .fgBrightMagenta()
+                    .a(getTrajectoryCount())
+                    .fgGreen()
+                    .a(" " + process.getClass().getSimpleName())
+                    .fgRed()
+                    .bgBright(Color.WHITE)
+                    .a("es to estimate the model parameters ")
+                    .fgBrightBlue()
+                    .a("[" + asList(process.getParameterFields()).stream().map(field -> field.getName()).collect(joining(",")))
+                    .fgRed()
+                    .bgBright(Color.WHITE)
+                    .a("] most likely to have generated the observed sequence of ")
+                    .fgBrightMagenta()
+                    .a(data.size())
+                    .fgRed()
+                    .bgBright(Color.WHITE)
+                    .a(" timestamps")
+                    .reset());
     }
 
     process.T = data;
@@ -226,11 +223,13 @@ public class SelfExcitingProcessEstimator
 
     Object[][] data = evaluateStatisticsForEachLocalOptima(optima, columnHeaders);
 
-  
     TextTable tt = new TextTable(columnHeaders, data);
 
     tt.setAddRowNumbering(true);
+    out.print(ansi().fgBlack().bgBright(Color.WHITE));
     tt.printTable();
+    out.flush();
+    out.print(ansi().reset());
 
     return tt;
   }

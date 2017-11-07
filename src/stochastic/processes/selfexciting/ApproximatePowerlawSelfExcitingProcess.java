@@ -1,6 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -9,18 +8,18 @@ import static java.lang.Math.pow;
 public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
 {
 
-  @Override
-  public double nthNormalizedMoment(int n)
-  {
-    if (ε == 0)
-    {
-      return (pow(m, n * M) - 1) / M / (pow(m, n) - 1) * pow(τ0, n);
-    }
-    else
-    {
-      return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
-    }
-  }
+//  @Override
+//  public double nthNormalizedMoment(int n)
+//  {
+//    if (ε == 0)
+//    {
+//      return (pow(m, n * M) - 1) / M / (pow(m, n) - 1) * pow(τ0, n);
+//    }
+//    else
+//    {
+//      return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
+//    }
+//  }
 
   public ApproximatePowerlawSelfExcitingProcess(double ε, double τ0)
   {

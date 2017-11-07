@@ -5,7 +5,7 @@ import static java.lang.System.out;
 public class Console
 {
 
-  public static void println( String str )
+  public static void println( Object str )
   {
     out.println( str );
   }
