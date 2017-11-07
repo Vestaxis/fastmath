@@ -26,7 +26,7 @@ import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TradeClassifier;
 
-public class TradingProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<TradingProcess>
+public class NasdaqTradingProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<NasdaqTradingProcess>
 {
   public static double openTime = 9.5;
 
@@ -59,7 +59,7 @@ public class TradingProcess implements Iterable<ArchivableEvent>, Iterator<Archi
   private Date date;
   private ByteBuffer buffer;
 
-  public TradingProcess(Pair<RandomAccessFile, RandomAccessFile> pair, File mppFile, String symbol) throws IOException
+  public NasdaqTradingProcess(Pair<RandomAccessFile, RandomAccessFile> pair, File mppFile, String symbol) throws IOException
   {
     this.mppFile = mppFile;
     RandomAccessFile raf = pair.left;
@@ -186,7 +186,7 @@ public class TradingProcess implements Iterable<ArchivableEvent>, Iterator<Archi
   }
 
   @Override
-  public int compareTo(TradingProcess o)
+  public int compareTo(NasdaqTradingProcess o)
   {
     return date.compareTo(o.getDate());
   }
@@ -277,14 +277,14 @@ public class TradingProcess implements Iterable<ArchivableEvent>, Iterator<Archi
   }
 
 
-  public static TradingProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
+  public static NasdaqTradingProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
   {
     Pair<RandomAccessFile, RandomAccessFile> mppDataIndexPair = new Pair<>(new RandomAccessFile(mppFilename, "r"),
                                                                            new RandomAccessFile(mppFilename + ".idx", "r"));
 
     File mppFile = new File(mppFilename);
     String symbol = mppFile.getName().split("-")[0];
-    return new TradingProcess(mppDataIndexPair, mppFile, symbol);
+    return new NasdaqTradingProcess(mppDataIndexPair, mppFile, symbol);
   }
 
 }

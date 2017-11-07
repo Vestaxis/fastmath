@@ -16,12 +16,12 @@ import java.util.stream.StreamSupport;
 
 import fastmath.Pair;
 
-public class TradingProcessIterator implements Iterator<TradingProcess>, Iterable<TradingProcess>
+public class NasdaqTradingProcessIterator implements Iterator<NasdaqTradingProcess>, Iterable<NasdaqTradingProcess>
 {
   private Iterator<File> markedPointProcesses;
   private HashSet<String> symbols = new HashSet<>();
 
-  public TradingProcessIterator(File directory, String... symbolList) throws IOException
+  public NasdaqTradingProcessIterator(File directory, String... symbolList) throws IOException
   {
     symbols.addAll(Arrays.asList(symbolList));
     Stream<File> mppFiles = Files.find(Paths.get(directory.toURI()), 2, (p, bfa) -> {
@@ -39,23 +39,23 @@ public class TradingProcessIterator implements Iterator<TradingProcess>, Iterabl
     markedPointProcesses = mppList.iterator();
   }
 
-  public TradingProcessIterator(String dir, String... symbolList) throws IOException
+  public NasdaqTradingProcessIterator(String dir, String... symbolList) throws IOException
   {
     this(new File(dir), symbolList);
   }
 
-  public static List<TradingProcess> ls(String... symbols) throws IOException
+  public static List<NasdaqTradingProcess> ls(String... symbols) throws IOException
   {
-    return new TradingProcessIterator("/data", symbols).stream().collect(Collectors.toList());
+    return new NasdaqTradingProcessIterator("/data", symbols).stream().collect(Collectors.toList());
   }
 
-  public Stream<TradingProcess> stream()
+  public Stream<NasdaqTradingProcess> stream()
   {
     return StreamSupport.stream(spliterator(), false);
   }
 
   @Override
-  public Iterator<TradingProcess> iterator()
+  public Iterator<NasdaqTradingProcess> iterator()
   {
     return this;
   }
@@ -67,7 +67,7 @@ public class TradingProcessIterator implements Iterator<TradingProcess>, Iterabl
   }
 
   @Override
-  public TradingProcess next()
+  public NasdaqTradingProcess next()
   {
     Pair<RandomAccessFile, RandomAccessFile> mpp = new Pair<>();
     File mppFile;
@@ -85,7 +85,7 @@ public class TradingProcessIterator implements Iterator<TradingProcess>, Iterabl
     }
     try
     {
-      return new TradingProcess(mpp, mppFile, symbol);
+      return new NasdaqTradingProcess(mpp, mppFile, symbol);
     }
     catch (IOException e)
     {
