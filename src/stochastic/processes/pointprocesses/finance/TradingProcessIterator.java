@@ -1,4 +1,4 @@
-package stochastic.processes.point;
+package stochastic.processes.pointprocesses.finance;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,14 +15,13 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import fastmath.Pair;
-import stochastic.processes.pointprocesses.finance.TradingProcess;
 
-public class MarkedPointProcessIterator implements Iterator<TradingProcess>, Iterable<TradingProcess>
+public class TradingProcessIterator implements Iterator<TradingProcess>, Iterable<TradingProcess>
 {
   private Iterator<File> markedPointProcesses;
   private HashSet<String> symbols = new HashSet<>();
 
-  public MarkedPointProcessIterator(File directory, String... symbolList) throws IOException
+  public TradingProcessIterator(File directory, String... symbolList) throws IOException
   {
     symbols.addAll(Arrays.asList(symbolList));
     Stream<File> mppFiles = Files.find(Paths.get(directory.toURI()), 2, (p, bfa) -> {
@@ -40,14 +39,14 @@ public class MarkedPointProcessIterator implements Iterator<TradingProcess>, Ite
     markedPointProcesses = mppList.iterator();
   }
 
-  public MarkedPointProcessIterator(String dir, String... symbolList) throws IOException
+  public TradingProcessIterator(String dir, String... symbolList) throws IOException
   {
     this(new File(dir), symbolList);
   }
 
   public static List<TradingProcess> ls(String... symbols) throws IOException
   {
-    return new MarkedPointProcessIterator("/data", symbols).stream().collect(Collectors.toList());
+    return new TradingProcessIterator("/data", symbols).stream().collect(Collectors.toList());
   }
 
   public Stream<TradingProcess> stream()
