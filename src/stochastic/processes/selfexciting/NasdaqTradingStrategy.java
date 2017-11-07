@@ -18,8 +18,8 @@ import fastmath.IntVector;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
-import stochastic.processes.point.MarkedPointProcess;
 import stochastic.processes.pointprocesses.finance.Side;
+import stochastic.processes.pointprocesses.finance.TradingProcess;
 import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 import util.TradeClassifier;
@@ -134,23 +134,23 @@ public class NasdaqTradingStrategy
    * 
    * @param times
    *          a {@link Vector} of timestamps covering the span
-   *          {@link MarkedPointProcess#openTime} to
-   *          {@link MarkedPointProcess#closeTime}
+   *          {@link TradingProcess#openTime} to
+   *          {@link TradingProcess#closeTime}
    * @return an array of offsets indicating the timestamp indexes which divides
    *         the data into n windows of length
    *         {@link SelfExcitingProcessEstimator#W} hours over the interval
-   *         {@link MarkedPointProcess#openTime} to
-   *         {@link MarkedPointProcess#closeTime}
+   *         {@link TradingProcess#openTime} to
+   *         {@link TradingProcess#closeTime}
    */
   public static int[] getIndices(Vector times)
   {
-    int n = (int) (MarkedPointProcess.tradingDuration / SelfExcitingProcessEstimator.W);
+    int n = (int) (TradingProcess.tradingDuration / SelfExcitingProcessEstimator.W);
     out.println("Dividing the interval into " + n + " pieces");
     int indexes[] = new int[n];
     for (int i = 0; i < n; i++)
     {
-      double startPoint = MarkedPointProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
-      double endPoint = MarkedPointProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
+      double startPoint = TradingProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
+      double endPoint = TradingProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
 
       double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = times.find(t, Condition.GTE, 0);

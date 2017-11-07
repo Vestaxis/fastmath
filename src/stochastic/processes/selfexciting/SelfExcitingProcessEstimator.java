@@ -20,7 +20,7 @@ import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
-import stochastic.processes.point.MarkedPointProcess;
+import stochastic.processes.pointprocesses.finance.TradingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;
@@ -125,7 +125,7 @@ public class SelfExcitingProcessEstimator
     out.println("E[dt]=" + Edt);
 
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
-    int n = (int) (MarkedPointProcess.tradingDuration / W);
+    int n = (int) (TradingProcess.tradingDuration / W);
     int indexes[] = NasdaqTradingStrategy.getIndices(times);
 
     for (int i = 0; i < n; i++)

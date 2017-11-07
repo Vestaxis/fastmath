@@ -15,8 +15,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import fastmath.Pair;
+import stochastic.processes.pointprocesses.finance.TradingProcess;
 
-public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>, Iterable<MarkedPointProcess>
+public class MarkedPointProcessIterator implements Iterator<TradingProcess>, Iterable<TradingProcess>
 {
   private Iterator<File> markedPointProcesses;
   private HashSet<String> symbols = new HashSet<>();
@@ -44,18 +45,18 @@ public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>,
     this(new File(dir), symbolList);
   }
 
-  public static List<MarkedPointProcess> ls(String... symbols) throws IOException
+  public static List<TradingProcess> ls(String... symbols) throws IOException
   {
     return new MarkedPointProcessIterator("/data", symbols).stream().collect(Collectors.toList());
   }
 
-  public Stream<MarkedPointProcess> stream()
+  public Stream<TradingProcess> stream()
   {
     return StreamSupport.stream(spliterator(), false);
   }
 
   @Override
-  public Iterator<MarkedPointProcess> iterator()
+  public Iterator<TradingProcess> iterator()
   {
     return this;
   }
@@ -67,7 +68,7 @@ public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>,
   }
 
   @Override
-  public MarkedPointProcess next()
+  public TradingProcess next()
   {
     Pair<RandomAccessFile, RandomAccessFile> mpp = new Pair<>();
     File mppFile;
@@ -85,7 +86,7 @@ public class MarkedPointProcessIterator implements Iterator<MarkedPointProcess>,
     }
     try
     {
-      return new MarkedPointProcess(mpp, mppFile, symbol);
+      return new TradingProcess(mpp, mppFile, symbol);
     }
     catch (IOException e)
     {

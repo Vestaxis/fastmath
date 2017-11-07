@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.matfile.MatFile;
+import stochastic.processes.pointprocesses.finance.TradingProcess;
 
 public class MPP2Mat
 {
@@ -27,7 +28,7 @@ public class MPP2Mat
 
   public static DoubleRowMatrix mpp2mat(String mppFile, String matFile) throws FileNotFoundException, IOException
   {
-    MarkedPointProcess mpp = MarkedPointProcess.loadMppFile(mppFile);
+    TradingProcess mpp = TradingProcess.loadMppFile(mppFile);
 
     Pair<DoubleRowMatrix, DoubleRowMatrix> buySellMatrix = mpp.getBuySellMatrix(timeUnits);
 

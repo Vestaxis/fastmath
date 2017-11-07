@@ -1,4 +1,4 @@
-package stochastic.processes.point;
+package stochastic.processes.pointprocesses.finance;
 
 import static java.lang.System.err;
 import static java.lang.System.out;
@@ -19,19 +19,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import fastmath.DoubleColMatrix;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
-import stochastic.processes.pointprocesses.finance.ArchivableEvent;
-import stochastic.processes.pointprocesses.finance.Side;
-import stochastic.processes.pointprocesses.finance.TradeTick;
-import stochastic.processes.pointprocesses.finance.TwoSidedQuote;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TradeClassifier;
 
-public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<MarkedPointProcess>
+public class TradingProcess implements Iterable<ArchivableEvent>, Iterator<ArchivableEvent>, Comparable<TradingProcess>
 {
   public static double openTime = 9.5;
 
@@ -64,7 +59,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   private Date date;
   private ByteBuffer buffer;
 
-  public MarkedPointProcess(Pair<RandomAccessFile, RandomAccessFile> pair, File mppFile, String symbol) throws IOException
+  public TradingProcess(Pair<RandomAccessFile, RandomAccessFile> pair, File mppFile, String symbol) throws IOException
   {
     this.mppFile = mppFile;
     RandomAccessFile raf = pair.left;
@@ -191,7 +186,7 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   }
 
   @Override
-  public int compareTo(MarkedPointProcess o)
+  public int compareTo(TradingProcess o)
   {
     return date.compareTo(o.getDate());
   }
@@ -282,14 +277,14 @@ public class MarkedPointProcess implements Iterable<ArchivableEvent>, Iterator<A
   }
 
 
-  public static MarkedPointProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
+  public static TradingProcess loadMppFile(String mppFilename) throws FileNotFoundException, IOException
   {
     Pair<RandomAccessFile, RandomAccessFile> mppDataIndexPair = new Pair<>(new RandomAccessFile(mppFilename, "r"),
                                                                            new RandomAccessFile(mppFilename + ".idx", "r"));
 
     File mppFile = new File(mppFilename);
     String symbol = mppFile.getName().split("-")[0];
-    return new MarkedPointProcess(mppDataIndexPair, mppFile, symbol);
+    return new TradingProcess(mppDataIndexPair, mppFile, symbol);
   }
 
 }
