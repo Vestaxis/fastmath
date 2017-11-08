@@ -96,10 +96,12 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   }
 
+  public int M = 15;
+  
   @Override
   public int order()
   {
-    throw new UnsupportedOperationException("TODO");
+    return M + 1;
   }
 
   @Override

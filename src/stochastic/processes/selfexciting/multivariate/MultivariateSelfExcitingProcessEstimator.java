@@ -24,7 +24,7 @@ import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
-import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy.TradingProcess;
+import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.BoundedParameter;
 import stochastic.processes.selfexciting.multivariate.MultivariateExponentialSelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
@@ -102,7 +102,7 @@ public class MultivariateSelfExcitingProcessEstimator
   public static ArrayList<MultivariateExponentialSelfExcitingProcess> estimateSelfExcitingTradingProcess(MultivariateExponentialSelfExcitingProcessFactory.Type type,
       String filename, int trajectoryCount, String symbol) throws IOException
   {
-    return estimateSelfExcitingTradingProcesses(type, trajectoryCount, new TradingProcess(MatFile.loadMatrix(filename, symbol)));
+    return estimateSelfExcitingTradingProcesses(type, trajectoryCount, new TradingFiltration(MatFile.loadMatrix(filename, symbol)));
   }
 
   /**
@@ -120,7 +120,7 @@ public class MultivariateSelfExcitingProcessEstimator
    * @throws IOException
    */
   public static ArrayList<MultivariateExponentialSelfExcitingProcess> estimateSelfExcitingTradingProcesses(MultivariateExponentialSelfExcitingProcessFactory.Type type,
-      int trajectoryCount, TradingProcess tradingProcess) throws IOException
+      int trajectoryCount, TradingFiltration tradingProcess) throws IOException
   {
     Vector times = tradingProcess.times;
     double Edt = times.diff().mean();
@@ -137,11 +137,12 @@ public class MultivariateSelfExcitingProcessEstimator
       IntVector typeSlice = tradingProcess.types.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       DoubleMatrix markedPointSlice = tradingProcess.markedPoints.sliceRows(i == 0 ? 0 : tradingProcess.tradeIndexes[i - 1], tradingProcess.tradeIndexes[i]);
 
-      MultivariateExponentialSelfExcitingProcess process = MultivariateExponentialSelfExcitingProcessFactory.spawnNewProcess(type, 2);
+      MultivariateExponentialSelfExcitingProcess process = MultivariateExponentialSelfExcitingProcessFactory.spawnNewProcess(type, tradingProcess );
+ 
       
       MultivariateSelfExcitingProcessEstimator estimator = new MultivariateSelfExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
-      estimator.estimate(timeSlice, typeSlice);
+      estimator.estimate(markedPointSlice, typeSlice);
       processes.add(process);
 
       File testFile = new File("test" + i + ".mat");
@@ -182,8 +183,12 @@ public class MultivariateSelfExcitingProcessEstimator
     return trajectoryCount;
   }
 
-  public MultivariateExponentialSelfExcitingProcess estimate(Vector times, IntVector types) throws IOException
+  public MultivariateSelfExcitingProcess estimate(DoubleMatrix markedPoints, IntVector types) throws IOException
   {
+    process.T = markedPoints.col(0);
+    process.X = markedPoints;
+    process.K = types;
+    
     if (verbose)
     {
       println(ansi().fgRed()
@@ -202,15 +207,14 @@ public class MultivariateSelfExcitingProcessEstimator
                     .bgBright(Color.WHITE)
                     .a("] most likely to have generated the observed sequence of ")
                     .fgBrightMagenta()
-                    .a(times.size())
+                    .a(process.T.size())
                     .fgRed()
                     .bgBright(Color.WHITE)
                     .a(" timestamps")
                     .reset());
     }
 
-    process.T = times;
-    process.K = types;
+ 
     ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
     printResults(optimizer);
 

@@ -19,7 +19,7 @@ import org.knowm.xchart.XYChart;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
-import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy.TradingProcess;
+import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import util.DateUtils;
 
@@ -37,7 +37,7 @@ public class ModelViewer
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
     ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile,
-                                                                                                       new TradingProcess(MatFile.loadMatrix(matFile, symbol)));
+                                                                                                       new TradingFiltration(MatFile.loadMatrix(matFile, symbol)));
 
     NasdaqTradingStrategy.launchModelViewer(processes);
 

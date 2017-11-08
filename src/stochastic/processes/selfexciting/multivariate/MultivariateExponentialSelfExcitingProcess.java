@@ -52,10 +52,8 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
-import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 
-
-public abstract class MultivariateExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess
+public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
 {
 
   protected int dim;
@@ -71,41 +69,14 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   // time decay parameters
   DoubleMatrix[] β;
 
-  @Override
-  public Object clone()
-  {
-    try
-    {
-      AbstractSelfExcitingProcess spawn = getClass().newInstance();
-      spawn.assignParameters(getParameters().toArray());
-      spawn.T = T;
-      return spawn;
-    }
-    catch (InstantiationException | IllegalAccessException e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
-
-  }
-  
   public MultivariateExponentialSelfExcitingProcess()
   {
-    
-  }
-  
 
+  }
 
   private Entry<Double, Integer>[][][] lowerEntries;
 
   private Entry<Double, Integer>[][][] upperEntries;
-
-  public Vector T;
-
-  /**
-   * integer-array indicating which dimension to which each point in
-   * this{@link #T} corresponds
-   */
-  public IntVector K;
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
@@ -159,16 +130,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
 
   }
 
-  private double evolveΛ(double prevdt, double dt, double d, double[] a)
-  {
-    throw new UnsupportedOperationException( "TODO" ); 
-  }
-
-  private double evolveλ(double dt, double d, double[] s)
-  {
-    throw new UnsupportedOperationException( "TODO" ); 
-  }
-
   protected boolean verbose = false;
 
   public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
@@ -177,6 +138,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     int maxIters = Integer.MAX_VALUE;
     assert T != null : "T cannot be null";
     assert K != null : "K cannot be null";
+
     assert T.size() == K.size() : "times and types should be of same dimension";
 
     final MultivariateFunction logLikelihoodFunction = new MultivariateFunction()
@@ -186,7 +148,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
       public double value(double[] paramArray)
       {
         Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair = getSubTimes(T, K);
-
 
         Vector mean = calculateMean();
         double ll = 0;
@@ -463,14 +424,26 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     return intensity;
   }
 
+  /**
+   * @see this{@link #calculateIntensity(Pair, int)}
+   * @param dt
+   * @param d
+   * @param s
+   * @return
+   */
+  protected double evolveλ(double dt, double d, double[] s)
+  {
+    throw new UnsupportedOperationException("TODO: do as in calculateIntensity");
+  }
+
   protected double getDeterministicIntensity(int m, double upperTime, int i)
   {
-    return 1;
+    return κ.get(m);
   }
 
   protected double getDeterministicCompensator(int m, double upperTime, double lowerTime, int i)
   {
-    return upperTime - lowerTime;
+    return (upperTime - lowerTime) * getDeterministicIntensity(m, upperTime, i);
   }
 
   private Entry<Double, Integer> getUpperEntry(TreeMap<Double, Integer>[] subTimeIndex, final double upperTime, int n, int m, int i)
@@ -541,6 +514,19 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
       compensator.set(i - 1, sum);
     }
     return compensator;
+  }
+
+  /**
+   * @see this{@link #calculateCompensator(Pair, int)}
+   * @param prevdt
+   * @param dt
+   * @param d
+   * @param a
+   * @return
+   */
+  protected double evolveΛ(double prevdt, double dt, double d, double[] a)
+  {
+    throw new UnsupportedOperationException("TODO: do as in calculateCompensator");
   }
 
   public Vector calculateCompensator(Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair, int m)
@@ -778,11 +764,11 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
 
   public AbstractMatrix conditionalλ()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
   public void storeParameters(File modelFile)
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 }
