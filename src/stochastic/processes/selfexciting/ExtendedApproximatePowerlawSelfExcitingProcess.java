@@ -123,11 +123,12 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   @Override
   public double getρ()
   {
-    if (!Double.isNaN(cachedρ)) { return cachedρ; }
-    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
-    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
-    cachedρ = res;
-    return res;
+    return 1;
+//    if (!Double.isNaN(cachedρ)) { return cachedρ; }
+//    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
+//    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
+//    cachedρ = res;
+//    return res;
 
   }
 }

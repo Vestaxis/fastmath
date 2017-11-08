@@ -63,7 +63,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-
   public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
   {
     chart.addSeries(name, X.toArray(), Y.toArray());
@@ -149,14 +148,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return multiopt;
   }
 
-
   public static String[] statisticNames =
-  { "Log-Lik",  "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
 
   public Object[] evaluateParameterStatistics(double[] point)
   {
     ExponentialSelfExcitingProcess process = newProcess(point);
-    double ksStatistic = process.getCompensatorKolmogorovSmirnovStatistic();
+    double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
 
     Vector compensated = process.Λ();
 
@@ -203,12 +201,18 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(i -> α(i) / β(i), 0, order() - 1) / Z();
   }
 
+  /**
+   * 
+   * @return a list formed by concatenating the names of the parameters enumerated
+   *         by this{@link #getBoundedParameters()} and the names of the
+   *         statistics enumerated by this{@link #statisticNames}
+   */
   public String[] getColumnHeaders()
   {
     return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
   }
 
-  public double getCompensatorKolmogorovSmirnovStatistic()
+  public double getΛKolmogorovSmirnovStatistic()
   {
     Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
     double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());

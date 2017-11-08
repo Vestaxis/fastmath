@@ -1,5 +1,4 @@
-% This file was created with JabRef 2.10.
-% Encoding: UTF8
+% Encoding: UTF-8
 
 
 @Book{stationaryRandomFunctions,
@@ -53,61 +52,6 @@
   Timestamp                = {2008.08.25}
 }
 
-@Book{argyros2008convergence,
-  Title                    = {Convergence and applications of Newton-type iterations},
-  Author                   = {Argyros, Ioannis K},
-  Publisher                = {Springer Science \& Business Media},
-  Year                     = {2008}
-}
-
-@Article{argyros2014convergence,
-  Title                    = {Convergence of the relaxed Newton's method},
-  Author                   = {Argyros, Ioannis Konstantinos and Guti{\'e}rrez, Jos{\'e} Manuel and Magren{\'a}n, {\'A}ngel Alberto and Romero, Natalia},
-  Journal                  = {Journal of the Korean Mathematical Society},
-  Year                     = {2014},
-  Number                   = {1},
-  Pages                    = {137--162},
-  Volume                   = {51},
-
-  Publisher                = {The Korean Mathematical Society}
-}
-
-@Article{Argyros2012,
-  Title                    = {Weaker conditions for the convergence of Newton’s method},
-  Author                   = {Argyros, Ioannis K and Hilout, Sa{\"\i}d},
-  Journal                  = {Journal of Complexity},
-  Year                     = {2012},
-  Number                   = {3},
-  Pages                    = {364--387},
-  Volume                   = {28},
-
-  Publisher                = {Elsevier}
-}
-
-@Article{argyros2012semilocal,
-  Title                    = {On the semilocal convergence of damped Newton’s method},
-  Author                   = {Argyros, Ioannis K and Hilout, Sa{\"\i}d},
-  Journal                  = {Applied Mathematics and Computation},
-  Year                     = {2012},
-  Number                   = {5},
-  Pages                    = {2808--2824},
-  Volume                   = {219},
-
-  Publisher                = {Elsevier}
-}
-
-@Article{argyros2012weaker,
-  Title                    = {Weaker conditions for the convergence of Newton’s method},
-  Author                   = {Argyros, Ioannis K and Hilout, Sa{\"\i}d},
-  Journal                  = {Journal of Complexity},
-  Year                     = {2012},
-  Number                   = {3},
-  Pages                    = {364--387},
-  Volume                   = {28},
-
-  Publisher                = {Elsevier}
-}
-
 @Article{einstein-photon,
   Title                    = {Einstein's Proposal of the Photon Concept---a Translation of the Annalen der Physik Paper of 1905},
   Author                   = {A. B. Arons and M. B. Peppard},
@@ -142,30 +86,6 @@
 
   HowPublished             = {arXiv.org:space/0307214},
   Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:space/0307214}
-}
-
-@Article{baker1991iterates,
-  Title                    = {Iterates of meromorphic functions: I},
-  Author                   = {Baker, Irvine N and Kotus, Janina and Yinian, Lu}
-}
-
-@Article{baker2008,
-  Title                    = {Iterates of meromorphic functions III: Preperiodic domains},
-  Author                   = {I. N. Baker and J. Kotus and Lü Yinian},
-  Journal                  = {Ergodic Theory and Dynamical Systems},
-  Year                     = {2008},
-
-  Month                    = {09},
-  Number                   = {4},
-  Pages                    = {603-618},
-  Volume                   = {11},
-
-  Abstract                 = {AbstractThe paper discusses the connectivity of periodic and preperiodic domains in the stable set in the iteration of a meromorphic function. The connectivity of an invariant component has one of the values 1, 2, ∞. Examples are constructed to show that the connectivity of a preperiodic component may take any value.},
-  Address                  = {Cambridge, UK},
-  Day                      = {01},
-  Doi                      = {10.1017/S0143385700006386},
-  Publisher                = {Cambridge University Press},
-  Url                      = {https://www.cambridge.org/core/article/iterates-of-meromorphic-functions-iii-preperiodic-domains/CC08D3E7B6B116A22FDB711696CA28BB}
 }
 
 @Book{ocvshjb,
@@ -273,20 +193,6 @@
   Url                      = {http://links.jstor.org/sici?sici=0021-9002%28200103%2938%3A1%3C180%3AGRCRFH%3E2.0.CO%3B2-F}
 }
 
-@Article{bergweiler1993iteration,
-  Title                    = {{Iteration of meromorphic functions}},
-  Author                   = {{Bergweiler}, W.},
-  Journal                  = {ArXiv Mathematics e-prints},
-  Year                     = {1993},
-
-  Month                    = sep,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/1993math.....10226B},
-  Eprint                   = {math/9310226},
-  Keywords                 = {Mathematics - Dynamical Systems, Mathematics - Complex Variables}
-}
-
 @Article{ocvi,
   Title                    = {Optimal control based on the variational iteration method },
   Author                   = {Samira Berkani and Farida Manseur and Ahmed Maidi},
@@ -362,22 +268,6 @@
   Url                      = {http://liberzon.csl.illinois.edu/teaching/bliss.pdf}
 }
 
-@Article{zcr,
-  Title                    = {{New computations of the Riemann zeta function on the critical line}},
-  Author                   = {{Bober}, J.~W. and {Hiary}, G.~A.},
-  Journal                  = {ArXiv e-prints},
-  Year                     = {2016},
-
-  Month                    = jul,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/2016arXiv160700709B},
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1607.00709},
-  Keywords                 = {Mathematics - Number Theory, Mathematics - Numerical Analysis, 11Y35},
-  Primaryclass             = {math.NT}
-}
-
 @Book{bochner1955harmonic,
   Title                    = {Harmonic Analysis and the Theory of Probability},
   Author                   = {Bochner, Solomon},
@@ -399,14 +289,6 @@
 
   Owner                    = {crow},
   Timestamp                = {2009.07.15}
-}
-
-@Book{borwein2008riemann,
-  Title                    = {The Riemann hypothesis: a resource for the afficionado and virtuoso alike},
-  Author                   = {Borwein, Peter},
-  Publisher                = {Springer Science \& Business Media},
-  Year                     = {2008},
-  Volume                   = {27}
 }
 
 @Article{bowsher2007modelling,
@@ -648,18 +530,6 @@
   Publisher                = {Elsevier}
 }
 
-@Article{chen1990convergence,
-  Title                    = {On the convergence of a class of generalized Steffensen's iterative procedures and error analysis},
-  Author                   = {Chen, Dong},
-  Journal                  = {International Journal of Computer Mathematics},
-  Year                     = {1990},
-  Number                   = {3-4},
-  Pages                    = {195--203},
-  Volume                   = {31},
-
-  Publisher                = {Taylor \& Francis}
-}
-
 @Article{cheninference,
   Title                    = {INFERENCE FOR A NON-STATIONARY SELF-EXCITING POINT PROCESS WITH AN APPLICATION IN ULTRA-HIGH FREQUENCY FINANCIAL DATA MODELING},
   Author                   = {Chen, F. and Hall, P.},
@@ -749,13 +619,6 @@
   Volume                   = {30},
 
   Url                      = {http://www.sciencedirect.com/science/article/B6V85-4HG69H7-2/2/4a17ea597d7f096c97d81085e4bff57d}
-}
-
-@Book{conte1980elementary,
-  Title                    = {Elementary numerical analysis: an algorithmic approach},
-  Author                   = {Conte, Samuel Daniel and Boor, Carl W De},
-  Publisher                = {McGraw-Hill Higher Education},
-  Year                     = {1980}
 }
 
 @Book{bon,
@@ -859,26 +722,6 @@
   Timestamp                = {2015.11.12}
 }
 
-@Article{Crowley2016,
-  Title                    = {Convergence of the Newton-Kantorovich Method for the Gram Points},
-  Author                   = {Stephen Crowley},
-  Journal                  = {http://vixra.org/abs/1612.0176},
-  Year                     = {2016},
-
-  Owner                    = {crow},
-  Timestamp                = {2016.12.09}
-}
-
-@Article{NKG,
-  Title                    = {Convergence of the Newton-Kantorovich Method for the Gram Points},
-  Author                   = {Stephen Crowley},
-  Journal                  = {http://vixra.org/abs/1612.0176},
-  Year                     = {2016},
-
-  Owner                    = {crow},
-  Timestamp                = {2016.12.15}
-}
-
 @Article{scppm,
   Title                    = {Point Process Models for Multivariate High-Frequency Irregularly Spaced Data},
   Author                   = {Stephen Crowley},
@@ -969,19 +812,6 @@
   Timestamp                = {2015.09.06}
 }
 
-@InProceedings{DaumFilter,
-  Title                    = {Exact Finite Dimensional Nonlinear Filters},
-  Author                   = {Frederick E. Daum},
-  Booktitle                = {Proceedings of 24th Conference on Decision and Control},
-  Year                     = {1985},
-
-  Address                  = {Ft. Lauderdale, FL},
-  Month                    = {December},
-
-  Owner                    = {crow},
-  Timestamp                = {2016.11.30}
-}
-
 @Article{sl2r-hilbert,
   Title                    = {Representations of {SL}(2,{R}) in a {H}ilbert space of analytic functions and a class of associated integral transforms},
   Author                   = {{Debabrata Basu}},
@@ -1034,18 +864,6 @@
   Timestamp                = {2014.03.19}
 }
 
-@Article{dembo1982inexact,
-  Title                    = {Inexact newton methods},
-  Author                   = {Dembo, Ron S and Eisenstat, Stanley C and Steihaug, Trond},
-  Journal                  = {SIAM Journal on Numerical analysis},
-  Year                     = {1982},
-  Number                   = {2},
-  Pages                    = {400--408},
-  Volume                   = {19},
-
-  Publisher                = {SIAM}
-}
-
 @Article{cms,
   Title                    = {Some identities on the Catalan, Motzkin and Schroder numbers},
   Author                   = {Eva Y.P. Deng and Wei-Jun Yan},
@@ -1066,16 +884,6 @@
   Pages                    = {116--122},
 
   Publisher                = {SIAM Philadelphia}
-}
-
-@Article{dominguez1998dynamics,
-  Title                    = {Dynamics of transcendental meromorphic functions},
-  Author                   = {Dom{\i}nguez, Patricia},
-  Journal                  = {Ann. Acad. Sci. Fenn. Math},
-  Year                     = {1998},
-  Number                   = {1},
-  Pages                    = {225--250},
-  Volume                   = {23}
 }
 
 @Article{rigor,
@@ -1100,6 +908,17 @@
 
   Owner                    = {crow},
   Timestamp                = {2009.05.28}
+}
+
+@Article{yang-mills-segal-bargmann,
+  Title                    = {Yang-Mills theory and the Segal-Bargmann transform},
+  Author                   = {Bruce K. Driver and Brian C. Hall},
+  Journal                  = {Communications in Mathematical Physics},
+  Year                     = {1999},
+  Pages                    = {249},
+  Volume                   = {201},
+
+  Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:hep-th/9808193}
 }
 
 @Book{edwardszeta,
@@ -1190,6 +1009,22 @@
 
   Owner                    = {crow},
   Timestamp                = {2008.09.23}
+}
+
+@Article{gbcab,
+  Title                    = {Generalized boundary conditions for the Aharonov-Bohm effect combined with a homogeneous magnetic field},
+  Author                   = {{Exner}, P. and {{\v S}t'ov{\'{\i}}{\v c}ek}, P. and {Vyt{\v r}as}, P.},
+  Journal                  = {Journal of Mathematical Physics},
+  Year                     = {2002},
+
+  Month                    = may,
+  Pages                    = {2151-2168},
+  Volume                   = {43},
+
+  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
+  Adsurl                   = {http://adsabs.harvard.edu/abs/2002JMP....43.2151E},
+  Doi                      = {10.1063/1.1463712},
+  Keywords                 = {Aharonov-Bohm effect, boundary-value problems, magnetic fields}
 }
 
 @Article{SchrodingerHeatNonnegative,
@@ -1324,29 +1159,9 @@
   HowPublished             = {https://commons.apache.org/space/}
 }
 
-@Article{francca2014theory,
-  Title                    = {A theory for the zeros of Riemann Zeta and other L-functions},
-  Author                   = {Fran{\c{c}}a, Guilherme and LeClair, Andr{\'e}},
-  Journal                  = {arXiv preprint arXiv:1407.4358},
-  Year                     = {2014}
-}
-
-@Article{lg2015,
-  Title                    = {{Transcendental equations satisfied by the individual
- zeros of Riemann $\zeta$, Dirichlet and modular
- $L$-functions}},
-  Author                   = {França, Guilherme and LeClair, André},
-  Year                     = {2015},
-
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1502.06003},
-  Primaryclass             = {math.NT},
-  Slaccitation             = {%%CITATION = ARXIV:1502.06003;%%}
-}
-
 @Article{z0t,
-  Title                    = {Transcendental equations satisfied by the individual zeros of Riemann ζ, Dirichlet and modular L-functions},
-  Author                   = {Guilherme França and André LeClair},
+  Title                    = {Transcendental equations satisfied by  the individual zeros of Riemann zeta, Dirichlet and modular L functions},
+  Author                   = {Guilherme Franca and Andre LeClair},
   Journal                  = {Communications in Number Theory and Physics},
   Year                     = {2015},
 
@@ -1363,6 +1178,19 @@
 
   Owner                    = {crow},
   Timestamp                = {2008.11.30}
+}
+
+@Article{closedHoloPoly,
+  Title                    = {Functions with derivatives given by polynomials in the function itself or a related function},
+  Author                   = {Ghislain R. Franssens},
+  Journal                  = {Analysis Mathematica},
+  Year                     = {2007},
+  Number                   = {1},
+  Pages                    = {17-36},
+  Volume                   = {33},
+
+  Owner                    = {crow},
+  Timestamp                = {2008.09.10}
 }
 
 @Article{numberPyramid,
@@ -1458,18 +1286,6 @@
   Owner                    = {scrowley},
   Pages                    = {200},
   Timestamp                = {2012.01.06}
-}
-
-@Article{gill1988compositions,
-  Title                    = {Compositions of analytic functions of the form Fn (z)= F n- 1 (fn (z)), fn (z)→ f (z)},
-  Author                   = {Gill, John},
-  Journal                  = {Journal of computational and applied mathematics},
-  Year                     = {1988},
-  Number                   = {2},
-  Pages                    = {179--184},
-  Volume                   = {23},
-
-  Publisher                = {Elsevier}
 }
 
 @Article{geomix,
@@ -1616,18 +1432,6 @@
   Primaryclass             = {q-fin.TR}
 }
 
-@Article{gutierrez1997new,
-  Title                    = {A new semilocal convergence theorem for Newton's method},
-  Author                   = {Guti{\'e}rrez, Jos{\'e}M},
-  Journal                  = {Journal of Computational and Applied Mathematics},
-  Year                     = {1997},
-  Number                   = {1},
-  Pages                    = {131--145},
-  Volume                   = {79},
-
-  Publisher                = {Elsevier}
-}
-
 @Article{hypergeometric-neumann-expansion,
   Title                    = {Neumann expansions for a certain class of generalised multiple hypergeometric series arising in physical and quantum chemical applications},
   Author                   = {{H M Srivastava}},
@@ -1715,18 +1519,6 @@
   Url                      = {http://links.jstor.org/sici?sici=0002-9939%28198010%2980%3A2%3C311%3ASCOITT%3E2.0.CO%3B2-B}
 }
 
-@Article{hansen1979global,
-  Title                    = {Global optimization using interval analysis: the one-dimensional case},
-  Author                   = {Hansen, Eldon R},
-  Journal                  = {Journal of Optimization Theory and Applications},
-  Year                     = {1979},
-  Number                   = {3},
-  Pages                    = {331--344},
-  Volume                   = {29},
-
-  Publisher                = {Springer}
-}
-
 @Article{hlrzdp,
   Title                    = {Contributions to the Theory of the Riemann Zeta-Function and the Theory of the Distribution of Primes},
   Author                   = {G.H. Hardy and J.E. Littlewood},
@@ -1762,6 +1554,13 @@
   Timestamp                = {2008.09.20}
 }
 
+@Book{hftecon,
+  Title                    = {Econometrics of Financial High-Frequency Data},
+  Author                   = {Hautsch, N.},
+  Publisher                = {Springer},
+  Year                     = {2011}
+}
+
 @Book{gamma,
   Title                    = {Gamma: Exploring Euler's Constant.},
   Author                   = {Havil, J.},
@@ -1795,6 +1594,20 @@
 
   Owner                    = {crow},
   Timestamp                = {2008.11.25}
+}
+
+@Book{gmc,
+  Title                    = {Generalized Minkowski content, spectrum of fractal drums, fractal strings and the Riemann zeta-function},
+  Author                   = {Christina Q. He and Michel Laurent Lapidus},
+  Publisher                = {American Mathematical Society},
+  Year                     = {1997},
+  Month                    = {May},
+  Number                   = {608},
+  Series                   = {Memoirs of the American Mathematical Society},
+  Volume                   = {127},
+
+  Owner                    = {crow},
+  Timestamp                = {2009.07.26}
 }
 
 @Article{vim,
@@ -1884,10 +1697,15 @@
   Year                     = {2011}
 }
 
-@Article{hoorfarapproximation,
-  Title                    = {Approximation of the Lambert W Function and Hyperpower Function},
-  Author                   = {Hoorfar, Abdolhossein and Hassani, Mehdi},
-  Journal                  = {http://rgmia.org/papers/v10n2/lambert-v2.pdf}
+@Article{Gcym,
+  Title                    = {Generalized Calabi-Yau manifolds},
+  Author                   = {Nigel Hitchin},
+  Journal                  = {Quart.J.Math.Oxford Ser.},
+  Year                     = {2003},
+  Pages                    = {281-308},
+  Volume                   = {54},
+
+  Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:space/0209099}
 }
 
 @Article{ergodic-completely-transitive,
@@ -2011,7 +1829,7 @@
   Timestamp                = {2008.09.19}
 }
 
-@Article{jwnSep,
+@Article{,
   Title                    = {Newton flow of the Riemann zeta function: separatrices control the appearance of zeros},
   Author                   = {J W Neuberger, C Feiler, H Maier and W P Schleich},
 
@@ -2069,18 +1887,6 @@
   Pages                    = {91-110},
 
   Url                      = {citeseer.ist.psu.edu/dehesa97information.html}
-}
-
-@Article{Johansson2013arb,
-  Title                    = {{A}rb: a {C} library for ball arithmetic},
-  Author                   = {F. Johansson},
-  Journal                  = {ACM Communications in Computer Algebra},
-  Year                     = {2013},
-  Number                   = {4},
-  Pages                    = {166--169},
-  Volume                   = {47},
-
-  Publisher                = {ACM}
 }
 
 @Book{FiFoc,
@@ -2145,29 +1951,6 @@
   Volume                   = {36}
 }
 
-@Article{unimodalW,
-  Title                    = {{Unimodal sequences show Lambert W is Bernstein}},
-  Author                   = {{Kalugin}, G.~A. and {Jeffrey}, D.~J.},
-  Journal                  = {ArXiv e-prints},
-  Year                     = {2010},
-
-  Month                    = nov,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/2010arXiv1011.5940K},
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1011.5940},
-  Keywords                 = {Mathematics - Classical Analysis and ODEs, 11B83},
-  Primaryclass             = {math.CA}
-}
-
-@Book{kantorovichfunctional,
-  Title                    = {Functional Analysis},
-  Author                   = {Kantorovich, LV and Akilov, GP},
-  Publisher                = {Pergamon Press, Oxford},
-  Year                     = {1982}
-}
-
 @Book{karr,
   Title                    = {Point processes and their statistical inference},
   Author                   = {Karr, A.},
@@ -2187,22 +1970,6 @@
   Url                      = {https://books.google.com/books?id=rfObBQAAQBAJ}
 }
 
-@Article{krh,
-  Title                    = {{The Riemann hypothesis and holomorphic index in complex dynamics}},
-  Author                   = {{Kawahira}, T.},
-  Journal                  = {ArXiv e-prints},
-  Year                     = {2016},
-
-  Month                    = feb,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/2016arXiv160206843K},
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1602.06843},
-  Keywords                 = {Mathematics - Dynamical Systems, Mathematics - Complex Variables, Mathematics - Number Theory, 37F10, 11M26},
-  Primaryclass             = {math.DS}
-}
-
 @Article{discrete-quad-sv,
   Title                    = {Specification and estimation of discrete time quadratic stochastic volatility models},
   Author                   = {Hiroyuki Kawakatsu},
@@ -2213,17 +1980,6 @@
   Number                   = {3},
   Pages                    = {424-442},
   Volume                   = {14}
-}
-
-@InProceedings{keen2007accumulation,
-  Title                    = {Accumulation constants of iterated function systems with Bloch target domains},
-  Author                   = {Keen, Linda and Lakic, Nikola},
-  Booktitle                = {Annales-Academiae Scientiarum Fennica Mathematica},
-  Year                     = {2007},
-  Number                   = {1},
-  Organization             = {Academiae Scientiarum Fennica},
-  Pages                    = {73},
-  Volume                   = {32}
 }
 
 @Article{green-func-probability,
@@ -2283,6 +2039,18 @@
   Series                   = {Accademia Nazionale Dei Lincei}
 }
 
+@Article{PC-uncertainty-propagation,
+  Title                    = {Uncertainty propagation in {CFD} using polynomial chaos decomposition},
+  Author                   = {O M Knio and O P {Le Maitre}},
+  Journal                  = {Fluid Dynamics Research},
+  Year                     = {2006},
+
+  Month                    = {sep},
+  Number                   = {9},
+  Pages                    = {616-640},
+  Volume                   = {38}
+}
+
 @Book{hypersum,
   Title                    = {Hypergeometric Summation: An Algorithmic Approach to Summation and Special Function Identities},
   Author                   = {W. Koepf},
@@ -2318,29 +2086,25 @@
   Timestamp                = {2014.06.21}
 }
 
-@Article{eslg,
-  Title                    = {{Exactification of Stirling's Approximation for the Logarithm of the Gamma Function}},
-  Author                   = {{Kowalenko}, V.},
-  Journal                  = {ArXiv e-prints},
-  Year                     = {2014},
+@Article{electronic-coherence,
+  Title                    = {The insulating and conducting crystal states. {L}ocalization and delocalization of electronic states.},
+  Author                   = {E. K. Kudinov},
+  Journal                  = {Physics of the Solid State},
+  Year                     = {1999},
 
-  Month                    = apr,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/2014arXiv1404.2705K},
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1404.2705},
-  Keywords                 = {Mathematics - Classical Analysis and ODEs},
-  Primaryclass             = {math.CA}
+  Month                    = {nov},
+  Number                   = {9},
+  Pages                    = {1450},
+  Volume                   = {41}
 }
 
-@InProceedings{krcmar2000global,
-  Title                    = {Global asymptotic stability for RNNs with a bipolar activation function},
-  Author                   = {Krcmar, IR and Bozic, MM and Mandic, DP},
-  Booktitle                = {Neural Network Applications in Electrical Engineering, 2000. NEUREL 2000. Proceedings of the 5th Seminar on},
-  Year                     = {2000},
-  Organization             = {IEEE},
-  Pages                    = {33--36}
+@Article{fock-superalgebra,
+  Title                    = {Functional representations for fock superalgebras, hep-th/9708069},
+  Author                   = {Joachim Kupsch and Oleg G. Smolyanov},
+  Journal                  = {arXiv.org: High Energy Physics - Theory},
+  Year                     = {1997},
+
+  Month                    = {12 }
 }
 
 @Article{kwok2008diagnostic,
@@ -2363,6 +2127,18 @@
   Number                   = {3},
   Pages                    = {605-632},
   Volume                   = {180}
+}
+
+@Article{bargmann-signal,
+  Title                    = {The {B}argmann analytic representation in signal analysis},
+  Author                   = {{L. K. Stergioulas} and {A. Vourdas}},
+  Journal                  = {Journal of Computational and Applied Mathematics},
+  Year                     = {2004},
+
+  Month                    = {may},
+  Number                   = {1},
+  Pages                    = {183-192},
+  Volume                   = {167}
 }
 
 @Book{laning1956random,
@@ -2505,17 +2281,6 @@
   Series                   = {Probability and its Applications}
 }
 
-@Article{SO1,
-  Title                    = {{Riemann Hypothesis and Random Walks: the Zeta case}},
-  Author                   = {LeClair, André},
-  Year                     = {2016},
-
-  Archiveprefix            = {arXiv},
-  Eprint                   = {1601.00914},
-  Primaryclass             = {math.NT},
-  Slaccitation             = {%%CITATION = ARXIV:1601.00914;%%}
-}
-
 @Article{memip,
   Title                    = {{Nonparametric Markovian Learning of Triggering Kernels for Mutually Exciting and Mutually Inhibiting Multivariate Hawkes Processes}},
   Author                   = {{Lemonnier}, R. and {Vayatis}, N.},
@@ -2589,30 +2354,6 @@
   Volume                   = {18},
 
   Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:hep-th/9307142}
-}
-
-@Article{Lorentzen1990,
-  Title                    = {Compositions of contractions},
-  Author                   = {Lorentzen, Lisa},
-  Journal                  = {Journal of Computational and Applied Mathematics},
-  Year                     = {1990},
-  Number                   = {1-2},
-  Pages                    = {169--178},
-  Volume                   = {32},
-
-  Publisher                = {Elsevier}
-}
-
-@Article{lorentzen1990compositions,
-  Title                    = {Compositions of contractions},
-  Author                   = {Lorentzen, Lisa},
-  Journal                  = {Journal of Computational and Applied Mathematics},
-  Year                     = {1990},
-  Number                   = {1-2},
-  Pages                    = {169--178},
-  Volume                   = {32},
-
-  Publisher                = {Elsevier}
 }
 
 @PhdThesis{appa,
@@ -2738,6 +2479,23 @@
   Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:space/0702520}
 }
 
+@Article{cf-ms-ng,
+  Title                    = {Continued fractions, modular symbols, and noncommutative geometry},
+  Author                   = {Manin, Y. I. and Marcolli, M.},
+  Journal                  = {Selecta Mathematica (New Series)},
+  Year                     = {2002},
+  Note                     = {10.1007/s00029-002-8113-3 },
+  Pages                    = {475-521},
+  Volume                   = {8},
+
+  Affiliation              = {Max-Planck-Institut f\FCr Mathematik, Vivatsgasse 7, D-53111, Bonn, Germany,\B6e-mail: manin@mpim-bonn.mpg.de},
+  ISSN                     = {1022-1824},
+  Issue                    = {3},
+  Keyword                  = {Mathematics and Statistics},
+  Publisher                = {Birkh\E4user Basel},
+  Url                      = {http://dx.doi.org/10.1007/s00029-002-8113-3 }
+}
+
 @Book{statistical-signal-processing,
   Title                    = {Statistical and Adaptive Signal Processing: Spectral Estimation, Signal Modelling, Adaptive Filtering, and Array Processing},
   Author                   = {Dimitris G. Manolakis and Vinay K. Ingle and Stephen M. Kogon},
@@ -2754,22 +2512,6 @@
   Doi                      = {978-1-926902-08-1},
   Owner                    = {crow},
   Timestamp                = {2012.02.24}
-}
-
-@Misc{maple,
-  Title                    = {Maple 2016.1},
-
-  Author                   = {Maplesoft, a division of Waterloo Maple Inc., Waterloo, Ontario},
-
-  Owner                    = {crow},
-  Timestamp                = {2016.10.03}
-}
-
-@Article{marca2009mean,
-  Title                    = {Mean Staircase of the Riemann Zeros: a comment on the Lambert W function and an algebraic aspect},
-  Author                   = {Marca, Davide A and Beltraminelli, Stefano and Merlini, Danilo},
-  Journal                  = {arXiv preprint arXiv:0901.3377},
-  Year                     = {2009}
 }
 
 @Article{msrz,
@@ -2820,14 +2562,14 @@
   Timestamp                = {2014.05.28}
 }
 
-@InProceedings{mayer2006immediate,
-  Title                    = {Immediate and virtual basins of Newton’s method for entire functions},
-  Author                   = {Mayer, Sebastian and Schleicher, Dierk},
-  Booktitle                = {Annales de l'institut Fourier},
-  Year                     = {2006},
-  Number                   = {2},
-  Pages                    = {325--336},
-  Volume                   = {56}
+@Book{inverseSpectralFunctions,
+  Title                    = {Gaussian Processes, Function Theory, and the Inverse Spectral Problem},
+  Author                   = {H. Dym \& H.P. McKean},
+  Publisher                = {Dover},
+  Year                     = {1976},
+
+  Owner                    = {crow},
+  Timestamp                = {2015.07.17}
 }
 
 @Book{fmm,
@@ -2946,14 +2688,6 @@
   Url                      = {citeseer.ist.psu.edu/609498.html}
 }
 
-@Book{milnor2006dynamics,
-  Title                    = {Dynamics in one complex variable},
-  Author                   = {Milnor, John Willard},
-  Publisher                = {Springer},
-  Year                     = {2006},
-  Volume                   = {160}
-}
-
 @Book{Gtaia,
   Title                    = {Group Theory: An Intuitive Approach},
   Author                   = {R. Mirman},
@@ -3027,6 +2761,19 @@
 
   Owner                    = {crow},
   Timestamp                = {2008.09.25}
+}
+
+@Article{chaotic-quantum-transport,
+  Title                    = {Semiclassical approach to chaotic quantum transport},
+  Author                   = {Sebastian Muller and Stefan Heusler and Petr Braun and Fritz Haake},
+  Journal                  = {New Journal of Physics},
+  Year                     = {2007},
+  Number                   = {1},
+  Pages                    = {12},
+  Volume                   = {9},
+
+  Abstract                 = {We describe a semiclassical method to calculate universal transport properties of chaotic cavities. While the energy-averaged conductance turns out governed by pairs of entrance-to-exit trajectories, the conductance variance, shot noise and other related quantities require trajectory quadruplets; simple diagrammatic rules allow us to find the contributions of these pairs and quadruplets. Both pure symmetry classes and the crossover due to an external magnetic field are considered. },
+  Url                      = {http://stacks.iop.org/1367-2630/9/12}
 }
 
 @Article{rings-of-operators,
@@ -3128,19 +2875,6 @@
   Volume                   = {7}
 }
 
-@Electronic{zt,
-  Title                    = {Tables of zeros of the Riemann zeta function},
-
-  Address                  = {http://www.dtc.umn.edu/\~{}odlyZko/zeta\_tables/},
-  Author                   = {Andrew Odlyzko},
-  HowPublished             = {http://www.dtc.umn.edu/\~{}odlyZko/zeta\_tables/},
-  Url                      = {http://www.dtc.umn.edu/\~{}odlyZko/zeta\_tables/},
-
-  Journal                  = {http://www.dtc.umn.edu/~odlyZko/zeta_tables/},
-  Owner                    = {stephen},
-  Timestamp                = {2017.02.20}
-}
-
 @Article{ogata1981lewis,
   Title                    = {On Lewis' simulation method for point processes},
   Author                   = {Ogata, Y.},
@@ -3221,6 +2955,16 @@
   Number                   = {1},
   Pages                    = {1-9},
   Volume                   = {36}
+}
+
+@Book{cds,
+  Title                    = {Chaos in dynamical systems},
+  Author                   = {E. Ott},
+  Publisher                = {Cambridge University Press},
+  Year                     = {1993},
+
+  Owner                    = {crow},
+  Timestamp                = {2009.07.16}
 }
 
 @Article{ozaki1979maximum,
@@ -3428,18 +3172,6 @@
   Timestamp                = {2008.09.02}
 }
 
-@Article{polyak2006newton,
-  Title                    = {Newton-Kantorovich method and its global convergence},
-  Author                   = {Polyak, Boris Teodorovich},
-  Journal                  = {Journal of Mathematical Sciences},
-  Year                     = {2006},
-  Number                   = {4},
-  Pages                    = {1513--1523},
-  Volume                   = {133},
-
-  Publisher                = {Springer}
-}
-
 @Article{geometricFproperties,
   Title                    = {Geometric Properties of Generalized Hypergeometric Functions},
   Author                   = {S. Ponnusamy and S. Sabapathy},
@@ -3497,16 +3229,6 @@
   Volume                   = {19}
 }
 
-@Article{raadstrom1953iteration,
-  Title                    = {On the iteration of analytic functions},
-  Author                   = {R{\aa}dstr{\"o}m, Hans},
-  Journal                  = {Mathematica Scandinavica},
-  Year                     = {1953},
-  Pages                    = {85--92},
-
-  Publisher                = {JSTOR}
-}
-
 @Book{sf,
   Title                    = {Special Functions},
   Author                   = {Earl D. Rainville},
@@ -3528,17 +3250,6 @@
 
   Owner                    = {crow},
   Timestamp                = {2012.02.21}
-}
-
-@Book{ramachandra1995lectures,
-  Title                    = {Lectures on the Mean-value and Omega-theorems for the Riemann Zeta-function},
-  Author                   = {Ramachandra, K},
-  Publisher                = {Tata Institute of Fundamental Research},
-  Year                     = {1995},
-  Series                   = {Lectures on mathematics and physics},
-
-  ISBN                     = {9780387584379},
-  Url                      = {https://books.google.com/books?id=xa0xvgAACAAJ}
 }
 
 @Book{cma,
@@ -3570,18 +3281,6 @@
   Year                     = {1995},
   Pages                    = {25},
   Volume                   = {2}
-}
-
-@Article{ren2007improved,
-  Title                    = {An improved convergence theorem for a class of Secant-like methods},
-  Author                   = {Ren, Hongmin},
-  Journal                  = {Applied mathematics and computation},
-  Year                     = {2007},
-  Number                   = {1},
-  Pages                    = {472--481},
-  Volume                   = {189},
-
-  Publisher                = {Elsevier}
 }
 
 @Electronic{mathematica,
@@ -3703,6 +3402,16 @@
   Url                      = {https://books.google.com/books?id=eJp330pIvQ4C}
 }
 
+@Book{cigt,
+  Title                    = {The Complete Idiot's Guide to Game Theory},
+  Author                   = {Edward C. Rosenthal},
+  Publisher                = {Alpha},
+  Year                     = {2011},
+
+  Owner                    = {crow},
+  Timestamp                = {2014.03.26}
+}
+
 @Article{combinatorial-stochastic-integral,
   Title                    = {Stochastic Integrals: A Combinatorial Approach},
   Author                   = {Gian-Carlo Rota and Timothy C. Wallstrom},
@@ -3740,7 +3449,7 @@
 @Book{Rudin2006,
   Title                    = {Real \& Complex Analysis},
   Author                   = {Walter Rudin},
-  Publisher                = {McGraw-Hill},
+  Publisher                = {Tata McGraw-Hill},
   Year                     = {2006},
   Edition                  = {third},
 
@@ -3756,20 +3465,6 @@
   Edition                  = {3}
 }
 
-@Article{NewtonEntire,
-  Title                    = {{On Newton's Method for Entire Functions}},
-  Author                   = {{Rueckert}, J. and {Schleicher}, D.},
-  Journal                  = {ArXiv Mathematics e-prints},
-  Year                     = {2005},
-
-  Month                    = may,
-
-  Adsnote                  = {Provided by the SAO/NASA Astrophysics Data System},
-  Adsurl                   = {http://adsabs.harvard.edu/abs/2005math......5652R},
-  Eprint                   = {math/0505652},
-  Keywords                 = {Mathematics - Dynamical Systems, 30D05, 37F10, 37F20, 49M15}
-}
-
 @Book{dzf,
   Title                    = {Dynamical Zeta Functions for Piecewise Monotone Maps of the Interval},
   Author                   = {David Ruelle},
@@ -3779,6 +3474,15 @@
 
   Owner                    = {crow},
   Timestamp                = {2009.07.16}
+}
+
+@Article{aci,
+  Title                    = {Econometric modeling of multivariate irregularly-spaced high-frequency data},
+  Author                   = {Russell, J.R.},
+  Journal                  = {Manuscript, GSB, University of Chicago},
+  Year                     = {1999},
+
+  Url                      = {http://faculty.chicagobooth.edu/jeffrey.russell/research/multi.pdf}
 }
 
 @Article{SaiS,
@@ -3834,15 +3538,6 @@
   Note                     = {available at http://ideas.repec.org/p/bon/bonsfb/293.html},
   Number                   = {293},
   Type                     = {Discussion Paper Serie B}
-}
-
-@InCollection{schleicher2010dynamics,
-  Title                    = {Dynamics of entire functions},
-  Author                   = {Schleicher, Dierk},
-  Booktitle                = {Holomorphic dynamical systems},
-  Publisher                = {Springer},
-  Year                     = {2010},
-  Pages                    = {295--339}
 }
 
 @Article{random-phase-gauges,
@@ -3919,6 +3614,13 @@
 
   Owner                    = {crow},
   Timestamp                = {2009.08.03}
+}
+
+@Article{hxpInteraction,
+  Title                    = {H = x p with interaction and the Riemann zeros},
+  Author                   = {German Sierra},
+  Journal                  = {space-ph/0702034},
+  Year                     = {2007}
 }
 
 @Book{Fslater,
@@ -4013,16 +3715,6 @@
   Timestamp                = {2015.05.07}
 }
 
-@Article{stanley1989log,
-  Title                    = {Log-concave and unimodal sequences in algebra, combinatorics, and geometry},
-  Author                   = {Stanley, Richard P},
-  Journal                  = {Ann. New York Acad. Sci},
-  Year                     = {1989},
-  Number                   = {1},
-  Pages                    = {500--535},
-  Volume                   = {576}
-}
-
 @Article{complexMomentSubnormality,
   Title                    = {The complex moment problem and subnormality: a polar decomposition approach},
   Author                   = {J. Stochel and F. Szafraniec},
@@ -4063,15 +3755,15 @@
   Timestamp                = {2008.09.02}
 }
 
-@InProceedings{crfs,
-  Title                    = {A Survey of Several Root-Finding Methods in the Complex Plane},
-  Author                   = {Szyszkowicz, Mieczyslaw},
-  Booktitle                = {Computer Graphics Forum},
-  Year                     = {1991},
-  Number                   = {2},
-  Organization             = {Wiley Online Library},
-  Pages                    = {141--144},
-  Volume                   = {10}
+@Article{sun-pan,
+  Title                    = {Identities concerning Bernoulli and Euler polynomials},
+  Author                   = {Zhi-Wei Sun and Hao Pan},
+  Journal                  = {ACTA ARITH.},
+  Year                     = {2006},
+  Pages                    = {21},
+  Volume                   = {125},
+
+  Url                      = {http://www.citebase.org/abstract?id=oai:arXiv.org:space/0409035}
 }
 
 @Article{positive-analytic-operators,
@@ -4168,59 +3860,6 @@
   Url                      = {http://fiquant.mas.ecp.fr/ioane\_files/HawkesCourseSlides.pdf}
 }
 
-@Article{traub1966class,
-  Title                    = {A class of globally convergent iteration functions for the solution of polynomial equations},
-  Author                   = {Traub, Joseph F},
-  Journal                  = {Mathematics of Computation},
-  Year                     = {1966},
-  Number                   = {93},
-  Pages                    = {113--138},
-  Volume                   = {20},
-
-  Publisher                = {JSTOR}
-}
-
-@Article{Sub,
-  Title                    = {An improved upper bound for the argument of the Riemann zeta-function on the critical line},
-  Author                   = {Trudgian, Timothy},
-  Journal                  = {Mathematics of Computation},
-  Year                     = {2011},
-
-  Month                    = {8},
-  Pages                    = {1053-1061},
-  Volume                   = {81},
-
-  Doi                      = {10.1090/S0025-5718-2011-02537-8}
-}
-
-@Article{trudgian2014improved,
-  Title                    = {An improved upper bound for the argument of the Riemann zeta-function on the critical line II},
-  Author                   = {Trudgian, Timothy S},
-  Journal                  = {Journal of Number Theory},
-  Year                     = {2014},
-  Pages                    = {280--292},
-  Volume                   = {134},
-
-  Publisher                = {Elsevier}
-}
-
-@Article{ebsd,
-  Title                    = {Entire Functions on Banach Spaces with a Separable Dual},
-  Author                   = {Humberto D. Carrión V.},
-  Journal                  = {Journal of Functional Analysis},
-  Year                     = {2002},
-  Number                   = {2},
-  Pages                    = {496 - 514},
-  Volume                   = {189},
-
-  Abstract                 = {Let E and F be complex Banach spaces. We show that if E has a separable dual, then every holomorphic function from E into F which is bounded on weakly compact sets is bounded on bounded sets.},
-  Doi                      = {http://dx.doi.org/10.1006/jfan.2001.3838},
-  ISSN                     = {0022-1236},
-  Owner                    = {crow},
-  Timestamp                = {2016.10.03},
-  Url                      = {http://www.sciencedirect.com/science/article/pii/S0022123601938388}
-}
-
 @Book{ergoStat,
   Title                    = {Asymptotic Statistics},
   Author                   = {A.W. van der Vaart},
@@ -4284,30 +3923,6 @@
   Publisher                = {Tata McGraw-Hill},
   Year                     = {2006},
   Edition                  = {3rd}
-}
-
-@Article{wang2000convergence,
-  Title                    = {Convergence of Newton's method and uniqueness of the solution of equations in Banach space},
-  Author                   = {Wang, Xinghua},
-  Journal                  = {IMA Journal of Numerical Analysis},
-  Year                     = {2000},
-  Number                   = {1},
-  Pages                    = {123--134},
-  Volume                   = {20},
-
-  Publisher                = {Oxford University Press}
-}
-
-@Article{wang2003convergence,
-  Title                    = {Convergence of Newton's method and uniqueness of the solution of equations in Banach spaces II},
-  Author                   = {Wang, Xing Hua and Li, Chong},
-  Journal                  = {Acta Mathematica Sinica},
-  Year                     = {2003},
-  Number                   = {2},
-  Pages                    = {405--412},
-  Volume                   = {19},
-
-  Publisher                = {Springer}
 }
 
 @Book{whittaker-watson,
@@ -4542,56 +4157,51 @@
 
 @Article{,
   Owner                    = {crow},
-  Timestamp                = {2016.10.08}
-}
-
-@Article{,
-  Owner                    = {crow},
   Timestamp                = {2015.10.14}
 }
 
-@ARTICLE{htn,
-   author = {{Sangale}, U.~K.},
-    title = "{A note on Hardy's theorem}",
-  journal = {ArXiv e-prints},
-archivePrefix = "arXiv",
-   eprint = {1606.00680},
- primaryClass = "math.NT",
- keywords = {Mathematics - Number Theory, 11E45, 11M41},
-     year = 2016,
-    month = jun,
-   adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160600680S},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@Article{rubin72,
+  author   = {I. Rubin},
+  title    = {Regular point processes and their detection},
+  journal  = {IEEE Transactions on Information Theory},
+  year     = {1972},
+  volume   = {18},
+  number   = {5},
+  month    = {Sep},
+  pages    = {547-557},
+  issn     = {0018-9448},
+  doi      = {10.1109/TIT.1972.1054897},
+  keywords = {Estimation;Point processes;Signal detection;Differential equations;Filtering;Helium;Least squares approximation;Medical signal detection;Signal detection;Statistics;Stochastic processes;Telegraphy;Yield estimation},
 }
 
-@ARTICLE{rhhi,
-   author = {{Kawahira}, T.},
-    title = "{The Riemann hypothesis and holomorphic index in complex dynamics}",
-  journal = {ArXiv e-prints},
-archivePrefix = "arXiv",
-   eprint = {1602.06843},
- primaryClass = "math.DS",
- keywords = {Mathematics - Dynamical Systems, Mathematics - Complex Variables, Mathematics - Number Theory, 37F10, 11M26},
-     year = 2016,
-    month = feb,
-   adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160206843K},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@Article{cf,
+  author      = {Hardiman, Stephen J. and Bercot, Nicolas and Bouchaud, Jean-Philippe},
+  title       = {Critical reflexivity in financial markets: a Hawkes process analysis},
+  journal     = {The European Physical Journal B},
+  year        = {2013},
+  language    = {English},
+  volume      = {86},
+  number      = {10},
+  pages       = {1-9},
+  doi         = {10.1140/epjb/e2013-40107-3},
+  abstract    = {
+We model the arrival of mid-price changes in the E-mini S&P futures contract as a self-exciting Hawkes process. Using several estimation methods, we find that the Hawkes kernel is power-law with a decay exponent close to −1.15 at short times, less than ≈ 103 s, and crosses over to a second power-law regime with a larger decay exponent ≈–1.45 for longer times scales in the range [103 ,106 ] seconds. More importantly, we find that the Hawkes kernel integrates to unity independently of the analysed period, from 1998 to 2011. This suggests that markets are and have always been close to criticality, challenging a recent study which indicates that reflexivity (endogeneity) has increased in recent years as a result of increased automation of trading. However, we note that the scale over which market events are correlated has decreased steadily over time with the emergence of higher frequency trading.
+},
+  affiliation = {Capital Fund Management},
+  copyright   = {EDP Sciences, SIF, Springer-Verlag Berlin Heidelberg},
+  keywords    = {Statistical and Nonlinear Physics},
 }
 
-
-
-@ARTICLE{2016arXiv160206328F,
-   author = {{Ferry}, L. and {Ghisa}, D. and {Muscutar}, F.~A.},
-    title = "{On Davenport and Heilbronn-Type of Functions}",
-  journal = {ArXiv e-prints},
-archivePrefix = "arXiv",
-   eprint = {1602.06328},
- primaryClass = "math.CV",
- keywords = {Mathematics - Complex Variables, 30C35, 11M26},
-     year = 2016,
-    month = feb,
-   adsurl = {http://adsabs.harvard.edu/abs/2016arXiv160206328F},
-  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+@Article{oaple,
+  author   = {{Bochud}, T. and {Challet}, D.},
+  title    = {{Optimal approximations of power-laws with exponentials}},
+  journal  = {ArXiv Physics e-prints},
+  year     = {2006},
+  month    = may,
+  eprint   = {physics/0605149},
+  adsnote  = {Provided by the SAO/NASA Astrophysics Data System},
+  adsurl   = {http://adsabs.harvard.edu/abs/2006physics...5149B},
+  keywords = {Physics - Data Analysis, Statistics and Probability, Condensed Matter - Statistical Mechanics, Physics - Physics and Society, Quantitative Finance - Statistical Finance},
 }
 
-
+@Comment{jabref-meta: databaseType:biblatex;}

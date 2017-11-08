@@ -17,7 +17,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public Vector T;
 
-
   /*
    * The first column of this matrix is identical with T, the remaining columns,
    * if any, are the marks associated with the timestamps in column 0
@@ -148,7 +147,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   protected double cachedρ = Double.NaN;
-  
+
   public abstract BoundedParameter[] getBoundedParameters();
 
   public final int getParamCount()
@@ -183,5 +182,14 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   public abstract double logLik();
+
+  /**
+   * 
+   * @param point
+   *          the parameter vector to use which evaluating the statistics
+   * @return data corresponding to the columns described by
+   *         {@link ExponentialSelfExcitingProcess#statisticNames}
+   */
+  public abstract Object[] evaluateParameterStatistics(double[] point);
 
 }

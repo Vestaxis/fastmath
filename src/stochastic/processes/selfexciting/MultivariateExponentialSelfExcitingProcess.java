@@ -10,7 +10,10 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
+import static java.util.stream.Stream.concat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -759,4 +762,18 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   }
 
   private boolean trace = false;
+
+  public static String[] statisticNames =
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
+
+  /**
+   * 
+   * @return a list formed by concatenating the names of the parameters enumerated
+   *         by this{@link #getBoundedParameters()} and the names of the
+   *         statistics enumerated by this{@link #statisticNames}
+   */
+  public String[] getColumnHeaders()
+  {
+    return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
+  }
 }
