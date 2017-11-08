@@ -59,7 +59,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
                                                                    + getClass().getSimpleName()); }
       for (int j = 0; j < dim; j++)
       {
-        int offset = getBoundedParameters()[i].getOrdinal() * (j + 1);
+        int offset = getBoundedParameters()[i].getOrdinal() + (j * getParamCount());
         params.set(offset, fieldArray.get(j));
       }
     }
@@ -89,7 +89,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
       for (int j = 0; j < dim; j++)
       {
         {
-          int offset = params[i].getOrdinal() * (j + 1);
+          int offset = params[i].getOrdinal() + (j * getParamCount());
           fieldArray.set(j, point[offset]);
         }
       }
@@ -122,7 +122,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
 
   /**
    * 
-   * @param i index of the parameter to return
+   * @param i
+   *          index of the parameter to return
    * 
    * @return the {@link Vector} corresponding to the i-th parameter as determined
    *         by this{@link #getParameterFields()}
