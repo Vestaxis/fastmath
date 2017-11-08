@@ -97,8 +97,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
 
   VectorContainer tmp4[];
 
-  private PointValuePair params;
-
   private Entry<Double, Integer>[][][] lowerEntries;
 
   private Entry<Double, Integer>[][][] upperEntries;
@@ -601,21 +599,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   private final LegendreGaussIntegrator integrator = new LegendreGaussIntegrator(5, pow(10, -5), pow(10, -5));
 
   private int predictionIntegrationLimit = 25;
-
-  public String getParamString()
-  {
-    return tmp5.getVector(params.getPoint().length).assign(params.getPoint()).toString();
-  }
-
-  public PointValuePair getParams()
-  {
-    return params;
-  }
-
-  public void setParams(PointValuePair params)
-  {
-    this.params = params;
-  }
 
   public int getDim()
   {
