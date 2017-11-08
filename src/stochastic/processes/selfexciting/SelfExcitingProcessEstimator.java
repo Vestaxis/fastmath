@@ -21,6 +21,7 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;

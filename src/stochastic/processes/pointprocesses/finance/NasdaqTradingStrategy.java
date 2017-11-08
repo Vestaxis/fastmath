@@ -1,4 +1,4 @@
-package stochastic.processes.selfexciting;
+package stochastic.processes.pointprocesses.finance;
 
 import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
@@ -17,8 +17,9 @@ import fastmath.IntVector;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
-import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
-import stochastic.processes.pointprocesses.finance.Side;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
+import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
 import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 import util.TradeClassifier;

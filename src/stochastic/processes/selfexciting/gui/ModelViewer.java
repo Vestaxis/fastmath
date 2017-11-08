@@ -19,8 +19,8 @@ import org.knowm.xchart.XYChart;
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.NasdaqTradingStrategy;
 import util.DateUtils;
 
 public class ModelViewer

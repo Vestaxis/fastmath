@@ -1,9 +1,10 @@
 
-package stochastic.processes.selfexciting;
+package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Functions.eye;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
+import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.lang.System.currentTimeMillis;
@@ -49,6 +50,7 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 
 /**
  * TODO: same thing I did with univariate exponential self exciting process
@@ -110,6 +112,67 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   public IntVector K;
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
+
+  /**
+   * 
+   * @param T
+   * @param deterministicIntensity
+   * @param lambda
+   * @param alpha
+   * @param bη
+   * @return Pair<logLik,E[Lambda]>
+   */
+  public final double logLik()
+  {
+    double tn = T.getRightmostValue();
+    double ll = tn - T.getLeftmostValue();
+    final int n = T.size();
+
+    double A[] = new double[order()];
+    double S[] = new double[order()];
+    for (int i = 1; i < n; i++)
+    {
+      double t = T.get(i);
+      double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+      double dt = t - T.get(i - 1);
+      double λ = evolveλ(dt, T.get(i), S);
+      double Λ = evolveΛ(prevdt, dt, T.get(i), A);
+
+      // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
+
+      if (λ > 0)
+      {
+        ll += log(λ);
+      }
+
+      ll -= Λ;
+
+    }
+
+    if (Double.isNaN(ll))
+    {
+      if (verbose)
+      {
+        out.println(Thread.currentThread().getName() + " NaN for LL ");
+      }
+      ll = Double.NEGATIVE_INFINITY;
+    }
+
+    return ll;
+
+  }
+
+  private double evolveΛ(double prevdt, double dt, double d, double[] a)
+  {
+    throw new UnsupportedOperationException( "TODO" ); 
+  }
+
+  private double evolveλ(double dt, double d, double[] s)
+  {
+    throw new UnsupportedOperationException( "TODO" ); 
+  }
+
+  private boolean verbose = false;
 
   public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
   {

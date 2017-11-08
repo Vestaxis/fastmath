@@ -1,4 +1,4 @@
-package stochastic.processes.selfexciting;
+package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Console.println;
 import static java.lang.System.out;
@@ -22,7 +22,12 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
+import stochastic.processes.selfexciting.BoundedParameter;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;

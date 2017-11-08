@@ -1,4 +1,4 @@
-package stochastic.processes.selfexciting;
+package stochastic.processes.selfexciting.multivariate;
 
 public class MultivariateExponentialSelfExcitingProcessFactory
 {
