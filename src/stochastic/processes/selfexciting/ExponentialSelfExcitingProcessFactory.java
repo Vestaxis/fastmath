@@ -39,7 +39,7 @@ public class ExponentialSelfExcitingProcessFactory
     case ConstrainedApproximatePowerlaw:
       return new ConstrainedApproximatePowerlawSelfExcitingProcess();
     case ExtendedConstrainedExponentialPowerlawApproximation:
-      return new ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess();
+      return new ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProcess();
     default:
       throw new UnsupportedOperationException("TODO: " + type);
     }

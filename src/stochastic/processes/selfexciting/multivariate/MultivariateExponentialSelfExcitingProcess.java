@@ -54,15 +54,11 @@ import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 
-/**
- * TODO: same thing I did with univariate exponential self exciting process
- * 
- *
- */
+
 public abstract class MultivariateExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess
 {
 
-  private final int dim; // dimension
+  protected final int dim; // dimension
 
   public abstract int order();
 
@@ -174,7 +170,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     throw new UnsupportedOperationException( "TODO" ); 
   }
 
-  private boolean verbose = false;
+  protected boolean verbose = false;
 
   public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
   {
@@ -268,12 +264,12 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     return optimizer;
   }
 
-  private double compensatorMomentMeasure()
+  public double compensatorMomentMeasure()
   {
     throw new UnsupportedOperationException("TODO");
   }
 
-  private MultivariateExponentialSelfExcitingProcess newProcess(double[] point)
+  public MultivariateExponentialSelfExcitingProcess newProcess(double[] point)
   {
     throw new UnsupportedOperationException("TODO");
   }

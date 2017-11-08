@@ -1,6 +1,9 @@
 package stochastic.processes.selfexciting;
 
+import static java.lang.Math.pow;
+import static java.util.Arrays.stream;
 import static java.util.stream.IntStream.range;
+import static org.apache.commons.lang.ArrayUtils.addAll;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -16,6 +19,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 {
 
   public Vector T;
+
+  public boolean verbose = false;
 
   /*
    * The first column of this matrix is identical with T, the remaining columns,
@@ -104,6 +109,22 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }));
   }
 
+  public abstract Object[] evaluateParameterStatistics(double[] point);
+  
+
+  public abstract Vector Λ();
+
+  public abstract double mean();
+  
+  public abstract double compensatorMomentMeasure();
+
+  public abstract double getΛKolmogorovSmirnovStatistic();
+
+  private AbstractSelfExcitingProcess newProcess(double[] point)
+  {
+   throw new UnsupportedOperationException( "TODO" );
+  }
+
   public final synchronized Field[] getParameterFields()
   {
     if (parameterFields == null)
@@ -126,7 +147,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * @param array
    *          of values ordered according to this{@link #getBoundedParameters()}
    */
-  public final void assignParameters(double[] point)
+  public void assignParameters(double[] point)
   {
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
@@ -183,13 +204,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public abstract double logLik();
 
-  /**
-   * 
-   * @param point
-   *          the parameter vector to use which evaluating the statistics
-   * @return data corresponding to the columns described by
-   *         {@link ExponentialSelfExcitingProcess#statisticNames}
-   */
-  public abstract Object[] evaluateParameterStatistics(double[] point);
+
 
 }

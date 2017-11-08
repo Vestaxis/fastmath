@@ -151,27 +151,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public static String[] statisticNames =
   { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
 
-  public Object[] evaluateParameterStatistics(double[] point)
-  {
-    ExponentialSelfExcitingProcess process = newProcess(point);
-    double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
-
-    Vector compensated = process.Λ();
-
-    // out.println(compensated.autocor(30));
-
-    Object[] statisticsVector = new Object[]
-    { process.logLik(),
-      ksStatistic,
-      compensated.mean(),
-      compensated.variance(),
-      process.compensatorMomentMeasure(),
-      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
-      process.mean() };
-
-    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
-  }
-
   protected final double evolveλ(double dt, double t, double[] S)
   {
     double λ = λ0.value(t);
@@ -639,4 +618,26 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
+
+  public Object[] evaluateParameterStatistics(double[] point)
+  {
+    AbstractSelfExcitingProcess process = newProcess(point);
+    double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
+
+    Vector compensated = process.Λ();
+
+    // out.println(compensated.autocor(30));
+
+    Object[] statisticsVector = new Object[]
+    { process.logLik(),
+      ksStatistic,
+      compensated.mean(),
+      compensated.variance(),
+      process.compensatorMomentMeasure(),
+      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
+      process.mean() };
+
+    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+  }
+
 }

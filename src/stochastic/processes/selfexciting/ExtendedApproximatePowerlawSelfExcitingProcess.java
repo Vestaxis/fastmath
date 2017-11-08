@@ -19,7 +19,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return Parameter.values();
   }
 
-  protected static enum Parameter implements BoundedParameter
+  public static enum Parameter implements BoundedParameter
   {
 
     κ(0, 1), η(0, 10), b(0, 2), ε(0, 0.5), τ0(0, 3);

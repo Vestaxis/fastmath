@@ -49,7 +49,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess process = new ExtendedConstrainedExponentialPowerlawApproximatioSelfExcitingProcess(τ0, ε, b, τ);
+    ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProcess process = new ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProcess(τ0, ε, b, τ);
 //    RombergIntegrator integrator = new RombergIntegrator();
 //    double integral = integrator.integrate(5000000, process::ψ, 0, 400000);
 //    out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
