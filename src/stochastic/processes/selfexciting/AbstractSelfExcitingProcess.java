@@ -31,14 +31,15 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   {
     try
     {
-      AbstractSelfExcitingProcess spawn = getClass().newInstance();
+      AbstractSelfExcitingProcess spawn = getClass().getDeclaredConstructor().newInstance();
       spawn.assignParameters(getParameters().toArray());
       spawn.T = T;
       spawn.X = X;
       return spawn;
     }
-    catch (InstantiationException | IllegalAccessException e)
+    catch (Exception e)
     {
+      if (e instanceof RuntimeException) { throw (RuntimeException) e; }
       throw new RuntimeException(e.getMessage(), e);
     }
 
@@ -118,6 +119,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public abstract double getΛKolmogorovSmirnovStatistic();
 
+
+
   private AbstractSelfExcitingProcess newProcess(double[] point)
   {
     throw new UnsupportedOperationException("TODO");
@@ -169,7 +172,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public abstract BoundedParameter[] getBoundedParameters();
 
-  public final int getParamCount()
+  public int getParamCount()
   {
     return getBoundedParameters().length;
   }

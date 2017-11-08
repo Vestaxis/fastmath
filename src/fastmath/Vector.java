@@ -54,12 +54,12 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return Native.getDirectBufferPointer(buffer);
   }
 
-  public Vector xor( double p )
+  public Vector xor(double p)
   {
     return pow(p);
   }
 
-  public Vector xor( int p )
+  public Vector xor(int p)
   {
     return pow(p);
   }
@@ -68,7 +68,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     return copy().multiply(-1);
   }
-  
+
   public final class VectorSpliterator extends AbstractDoubleSpliterator
   {
     int n = 0;
@@ -357,11 +357,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     assert size == x.size() : "Dimensions must be equal";
 
-    for ( int i = 0; i < size; i++ )
+    for (int i = 0; i < size; i++)
     {
-      set( i, get( i ) + x.get(i) * alpha );
+      set(i, get(i) + x.get(i) * alpha);
     }
-    //BLAS1.daxpy(alpha, x, this);
+    // BLAS1.daxpy(alpha, x, this);
 
     return this;
   }
@@ -438,8 +438,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    */
   public Vector divide(double x)
   {
-    BLAS1.dscal(this, 1.0 / x);
-
+    for (int i = 0; i < size(); i++)
+    {
+      set(i, get(i) / x);
+    }
     return this;
   }
 
@@ -448,7 +450,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public native Vector divide(Vector x);
+  public Vector divide(Vector x)
+  {
+    assert size() == x.size();
+    for (int i = 0; i < size(); i++)
+    {
+      set(i, get(i) / x.get(i));
+    }
+    return this;
+  }
 
   /**
    * Dot-product
@@ -1096,10 +1106,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     assert size == x.size() : "Dimensions must agree, this.size=" + size + " != x.size = " + x.size();
 
-    return add(x,-alpha);
-//    BLAS1.daxpy(alpha * -1.0, x, this);
-//
-//    return this;
+    return add(x, -alpha);
+    // BLAS1.daxpy(alpha * -1.0, x, this);
+    //
+    // return this;
   }
 
   /**
@@ -1475,7 +1485,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     int len = size();
     Vector newVec = extend(1);
-    newVec.set(len,d);
+    newVec.set(len, d);
     return newVec;
   }
 }

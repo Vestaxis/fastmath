@@ -75,9 +75,10 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) ;
   }
 
+  
   @Override
   public double α(int i)
-  {
+  {   
     return i < M ? super.α(i) : αS();
   }
 

@@ -39,7 +39,6 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 
 import fastmath.AbstractMatrix;
 import fastmath.DoubleColMatrix;
-import fastmath.DoubleMatrix;
 import fastmath.EigenDecomposition;
 import fastmath.IntVector;
 import fastmath.Pair;
@@ -56,18 +55,10 @@ import fastmath.optim.SolutionValidator;
 public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
 {
 
-  protected int dim;
-
   public abstract int order();
 
   // baseline intensity parameters
   Vector κ;
-
-  // scale parameters
-  DoubleMatrix[] α;
-
-  // time decay parameters
-  DoubleMatrix[] β;
 
   public MultivariateExponentialSelfExcitingProcess()
   {
@@ -292,20 +283,45 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   }
 
   /**
-   * @return sum(α[j][m][n]/β[j][m][n],j=1..order)
+   * 
+   * @param j
+   *          index in [0,order()-1]
+   * @param m
+   *          dimension in [0,dim-1]
+   * @param n
+   *          dimension in [0,dim-1]
+   * 
+   * @return the j-th α parameter corresponding to the k-th dimension
+   */
+  protected abstract double α(int j, int m, int n);
+
+  /**
+   * 
+   * @param j
+   *          index in [0,order()-1]
+   * @param m
+   *          dimension in [0,dim-1]
+   * @param n
+   *          dimension in [0,dim-1]
+   * @return the j-th β parameter corresponding to the k-th dimension
+   */
+  protected abstract double β(int j, int m, int n);
+
+  /**
+   * Calculate sum(α(j,m,n)/β(j,m,n),j=1..order)
+   * 
+   * @return branching matrix of dimsion this{@link #dim} x this{@link #dim}
    */
   public DoubleColMatrix calculateBranchingMatrix()
   {
     DoubleColMatrix αβ = new DoubleColMatrix(getDim(), getDim());
     for (int j = 0; j < order(); j++)
     {
-      DoubleMatrix αj = α[j];
-      DoubleMatrix βj = β[j];
       for (int m = 0; m < getDim(); m++)
       {
         for (int n = 0; n < getDim(); n++)
         {
-          αβ.add(m, n, αj.get(m, n) / βj.get(m, n));
+          αβ.add(m, n, α(j, m, n) / β(j, m, n));
         }
       }
     }
@@ -356,8 +372,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
         final int Nn = ntimes.size();
         for (int j = 0; j < order(); j++)
         {
-          final double αjmn = α[j].get(m, n);
-          final double βjmn = β[j].get(m, n);
+          final double αjmn = α(j, m, n);
+          final double βjmn = β(j, m, n);
           double ntime;
           for (int k = 0; k < Nn && (ntime = ntimes.get(k)) < mtime; k++)
           {
@@ -395,7 +411,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
         for (int j = 0; j < order(); j++)
         {
           double r;
-          double βjmn = β[j].get(m, n);
+          double βjmn = β(j, m, n);
           if (m != n)
           {
             r = exp(-βjmn * mtimeDiff) * R[j][m][n];
@@ -415,7 +431,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
           {
             r = exp(-βjmn * mtimeDiff) * (1 + R[j][m][n]);
           }
-          logsum += α[j].get(m, n) * r;
+          logsum += α(j, m, n) * r;
           R[j][m][n] = r;
         }
       }
@@ -487,8 +503,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
         for (int j = 0; j < order(); j++)
         {
-          final double αjmn = α[j].get(m, n);
-          final double βjmn = β[j].get(m, n);
+          final double αjmn = α(j, m, n);
+          final double βjmn = β(j, m, n);
           double ktime;
           int k = 0;
           // for (k = 0; k < Nn && (ktime = ntimes.get(k)) <
@@ -559,8 +575,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
         for (int j = 0; j < order(); j++)
         {
-          final double αjmn = α[j].get(m, n);
-          final double βjmn = β[j].get(m, n);
+          final double αjmn = α(j, m, n);
+          final double βjmn = β(j, m, n);
           double ktime;
           int k;
           double subsum = exp(-βjmn * (lowerTime - lowerTimeBeforeLast)) * A[j][m][n];
@@ -676,8 +692,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
             for (int j = 0; j < order(); j++)
             {
-              final double αjmn = α[j].get(m, n);
-              final double βjmn = β[j].get(m, n);
+              final double αjmn = α(j, m, n);
+              final double βjmn = β(j, m, n);
               double ktime;
               int k;
               double subsum = exp(-βjmn * (lowerTime - lowerTimeBeforeLast)) * A[j][m][n];

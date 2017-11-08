@@ -503,8 +503,18 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public abstract double Z();
 
+  /**
+   * 
+   * @param j index in [0,order()-1]
+   * @return the j-th α parameter
+   */
   protected abstract double α(int j);
 
+  /**
+   * 
+   * @param j index in [0,order()-1]
+   * @return the j-th β parameter
+   */
   protected abstract double β(int j);
 
   /**

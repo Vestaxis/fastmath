@@ -1,71 +1,30 @@
 package stochastic.processes.selfexciting.multivariate;
 
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
+import static java.lang.Math.pow;
 import static java.lang.System.out;
-
-import java.lang.reflect.Field;
 
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 
+/**
+ * a multivariate version of
+ * {@link ExtendedApproximatePowerlawSelfExcitingProcess} with null
+ * cross-terms.. that is, the branching matrix is a diagonal vector
+ */
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends MultivariateExponentialSelfExcitingProcess
 {
-  @Override
-  public Vector getParameters()
-  {
-    Vector params = new Vector(getParamCount() * dim);
-    for (int i = 0; i < getParamCount(); i++)
-    {
-      Field field = getParameterFields()[i];
-      Vector fieldArray = getField(field);
-      if (fieldArray == null) { throw new IllegalArgumentException("Vector field '" + field.getName() + "' not found in " + getClass().getSimpleName()); }
-      for (int j = 0; j < dim; j++)
-      {
-        int offset = getBoundedParameters()[i].getOrdinal() * (j + 1);
-        params.set(offset, fieldArray.get(j));
-      }
-    }
-    return params;
-  }
-
-  /**
-   * Uses this{@link #getParameterFields()} to assign values from an array to the
-   * specified Java fields, there should dim*this{@link #getParamCount()}
-   * elements, arranged in order [α1,β1,ε1,α.,β.,ε.,αD,βD,εD] where
-   * D=this{@link #getDim()} and for instance getBoundedParms() has 3 elements
-   * called [α,β,ε]
-   * 
-   * @param array
-   *          of values ordered according to this{@link #getBoundedParameters()}
-   */
-  @Override
-  public void assignParameters(double[] point)
-  {
-    BoundedParameter[] params = getBoundedParameters();
-    Field[] fields = getParameterFields();
-    assert fields.length == params.length;
-
-    for (int i = 0; i < fields.length; i++)
-    {
-      Vector fieldArray = getField(fields[i]);
-      for (int j = 0; j < dim; j++)
-      {
-        {
-          int offset = params[i].getOrdinal() * (j + 1);
-          fieldArray.set(j, point[offset]);
-        }
-      }
-    }
-  }
-
-  public MultivariateExtendedApproximatePowerlawSelfExcitingProcess()
-  {
-
-  }
 
   public MultivariateExtendedApproximatePowerlawSelfExcitingProcess(int dim)
   {
     this.dim = dim;
+    κ = new Vector(dim).setName("κ");
+    η = new Vector(dim).setName("η");
+    b = new Vector(dim).setName("b");
+    ε = new Vector(dim).setName("ε");
+    τ0 = new Vector(dim).setName("τ0");
   }
 
   public Vector κ;
@@ -97,7 +56,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   }
 
   public int M = 15;
-  
+
   @Override
   public int order()
   {
@@ -129,47 +88,34 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   }
 
   /**
-   * 
-   * @param field
-   * @return a Vector of dimension this{@link #getDim()}, one is constructed if it
-   *         does not already exist
+   * choose m such that m^M=1 minute, in milliseconds
    */
-  public Vector getField(Field field)
+  public double m = exp(log(60000) / M);
+
+  @Override
+  protected double α(int i, int j, int k)
   {
-    try
-    {
-      Vector vector = (Vector) field.get(this);
-      if (vector == null)
-      {
-        vector = new Vector(dim);
-        field.set(this, vector);
-      }
-      return vector;
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
+    if (j != k) { return 0; }
+    return i < M ? pow(1 / (τ0.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
+
   }
 
-  /**
-   * 
-   * @param field
-   * @param j
-   * @return the n-th element of the {@link Vector} referenced by field
-   */
-  public double getFieldValue(Field field, int j)
+  @Override
+  protected double β(int i, int j, int k)
   {
-    Vector fieldArray;
-    try
-    {
-      fieldArray = (Vector) field.get(this);
-      return fieldArray.get(j);
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
+    if (j != k) { return 0; }
+    return i < M ? 1 / (τ0.get(j) * pow(m, i)) : βS(j);
+
+  }
+
+  public double αS(int j)
+  {
+    return b.get(j);
+  }
+
+  public double βS(int j)
+  {
+    return 1 / τ0.get(j);
   }
 
 }

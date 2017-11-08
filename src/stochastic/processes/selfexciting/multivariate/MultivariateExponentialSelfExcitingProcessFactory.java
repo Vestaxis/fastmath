@@ -25,7 +25,6 @@ public class MultivariateExponentialSelfExcitingProcessFactory
    * @param type
    *          type of process to spawn
    * @param tradingProcess
-   *          dimension
    * @return
    */
   public static MultivariateExponentialSelfExcitingProcess spawnNewProcess(Type type, TradingFiltration tradingProcess)
@@ -33,10 +32,10 @@ public class MultivariateExponentialSelfExcitingProcessFactory
     assert tradingProcess.times != null : "tradingProcess.times is null";
     assert tradingProcess.types != null : "tradingProcess.types is null";
     assert tradingProcess.markedPoints != null : "tradingProcess.markedPoints is null";
-    
+
     if (type == Type.ExtendedApproximatePowerlaw)
     {
-      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess();
+      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
       process.T = tradingProcess.times;
       process.K = tradingProcess.types;
       process.X = tradingProcess.markedPoints;

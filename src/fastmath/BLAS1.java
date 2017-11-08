@@ -35,17 +35,6 @@ public class BLAS1
 
   public static native int dgetrf(boolean colMajor, int M, int N, ByteBuffer A, int offA, int lda, ByteBuffer buffer);
 
-  public native static void dscal(int N, double alpha, ByteBuffer X, int offX, int incX);
-
-  /**
-   * compute y := alpha * x + y where alpha is a scalar and x and y are n-vectors.
-   */
-  public static void daxpy(int N, double alpha, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY)
-  {
-    throw new UnsupportedOperationException( "TODO");   
-    //BLASLibrary.instance.daxpy(N, alpha, X.asDoubleBuffer().position(offX), incX, Y.asDoubleBuffer().position(offY), incY);
-  }
-
   public native static double dlassq(int N, ByteBuffer X, int offX, int incX);
 
   public static double dasum(int N, ByteBuffer X, int incX)
@@ -164,12 +153,6 @@ public class BLAS1
     // X.getIncrement(), Y.getBuffer().asDoubleBuffer(), Y.getIncrement());
   }
 
-  public static void daxpy(double alpha, Vector X, Vector Y)
-  {
-    assert X.size() == Y.size() : "Dimensions of X and Y must be the same";
-
-    daxpy(X.size(), alpha, X.getBuffer(), X.getOffset(0), X.getIncrement(), Y.getBuffer(), Y.getOffset(0), Y.getIncrement());
-  }
 
   /**
    * return alpha*op( A )*op( B )
@@ -229,13 +212,6 @@ public class BLAS1
     // TestCase.assertEquals( V, C );
   }
 
-  /**
-   * X = X*alpha
-   */
-  public static void dscal(Vector X, double alpha)
-  {
-    dscal(X.size(), alpha, X.getBuffer(), X.getOffset(0), X.getIncrement());
-  }
 
   public static int dgetrf(AbstractMatrix A, IntVector ipiv)
   {
