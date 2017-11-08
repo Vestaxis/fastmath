@@ -120,6 +120,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
    */
   public final double logLik()
   {
+    assert T != null : "T cannot be null";
     double tn = T.getRightmostValue();
     double ll = tn - T.getLeftmostValue();
     final int n = T.size();
@@ -174,6 +175,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
+    assert T != null : "T cannot be null";
+    assert K != null : "K cannot be null";
     assert T.size() == K.size() : "times and types should be of same dimension";
 
     final MultivariateFunction logLikelihoodFunction = new MultivariateFunction()

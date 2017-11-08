@@ -29,50 +29,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   }
 
   /**
-   * 
-   * @param field
-   * @return a Vector of dimension this{@link #getDim()}, one is constructed if it
-   *         does not already exist
-   */
-  public Vector getField(Field field)
-  {
-    try
-    {
-      Vector vector = (Vector) field.get(this);
-      if (vector == null)
-      {
-        vector = new Vector(dim);
-        field.set(this, vector);
-      }
-      return vector;
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
-  }
-
-  /**
-   * 
-   * @param field
-   * @param j
-   * @return the n-th element of the {@link Vector} referenced by field
-   */
-  public double getFieldValue(Field field, int j)
-  {
-    Vector fieldArray;
-    try
-    {
-      fieldArray = (Vector) field.get(this);
-      return fieldArray.get(j);
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException(e.getMessage(), e);
-    }
-  }
-
-  /**
    * Uses this{@link #getParameterFields()} to assign values from an array to the
    * specified Java fields, there should dim*this{@link #getParamCount()}
    * elements, arranged in order [α1,β1,ε1,α.,β.,ε.,αD,βD,εD] where
@@ -91,19 +47,12 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
     for (int i = 0; i < fields.length; i++)
     {
+      Vector fieldArray = getField(fields[i]);
       for (int j = 0; j < dim; j++)
       {
         {
-          try
-          {
-            int offset = params[i].getOrdinal() * (j + 1);
-            Vector fieldArray = (Vector) fields[i].get(this);
-            fieldArray.set(j, point[offset]);
-          }
-          catch (IllegalArgumentException | IllegalAccessException e)
-          {
-            throw new RuntimeException(e.getMessage(), e);
-          }
+          int offset = params[i].getOrdinal() * (j + 1);
+          fieldArray.set(j, point[offset]);
         }
       }
     }
@@ -175,6 +124,50 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   public double getΛKolmogorovSmirnovStatistic()
   {
     throw new UnsupportedOperationException("TODO");
+  }
+
+  /**
+   * 
+   * @param field
+   * @return a Vector of dimension this{@link #getDim()}, one is constructed if it
+   *         does not already exist
+   */
+  public Vector getField(Field field)
+  {
+    try
+    {
+      Vector vector = (Vector) field.get(this);
+      if (vector == null)
+      {
+        vector = new Vector(dim);
+        field.set(this, vector);
+      }
+      return vector;
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * 
+   * @param field
+   * @param j
+   * @return the n-th element of the {@link Vector} referenced by field
+   */
+  public double getFieldValue(Field field, int j)
+  {
+    Vector fieldArray;
+    try
+    {
+      fieldArray = (Vector) field.get(this);
+      return fieldArray.get(j);
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
 }

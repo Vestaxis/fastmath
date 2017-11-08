@@ -210,6 +210,7 @@ public class MultivariateSelfExcitingProcessEstimator
     }
 
     process.T = times;
+    process.K = types;
     ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
     printResults(optimizer);
 
