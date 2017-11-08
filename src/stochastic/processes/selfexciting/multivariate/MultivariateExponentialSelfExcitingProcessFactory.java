@@ -18,13 +18,22 @@ public class MultivariateExponentialSelfExcitingProcessFactory
     }
   };
 
-  public static MultivariateExponentialSelfExcitingProcess spawnNewProcess(Type type)
+  /**
+   * 
+   * @param type
+   *          type of process to spawn
+   * @param dim
+   *          dimension
+   * @return
+   */
+  public static MultivariateExponentialSelfExcitingProcess spawnNewProcess(Type type, int dim)
   {
-    switch (type)
+    if (type == Type.ExtendedApproximatePowerlaw)
     {
-//    case ExtendedApproximatePowerlaw:
-//      return new MultivariateExponentialSelfExcitingProcess();
-    default:
+      return new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(dim);
+    }
+    else
+    {
       throw new UnsupportedOperationException("TODO: " + type);
     }
   }

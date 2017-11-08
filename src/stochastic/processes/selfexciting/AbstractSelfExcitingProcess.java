@@ -1,7 +1,9 @@
 package stochastic.processes.selfexciting;
 
 import static java.lang.Math.pow;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 
@@ -29,7 +31,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public DoubleMatrix X;
 
   @Override
-  public final Object clone()
+  public Object clone()
   {
     try
     {
@@ -95,7 +97,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     super();
   }
 
-  public final Vector getParameters()
+  public Vector getParameters()
   {
     return new Vector(Arrays.stream(getParameterFields()).mapToDouble(field -> {
       try
@@ -110,19 +112,18 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   public abstract Object[] evaluateParameterStatistics(double[] point);
-  
 
   public abstract Vector Λ();
 
   public abstract double mean();
-  
+
   public abstract double compensatorMomentMeasure();
 
   public abstract double getΛKolmogorovSmirnovStatistic();
 
   private AbstractSelfExcitingProcess newProcess(double[] point)
   {
-   throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
   public final synchronized Field[] getParameterFields()
@@ -178,7 +179,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public String getParamString()
   {
-    return "[" + Arrays.asList(getParameterFields()).stream().map(param -> {
+    return "[" + asList(getParameterFields()).stream().map(param -> {
       try
       {
         return param.getName() + "=" + param.getDouble(this);
@@ -187,7 +188,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
       {
         throw new RuntimeException(e.getMessage(), e);
       }
-    }).collect(Collectors.joining(",")) + "]";
+    }).collect(joining(",")) + "]";
   }
 
   public double getFieldValue(Field param)
@@ -203,7 +204,5 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   public abstract double logLik();
-
-
 
 }

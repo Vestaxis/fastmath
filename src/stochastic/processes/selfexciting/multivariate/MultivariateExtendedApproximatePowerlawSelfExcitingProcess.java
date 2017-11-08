@@ -10,6 +10,68 @@ import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExciting
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends MultivariateExponentialSelfExcitingProcess
 {
+  @Override
+  public Vector getParameters()
+  {
+    Vector params = new Vector(getParamCount() * dim);
+    for (int i = 0; i < getParamCount(); i++)
+    {
+      Field field = getParameterFields()[i];
+      Vector fieldArray = getField(field);
+      if (fieldArray == null) { throw new IllegalArgumentException("Vector field '" + field.getName() + "' not found in " + getClass().getSimpleName()); }
+      for (int j = 0; j < dim; j++)
+      {
+        int offset = getBoundedParameters()[i].getOrdinal() * (j + 1);
+        params.set(offset, fieldArray.get(j));
+      }
+    }
+    return params;
+  }
+
+  /**
+   * 
+   * @param field
+   * @return a Vector of dimension this{@link #getDim()}, one is constructed if it
+   *         does not already exist
+   */
+  public Vector getField(Field field)
+  {
+    try
+    {
+      Vector vector = (Vector) field.get(this);
+      if (vector == null)
+      {
+        vector = new Vector(dim);
+        field.set(this, vector);
+      }
+      return vector;
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
+  /**
+   * 
+   * @param field
+   * @param j
+   * @return the n-th element of the {@link Vector} referenced by field
+   */
+  public double getFieldValue(Field field, int j)
+  {
+    Vector fieldArray;
+    try
+    {
+      fieldArray = (Vector) field.get(this);
+      return fieldArray.get(j);
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
   /**
    * Uses this{@link #getParameterFields()} to assign values from an array to the
    * specified Java fields, there should dim*this{@link #getParamCount()}
@@ -23,7 +85,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   @Override
   public void assignParameters(double[] point)
   {
-
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
     assert fields.length == params.length;
@@ -46,12 +107,16 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
         }
       }
     }
-    cachedρ = Double.NaN;
+  }
+
+  public MultivariateExtendedApproximatePowerlawSelfExcitingProcess()
+  {
+
   }
 
   public MultivariateExtendedApproximatePowerlawSelfExcitingProcess(int dim)
   {
-    super(dim);
+    this.dim = dim;
   }
 
   public Vector κ;
@@ -103,15 +168,13 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   @Override
   public double mean()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    throw new UnsupportedOperationException("TODO");
   }
 
   @Override
   public double getΛKolmogorovSmirnovStatistic()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    throw new UnsupportedOperationException("TODO");
   }
 
 }

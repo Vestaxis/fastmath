@@ -58,7 +58,7 @@ import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 public abstract class MultivariateExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess
 {
 
-  protected final int dim; // dimension
+  protected int dim;
 
   public abstract int order();
 
@@ -71,31 +71,29 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   // time decay parameters
   DoubleMatrix[] β;
 
-  public MultivariateExponentialSelfExcitingProcess(int dim)
+  @Override
+  public Object clone()
   {
-    this.dim = dim;
-    tmp1 = new VectorContainer[dim];
-    tmp2 = new VectorContainer[dim];
-    tmp3 = new VectorContainer[dim];
-    tmp4 = new VectorContainer[dim];
-    for (int i = 0; i < dim; i++)
+    try
     {
-      tmp1[i] = new VectorContainer();
-      tmp2[i] = new VectorContainer();
-      tmp3[i] = new VectorContainer();
-      tmp4[i] = new VectorContainer();
+      AbstractSelfExcitingProcess spawn = getClass().newInstance();
+      spawn.assignParameters(getParameters().toArray());
+      spawn.T = T;
+      return spawn;
     }
+    catch (InstantiationException | IllegalAccessException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+
   }
+  
+  public MultivariateExponentialSelfExcitingProcess()
+  {
+    
+  }
+  
 
-  VectorContainer tmp0 = new VectorContainer();
-
-  VectorContainer tmp1[];
-
-  VectorContainer tmp2[];
-
-  VectorContainer tmp3[];
-
-  VectorContainer tmp4[];
 
   private Entry<Double, Integer>[][][] lowerEntries;
 
@@ -186,7 +184,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
       {
         Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair = getSubTimes(T, K);
 
-        Vector params = tmp0.getVector(paramArray.length).assign(paramArray).abs();
 
         Vector mean = calculateMean();
         double ll = 0;
@@ -214,15 +211,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
           }
         }
 
-        System.out.println("ll[" + params.toString().replace("\n", "")
-                           + "]="
-                           + ll
-                           + " compMeans="
-                           + asList(compMeans)
-                           + " compVars="
-                           + asList(compVars)
-                           + " mean="
-                           + mean);
         return ll;
       }
 
@@ -318,42 +306,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     return cachedSubTimes;
   }
 
-  @SuppressWarnings("unused")
-  private Vector calculateInitialGuess(Vector times, IntVector types)
-  {
-    final int matrixSize = getDim() * getDim();
-    final Vector params = tmp0.getVector(getDim() + (matrixSize * order() * 2)).assign(0.0);
-    // baseline intensity params
-
-    final Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair = getSubTimes(times, types);
-    final Vector[] timesSub = timesSubPair.left;
-
-    for (int i = 0; i < getDim(); i++)
-    {
-      System.out.println("mean[" + i + "]=" + 1.0 / (timesSub[i].diff().mean()));
-    }
-
-    κ = params.slice(0, getDim());
-    α = new DoubleMatrix[order()];
-    β = new DoubleMatrix[order()];
-    for (int j = 0; j < getDim(); j++)
-    {
-      Vector theseTimes = new Vector(timesSub[j]);
-      κ.set(j, 0.5 / theseTimes.diff().mean());
-    }
-
-    for (int j = 0; j < order(); j++)
-    {
-      α[j] = params.slice(getDim() + (j * matrixSize), getDim() + ((j + 1) * matrixSize)).reshape(getDim(), getDim());
-      β[j] = params.slice(getDim() + (order() * matrixSize) + (j * matrixSize), getDim() + (order() * matrixSize) + ((j + 1) * matrixSize)).reshape(getDim(),
-                                                                                                                                                    getDim());
-      α[j].diag().assign(1.0 / order());
-      β[j].assign(2.0);
-    }
-
-    return params;
-  }
-
   /**
    * @return null if mean could not be calculated
    */
@@ -427,7 +379,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
 
     final Vector mtimes = timesSub[m];
     final int Nm = mtimes.size();
-    Vector intensity = tmp1[m].getVector(Nm - 1);
+    Vector intensity = new Vector(Nm - 1);
     double kappa = this.κ.get(m);
     for (int i = 1; i < Nm; i++)
     {
@@ -461,7 +413,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     Vector[] timesSub = timesSubPair.left;
     TreeMap<Double, Integer>[] subTimeIndex = timesSubPair.right;
     final Vector mtimes = timesSub[m];
-    Vector intensity = tmp4[m].getVector(mtimes.size() - 1);
+    Vector intensity = new Vector(mtimes.size() - 1);
     final int Nm = mtimes.size();
     for (int i = 1; i < Nm; i++)
     {
@@ -546,7 +498,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     double kappa = this.κ.get(m);
     final Vector mtimes = timesSub[m];
     final int N = mtimes.size();
-    Vector compensator = tmp2[m].getVector(N - 1);
+    Vector compensator = new Vector(N - 1);
     for (int i = 1; i < N; i++)
     {
       double upperTime = mtimes.get(i);
@@ -595,7 +547,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     double kappa = this.κ.get(m);
     final Vector mtimes = timesSub[m];
     final int N = mtimes.size();
-    Vector compensator = tmp3[m].getVector(N - 1);
+    Vector compensator = new Vector(N - 1);
     double A[][][] = new double[order()][getDim()][getDim()];
 
     for (int i = 1; i < N; i++)
