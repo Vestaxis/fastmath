@@ -5,11 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
 import java.util.TreeSet;
-import java.util.PrimitiveIterator.OfDouble;
 
 import com.sleepycat.persist.model.Persistent;
 
-import fastmath.matfile.MiDouble;
 import fastmath.matfile.MiInt32;
 
 @Persistent

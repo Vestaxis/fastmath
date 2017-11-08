@@ -3,7 +3,6 @@ package fastmath;
 import java.nio.DoubleBuffer;
 
 import com.sun.jna.Library;
-import com.sun.jna.Native;
 
 public interface BLASLibrary extends Library
 {

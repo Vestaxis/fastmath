@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.sun.jna.NativeLibrary;
-
 /**
  * library for working with JNI (Java Native Interface)
  * 

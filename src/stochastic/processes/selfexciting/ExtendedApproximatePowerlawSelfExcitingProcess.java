@@ -1,14 +1,11 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.prod;
 import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-
-import fastmath.DoubleMatrix;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })

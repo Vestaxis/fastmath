@@ -5,8 +5,6 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.math3.analysis.integration.RombergIntegrator;
-
 import junit.framework.TestCase;
 
 /**

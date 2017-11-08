@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
@@ -18,8 +17,8 @@ import fastmath.IntVector;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
-import stochastic.processes.pointprocesses.finance.Side;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
+import stochastic.processes.pointprocesses.finance.Side;
 import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 import util.TradeClassifier;

@@ -1,7 +1,6 @@
 package stochastic.processes.point;
 
 import static java.lang.System.out;
-import static util.Plotter.plot;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
