@@ -16,10 +16,10 @@ import javax.swing.table.DefaultTableModel;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 
-import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy.TradingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import util.DateUtils;
 
@@ -36,13 +36,8 @@ public class ModelViewer
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    DoubleColMatrix markedPoints = MatFile.loadMatrix(matFile, symbol);
-
-    Vector times = markedPoints.col(0);
-
-    int indexes[] = NasdaqTradingStrategy.getIndices(times);
-
-    ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, times, indexes, markedPoints);
+    ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile,
+                                                                                                       new TradingProcess(MatFile.loadMatrix(matFile, symbol)));
 
     NasdaqTradingStrategy.launchModelViewer(processes);
 
@@ -99,7 +94,7 @@ public class ModelViewer
     assert times.equals(firstProcess.X.col(0));
     Vector prices = firstProcess.X.col(1);
     chart.addSeries("price", times.toArray(), prices.toArray());
-    chart.setTitle( "time units=hours");
+    chart.setTitle("time units=hours");
     chart.getStyler().setMarkerSize(0);
 
     EventQueue.invokeLater(new Runnable()

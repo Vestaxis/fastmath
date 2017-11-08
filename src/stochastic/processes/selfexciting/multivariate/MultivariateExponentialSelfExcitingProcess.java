@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -36,6 +37,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 
+import fastmath.AbstractMatrix;
 import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.EigenDecomposition;
@@ -276,7 +278,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
     throw new UnsupportedOperationException("TODO");
   }
 
-  private Vector Λ()
+  public Vector Λ()
   {
     throw new UnsupportedOperationException("TODO");
   }
@@ -821,5 +823,15 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Abstrac
   public String[] getColumnHeaders()
   {
     return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
+  }
+
+  public AbstractMatrix conditionalλ()
+  {
+    throw new UnsupportedOperationException( "TODO" );
+  }
+
+  public void storeParameters(File modelFile)
+  {
+    throw new UnsupportedOperationException( "TODO" );
   }
 }

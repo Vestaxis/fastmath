@@ -7,11 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.IntVector;
 import fastmath.Vector;
@@ -26,56 +24,76 @@ import util.TradeClassifier;
 
 public class NasdaqTradingStrategy
 {
+  public static class TradingProcess
+  {
+    public TradingProcess(DoubleMatrix markedPoints)
+    {
+      super();
+      this.markedPoints = markedPoints;
+      times = markedPoints.col(0).setName("times");
+      prices = markedPoints.col(1).setName("prices");
+      types = new IntVector(times.size());
+      buyTimes = new Vector(times.size());
+      sellTimes = new Vector(times.size());
+
+      classifyTradeSequences();
+    }
+
+    public void classifyTradeSequences()
+    {
+      TradeClassifier classifier = new TradeClassifier();
+
+      int buyCount = 0;
+      int sellCount = 0;
+      for (int i = 0; i < times.size(); i++)
+      {
+        double price = prices.get(i);
+        Side side = classifier.classify(price);
+        types.set(i, side.ordinal());
+        classifier.record(price);
+        double t = times.get(i);
+        if (side == Side.Buy)
+        {
+          buyTimes.set(buyCount++, t);
+        }
+        else if (side == Side.Sell)
+        {
+          sellTimes.set(sellCount++, t);
+        }
+      }
+      buyTimes = buyTimes.slice(0, buyCount);
+      sellTimes = sellTimes.slice(0, sellCount);
+
+      tradeIndexes = getIndices(times);
+      buyIndexes = getIndices(buyTimes);
+      sellIndexes = getIndices(sellTimes);
+
+    }
+
+    public Vector times;
+    public Vector prices;
+    public DoubleMatrix markedPoints;
+    public IntVector types;
+    public Vector buyTimes;
+    public Vector sellTimes;
+    public int[] tradeIndexes;
+    public int[] buyIndexes;
+    public int[] sellIndexes;
+  }
+
   public static void main(String args[]) throws FileNotFoundException, IOException
   {
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    DoubleColMatrix markedPoints = MatFile.loadMatrix(matFile, symbol);
-    Vector times = markedPoints.col(0).setName("times");
-    Vector prices = markedPoints.col(1).setName("prices");
-    IntVector types = new IntVector( times.size() );
-    TradeClassifier classifier = new TradeClassifier();
-    
-    Vector buyTimes = new Vector(times.size());
-    Vector sellTimes = new Vector(times.size());
-    int buyCount = 0;
-    int sellCount = 0;
-    for (int i = 0; i < times.size(); i++)
-    {
-      double price = prices.get(i);
-      Side side = classifier.classify(price);
-      types.set(i, side.ordinal() );
-      classifier.record(price);
-      double t = times.get(i);
-      if (side == Side.Buy)
-      {
-        buyTimes = buyTimes.append(t);
-        buyCount++;
-      }
-      else if (side == Side.Sell)
-      {
-        sellTimes = sellTimes.append(t);
-        sellCount++;
-      }
-    }
-    buyTimes = buyTimes.slice(0, buyCount );
-    sellTimes = sellTimes.slice(0, sellCount );
-    
-    int[] indexes = getIndices(times);
-    int[] buyIndexes = getIndices(buyTimes);
-    int[] sellIndexes = getIndices(sellTimes);
+    TradingProcess tradingProcess = new TradingProcess(MatFile.loadMatrix(matFile, symbol));
 
     // out.println( "buyTimes=" + buyTimes );
     // out.println( "sellTimes=" + sellTimes );
 
-    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, times, indexes, markedPoints);
+    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, tradingProcess);
 
     launchModelViewer(processes).frame.setTitle(ModelViewer.class.getSimpleName() + ": " + matFile);
-
-    out.println("indexes=" + Arrays.toString(indexes));
-    out.println("buyIndexes=" + Arrays.toString(buyIndexes));
-    out.println("sellIndexes=" + Arrays.toString(sellIndexes));
 
     // TODO: 1. implement the multivariate exponential self-exciting process code
     // that
@@ -110,18 +128,17 @@ public class NasdaqTradingStrategy
     return viewer;
   }
 
-  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, Vector times, int[] indexes,
-      DoubleColMatrix markedPoints)
+  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, TradingProcess tradingProcess)
   {
-    int n = indexes.length;
+    int n = tradingProcess.tradeIndexes.length;
     ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
     for (int i = 0; i < n; i++)
     {
-      DoubleMatrix pointSlice = markedPoints.sliceRows(i == 0 ? 0 : indexes[i - 1], indexes[i]);
-      Vector timeSlice = pointSlice.col(0);
+      DoubleMatrix markedPointSlice = tradingProcess.markedPoints.sliceRows(i == 0 ? 0 : tradingProcess.tradeIndexes[i - 1], tradingProcess.tradeIndexes[i]);
+      Vector timeSlice = markedPointSlice.col(0);
 
       ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-      process.X = pointSlice;
+      process.X = markedPointSlice;
       process.T = timeSlice;
       process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
       processes.add(process);
