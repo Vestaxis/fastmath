@@ -57,6 +57,13 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   public int M = 15;
 
+
+  /**
+   * choose m such that m^M=1 minute, in milliseconds
+   */
+  public double m = exp(log(60000) / M);
+
+  
   @Override
   public int order()
   {
@@ -86,11 +93,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   {
     throw new UnsupportedOperationException("TODO");
   }
-
-  /**
-   * choose m such that m^M=1 minute, in milliseconds
-   */
-  public double m = exp(log(60000) / M);
 
   @Override
   protected double α(int i, int j, int k)
