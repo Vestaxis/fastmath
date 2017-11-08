@@ -1,15 +1,11 @@
 package stochastic.processes.selfexciting;
 
-import static java.lang.Math.pow;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
-import static org.apache.commons.lang.ArrayUtils.addAll;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
