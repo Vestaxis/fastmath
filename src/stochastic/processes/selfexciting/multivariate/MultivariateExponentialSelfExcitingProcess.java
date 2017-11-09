@@ -179,7 +179,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       return process.Λ().mean() > 0;
     };
 
-    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
+    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim * 2 + 1);
 
     ParallelMultistartMultivariateOptimizer optimizer = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
                                                                                                     numStarts,

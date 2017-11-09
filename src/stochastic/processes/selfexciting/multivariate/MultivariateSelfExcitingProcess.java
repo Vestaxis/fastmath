@@ -1,6 +1,10 @@
 package stochastic.processes.selfexciting.multivariate;
 
+import static java.util.stream.IntStream.range;
+
 import java.lang.reflect.Field;
+
+import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.IntVector;
 import fastmath.Vector;
@@ -21,6 +25,15 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
   public MultivariateSelfExcitingProcess()
   {
     super();
+  }
+
+  public SimpleBounds getParameterBounds()
+  {
+    BoundedParameter[] bounds = getBoundedParameters();
+    final int paramCount = bounds.length;
+    double[] lowerBounds = range(0, paramCount * dim).mapToDouble(i -> bounds[i % bounds.length].getMin()).toArray();
+    double[] upperBounds = range(0, paramCount * dim).mapToDouble(i -> bounds[i % bounds.length].getMax()).toArray();
+    return new SimpleBounds(lowerBounds, upperBounds);
   }
 
   @Override

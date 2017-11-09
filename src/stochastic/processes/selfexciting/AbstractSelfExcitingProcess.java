@@ -53,12 +53,15 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   Field[] parameterFields = null;
 
-  public final SimpleBounds getParameterBounds()
+  
+  public SimpleBounds getParameterBounds()
   {
     BoundedParameter[] bounds = getBoundedParameters();
     final int paramCount = bounds.length;
-    return new SimpleBounds(range(0, paramCount).mapToDouble(i -> bounds[i].getMin()).toArray(),
-                            range(0, paramCount).mapToDouble(i -> bounds[i].getMax()).toArray());
+    double[] lowerBounds = range(0, paramCount).mapToDouble(i -> bounds[i].getMin()).toArray();
+    double[] upperBounds = range(0, paramCount).mapToDouble(i -> bounds[i].getMax()).toArray();
+    return new SimpleBounds(lowerBounds,
+                            upperBounds);
   }
 
   public final Field getField(String name)
