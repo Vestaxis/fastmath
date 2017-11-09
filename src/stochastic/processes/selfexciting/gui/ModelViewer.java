@@ -1,7 +1,10 @@
 package stochastic.processes.selfexciting.gui;
 
+import static util.Plotter.plot;
+
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +16,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 
@@ -30,6 +34,8 @@ public class ModelViewer
   private JTable table;
   private XYChart chart;
   private ArrayList<ExponentialSelfExcitingProcess> processes;
+  private XChartPanel<XYChart> chartPanel;
+  private JPanel bottomPanel;
 
   public static void main(String args[]) throws IOException
   {
@@ -37,7 +43,8 @@ public class ModelViewer
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
     ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile,
-                                                                                                       new TradingFiltration(MatFile.loadMatrix(matFile, symbol)));
+                                                                                                       new TradingFiltration(MatFile.loadMatrix(matFile,
+                                                                                                                                                symbol)));
 
     NasdaqTradingStrategy.launchModelViewer(processes);
 
@@ -77,18 +84,23 @@ public class ModelViewer
     JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     splitPane.setTopComponent(scrollPane);
     splitPane.setDividerLocation(250);
-    JPanel bottomPanel = new JPanel();
+    bottomPanel = new JPanel();
 
     splitPane.setBottomComponent(bottomPanel);
     chart = new XYChart(2000, 500);
-    bottomPanel.add(new XChartPanel<XYChart>(chart));
+    chartPanel = new XChartPanel<XYChart>(chart);
+    bottomPanel.setLayout(new GridLayout(1, 2));
+    bottomPanel.add(chartPanel);
 
     frame.getContentPane().add(splitPane, BorderLayout.CENTER);
   }
 
   public void show()
   {
+
     ExponentialSelfExcitingProcess firstProcess = processes.get(0);
+    bottomPanel.add(plot("ν", firstProcess::ν, 0, 100));
+
     double factor = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
     Vector times = firstProcess.T.copy().multiply(factor);
     assert times.equals(firstProcess.X.col(0));

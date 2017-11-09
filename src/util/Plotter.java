@@ -4,6 +4,7 @@ import static java.util.stream.IntStream.rangeClosed;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 
 import fastmath.Vector;
@@ -11,17 +12,23 @@ import fastmath.Vector;
 public class Plotter
 {
 
-  public static void plot(UnivariateFunction func, double left, double right)
+  public static XChartPanel<XYChart> plot(UnivariateFunction func, double left, double right)
   {
-    plot("f", func, left, right, 1000);
+    return plot("f", func, left, right, 1000);
   }
 
-  public static void plot(String name, UnivariateFunction func, double left, double right)
+  public static XChartPanel<XYChart> plot(String name, UnivariateFunction func, double left, double right)
   {
-    plot(name, func, left, right, 1000);
+    return plot(name, func, left, right, 1000);
   }
 
-  public static XYChart plot(String name, UnivariateFunction func, double left, double right, int n)
+  public static XChartPanel<XYChart> plot(String name, UnivariateFunction func, double left, double right, int n)
+  {
+    XYChart chart = chart(name, func, left, right, n);
+    return new XChartPanel<XYChart>(chart);
+  }
+
+  public static XYChart chart(String name, UnivariateFunction func, double left, double right, int n)
   {
     XYChart chart = new XYChart(800, 600);
     chart.getStyler().setXAxisMin(left);
@@ -39,8 +46,14 @@ public class Plotter
       y[i] = func.value(t);
     }
     chart.addSeries(name, x, y);
-    new SwingWrapper<XYChart>(chart).displayChart();
     return chart;
+  }
+
+  public static SwingWrapper<XYChart> display(XYChart chart)
+  {
+    SwingWrapper<XYChart> wrapper = new SwingWrapper<>(chart);
+    wrapper.displayChart();
+    return wrapper;
   }
 
   public static XYChart plot(Vector y)

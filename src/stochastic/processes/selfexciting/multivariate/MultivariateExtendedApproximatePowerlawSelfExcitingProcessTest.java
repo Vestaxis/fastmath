@@ -2,12 +2,25 @@ package stochastic.processes.selfexciting.multivariate;
 
 import static java.lang.Math.random;
 import static java.lang.System.out;
+import static util.Plotter.chart;
+import static util.Plotter.display;
+import static util.Plotter.plot;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
+import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
+import util.Plotter;
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {
+  public static void main(String args[])
+  {
+    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
+    univariateProcess.assignParameters(new double[]
+    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0.34711839565630465, 1.8505814321703276 });
+    display(chart("ν", univariateProcess::ν, 0, 100, 1000));
+  }
+
   public void testAssignParameters()
   {
     MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
@@ -19,7 +32,15 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
     }
     process.assignParameters(randomParams.toArray());
     Vector gotParams = process.getParameters();
-    assertEquals( randomParams, gotParams );
+    assertEquals(randomParams, gotParams);
     // out.println( "paramCount=" + paramCount );
+  }
+
+  public void testIntensity()
+  {
+    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
+    univariateProcess.assignParameters(new double[]
+    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0.34711839565630465, 1.8505814321703276 });
+
   }
 }

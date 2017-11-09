@@ -531,7 +531,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double s;
     for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
     {
-      sum.add(ψ(t - s));
+      sum.add(ν(t - s));
     }
     return sum.doubleValue();
   }
@@ -624,7 +624,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param t
    * @return
    */
-  public final double ψ(double t)
+  public final double ν(double t)
   {
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }

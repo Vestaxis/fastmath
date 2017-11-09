@@ -20,7 +20,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcessTest extends TestC
     //RombergIntegrator integrator = new RombergIntegrator();
     IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 10, 1000);
        
-    double integral = integrator.integrate(50_000_000, process::ψ, 0, 50_000);
+    double integral = integrator.integrate(50_000_000, process::ν, 0, 50_000);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
     assertEquals( process.getρ(), integral, 0.01 );
 //    process.getρ() = 0.5;
