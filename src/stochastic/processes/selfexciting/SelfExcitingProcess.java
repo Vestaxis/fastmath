@@ -5,6 +5,7 @@ import fastmath.Vector;
 public interface SelfExcitingProcess
 {
 
+
   double getBranchingRatio();
 
   double logLikelihood(Vector t);
@@ -21,5 +22,10 @@ public interface SelfExcitingProcess
    * @return conditional mean intensity
    */
   double λ(double t);
+
+  public Vector Λ();
+
+  public Vector λvector();
+  
 
 }

@@ -14,7 +14,9 @@ import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
+import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
 import stochastic.processes.selfexciting.gui.ModelViewer;
@@ -22,17 +24,16 @@ import util.DateUtils;
 
 public class NasdaqTradingStrategy
 {
-  public static void main(String args[]) throws FileNotFoundException, IOException
+  public static void
+         main(String args[]) throws FileNotFoundException,
+                             IOException
   {
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    TradingFiltration tradingProcess = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
+    TradingFiltration data = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
 
-    // out.println( "buyTimes=" + buyTimes );
-    // out.println( "sellTimes=" + sellTimes );
-
-    ArrayList<ExponentialSelfExcitingProcess> processes = getCalibratedProcesses(matFile, tradingProcess);
+    ArrayList<AbstractSelfExcitingProcess> processes = getCalibratedProcesses(matFile, data, Type.ConstrainedApproximatePowerlaw);
 
     launchModelViewer(processes).frame.setTitle(ModelViewer.class.getSimpleName() + ": " + matFile);
 
@@ -50,28 +51,39 @@ public class NasdaqTradingStrategy
 
   }
 
-  public static ModelViewer launchModelViewer(ArrayList<ExponentialSelfExcitingProcess> processes)
+  public static ModelViewer
+         launchModelViewer(ArrayList<AbstractSelfExcitingProcess> processes)
   {
-    ModelViewer viewer = new ModelViewer( processes);
+    ModelViewer viewer = new ModelViewer(processes);
     viewer.show();
     return viewer;
   }
 
-
-  public static ArrayList<ExponentialSelfExcitingProcess> getCalibratedProcesses(final String matFile, TradingFiltration tradingFiltration)
+  /**
+   * 
+   * @param matFile
+   * @param tradingFiltration
+   * 
+   * @return an {@link ArrayList}
+   * @throws IOException 
+   */
+  public static ArrayList<AbstractSelfExcitingProcess>
+         getCalibratedProcesses(final String matFile,
+                                TradingFiltration tradingFiltration, Type type ) throws IOException
   {
     int n = tradingFiltration.tradeIndexes.length;
-    ArrayList<ExponentialSelfExcitingProcess> processes = new ArrayList<>();
+    ArrayList<AbstractSelfExcitingProcess> processes = new ArrayList<>();
     for (int i = 0; i < n; i++)
     {
       DoubleMatrix markedPointSlice = tradingFiltration.markedPoints.sliceRows(i == 0 ? 0 : tradingFiltration.tradeIndexes[i - 1],
                                                                                tradingFiltration.tradeIndexes[i]);
       Vector timeSlice = markedPointSlice.col(0);
 
-      ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+      AbstractSelfExcitingProcess process = type.instantiate(1);
+      
       process.X = markedPointSlice;
       process.T = timeSlice;
-      process.loadParameters(new File(matFile + ".eapl." + i + ".model"));
+      process.loadParameters(new File(matFile + "." + process.getType().getFilenameExtension() + "." + i + ".model"));
       processes.add(process);
 
     }
@@ -90,7 +102,8 @@ public class NasdaqTradingStrategy
    *         {@link NasdaqTradingProcess#openTime} to
    *         {@link NasdaqTradingProcess#closeTime}
    */
-  public static int[] getIndices(Vector times)
+  public static int[]
+         getIndices(Vector times)
   {
     int n = (int) (NasdaqTradingProcess.tradingDuration / SelfExcitingProcessEstimator.W);
     out.println("Dividing the interval containing " + times.size() + " points into " + n + " pieces");

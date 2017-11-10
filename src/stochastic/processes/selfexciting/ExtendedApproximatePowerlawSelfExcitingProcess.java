@@ -75,7 +75,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   }
 
   @Override
-  public double getρ()
+  public double ρ()
   {
     return 1;
   }

@@ -19,7 +19,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcessTest extends TestC
        
     double integral = integrator.integrate(50_000_000, process::ν, 0, 60000 * 5);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
-    assertEquals( process.getρ(), integral, 0.00001 );
+    assertEquals( process.ρ(), integral, 0.00001 );
 
   }
 }

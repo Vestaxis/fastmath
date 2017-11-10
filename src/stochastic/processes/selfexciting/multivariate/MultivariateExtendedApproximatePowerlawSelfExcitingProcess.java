@@ -5,8 +5,12 @@ import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 
+import java.io.File;
+import java.io.IOException;
+
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 
 /**
@@ -38,7 +42,8 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   public Vector τ0;
 
   @Override
-  public final double value(double[] point)
+  public final double
+         value(double[] point)
   {
     assignParameters(point);
 
@@ -57,45 +62,51 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   public int M = 15;
 
-
   /**
    * choose m such that m^M=1 minute, in milliseconds
    */
   public double m = exp(log(60000) / M);
 
-  
   @Override
-  public int order()
+  public int
+         order()
   {
     return M + 1;
   }
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     return ExtendedApproximatePowerlawSelfExcitingProcess.Parameter.values();
   }
 
   @Override
-  public Object[] evaluateParameterStatistics(double[] point)
+  public Object[]
+         evaluateParameterStatistics(double[] point)
   {
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  public double mean()
+  public double
+         mean()
   {
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  public double getΛKolmogorovSmirnovStatistic()
+  public double
+         getΛKolmogorovSmirnovStatistic()
   {
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  protected double α(int i, int j, int k)
+  protected double
+            α(int i,
+              int j,
+              int k)
   {
     if (j != k) { return 0; }
     return i < M ? pow(1 / (τ0.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
@@ -103,27 +114,103 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   }
 
   @Override
-  protected double β(int i, int j, int k)
+  protected double
+            β(int i,
+              int j,
+              int k)
   {
     if (j != k) { return 0; }
     return i < M ? 1 / (τ0.get(j) * pow(m, i)) : βS(j);
 
   }
 
-  public double αS(int j)
+  public double
+         αS(int j)
   {
     return b.get(j);
   }
 
-  public double βS(int j)
+  public double
+         βS(int j)
   {
     return 1 / τ0.get(j);
   }
 
   @Override
-  public double getLjungBoxMeasure()
+  public double
+         getLjungBoxMeasure()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public Type
+         getType()
+  {
+    return Type.MultivariateExtendedApproximatePowerlaw;
+  }
+
+  @Override
+  public double
+         getBranchingRatio()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         logLikelihood(Vector t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         getStationaryλ()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         λ(double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public Vector
+         λvector()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public void
+         loadParameters(File modelFile) throws IOException
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         ν(double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         Z()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         ρ()
+  {
+    throw new UnsupportedOperationException("TODO");
   }
 
 }

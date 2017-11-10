@@ -6,25 +6,28 @@ import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 
 public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcitingProcess implements SelfExcitingProcess
 {
 
-
   @Override
-  protected double α(int j)
+  protected double
+            α(int j)
   {
     return α.get(j);
   }
 
   @Override
-  protected double β(int j)
+  protected double
+            β(int j)
   {
     return β.get(j);
   }
 
   @Override
-  public String toString()
+  public String
+         toString()
   {
     return String.format("HawkesProcess[lambda=%f, alpha=%s, beta=%s, branchingRatio=%f, unconditionalIntensity=%f]",
                          lambda,
@@ -69,43 +72,51 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
   {
   }
 
-  public Vector getAlpha()
+  public Vector
+         getAlpha()
   {
     return α;
   }
 
-  public void setAlpha(Vector alpha)
+  public void
+         setAlpha(Vector alpha)
   {
     this.α = alpha;
   }
 
-  public Vector getBeta()
+  public Vector
+         getBeta()
   {
     return β;
   }
 
-  public void setBeta(Vector beta)
+  public void
+         setBeta(Vector beta)
   {
     this.β = beta;
   }
 
   @Override
-  public int order()
+  public int
+         order()
   {
     return P;
   }
 
-  public void setOrder(int order)
+  public void
+         setOrder(int order)
   {
     this.P = order;
   }
 
-  public double getLambda()
+  public double
+         getLambda()
   {
     return lambda;
   }
 
-  public void setLambda(double lambda)
+  public void
+         setLambda(double lambda)
   {
     this.lambda = lambda;
   }
@@ -122,23 +133,27 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
    * @see pp.HawkesProcess#logLikelihood(fastmath.Vector)
    */
   @Override
-  public double logLikelihood(Vector t)
+  public double
+         logLikelihood(Vector t)
   {
     return Fastmath.getHawkesLL(t, lambda, α, β);
   }
 
-  public double logLikelihoodPos(Vector t)
+  public double
+         logLikelihoodPos(Vector t)
   {
     return Fastmath.getHawkesLLPos(t, lambda, α, β);
   }
 
   @Override
-  public double getStationaryλ()
+  public double
+         getStationaryλ()
   {
     return lambda / (1 - getBranchingRatio());
   }
 
-  public DoubleColMatrix getJacobian(Vector t)
+  public DoubleColMatrix
+         getJacobian(Vector t)
   {
     assert α.size() == β.size() : "alpha and beta dimensions must be equal";
     int order = α.size();
@@ -165,7 +180,8 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return J;
   }
 
-  public double iteratePos(Vector t) throws FastMathException
+  public double
+         iteratePos(Vector t) throws FastMathException
   {
     // out.println(
     // "********************************************ITERATINGPos***********************************************************"
@@ -225,7 +241,9 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return lambda;
   }
 
-  public double iterate(Vector t, double lr) throws FastMathException
+  public double
+         iterate(Vector t,
+                 double lr) throws FastMathException
   {
     int order = α.size();
     // out.println(
@@ -291,7 +309,8 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return lambda;
   }
 
-  public DoubleColMatrix getJacobianPos(Vector t)
+  public DoubleColMatrix
+         getJacobianPos(Vector t)
   {
     assert α.size() == β.size() : "alpha and beta dimensions must be equal";
     int order = α.size();
@@ -318,7 +337,8 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return J;
   }
 
-  public DoubleColMatrix getHessian(Vector t)
+  public DoubleColMatrix
+         getHessian(Vector t)
   {
     assert α.size() == β.size() : "alpha and beta dimensions must be equal";
     int order = α.size();
@@ -355,7 +375,8 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return H;
   }
 
-  public DoubleColMatrix getHessianPos(Vector t)
+  public DoubleColMatrix
+         getHessianPos(Vector t)
   {
     assert α.size() == β.size() : "alpha and beta dimensions must be equal";
     int order = α.size();
@@ -395,118 +416,165 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
     return H;
   }
 
-  public double logLikelihoodAlphaDerivative(Vector t, int j)
+  public double
+         logLikelihoodAlphaDerivative(Vector t,
+                                      int j)
   {
     return Fastmath.getHawkesLLAlphaDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodAlphaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodAlphaDerivativePos(Vector t,
+                                         int j)
   {
     return Fastmath.getHawkesLLAlphaDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodBetaDerivative(Vector t, int j)
+  public double
+         logLikelihoodBetaDerivative(Vector t,
+                                     int j)
   {
     return Fastmath.getHawkesLLBetaDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodBetaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodBetaDerivativePos(Vector t,
+                                        int j)
   {
     return Fastmath.getHawkesLLBetaDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodLambdaDerivative(Vector t, int j)
+  public double
+         logLikelihoodLambdaDerivative(Vector t,
+                                       int j)
   {
     return Fastmath.getHawkesLLLambdaDeriv(t, lambda, α, β);
   }
 
-  public double logLikelihoodLambdaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodLambdaDerivativePos(Vector t,
+                                          int j)
   {
     return Fastmath.getHawkesLLLambdaDerivPos(t, lambda, α, β);
   }
 
-  public double logLikelihoodAlpha2ndDerivative(Vector t, int j)
+  public double
+         logLikelihoodAlpha2ndDerivative(Vector t,
+                                         int j)
   {
     return Fastmath.getHawkesLLAlpha2ndDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodAlpha2ndDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodAlpha2ndDerivativePos(Vector t,
+                                            int j)
   {
     return Fastmath.getHawkesLLAlpha2ndDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodBeta2ndDerivative(Vector t, int j)
+  public double
+         logLikelihoodBeta2ndDerivative(Vector t,
+                                        int j)
   {
     return Fastmath.getHawkesLLBeta2ndDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodBeta2ndDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodBeta2ndDerivativePos(Vector t,
+                                           int j)
   {
     return Fastmath.getHawkesLLBeta2ndDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodLambda2ndDerivative(Vector t, int j)
+  public double
+         logLikelihoodLambda2ndDerivative(Vector t,
+                                          int j)
   {
     return Fastmath.getHawkesLLLambda2ndDeriv(t, lambda, α, β);
   }
 
-  public double logLikelihoodLambda2ndDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodLambda2ndDerivativePos(Vector t,
+                                             int j)
   {
     return Fastmath.getHawkesLLLambda2ndDerivPos(t, lambda, α, β);
   }
 
-  public double logLikelihoodLambdaAlphaDerivative(Vector t, int j)
+  public double
+         logLikelihoodLambdaAlphaDerivative(Vector t,
+                                            int j)
   {
     return Fastmath.getHawkesLLLambdaAlphaDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodLambdaAlphaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodLambdaAlphaDerivativePos(Vector t,
+                                               int j)
   {
     return Fastmath.getHawkesLLLambdaAlphaDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodLambdaBetaDerivative(Vector t, int j)
+  public double
+         logLikelihoodLambdaBetaDerivative(Vector t,
+                                           int j)
   {
     return Fastmath.getHawkesLLLambdaBetaDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodLambdaBetaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodLambdaBetaDerivativePos(Vector t,
+                                              int j)
   {
     return Fastmath.getHawkesLLLambdaBetaDerivPos(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodAlphaBetaDerivative(Vector t, int j)
+  public double
+         logLikelihoodAlphaBetaDerivative(Vector t,
+                                          int j)
   {
     return Fastmath.getHawkesLLAlphaBetaDeriv(t, lambda, α, β, j);
   }
 
-  public double logLikelihoodAlphaBetaDerivativePos(Vector t, int j)
+  public double
+         logLikelihoodAlphaBetaDerivativePos(Vector t,
+                                             int j)
   {
     return Fastmath.getHawkesLLAlphaBetaDerivPos(t, lambda, α, β, j);
   }
 
   @Override
-  public double Z()
+  public double
+         Z()
   {
     return 1;
   }
 
   @Override
-  public String getParamString()
+  public String
+         getParamString()
   {
     return "α=" + α + " β=" + β;
   }
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     throw new UnsupportedOperationException("implement me");
   }
 
   @Override
-  public double getρ()
+  public double
+         ρ()
   {
     return 1;
+  }
+
+  @Override
+  public Type
+         getType()
+  {
+    return Type.Standard;
   }
 
 }

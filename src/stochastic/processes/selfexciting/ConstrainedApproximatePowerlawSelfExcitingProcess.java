@@ -7,11 +7,9 @@ import java.io.Serializable;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
 /**
- * Exponential power-law approximation kernel with the no-instantaneous-response
- * constaint ψ(0)=0
+ * Exponential power-law approximation kernel with arbitrary instantaneous-response
+ * constant ψ(0)=y and branching rate exactly equal to 1
  * 
- * @author stephen
- *
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
@@ -85,11 +83,11 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
             + (1 / (pow(m, (1 + ε)) - 1)
                * pow(τ, (-1 - ε))
                * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-               * getρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+               * ρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
                - pow(τ, -ε) * pow(m, ε) * y)
-              / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ * y - τ * y)
+              / ((-m * pow(m, ε) + m) * ρ() + pow(m, ε) * τ * y - τ * y)
               * τ)
-           / getρ();
+           / ρ();
   }
 
   @Override
@@ -110,9 +108,9 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
            * (1 / (pow(m, (1 + ε)) - 1)
               * pow(τ, (-1 - ε))
               * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-              * getρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+              * ρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
               - pow(τ, -ε) * pow(m, ε) * y)
-           / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ * y - τ * y);
+           / ((-m * pow(m, ε) + m) * ρ() + pow(m, ε) * τ * y - τ * y);
   }
 
   public double βS()

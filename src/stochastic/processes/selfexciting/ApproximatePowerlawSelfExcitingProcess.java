@@ -5,6 +5,8 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+
 public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
 {
 
@@ -121,10 +123,16 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
    * @return the branching rate which will result in k/(1-r)=this{@link #mean()}
    */
   @Override
-  public double getρ()
+  public double ρ()
   {
     return 1;
 
+  }
+
+  @Override
+  public Type getType()
+  {
+    return Type.ApproximatePowerlaw;
   }
 
 }

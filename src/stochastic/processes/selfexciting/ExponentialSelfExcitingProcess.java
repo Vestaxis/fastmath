@@ -23,6 +23,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -53,6 +54,10 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import stochastic.processes.pointprocesses.finance.TradingFiltration;
+import stochastic.processes.selfexciting.multivariate.MultivariateExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory;
+import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
@@ -66,7 +71,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
-  public static void addSeriesToChart(XYChart chart, String name, Vector X, Vector Y)
+  public static void
+         addSeriesToChart(XYChart chart,
+                          String name,
+                          Vector X,
+                          Vector Y)
   {
     chart.addSeries(name, X.toArray(), Y.toArray());
   }
@@ -82,11 +91,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public boolean verbose = false;
 
   /**
-   * constant baseline intensity
-   */
-  public double κ = 0;
-
-  /**
    * background rate is just a fixed-constant per time-interval, for now
    * 
    */
@@ -99,7 +103,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return measure which is greater the closer the first two moments of the
    *         compensator are to unity
    */
-  public double ΛmomentMeasure()
+  public double
+         ΛmomentMeasure()
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
@@ -111,11 +116,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * functions which takes its minimum when the mean and the variance of the
    * compensator is closer to 1
    * 
-   * @return this{@link #ΛmomentMeasure()} * log( 1 + this{@link #getLjungBoxMeasure()} )
+   * @return this{@link #ΛmomentMeasure()} * log( 1 +
+   *         this{@link #getLjungBoxMeasure()} )
    */
-  public double getΛmomentLjungBoxMeasure()
+  public double
+         getΛmomentLjungBoxMeasure()
   {
-    return ΛmomentMeasure() * log( 1 + getLjungBoxMeasure() );
+    return ΛmomentMeasure() * log(1 + getLjungBoxMeasure());
   }
 
   /**
@@ -126,14 +133,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return (Λ().getLjungBoxStatistic( this{@link #LJUNG_BOX_ORDER} ) - (
    *         this{@link #LJUNG_BOX_ORDER} - 2 ))^2
    */
-  public double getLjungBoxMeasure()
+  public double
+         getLjungBoxMeasure()
   {
     return pow(Λ().getLjungBoxStatistic(LJUNG_BOX_ORDER) - (LJUNG_BOX_ORDER - 2), 2);
   }
 
   public static final int LJUNG_BOX_ORDER = 10;
 
-  public final ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
+  public final ParallelMultistartMultivariateOptimizer
+         estimateParameters(int numStarts)
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
@@ -152,7 +161,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                                                                                                    numStarts,
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
-    PointValuePairComparator momentMatchingAutocorrelationComparator = (a, b) -> {
+    PointValuePairComparator momentMatchingAutocorrelationComparator = (a,
+                                                                        b) -> {
       ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
       ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
       double mma = processA.getΛmomentLjungBoxMeasure();
@@ -184,7 +194,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public static String[] statisticNames =
   { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "MMLB(Λ)" };
 
-  protected final double evolveλ(double dt, double t, double[] S)
+  protected final double
+            evolveλ(double dt,
+                    double t,
+                    double[] S)
   {
     double λ = λ0.value(t);
     for (int j = 0; j < order(); j++)
@@ -195,7 +208,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return λ / Z();
   }
 
-  protected final double evolveΛ(double prevdt, double dt, double t, double[] A)
+  protected final double
+            evolveΛ(double prevdt,
+                    double dt,
+                    double t,
+                    double[] A)
   {
     double Λ = dt * λ0.value(t);
     for (int j = 0; j < order(); j++)
@@ -208,7 +225,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return Λ / Z();
   }
 
-  public final double getBranchingRatio()
+  public final double
+         getBranchingRatio()
   {
     return sum(i -> α(i) / β(i), 0, order() - 1) / Z();
   }
@@ -219,19 +237,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *         by this{@link #getBoundedParameters()} and the names of the
    *         statistics enumerated by this{@link #statisticNames}
    */
-  public String[] getColumnHeaders()
+  public String[]
+         getColumnHeaders()
   {
     return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
   }
 
-  public double getΛKolmogorovSmirnovStatistic()
+  public double
+         getΛKolmogorovSmirnovStatistic()
   {
     Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
     double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
     return 1 - ksStatistic;
   }
 
-  protected RandomVectorGenerator getRandomVectorGenerator(SimpleBounds bounds)
+  protected RandomVectorGenerator
+            getRandomVectorGenerator(SimpleBounds bounds)
   {
     return () -> {
       try
@@ -253,26 +274,39 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     };
   }
 
-  public ScoringMethod getScoringMethod()
+  public ScoringMethod
+         getScoringMethod()
   {
     return scoringMethod;
   }
 
-  public Vector getSpectrum(int n)
+  public Vector
+         getSpectrum(int n)
   {
     throw new UnsupportedOperationException("TODO: implement simulation then generate sample autocorrelation from simulated samples since the combinatorial complexixity of the analytic expression would require about 17 years to evaluate on even a really fast machine.");
   }
 
+  /**
+   * TODO: is the critical case when branchingRate == 1 correct?
+   */
   @Override
-  public double getStationaryλ()
+  public double
+         getStationaryλ()
   {
-    return κ / (1 - getBranchingRatio());
+    double branchingRate = ρ();
+    if (branchingRate > 1)
+    {
+      return Double.POSITIVE_INFINITY;
+    }
+    else if (branchingRate == 1) { return 1 / mean(); }
+    return κ / (1 - branchingRate);
   }
 
   /**
    * branching rate
    */
-  public abstract double getρ();
+  public abstract double
+         ρ();
 
   /**
    * integrated kernel function
@@ -280,12 +314,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param t
    * @return
    */
-  public double iψ(double t)
+  public double
+         iψ(double t)
   {
     return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
   }
 
-  public void loadParameters(File file)
+  public void
+         loadParameters(File file)
   {
     try
     {
@@ -298,9 +334,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       }
       dis.close();
       fileInputStream.close();
-      double[] ass = params.toArray();
-      out.println(Arrays.toString(ass));
-      assignParameters(ass);
+      assignParameters(params.toArray());
     }
     catch (Exception e)
     {
@@ -317,7 +351,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param bη
    * @return Pair<logLik,E[Lambda]>
    */
-  public final double logLik()
+  public final double
+         logLik()
   {
     double tn = T.getRightmostValue();
     double ll = tn - T.getLeftmostValue();
@@ -369,7 +404,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   @Override
-  public double logLikelihood(Vector t)
+  public double
+         logLikelihood(Vector t)
   {
     ExponentialSelfExcitingProcess spawn = copy();
     spawn.T = t;
@@ -380,19 +416,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return theoretical mean
    */
-  public final double mean()
+  public final double
+         mean()
   {
     return nthNormalizedMoment(1);
   }
 
-  public ExponentialSelfExcitingProcess newProcess(double[] point)
+  public ExponentialSelfExcitingProcess
+         newProcess(double[] point)
   {
     ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) this.clone();
     process.assignParameters(point);
     return process;
   }
 
-  private Vector normalizedMoments(int n)
+  private Vector
+          normalizedMoments(int n)
   {
     return new Vector(rangeClosed(1, n).mapToDouble(i -> nthNormalizedMoment(i)));
   }
@@ -401,7 +440,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return n'th (raw) moment E[X^n]
    */
-  public double nthMoment(int n)
+  public double
+         nthMoment(int n)
   {
     return nthNormalizedMoment(n) * factorial(n);
   }
@@ -410,18 +450,21 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return n'th (raw) factorial moment E[X^n]/n!
    */
-  public double nthNormalizedMoment(int n)
+  public double
+         nthNormalizedMoment(int n)
   {
     return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
   }
 
-  public abstract int order();
+  public abstract int
+         order();
 
   /**
    * @return predicted time of next point of the process given the list-history
    *         {@link #T}
    */
-  public double predict()
+  public double
+         predict()
   {
     final double v = prod(k -> β(k), 0, order() - 1);
     final double w = sum(k -> β(k), 0, order() - 1);
@@ -432,10 +475,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     out.println("w=" + w);
 
     UnivariateFunction η = t -> exp((t + maxT) * w);
-    BivariateFunction τ = (t, ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
+    BivariateFunction τ = (t,
+                           ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
     IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
-    QuadvariateFunction σ = (m, k, t, s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
-    BivariateFunction φ = (t, ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
+    QuadvariateFunction σ = (m,
+                             k,
+                             t,
+                             s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
+    BivariateFunction φ = (t,
+                           ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
 
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double ε = expDist.sample();
@@ -449,7 +497,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     // distributed ε find the critical point t which maximizes the score φ(t,ε) ");
   }
 
-  protected Vector recursiveΛ(final int n)
+  protected Vector
+            recursiveΛ(final int n)
   {
     Vector durations = T.diff();
 
@@ -464,12 +513,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return compensator;
   }
 
-  public void setScoringMethod(ScoringMethod scoringMethod)
+  public void
+         setScoringMethod(ScoringMethod scoringMethod)
   {
     this.scoringMethod = scoringMethod;
   }
 
-  public void storeParameters(File file) throws IOException
+  public void
+         storeParameters(File file) throws IOException
   {
     FileOutputStream fileOutputStream = new FileOutputStream(file, false);
     DataOutputStream dos = new DataOutputStream(fileOutputStream);
@@ -483,12 +534,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   @Override
-  public String toString()
+  public String
+         toString()
   {
     return getClass().getSimpleName() + getParamString();
   }
 
-  public double totalΛ()
+  public double
+         totalΛ()
   {
     double tn = T.getRightmostValue();
 
@@ -496,7 +549,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   @Override
-  public final double value(double[] point)
+  public final double
+         value(double[] point)
   {
     assignParameters(point);
 
@@ -527,14 +581,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   /**
    * 
-   * @return theoretical mean
+   * @return theoretical variance
    */
-  public final double variance()
+  public final double
+         variance()
   {
     return sum(i -> (2 * α(i)) / pow(β(i), 3), 0, order() - 1) / Z();
   }
 
-  public abstract double Z();
+  public abstract double
+         Z();
 
   /**
    * 
@@ -542,7 +598,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *          index in [0,order()-1]
    * @return the j-th α parameter
    */
-  protected abstract double α(int j);
+  protected abstract double
+            α(int j);
 
   /**
    * 
@@ -550,7 +607,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *          index in [0,order()-1]
    * @return the j-th β parameter
    */
-  protected abstract double β(int j);
+  protected abstract double
+            β(int j);
 
   /**
    * intensity function
@@ -559,7 +617,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return intensity at time t
    */
-  public final double λ(double t)
+  public final double
+         λ(double t)
   {
     DoubleAdder sum = new DoubleAdder();
     sum.add(λ0.value(t));
@@ -582,7 +641,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return ξ
    */
-  public Vector Λ()
+  public Vector
+         Λ()
   {
 
     final int n = T.size() - 1;
@@ -604,14 +664,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   /**
-   * n-th compensated point
+   * n-th compensated point, expensive O(n^2) runtime version
    * 
    * @param i
    *          >= 1 and <= n
    * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
    *         i-1)
    */
-  protected double Λ(int i)
+  protected double
+            Λ(int i)
   {
     final double Ti = T.get(i);
     return sum(k -> {
@@ -623,10 +684,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }, 0, i - 1) / Z();
   }
 
-  public Vector λvector()
+  public Vector
+         λvector()
   {
     final int n = T.size();
-    Vector intensity = new Vector(n);
+    Vector λ = new Vector(n);
 
     if (recursive)
     {
@@ -636,8 +698,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double t = T.get(i);
         double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
         double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, T.get(i), S);
-        intensity.set(i, λ);
+        λ.set(i, evolveλ(dt, T.get(i), S));
       }
     }
     else
@@ -645,12 +706,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       for (int i = 1; i < n; i++)
       {
         double thist = T.get(i);
-        intensity.set(i - 1, λ(thist));
+        λ.set(i - 1, λ(thist));
       }
 
     }
 
-    return intensity;
+    return λ;
   }
 
   /**
@@ -659,7 +720,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param t
    * @return
    */
-  public final double ν(double t)
+  public final double
+         ν(double t)
   {
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
@@ -667,7 +729,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
    */
-  public Object[] evaluateParameterStatistics(double[] point)
+  public Object[]
+         evaluateParameterStatistics(double[] point)
   {
     AbstractSelfExcitingProcess process = newProcess(point);
     double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
@@ -686,6 +749,35 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       process.getΛmomentLjungBoxMeasure() };
 
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+  }
+
+  /**
+   * 
+   * @param type
+   *          type of process to spawn
+   * @param filtration
+   * @return
+   */
+  public static MultivariateExponentialSelfExcitingProcess
+         spawnNewProcess(ExponentialSelfExcitingProcessFactory.Type type,
+                         TradingFiltration filtration)
+  {
+    assert filtration.times != null : "tradingProcess.times is null";
+    assert filtration.types != null : "tradingProcess.types is null";
+    assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
+
+    if (type == ExponentialSelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
+    {
+      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+      process.T = filtration.times;
+      process.K = filtration.types;
+      process.X = filtration.markedPoints;
+      return process;
+    }
+    else
+    {
+      throw new UnsupportedOperationException("TODO: " + type);
+    }
   }
 
 }

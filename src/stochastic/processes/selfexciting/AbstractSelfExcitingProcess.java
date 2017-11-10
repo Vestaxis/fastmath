@@ -4,6 +4,9 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
@@ -12,13 +15,22 @@ import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
+import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 
-public abstract class AbstractSelfExcitingProcess implements MultivariateFunction
+public abstract class AbstractSelfExcitingProcess implements MultivariateFunction, SelfExcitingProcess
 {
+
+  public abstract ExponentialSelfExcitingProcessFactory.Type
+         getType();
 
   public Vector T;
 
   public boolean verbose = false;
+
+  /**
+   * constant baseline intensity
+   */
+  public double κ = 0;
 
   /*
    * The first column of this matrix is identical with T, the remaining columns,
@@ -27,7 +39,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public DoubleMatrix X;
 
   @Override
-  public Object clone()
+  public Object
+         clone()
   {
     try
     {
@@ -46,25 +59,27 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   @SuppressWarnings("unchecked")
-  public final <E extends AbstractSelfExcitingProcess> E copy()
+  public final <E extends AbstractSelfExcitingProcess>
+         E
+         copy()
   {
     return (E) clone();
   }
 
   Field[] parameterFields = null;
 
-  
-  public SimpleBounds getParameterBounds()
+  public SimpleBounds
+         getParameterBounds()
   {
     BoundedParameter[] bounds = getBoundedParameters();
     final int paramCount = bounds.length;
     double[] lowerBounds = range(0, paramCount).mapToDouble(i -> bounds[i].getMin()).toArray();
     double[] upperBounds = range(0, paramCount).mapToDouble(i -> bounds[i].getMax()).toArray();
-    return new SimpleBounds(lowerBounds,
-                            upperBounds);
+    return new SimpleBounds(lowerBounds, upperBounds);
   }
 
-  public final Field getField(String name)
+  public final Field
+         getField(String name)
   {
     Class<? extends Object> oClass = getClass();
     NoSuchFieldException nsfe = null;
@@ -98,7 +113,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     super();
   }
 
-  public Vector getParameters()
+  public Vector
+         getParameters()
   {
     return new Vector(Arrays.stream(getParameterFields()).mapToDouble(field -> {
       try
@@ -112,28 +128,35 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }));
   }
 
-  public abstract Object[] evaluateParameterStatistics(double[] point);
+  public abstract Object[]
+         evaluateParameterStatistics(double[] point);
 
-  public abstract Vector Λ();
+  public abstract Vector
+         Λ();
 
-  public abstract double mean();
+  public abstract double
+         mean();
 
-  public abstract double ΛmomentMeasure();
+  public abstract double
+         ΛmomentMeasure();
 
-  public abstract double getΛmomentLjungBoxMeasure();
+  public abstract double
+         getΛmomentLjungBoxMeasure();
 
-  public abstract double getLjungBoxMeasure();
-  
-  public abstract double getΛKolmogorovSmirnovStatistic();
+  public abstract double
+         getLjungBoxMeasure();
 
+  public abstract double
+         getΛKolmogorovSmirnovStatistic();
 
-
-  private AbstractSelfExcitingProcess newProcess(double[] point)
+  private AbstractSelfExcitingProcess
+          newProcess(double[] point)
   {
     throw new UnsupportedOperationException("TODO");
   }
 
-  public final synchronized Field[] getParameterFields()
+  public final synchronized Field[]
+         getParameterFields()
   {
     if (parameterFields == null)
     {
@@ -155,7 +178,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * @param array
    *          of values ordered according to this{@link #getBoundedParameters()}
    */
-  public void assignParameters(double[] point)
+  public void
+         assignParameters(double[] point)
   {
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
@@ -174,15 +198,17 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }
   }
 
+  public abstract BoundedParameter[]
+         getBoundedParameters();
 
-  public abstract BoundedParameter[] getBoundedParameters();
-
-  public int getParamCount()
+  public int
+         getParamCount()
   {
     return getBoundedParameters().length;
   }
 
-  public String getParamString()
+  public String
+         getParamString()
   {
     return "[" + asList(getParameterFields()).stream().map(param -> {
       try
@@ -196,7 +222,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }).collect(joining(",")) + "]";
   }
 
-  public double getFieldValue(Field param)
+  public double
+         getFieldValue(Field param)
   {
     try
     {
@@ -208,6 +235,40 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }
   }
 
-  public abstract double logLik();
+  public abstract double
+         logLik();
+
+  public abstract ParallelMultistartMultivariateOptimizer
+         estimateParameters(int numStarts);
+
+  public abstract String[]
+         getColumnHeaders();
+
+  public abstract void
+         loadParameters(File modelFile) throws IOException;
+
+  public abstract void
+         storeParameters(File modelFile) throws IOException;
+
+  /**
+   * kernel function
+   * 
+   * @param t
+   * @return
+   */
+  public abstract double
+         ν(double t);
+  
+  /**
+   * normalization factor which ensures the integral of this{@link #ν(double)} over [0,∞] is equal to this#ρ()
+   * @return
+   */
+  public abstract double Z();
+  
+  /**
+   * 
+   * @return the integral of this{@link #ν(double)} over [0,∞]
+   */
+  public abstract double ρ();
 
 }

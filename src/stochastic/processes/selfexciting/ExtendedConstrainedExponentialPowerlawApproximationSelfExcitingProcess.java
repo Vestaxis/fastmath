@@ -113,11 +113,11 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
   {
     if (abs(ε - pow(10, -15)) < 0)
     {
-      return (M * τ + αS()) / (τ * getρ());
+      return (M * τ + αS()) / (τ * ρ());
     }
     else
     {
-      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ, -ε) + αS() / τ) / getρ();
+      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ, -ε) + αS() / τ) / ρ();
     }
   }
 
@@ -154,8 +154,8 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
            * (-1 / (pow(m, (1 + ε)) - 1)
               * pow(τ, (-1 - ε))
               * (pow(m, (1 + ε)) - pow(m, (1 + 2 * ε)) - pow(m, -((1 + ε) * (M - 1))) + pow(m, (-ε * M - M + 2 * ε + 1)))
-              * getρ() + y * (pow(τ, -ε) * pow(m, -(ε * (M - 1))) - pow(τ, -ε) * pow(m, ε)))
-           / (pow(m, ε) * getρ() * τ - pow(m, ε) * y - τ * getρ() + y);
+              * ρ() + y * (pow(τ, -ε) * pow(m, -(ε * (M - 1))) - pow(τ, -ε) * pow(m, ε)))
+           / (pow(m, ε) * ρ() * τ - pow(m, ε) * y - τ * ρ() + y);
 
   }
 

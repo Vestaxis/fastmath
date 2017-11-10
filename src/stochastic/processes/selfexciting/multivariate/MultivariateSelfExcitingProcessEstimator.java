@@ -26,7 +26,9 @@ import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.BoundedParameter;
-import stochastic.processes.selfexciting.multivariate.MultivariateExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
@@ -49,10 +51,11 @@ public class MultivariateSelfExcitingProcessEstimator
     this.process = process;
   }
 
-  public static void main(String[] args) throws IOException, CloneNotSupportedException
+  public static void
+         main(String[] args) throws IOException,
+                             CloneNotSupportedException
   {
-
-    MultivariateExponentialSelfExcitingProcessFactory.Type type = Type.ExtendedApproximatePowerlaw;
+    Type type = Type.MultivariateExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
 
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * 1;
@@ -92,15 +95,20 @@ public class MultivariateSelfExcitingProcessEstimator
    * @return
    * @throws IOException
    */
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess> estimateHawkesProcess(MultivariateExponentialSelfExcitingProcessFactory.Type type,
-      String filename, String symbol) throws IOException
+  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+         estimateHawkesProcess(Type type,
+                               String filename,
+                               String symbol) throws IOException
 
   {
     return estimateSelfExcitingTradingProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
   }
 
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess> estimateSelfExcitingTradingProcess(MultivariateExponentialSelfExcitingProcessFactory.Type type,
-      String filename, int trajectoryCount, String symbol) throws IOException
+  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+         estimateSelfExcitingTradingProcess(Type type,
+                                            String filename,
+                                            int trajectoryCount,
+                                            String symbol) throws IOException
   {
     return estimateSelfExcitingTradingProcesses(type, trajectoryCount, new TradingFiltration(MatFile.loadMatrix(filename, symbol)));
   }
@@ -119,8 +127,10 @@ public class MultivariateSelfExcitingProcessEstimator
    * @return
    * @throws IOException
    */
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess> estimateSelfExcitingTradingProcesses(MultivariateExponentialSelfExcitingProcessFactory.Type type,
-      int trajectoryCount, TradingFiltration tradingProcess) throws IOException
+  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+         estimateSelfExcitingTradingProcesses(Type type,
+                                              int trajectoryCount,
+                                              TradingFiltration tradingProcess) throws IOException
   {
     Vector times = tradingProcess.times;
     double Edt = times.diff().mean();
@@ -137,9 +147,8 @@ public class MultivariateSelfExcitingProcessEstimator
       IntVector typeSlice = tradingProcess.types.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       DoubleMatrix markedPointSlice = tradingProcess.markedPoints.sliceRows(i == 0 ? 0 : tradingProcess.tradeIndexes[i - 1], tradingProcess.tradeIndexes[i]);
 
-      MultivariateExponentialSelfExcitingProcess process = MultivariateExponentialSelfExcitingProcessFactory.spawnNewProcess(type, tradingProcess );
- 
-      
+      MultivariateExponentialSelfExcitingProcess process = ExponentialSelfExcitingProcess.spawnNewProcess(type, tradingProcess);
+
       MultivariateSelfExcitingProcessEstimator estimator = new MultivariateSelfExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
       estimator.estimate(markedPointSlice, typeSlice);
@@ -153,7 +162,10 @@ public class MultivariateSelfExcitingProcessEstimator
     return processes;
   }
 
-  public static void storeParameterEstimationResults(File testFile, Vector data, MultivariateExponentialSelfExcitingProcess process) throws IOException
+  public static void
+         storeParameterEstimationResults(File testFile,
+                                         Vector data,
+                                         MultivariateExponentialSelfExcitingProcess process) throws IOException
   {
     Vector compensator = process.Λ().setName("comp");
     DoubleMatrix intensity = process.conditionalλ().setName("intensity");
@@ -165,7 +177,8 @@ public class MultivariateSelfExcitingProcessEstimator
     MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
   }
 
-  public void setTrajectoryCount(int trajectoryCount)
+  public void
+         setTrajectoryCount(int trajectoryCount)
   {
     this.trajectoryCount = trajectoryCount;
   }
@@ -178,17 +191,20 @@ public class MultivariateSelfExcitingProcessEstimator
    * parameters
    * 
    */
-  public int getTrajectoryCount()
+  public int
+         getTrajectoryCount()
   {
     return trajectoryCount;
   }
 
-  public MultivariateSelfExcitingProcess estimate(DoubleMatrix markedPoints, IntVector types) throws IOException
+  public MultivariateSelfExcitingProcess
+         estimate(DoubleMatrix markedPoints,
+                  IntVector types) throws IOException
   {
     process.T = markedPoints.col(0);
     process.X = markedPoints;
     process.K = types;
-    
+
     if (verbose)
     {
       println(ansi().fgRed()
@@ -214,7 +230,6 @@ public class MultivariateSelfExcitingProcessEstimator
                     .reset());
     }
 
- 
     ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
     printResults(optimizer);
 
@@ -222,7 +237,8 @@ public class MultivariateSelfExcitingProcessEstimator
 
   }
 
-  public TextTable printResults(ParallelMultistartMultivariateOptimizer multiopt)
+  public TextTable
+         printResults(ParallelMultistartMultivariateOptimizer multiopt)
   {
 
     BoundedParameter[] params = process.getBoundedParameters();
@@ -243,7 +259,9 @@ public class MultivariateSelfExcitingProcessEstimator
     return tt;
   }
 
-  public Object[][] evaluateStatisticsForEachLocalOptima(PointValuePair[] optima, String[] columnHeaders)
+  public Object[][]
+         evaluateStatisticsForEachLocalOptima(PointValuePair[] optima,
+                                              String[] columnHeaders)
   {
     Object[][] data = new Object[optima.length][columnHeaders.length];
 
@@ -259,7 +277,9 @@ public class MultivariateSelfExcitingProcessEstimator
     return data;
   }
 
-  public static Vector loadTimes(String filename, String symbol) throws IOException
+  public static Vector
+         loadTimes(String filename,
+                   String symbol) throws IOException
   {
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);

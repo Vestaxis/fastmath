@@ -22,12 +22,15 @@ import javax.swing.table.DefaultTableModel;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
+import org.knowm.xchart.style.XYStyler;
 
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
+import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import util.DateUtils;
 
 public class ModelViewer
@@ -36,23 +39,26 @@ public class ModelViewer
   public JFrame frame;
   private JTable table;
   private XYChart chart;
-  private List<ExponentialSelfExcitingProcess> processes;
+  private List<AbstractSelfExcitingProcess> processes;
   private XChartPanel<XYChart> chartPanel;
   private JPanel bottomPanel;
 
-  public static void main(String args[]) throws IOException
+  public static void
+         main(String args[]) throws IOException
   {
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
     TradingFiltration tradingFiltration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
-    ArrayList<ExponentialSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, tradingFiltration);
+    ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile,
+                                                                                                    tradingFiltration,
+                                                                                                    Type.ConstrainedApproximatePowerlaw);
 
     NasdaqTradingStrategy.launchModelViewer(processes);
 
   }
 
-  public ModelViewer(List<ExponentialSelfExcitingProcess> processes)
+  public ModelViewer(List<AbstractSelfExcitingProcess> processes)
   {
     Object[][] data = getProcessParametersAndStatisticsMatrix(processes);
 
@@ -62,7 +68,9 @@ public class ModelViewer
     DefaultTableModel tableModel = new DefaultTableModel()
     {
       @Override
-      public boolean isCellEditable(int arg0, int arg1)
+      public boolean
+             isCellEditable(int arg0,
+                            int arg1)
       {
         return false;
       }
@@ -72,7 +80,8 @@ public class ModelViewer
     this.processes = processes;
   }
 
-  public static Object[][] getProcessParametersAndStatisticsMatrix(List<ExponentialSelfExcitingProcess> processes)
+  public static Object[][]
+         getProcessParametersAndStatisticsMatrix(List<AbstractSelfExcitingProcess> processes)
   {
     List<Object[]> processStats = processes.stream().map(process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(toList());
     int N = processStats.get(0).length;
@@ -91,7 +100,8 @@ public class ModelViewer
   /**
    * Initialize the contents of the frame.
    */
-  private void initialize()
+  private void
+          initialize()
   {
     frame = new JFrame();
     frame.setBounds(100, 100, 2200, 1057);
@@ -117,10 +127,11 @@ public class ModelViewer
     frame.getContentPane().add(splitPane, BorderLayout.CENTER);
   }
 
-  public void show()
+  public void
+         show()
   {
 
-    ExponentialSelfExcitingProcess firstProcess = processes.get(0);
+    AbstractSelfExcitingProcess firstProcess = processes.get(0);
     double ν0 = firstProcess.ν(0);
     double z = firstProcess.Z();
     out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
@@ -131,12 +142,18 @@ public class ModelViewer
     assert times.equals(firstProcess.X.col(0));
     Vector prices = firstProcess.X.col(1);
     chart.addSeries("price", times.toArray(), prices.toArray());
-    chart.setTitle("time units=hours");
-    chart.getStyler().setMarkerSize(0);
+
+    chart.setTitle(firstProcess.X.getName());
+    chart.setXAxisTitle("hour");
+    chart.setYAxisTitle("price($)");
+    XYStyler styler = chart.getStyler();
+    styler.setMarkerSize(0);
+    styler.setYAxisLogarithmic(true);
 
     EventQueue.invokeLater(new Runnable()
     {
-      public void run()
+      public void
+             run()
       {
         try
         {
