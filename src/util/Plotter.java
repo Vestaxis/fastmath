@@ -9,6 +9,7 @@ import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.XYStyler;
 
 import fastmath.Vector;
 
@@ -60,9 +61,11 @@ public class Plotter
     XYChart chart = new XYChart(800, 600);
     chart.setXAxisTitle(xAxisTitle);
     chart.setYAxisTitle(yAxisTitle);
-    chart.getStyler().setXAxisMin(timeAxisTransformer.apply(left));
-    chart.getStyler().setXAxisMax(timeAxisTransformer.apply(right));
-    chart.getStyler().setMarkerSize(0);
+    XYStyler styler = chart.getStyler();
+    styler.setXAxisMin(timeAxisTransformer.apply(left));
+    styler.setXAxisMax(timeAxisTransformer.apply(right));
+    styler.setMarkerSize(0);
+    styler.setToolTipsEnabled(true);
     double W = right - left;
     double dt = W / n;
     double t = left;
@@ -131,10 +134,12 @@ public class Plotter
   {
     XYChart chart = new XYChart(800, 600);
     double left = x.fmin();
-    chart.getStyler().setXAxisMin(left);
+    XYStyler styler = chart.getStyler();
+    styler.setXAxisMin(left);
     double right = x.fmax();
-    chart.getStyler().setXAxisMax(right);
-    chart.getStyler().setMarkerSize(0);
+    styler.setXAxisMax(right);
+    styler.setMarkerSize(0);
+    styler.setToolTipsEnabled(true);
     double W = right - left;
     double t = left;
     int n = x.size();
@@ -144,15 +149,15 @@ public class Plotter
   }
 
   public static XChartPanel<XYChart>
-         plot(String string,
-              String string2,
-              UnivariateFunction univariateFunction,
+         plot(String xAxisName,
+              String yAxisName,
+              UnivariateFunction func,
               double fmin,
               double fmax,
               int i,
               DoubleFunction<Double> timeAxisTransformer)
   {
-    return new XChartPanel<XYChart>(chart(string, string2, univariateFunction, fmin, fmax, i, timeAxisTransformer));
+    return new XChartPanel<XYChart>(chart(xAxisName, yAxisName, func, fmin, fmax, i, timeAxisTransformer));
   }
 
 }

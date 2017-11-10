@@ -172,12 +172,13 @@ public class ModelViewer
     double logReferencePrice = logPrices.get(0);
     logPrices = logPrices.subtract(logReferencePrice).multiply(100);
     double referencePrice = exp(logReferencePrice);
-    String logPriceName = format("(ln(price)-ln(%4.2f)*100", referencePrice);
+    String logPriceName = format("(ln(price)-ln(%4.2f))*100", referencePrice);
     chart.addSeries(logPriceName, timesInHours.toArray(), logPrices.toArray());
     chart.setTitle("price Δ%");
     chart.setXAxisTitle("t (hours)");
     chart.setYAxisTitle(logPriceName);
     XYStyler styler = chart.getStyler();
+    styler.setToolTipsEnabled(true);
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);
 
