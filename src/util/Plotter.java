@@ -6,6 +6,7 @@ import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYSeries;
 
 import fastmath.Vector;
 
@@ -58,20 +59,32 @@ public class Plotter
 
   public static XYChart plot(Vector y)
   {
-    return plot("A", y);
+    return plot(y, y.getName() != null ? y.getName() : "A");
   }
 
-  public static XYChart plot(String name, Vector y)
+  public static XYChart plot(Vector y, String seriesName)
   {
-    return plot(new Vector(rangeClosed(1, y.size()).mapToDouble(i -> i)), y, name);
+    return plot(new Vector(rangeClosed(1, y.size()).mapToDouble(i -> i)), y, seriesName);
   }
 
   public static XYChart plot(Vector x, Vector y)
   {
-    return plot(x, y, "f");
+    XYChart chart = plot(x, y, "f");
+    chart.setXAxisTitle(x.getName());
+    chart.setYAxisTitle(y.getName());
+    return chart;
   }
 
-  public static XYChart plot(Vector x, Vector y, String name)
+  /**
+   * Constructs an {@link XYChart} containing an {@link XYSeries}
+   * 
+   * @param x
+   * @param y
+   * @param seriesName
+   *          passed to {@link XYChart#addSeries(String, double[], double[])}
+   * @return
+   */
+  public static XYChart plot(Vector x, Vector y, String seriesName)
   {
     XYChart chart = new XYChart(800, 600);
     double left = x.fmin();
@@ -83,11 +96,8 @@ public class Plotter
     double t = left;
     int n = x.size();
     assert n == y.size();
-
-    chart.addSeries(name, x.toArray(), y.toArray());
-    new SwingWrapper<XYChart>(chart).displayChart();
+    chart.addSeries(seriesName, x.toArray(), y.toArray());
     return chart;
-
   }
 
 }

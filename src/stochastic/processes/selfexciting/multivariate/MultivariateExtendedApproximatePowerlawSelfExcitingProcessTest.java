@@ -13,15 +13,8 @@ import util.Plotter;
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {
-  public static void main(String args[])
-  {
-    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
-    univariateProcess.assignParameters(new double[]
-    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0.34711839565630465, 1.8505814321703276 });
-    display(chart("ν", univariateProcess::ν, 0, 100, 1000));
-  }
 
-  public void testAssignParameters()
+  public void testGetAndAssignParameters()
   {
     MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
     int paramCount = process.getParamCount() * process.dim;

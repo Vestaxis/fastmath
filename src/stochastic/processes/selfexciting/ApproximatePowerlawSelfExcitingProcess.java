@@ -21,11 +21,11 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
 //    }
 //  }
 
-  public ApproximatePowerlawSelfExcitingProcess(double ε, double τ0)
+  public ApproximatePowerlawSelfExcitingProcess(double ε, double τ)
   {
     super();
     this.ε = ε;
-    this.τ0 = τ0;
+    this.τ = τ;
   }
 
   protected static enum Parameter implements BoundedParameter
@@ -70,20 +70,20 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
 
   public int M = 15;
 
-  public double τ0;
+  public double τ;
 
-  public double ε;
+  public double ε = 0;
 
   @Override
   public double α(int i)
   {
-    return pow(1 / (τ0 * pow(m, i)), 1 + ε);
+    return pow(1 / (τ * pow(m, i)), 1 + ε);
   }
 
   @Override
   public double β(int i)
   {
-    return 1 / (τ0 * pow(m, i));
+    return 1 / (τ * pow(m, i));
   }
 
   /**

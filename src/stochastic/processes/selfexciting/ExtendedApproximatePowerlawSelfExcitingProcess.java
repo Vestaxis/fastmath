@@ -2,30 +2,31 @@ package stochastic.processes.selfexciting;
 
 import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
+import static util.Plotter.chart;
+import static util.Plotter.display;
 
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
-@SuppressWarnings(
-{ "deprecation", "unused", "unchecked" })
 public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
-  private static final long serialVersionUID = 1L;
-
-  @Override
-  public BoundedParameter[] getBoundedParameters()
+  public static void main(String args[])
   {
-    return Parameter.values();
+    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
+    // κ(0, 1), η(0, 4), b(0, 2), ε(0, 0.5), τ0(0, 3);
+    univariateProcess.assignParameters(new double[]
+    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0, 1.8505814321703276 });
+    display(chart("ν", univariateProcess::ν, 0, 100, 1000));
+  }
+
+  public ExtendedApproximatePowerlawSelfExcitingProcess()
+  {
   }
 
   public static enum Parameter implements BoundedParameter
   {
-
-    κ(0, 1), η(0, 4), b(0, 2), ε(0, 0.5), τ0(0, 3);
-
-    private double min;
-    private double max;
+    κ(0, 1), τ(0, 15), ε(0, 0.5), η(0, 4), b(0, 5),;
 
     Parameter(double min, double max)
     {
@@ -33,10 +34,14 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
       this.max = max;
     }
 
+    private double max;
+
+    private double min;
+
     @Override
-    public String getName()
+    public double getMax()
     {
-      return name();
+      return max;
     }
 
     @Override
@@ -46,9 +51,9 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     }
 
     @Override
-    public double getMax()
+    public String getName()
     {
-      return max;
+      return name();
     }
 
     @Override
@@ -59,43 +64,20 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
 
   }
 
-  public ExtendedApproximatePowerlawSelfExcitingProcess()
-  {
-  }
-
   public double b;
 
   public double η;
 
-
   @Override
-  public double Z()
+  public BoundedParameter[] getBoundedParameters()
   {
-    //return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) / getρ();
-    return (M * b * τ0 + sum(k -> pow(τ0, -ε) * pow(m, -k * ε), 0, order() - 1)) ;
-  }
-
-  
-  @Override
-  public double α(int i)
-  {   
-    return i < M ? super.α(i) : αS();
+    return Parameter.values();
   }
 
   @Override
-  public double β(int i)
+  public double getρ()
   {
-    return i < M ? super.β(i) : βS();
-  }
-
-  public double αS()
-  {
-    return b;
-  }
-
-  public double βS()
-  {
-    return 1 / η;
+    return 1;
   }
 
   /**
@@ -108,7 +90,6 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   @Override
   public double iψ(double t)
   {
-
     throw new UnsupportedOperationException("TODO");
   }
 
@@ -119,14 +100,30 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   }
 
   @Override
-  public double getρ()
+  public double Z()
   {
-    return 1;
-//    if (!Double.isNaN(cachedρ)) { return cachedρ; }
-//    double x = sum(j -> prod(k -> k == j ? α(j) : pow(β(j), 2), 0, order() - 1), 0, order() - 1);
-//    double res = -(κ * prod(j -> pow(β(j), 2), 0, order() - 1) - x) / x;
-//    cachedρ = res;
-//    return res;
+    return (ε < 1E-14) ? (b * η + M) : ((pow(τ, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))) / (pow(m, ε) - 1) + b * η);
+  }
 
+  @Override
+  public double α(int i)
+  {
+    return i < M ? super.α(i) : αS();
+  }
+
+  public double αS()
+  {
+    return b;
+  }
+
+  @Override
+  public double β(int i)
+  {
+    return i < M ? super.β(i) : βS();
+  }
+
+  public double βS()
+  {
+    return 1 / η;
   }
 }

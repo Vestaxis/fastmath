@@ -68,7 +68,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
 
   public ConstrainedApproximatePowerlawSelfExcitingProcess(double τ0, double ε)
   {
-    this.τ0 = τ0;
+    this.τ = τ0;
     this.ε = ε;
   }
 
@@ -81,14 +81,14 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   @Override
   public double Z()
   {
-    return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε)
+    return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ, -ε)
             + (1 / (pow(m, (1 + ε)) - 1)
-               * pow(τ0, (-1 - ε))
+               * pow(τ, (-1 - ε))
                * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-               * getρ() + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
-               - pow(τ0, -ε) * pow(m, ε) * y)
-              / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ0 * y - τ0 * y)
-              * τ0)
+               * getρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+               - pow(τ, -ε) * pow(m, ε) * y)
+              / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ * y - τ * y)
+              * τ)
            / getρ();
   }
 
@@ -108,16 +108,16 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   {
     return m
            * (1 / (pow(m, (1 + ε)) - 1)
-              * pow(τ0, (-1 - ε))
+              * pow(τ, (-1 - ε))
               * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-              * getρ() + pow(m, -(ε * (M - 1))) * pow(τ0, -ε) * y
-              - pow(τ0, -ε) * pow(m, ε) * y)
-           / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ0 * y - τ0 * y);
+              * getρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+              - pow(τ, -ε) * pow(m, ε) * y)
+           / ((-m * pow(m, ε) + m) * getρ() + pow(m, ε) * τ * y - τ * y);
   }
 
   public double βS()
   {
-    return m / τ0;
+    return m / τ;
   }
 
   /**

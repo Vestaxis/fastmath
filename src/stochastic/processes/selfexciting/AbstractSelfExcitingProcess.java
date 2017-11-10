@@ -168,10 +168,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
         throw new RuntimeException(e.getMessage(), e);
       }
     }
-    cachedρ = Double.NaN;
   }
 
-  protected double cachedρ = Double.NaN;
 
   public abstract BoundedParameter[] getBoundedParameters();
 

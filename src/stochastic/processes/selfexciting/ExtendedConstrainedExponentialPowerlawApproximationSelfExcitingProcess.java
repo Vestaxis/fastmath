@@ -71,7 +71,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
     assert τ0 > 0 : "τ0 must be positive";
     assert τ > 0 : "τ must be positive";
-    this.τ0 = τ0;
+    this.τ = τ0;
     this.τ = τ;
     this.ε = ε;
     this.b = b;
@@ -117,7 +117,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
     }
     else
     {
-      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ0, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ0, -ε) + αS() / τ) / getρ();
+      return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ, -ε) + αS() / τ) / getρ();
     }
   }
 
@@ -152,9 +152,9 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
   {
     return τ
            * (-1 / (pow(m, (1 + ε)) - 1)
-              * pow(τ0, (-1 - ε))
+              * pow(τ, (-1 - ε))
               * (pow(m, (1 + ε)) - pow(m, (1 + 2 * ε)) - pow(m, -((1 + ε) * (M - 1))) + pow(m, (-ε * M - M + 2 * ε + 1)))
-              * getρ() + y * (pow(τ0, -ε) * pow(m, -(ε * (M - 1))) - pow(τ0, -ε) * pow(m, ε)))
+              * getρ() + y * (pow(τ, -ε) * pow(m, -(ε * (M - 1))) - pow(τ, -ε) * pow(m, ε)))
            / (pow(m, ε) * getρ() * τ - pow(m, ε) * y - τ * getρ() + y);
 
   }

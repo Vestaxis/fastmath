@@ -16,6 +16,8 @@ import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
+import static util.Plotter.chart;
+import static util.Plotter.display;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -54,6 +56,9 @@ import fastmath.optim.SolutionValidator;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
+ 
+
+  
   public static enum ScoringMethod
   {
     LikelihoodMaximization, MomentMatching
@@ -379,7 +384,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    */
   public double nthNormalizedMoment(int n)
   {
-    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1);
+    return sum(i -> (α(i) / pow(β(i), n + 1)), 0, order() - 1) / Z();
   }
 
   public abstract int order();
@@ -618,6 +623,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return intensity;
   }
 
+  
   /**
    * kernel function
    * 
