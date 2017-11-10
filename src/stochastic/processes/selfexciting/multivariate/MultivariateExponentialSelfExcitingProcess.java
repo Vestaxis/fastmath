@@ -214,7 +214,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   }
 
   @Override
-  public double ΛmomentLjungBoxMeasure()
+  public double getΛmomentLjungBoxMeasure()
   {
     throw new UnsupportedOperationException("TODO");
   }

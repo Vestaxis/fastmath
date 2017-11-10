@@ -120,7 +120,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public abstract double ΛmomentMeasure();
 
-  public abstract double ΛmomentLjungBoxMeasure();
+  public abstract double getΛmomentLjungBoxMeasure();
 
   public abstract double getLjungBoxMeasure();
   

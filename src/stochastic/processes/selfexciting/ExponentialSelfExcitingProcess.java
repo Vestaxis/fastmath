@@ -111,11 +111,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * functions which takes its minimum when the mean and the variance of the
    * compensator is closer to 1
    * 
-   * @return this{@link #ΛmomentMeasure()} * this{@link #getLjungBoxMeasure()}
+   * @return this{@link #ΛmomentMeasure()} * log( 1 + this{@link #getLjungBoxMeasure()} )
    */
-  public double ΛmomentLjungBoxMeasure()
+  public double getΛmomentLjungBoxMeasure()
   {
-    return ΛmomentMeasure() * getLjungBoxMeasure();
+    return ΛmomentMeasure() * log( 1 + getLjungBoxMeasure() );
   }
 
   /**
@@ -155,8 +155,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     PointValuePairComparator momentMatchingAutocorrelationComparator = (a, b) -> {
       ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
       ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.getLjungBoxMeasure();
-      double mmb = processB.getLjungBoxMeasure();
+      double mma = processA.getΛmomentLjungBoxMeasure();
+      double mmb = processB.getΛmomentLjungBoxMeasure();
       return Double.compare(mma, mmb);
     };
 
@@ -683,7 +683,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       compensated.variance(),
       process.ΛmomentMeasure(),
       process.getLjungBoxMeasure(),
-      process.ΛmomentLjungBoxMeasure() };
+      process.getΛmomentLjungBoxMeasure() };
 
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
