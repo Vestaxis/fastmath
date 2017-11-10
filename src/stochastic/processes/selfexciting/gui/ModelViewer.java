@@ -119,7 +119,7 @@ public class ModelViewer
     splitPane.setBottomComponent(bottomPanel);
     chart = new XYChart(2000, 500);
     chartPanel = new XChartPanel<XYChart>(chart);
-    bottomPanel.setLayout(new GridLayout(1, 2));
+    bottomPanel.setLayout(new GridLayout(3, 1));
     bottomPanel.add(chartPanel);
 
     frame.getContentPane().add(splitPane, BorderLayout.CENTER);
@@ -158,8 +158,7 @@ public class ModelViewer
     out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
     XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", firstProcess::ν, 0, 100);
     
-    impulseResponseChart.getChart().setTitle("impulse response kernel");
-    bottomPanel.add(impulseResponseChart);
+    impulseResponseChart.getChart().setTitle("impulse response kernel (ms)");
 
     double factor = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
     Vector times = firstProcess.T.copy().multiply(factor);
@@ -171,11 +170,19 @@ public class ModelViewer
     String logPriceName = format("(ln(price)-ln(%4.2f)*100", referencePrice);
     chart.addSeries(logPriceName, times.toArray(), logPrices.toArray());
     chart.setTitle("price Δ%");
-    chart.setXAxisTitle("t (hour)");
+    chart.setXAxisTitle("t (ms)");
     chart.setYAxisTitle(logPriceName);
     XYStyler styler = chart.getStyler();
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);
+    
+    
+    XChartPanel<XYChart> intensityChart = Plotter.plot("t (hour)", "λ(t)", t->firstProcess.λ(t)*1000, firstProcess.T.fmin(), firstProcess.T.fmax(), 100 );
+    intensityChart.getChart().setTitle("conditional intensity (events per second)");
+    
+    bottomPanel.add(intensityChart);
+    bottomPanel.add(impulseResponseChart);
+
   }
 
 }
