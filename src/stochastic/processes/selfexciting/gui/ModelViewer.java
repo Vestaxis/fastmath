@@ -6,12 +6,14 @@ import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.DoubleFunction;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -157,29 +159,41 @@ public class ModelViewer
     double z = firstProcess.Z();
     out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
     XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", firstProcess::ν, 0, 100);
-    
+
     impulseResponseChart.getChart().setTitle("impulse response kernel (ms)");
 
-    double factor = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
-    Vector times = firstProcess.T.copy().multiply(factor);
-    assert times.equals(firstProcess.X.col(0));
+    double millisecondsToHours = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
+    double millisecondsToSeconds = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+    Vector timesInHours = firstProcess.T.copy().multiply(millisecondsToHours);
+    Vector timesInSeconds = firstProcess.T.copy().multiply(millisecondsToSeconds);
+    Vector timesInMilliseconds = firstProcess.T.copy().multiply(millisecondsToHours);
+    assert timesInHours.equals(firstProcess.X.col(0));
     Vector logPrices = firstProcess.X.col(1).copy().add(1).log();
     double logReferencePrice = logPrices.get(0);
     logPrices = logPrices.subtract(logReferencePrice).multiply(100);
     double referencePrice = exp(logReferencePrice);
     String logPriceName = format("(ln(price)-ln(%4.2f)*100", referencePrice);
-    chart.addSeries(logPriceName, times.toArray(), logPrices.toArray());
+    chart.addSeries(logPriceName, timesInHours.toArray(), logPrices.toArray());
     chart.setTitle("price Δ%");
-    chart.setXAxisTitle("t (ms)");
+    chart.setXAxisTitle("t (hours)");
     chart.setYAxisTitle(logPriceName);
     XYStyler styler = chart.getStyler();
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);
-    
-    
-    XChartPanel<XYChart> intensityChart = Plotter.plot("t (hour)", "λ(t)", t->firstProcess.λ(t)*1000, firstProcess.T.fmin(), firstProcess.T.fmax(), 100 );
+
+    double firstTime = firstProcess.T.fmin();
+    XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)",
+                                                       "λ(t)",
+                                                       t -> firstProcess.λ(t) * 1000,
+                                                       firstTime,
+                                                       firstTime + 1000 * 5,
+                                                       2000,
+                                                       t -> (t - firstTime) / 1000);
+
     intensityChart.getChart().setTitle("conditional intensity (events per second)");
-    
+    intensityChart.getChart().getStyler().setSeriesColors(new Color[]
+    { Color.RED });
+
     bottomPanel.add(intensityChart);
     bottomPanel.add(impulseResponseChart);
 

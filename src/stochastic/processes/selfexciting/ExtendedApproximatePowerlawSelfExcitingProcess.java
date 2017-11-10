@@ -10,13 +10,14 @@ import org.apache.commons.math3.analysis.MultivariateFunction;
 
 public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
-  public static void main(String args[])
+  public static void
+         main(String args[])
   {
     final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
     // κ(0, 1), η(0, 4), b(0, 2), ε(0, 0.5), τ0(0, 3);
     univariateProcess.assignParameters(new double[]
     { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0, 1.8505814321703276 });
-    display(chart("t", "ν(t)", univariateProcess::ν, 0, 100, 1000));
+    display(chart("t", "ν(t)", univariateProcess::ν, 0, 100, 1000, t -> t / 1000));
   }
 
   public ExtendedApproximatePowerlawSelfExcitingProcess()
@@ -38,25 +39,29 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     private double min;
 
     @Override
-    public double getMax()
+    public double
+           getMax()
     {
       return max;
     }
 
     @Override
-    public double getMin()
+    public double
+           getMin()
     {
       return min;
     }
 
     @Override
-    public String getName()
+    public String
+           getName()
     {
       return name();
     }
 
     @Override
-    public int getOrdinal()
+    public int
+           getOrdinal()
     {
       return ordinal();
     }
@@ -68,13 +73,15 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   public double η;
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     return Parameter.values();
   }
 
   @Override
-  public double ρ()
+  public double
+         ρ()
   {
     return 1;
   }
@@ -87,41 +94,48 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
    * @return ∫this{@link #ψ}(t)dt
    */
   @Override
-  public double iψ(double t)
+  public double
+         iψ(double t)
   {
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  public int order()
+  public int
+         order()
   {
     return M + 1;
   }
 
   @Override
-  public double Z()
+  public double
+         Z()
   {
     return (ε < 1E-14) ? (b * η + M) : ((pow(τ, -ε) * (pow(m, ε) - pow(m, -ε * (M - 1)))) / (pow(m, ε) - 1) + b * η);
   }
 
   @Override
-  public double α(int i)
+  public double
+         α(int i)
   {
     return i < M ? super.α(i) : αS();
   }
 
-  public double αS()
+  public double
+         αS()
   {
     return b;
   }
 
   @Override
-  public double β(int i)
+  public double
+         β(int i)
   {
     return i < M ? super.β(i) : βS();
   }
 
-  public double βS()
+  public double
+         βS()
   {
     return 1 / η;
   }

@@ -2,6 +2,8 @@ package util;
 
 import static java.util.stream.IntStream.rangeClosed;
 
+import java.util.function.DoubleFunction;
+
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
@@ -12,7 +14,6 @@ import fastmath.Vector;
 
 public class Plotter
 {
-
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
@@ -32,7 +33,7 @@ public class Plotter
               double right,
               int n)
   {
-    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n);
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t);
     return new XChartPanel<XYChart>(chart);
   }
 
@@ -42,13 +43,25 @@ public class Plotter
                UnivariateFunction func,
                double left,
                double right,
-               int n)
+               DoubleFunction<Double> timeAxisTransformer)
+  {
+    return chart(xAxisTitle, yAxisTitle, func, left, right, 1000, timeAxisTransformer);
+  }
+
+  public static XYChart
+         chart(String xAxisTitle,
+               String yAxisTitle,
+               UnivariateFunction func,
+               double left,
+               double right,
+               int n,
+               DoubleFunction<Double> timeAxisTransformer)
   {
     XYChart chart = new XYChart(800, 600);
     chart.setXAxisTitle(xAxisTitle);
     chart.setYAxisTitle(yAxisTitle);
-    chart.getStyler().setXAxisMin(left);
-    chart.getStyler().setXAxisMax(right);
+    chart.getStyler().setXAxisMin(timeAxisTransformer.apply(left));
+    chart.getStyler().setXAxisMax(timeAxisTransformer.apply(right));
     chart.getStyler().setMarkerSize(0);
     double W = right - left;
     double dt = W / n;
@@ -58,7 +71,7 @@ public class Plotter
 
     for (int i = 0; i < n; i++, t = left + dt * i)
     {
-      x[i] = t;
+      x[i] = timeAxisTransformer.apply(t);
       y[i] = func.value(t);
     }
     chart.addSeries(yAxisTitle, x, y);
@@ -128,6 +141,18 @@ public class Plotter
     assert n == y.size();
     chart.addSeries(seriesName, x.toArray(), y.toArray());
     return chart;
+  }
+
+  public static XChartPanel<XYChart>
+         plot(String string,
+              String string2,
+              UnivariateFunction univariateFunction,
+              double fmin,
+              double fmax,
+              int i,
+              DoubleFunction<Double> timeAxisTransformer)
+  {
+    return new XChartPanel<XYChart>(chart(string, string2, univariateFunction, fmin, fmax, i, timeAxisTransformer));
   }
 
 }
