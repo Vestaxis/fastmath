@@ -373,6 +373,6 @@ public class DoubleColMatrix extends DoubleMatrix
 
   public double supNorm()
   {
-    return rows().stream( false ).mapToDouble( row -> row.stream().map( val -> abs( val ) ).sum() ).max().getAsDouble();
+    return rows().stream( false ).mapToDouble( row -> row.doubleStream().map( val -> abs( val ) ).sum() ).max().getAsDouble();
   }
 }

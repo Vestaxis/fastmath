@@ -44,7 +44,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     try
     {
       AbstractSelfExcitingProcess spawn = getClass().getDeclaredConstructor().newInstance();
-      spawn.assignParameters(getParameters().toArray());
+      spawn.assignParameters(getParameters().toDoubleArray());
       spawn.T = T;
       spawn.X = X;
       return spawn;

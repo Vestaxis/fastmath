@@ -8,7 +8,7 @@ import static java.util.stream.IntStream.range;
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
 import junit.framework.TestCase;
-import math.DoublePair;
+import util.DoublePair;
 
 public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {

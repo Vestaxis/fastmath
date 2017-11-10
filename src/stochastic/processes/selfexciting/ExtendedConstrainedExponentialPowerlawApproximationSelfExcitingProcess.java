@@ -86,7 +86,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
 
   private double[] getParameterArray()
   {
-    return getParameters().toArray();
+    return getParameters().toDoubleArray();
   }
 
   @Override

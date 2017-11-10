@@ -18,7 +18,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
     {
       randomParams.set(i, random());
     }
-    process.assignParameters(randomParams.toArray());
+    process.assignParameters(randomParams.toDoubleArray());
     Vector gotParams = process.getParameters();
     assertEquals(randomParams, gotParams);
     // out.println( "paramCount=" + paramCount );

@@ -3,11 +3,7 @@ package fastmath;
 import static java.lang.String.format;
 import static java.util.stream.IntStream.rangeClosed;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
@@ -36,7 +32,7 @@ import fastmath.matfile.MiMatrix;
 import fastmath.matfile.Writable;
 
 @Persistent
-public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>
+public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Collection<Double>
 {
 
   public Vector()
@@ -49,22 +45,26 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     NativeUtils.loadNativeFastmathLibrary();
   }
 
-  public Pointer getPointer()
+  public Pointer
+         getPointer()
   {
     return Native.getDirectBufferPointer(buffer);
   }
 
-  public Vector xor(double p)
+  public Vector
+         xor(double p)
   {
     return pow(p);
   }
 
-  public Vector xor(int p)
+  public Vector
+         xor(int p)
   {
     return pow(p);
   }
 
-  public Vector negate()
+  public Vector
+         negate()
   {
     return copy().multiply(-1);
   }
@@ -79,7 +79,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     }
 
     @Override
-    public boolean tryAdvance(DoubleConsumer action)
+    public boolean
+           tryAdvance(DoubleConsumer action)
     {
       if (n >= size) { return false; }
       action.accept(get(n++));
@@ -87,7 +88,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     }
 
     @Override
-    public boolean tryAdvance(Consumer<? super Double> action)
+    public boolean
+           tryAdvance(Consumer<? super Double> action)
     {
       if (n >= size) { return false; }
       action.accept(get(n++));
@@ -124,7 +126,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     }
 
     @Override
-    public int getIncrement()
+    public int
+           getIncrement()
     {
       return increment;
     }
@@ -136,13 +139,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
      * @return
      */
     @Override
-    public int getIndex()
+    public int
+           getIndex()
     {
       return index;
     }
 
     @Override
-    public int getOffset(int i)
+    public int
+           getOffset(int i)
     {
       return baseOffset + (increment * i * MiDouble.BYTES);
     }
@@ -164,9 +169,23 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  private static native double ddot(int n, ByteBuffer x, int offx, int incx, ByteBuffer y, int offy, int incy);
+  private static native double
+          ddot(int n,
+               ByteBuffer x,
+               int offx,
+               int incx,
+               ByteBuffer y,
+               int offy,
+               int incy);
 
-  public static native void swap(int n, ByteBuffer x, int xOff, int incx, ByteBuffer y, int yOff, int incy);
+  public static native void
+         swap(int n,
+              ByteBuffer x,
+              int xOff,
+              int incx,
+              ByteBuffer y,
+              int yOff,
+              int incy);
 
   private String name;
 
@@ -222,7 +241,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    */
   public Vector(Vector v)
   {
-    this(v.toArray());
+    this(v.toDoubleArray());
     setName(v.getName());
   }
 
@@ -254,7 +273,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector abs()
+  public Vector
+         abs()
   {
     for (int i = 0; i < size(); i++)
     {
@@ -269,22 +289,26 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * @param n
    * @return
    */
-  public double moment(int n)
+  public double
+         moment(int n)
   {
-    return stream().map(x -> Math.pow(x, n)).average().getAsDouble();
+    return doubleStream().map(x -> Math.pow(x, n)).average().getAsDouble();
   }
 
-  public Vector moments(int n)
+  public Vector
+         moments(int n)
   {
     return new Vector(rangeClosed(1, n).mapToDouble(i -> moment(i)));
   }
 
-  public Vector normalizedMoments(int n)
+  public Vector
+         normalizedMoments(int n)
   {
     return new Vector(rangeClosed(1, n).mapToDouble(i -> normalizedMoment(i)));
   }
 
-  private double normalizedMoment(int i)
+  private double
+          normalizedMoment(int i)
   {
     return moment(i) / CombinatoricsUtils.factorial(i);
   }
@@ -294,7 +318,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * @param n
    * @return
    */
-  public double centralMoment(int n)
+  public double
+         centralMoment(int n)
   {
     switch (n)
     {
@@ -302,7 +327,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
       return mean();
     default:
       double m = mean();
-      return stream().map(x -> Math.pow(x - m, n)).average().getAsDouble();
+      return doubleStream().map(x -> Math.pow(x - m, n)).average().getAsDouble();
     }
   }
 
@@ -314,7 +339,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public double add(int i, double x)
+  public double
+         add(int i,
+             double x)
   {
     assert i < size : format("%d >= %d", i, size);
     double updatedValue = get(i) + x;
@@ -322,7 +349,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return updatedValue;
   }
 
-  public Vector addVector(Vector x)
+  public Vector
+         addVector(Vector x)
   {
     assert size() == x.size();
     return add(x);
@@ -341,7 +369,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @throws FastMathException
    */
-  public native Vector add(Vector x);
+  public native Vector
+         add(Vector x);
 
   /**
    * Adds a vector to this vector
@@ -353,7 +382,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector add(Vector x, double alpha)
+  public Vector
+         add(Vector x,
+             double alpha)
   {
     assert size == x.size() : "Dimensions must be equal";
 
@@ -369,7 +400,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Return a view of this Vector as a rowsxN matrix
    */
-  public DoubleMatrix asDenseDoubleMatrix(int rows, int cols)
+  public DoubleMatrix
+         asDenseDoubleMatrix(int rows,
+                             int cols)
   {
     DoubleMatrix.Sub matrix = new DoubleMatrix.Sub(buffer, rows, cols, getOffset(0), MiDouble.BYTES, rows, false);
     matrix.setName(getName());
@@ -379,7 +412,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Return a view of this Vector as a 1xN matrix
    */
-  public DoubleMatrix asMatrix()
+  public DoubleMatrix
+         asMatrix()
   {
     return asDenseDoubleMatrix(1, size);
   }
@@ -387,12 +421,14 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Return a view of this Vector as a Nx1 matrix
    */
-  public DoubleMatrix asRowMatrix()
+  public DoubleMatrix
+         asRowMatrix()
   {
     return new DoubleMatrix.Sub(buffer, 1, size, getOffset(0), size, getIncrement(), false);
   }
 
-  public Vector assign(Vector x)
+  public Vector
+         assign(Vector x)
   {
     assert size() == x.size() : format("dimensions do not match in assignment: this.size=%d != %d", size(), x.size());
     for (int i = 0; i < x.size(); i++)
@@ -402,17 +438,20 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Vector copy()
+  public Vector
+         copy()
   {
     return new Vector(this);
   }
 
-  public Vector copy(VectorContainer container)
+  public Vector
+         copy(VectorContainer container)
   {
     return new Vector(this);
   }
 
-  public MiMatrix createMiMatrix()
+  public MiMatrix
+         createMiMatrix()
   {
     return asMatrix().createMiMatrix();
   }
@@ -424,7 +463,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return vector length of this minus 1
    */
-  public Vector diff()
+  public Vector
+         diff()
   {
     Vector fd = copy().slice(1, size());
     fd.subtract(slice(0, size() - 1));
@@ -436,7 +476,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector divide(double x)
+  public Vector
+         divide(double x)
   {
     for (int i = 0; i < size(); i++)
     {
@@ -450,7 +491,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector divide(Vector x)
+  public Vector
+         divide(Vector x)
   {
     assert size() == x.size();
     for (int i = 0; i < size(); i++)
@@ -467,7 +509,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public double dotProduct(Vector x)
+  public double
+         dotProduct(Vector x)
   {
     assert x.size == size : "Dimensions do not agree";
     if (x.getIncrement() >= 0 && getIncrement() >= 0)
@@ -482,7 +525,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   }
 
   @Override
-  public boolean equals(Object obj)
+  public boolean
+         equals(Object obj)
   {
     // TODO: optimize
     if (Vector.class.isAssignableFrom(obj.getClass()))
@@ -508,7 +552,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Equals within bounds
    */
-  public boolean equals(Vector v, double bounds)
+  public boolean
+         equals(Vector v,
+                double bounds)
   {
     if (size != v.size()) { return false; }
 
@@ -525,9 +571,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public native Vector exp();
+  public native Vector
+         exp();
 
-  public Vector floor()
+  public Vector
+         floor()
   {
     for (int i = 0; i < size(); i++)
     {
@@ -536,7 +584,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public IntVector findAll(final double val, final Condition cond)
+  public IntVector
+         findAll(final double val,
+                 final Condition cond)
   {
     IntVector indices = new IntVector();
     int i = 0;
@@ -560,7 +610,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return index, or -1 if condition not met
    */
-  public int find(final double val, final Condition cond, int start)
+  public int
+         find(final double val,
+              final Condition cond,
+              int start)
   {
     for (int i = start; i < size(); i++)
     {
@@ -586,7 +639,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return index, or -1 if condition not met
    */
-  public int findLast(final double val, final Condition cond)
+  public int
+         findLast(final double val,
+                  final Condition cond)
   {
     int reverseResult = reverse().find(val, cond, 0);
     return reverseResult == -1 ? -1 : (size() - reverseResult - 1);
@@ -595,12 +650,14 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * @return true if any element of this vector is equal to +infinity
    */
-  public boolean hasAnyInfinities()
+  public boolean
+         hasAnyInfinities()
   {
     return find(Double.POSITIVE_INFINITY, Condition.EQUAL, 0) != -1;
   }
 
-  public double get(int i)
+  public double
+         get(int i)
   {
     assert i < size() : "Index out of bounds, " + i + " >= " + size();
     assert buffer != null : "buffer is null";
@@ -609,7 +666,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return doubleVal;
   }
 
-  public int getIncrement()
+  public int
+         getIncrement()
   {
     return 1;
   }
@@ -621,17 +679,20 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * @return -1, there are no idexes for regular vectors, only for columns and
    *         rows
    */
-  public int getIndex()
+  public int
+         getIndex()
   {
     return -1;
   }
 
-  public String getName()
+  public String
+         getName()
   {
     return name;
   }
 
-  public int getOffset(int i)
+  public int
+         getOffset(int i)
   {
     return i * MiDouble.BYTES;
   }
@@ -643,7 +704,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * @param with
    * @return this
    */
-  public Vector replaceInfinity(double with)
+  public Vector
+         replaceInfinity(double with)
   {
     for (int i = 0; i < size; i++)
     {
@@ -653,7 +715,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Vector replaceNaN(double with)
+  public Vector
+         replaceNaN(double with)
   {
     for (int i = 0; i < size; i++)
     {
@@ -679,7 +742,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector inv()
+  public Vector
+         inv()
   {
     for (int i = 0; i < size; i++)
     {
@@ -694,7 +758,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public boolean isContiguous()
+  public boolean
+         isContiguous()
   {
     return getIncrement() == 1;
   }
@@ -704,7 +769,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public boolean isDense()
+  public boolean
+         isDense()
   {
     return getIncrement() == 1;
   }
@@ -716,7 +782,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector lag(int k)
+  public Vector
+         lag(int k)
   {
     return lag(k, 0.0);
   }
@@ -730,7 +797,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector lag(int k, double x)
+  public Vector
+         lag(int k,
+             double x)
   {
     assert k > 0 : "k must be > 0";
     slice(k, size()).assign(slice(0, size() - k).copy());
@@ -743,7 +812,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector log()
+  public Vector
+         log()
   {
     for (int i = 0; i < size; i++)
     {
@@ -758,7 +828,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public double fmax()
+  public double
+         fmax()
   {
     double max = Double.NEGATIVE_INFINITY;
 
@@ -788,7 +859,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    *          IEEE finite precision rounding) elements with the same value
    * @return
    */
-  public double fmax(int[] idx)
+  public double
+         fmax(int[] idx)
   {
     double max = Double.NEGATIVE_INFINITY;
 
@@ -813,7 +885,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return mean value
    */
-  public double mean()
+  public double
+         mean()
   {
     return sum() / size;
   }
@@ -823,7 +896,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public double fmin()
+  public double
+         fmin()
   {
     double min = Double.POSITIVE_INFINITY;
 
@@ -844,7 +918,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector multiply(double x)
+  public Vector
+         multiply(double x)
   {
     for (int i = 0; i < size; i++)
     {
@@ -861,14 +936,16 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public native Vector multiply(Vector x);
+  public native Vector
+         multiply(Vector x);
 
   /*
    * Element-wise pow
    * 
    * @return this
    */
-  public Vector pow(double x)
+  public Vector
+         pow(double x)
   {
     for (int i = 0; i < size; i++)
     {
@@ -883,7 +960,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * TODO: unit test
    */
-  public Vector replace(double x, double y)
+  public Vector
+         replace(double x,
+                 double y)
   {
     for (int i = 0; i < size; i++)
     {
@@ -908,7 +987,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public DoubleMatrix reshape(int m, int n)
+  public DoubleMatrix
+         reshape(int m,
+                 int n)
   {
     assert (m * n) == size() : "dimensions do not agree, m=" + m + ", n=" + n + ", m*n != " + size();
 
@@ -920,7 +1001,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return new Vector sharing the same underlying buffer as this
    */
-  public Vector reverse()
+  public Vector
+         reverse()
   {
     return new Sub(buffer, size, getOffset(size() - 1), getIncrement() * -1);
   }
@@ -934,7 +1016,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector round(double x)
+  public Vector
+         round(double x)
   {
     double y = 1 / x;
 
@@ -954,7 +1037,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector set(int i, double x)
+  public Vector
+         set(int i,
+             double x)
   {
     assert i < size() && i >= 0 : format("i=%d size()=%d", i, size());
 
@@ -973,7 +1058,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Vector set(double... x)
+  public Vector
+         set(double... x)
   {
     return assign(x);
   }
@@ -983,62 +1069,29 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    *          TODO: throw exception if name contains UTF characters
    */
-  public Vector setName(String name)
+  public Vector
+         setName(String name)
   {
     this.name = name;
     return this;
   }
 
-  /**
-   * Shift the elements of this matrix WITHOUT wrapping
-   * 
-   * For example: with i=2 [1 2 3 4 5] becomes [0 0 1 2 3]
-   * 
-   * @param i
-   * 
-   * @return this
-   */
-  public Vector shift(int i)
-  {
-    if (i > 0)
-    {
-      slice(i, size()).assign(slice(0, size() - i).copy());
-      slice(0, i).assign(0);
-    }
-    else if (i < 0)
-    {
-      i = -i;
-
-      slice(0, size() - i).assign(slice(i, size()).copy());
-      slice(size() - i, size()).assign(0);
-    }
-
-    return this;
-  }
-
-  public final int dimension()
+  public final int
+         dimension()
   {
     return size;
   }
 
-  public final int dim()
+  public final int
+         dim()
   {
     return size;
   }
 
-  public final int size()
+  public final int
+         size()
   {
     return size;
-  }
-
-  /**
-   * @see this{@link #slice(int, int)}
-   * @param timeSpanIndices
-   * @return
-   */
-  public Vector slice(Pair<Integer, Integer> timeSpanIndices)
-  {
-    return slice(timeSpanIndices.left, timeSpanIndices.right);
   }
 
   /**
@@ -1054,7 +1107,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return the specified subvector
    */
-  public Vector slice(int beginIndex, int endIndex)
+  public Vector
+         slice(int beginIndex,
+               int endIndex)
   {
     assert beginIndex >= 0 : String.format("beginIndex %d must be >= 0", beginIndex);
     assert endIndex <= size() : String.format("endIndex %d must be <= %d", endIndex, size());
@@ -1067,7 +1122,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Returns a vector of square roots applied to each element
    */
-  public Vector sqrt()
+  public Vector
+         sqrt()
   {
     Vector sqv = new Vector(size);
 
@@ -1087,7 +1143,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector subtract(Vector x)
+  public Vector
+         subtract(Vector x)
   {
     return subtract((Vector) x, 1.0);
   }
@@ -1102,7 +1159,9 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector subtract(Vector x, double alpha)
+  public Vector
+         subtract(Vector x,
+                  double alpha)
   {
     assert size == x.size() : "Dimensions must agree, this.size=" + size + " != x.size = " + x.size();
 
@@ -1114,9 +1173,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return
    */
-  public double sum()
+  public double
+         sum()
   {
-    return stream().sum();
+    return doubleStream().sum();
   }
 
   /**
@@ -1126,7 +1186,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public Vector swap(Vector x)
+  public Vector
+         swap(Vector x)
   {
     int len = size();
     assert len == x.size() : "Dimensions must agree";
@@ -1144,7 +1205,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * For each element x=tanh(x)
    */
-  public void tanh()
+  public void
+         tanh()
   {
     for (int i = 0; i < size; i++)
     {
@@ -1155,7 +1217,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   /**
    * Convert to an array
    */
-  public double[] toArray()
+  public double[]
+         toDoubleArray()
   {
     double[] x = new double[size];
 
@@ -1172,7 +1235,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * Return a new DenseDoubleMatrix with the diagonals set with the values from
    * this vector
    */
-  public AbstractMatrix toDiagMatrix()
+  public AbstractMatrix
+         toDiagMatrix()
   {
     DoubleMatrix cm = new DoubleColMatrix(size, size);
 
@@ -1182,12 +1246,14 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   }
 
   @Override
-  public String toString()
+  public String
+         toString()
   {
-    return print(5);
+    return print(10);
   }
 
-  public String print(int digits)
+  public String
+         print(int digits)
   {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
@@ -1200,26 +1266,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return sw.toString();
   }
 
-  private Vector logCopy;
-
   private double incrementalCapacityExpansionFactor = 0.25;
 
-  /**
-   * @return a cached copy of the logarithms of this vector, no methods are
-   *         provided to update or refresh the copy so if the vector is
-   *         transformed or resized, some more work will need to be done to
-   *         support it
-   */
-  public Vector logCopy()
-  {
-    if (logCopy == null)
-    {
-      logCopy = copy().log();
-    }
-    return logCopy;
-  }
-
-  public Vector assign(double scalar)
+  public Vector
+         assign(double scalar)
   {
     for (int i = 0; i < size(); i++)
     {
@@ -1228,7 +1278,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Vector assign(double... data)
+  public Vector
+         assign(double... data)
   {
     assert size() == data.length : format("dimensions do not match in assignment: this.size=%d != %d", size(), data.length);
     for (int i = 0; i < data.length; i++)
@@ -1238,7 +1289,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Vector unique()
+  public Vector
+         unique()
   {
     TreeSet<Double> values = new TreeSet<Double>();
     for (int i = 0; i < size(); i++)
@@ -1254,71 +1306,83 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * @param i
    * @return
    */
-  public Vector extend(int i)
+  public Vector
+         extend(int i)
   {
     Vector newVector = new Vector(size() + i);
     newVector.slice(0, size()).assign(this);
     return newVector;
   }
 
-  public OfDouble iterator()
+  public OfDouble
+         iterator()
   {
     return new OfDouble()
     {
       int i = 0;
 
       @Override
-      public boolean hasNext()
+      public boolean
+             hasNext()
       {
         return i < size();
       }
 
       @Override
-      public Double next()
+      public Double
+             next()
       {
         return get(i++);
       }
 
       @Override
-      public void remove()
+      public void
+             remove()
       {
         throw new UnsupportedOperationException();
       }
 
       @Override
-      public double nextDouble()
+      public double
+             nextDouble()
       {
         return get(i++);
       }
     };
   }
 
-  public int getDimension()
+  public int
+         getDimension()
   {
     return size();
   }
 
-  public double getIncrementalCapacityExpansionFactor()
+  public double
+         getIncrementalCapacityExpansionFactor()
   {
     return incrementalCapacityExpansionFactor;
   }
 
-  public void setIncrementalCapacityExpansionFactor(double incrementalCapacityExpansionFactor)
+  public void
+         setIncrementalCapacityExpansionFactor(double incrementalCapacityExpansionFactor)
   {
     this.incrementalCapacityExpansionFactor = incrementalCapacityExpansionFactor;
   }
 
-  public double getLeftmostValue()
+  public double
+         getLeftmostValue()
   {
     return get(0);
   }
 
-  public double getRightmostValue()
+  public double
+         getRightmostValue()
   {
     return get(size() - 1);
   }
 
-  public Vector add(double x)
+  public Vector
+         add(double x)
   {
     for (int i = 0; i < size(); i++)
     {
@@ -1327,17 +1391,20 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public Spliterator.OfDouble spliterator()
+  public Spliterator.OfDouble
+         spliterator()
   {
     return new VectorSpliterator();
   }
 
-  public DoubleStream stream()
+  public DoubleStream
+         doubleStream()
   {
     return StreamSupport.doubleStream(spliterator(), false);
   }
 
-  public Vector apply(IntFunction<Double> func)
+  public Vector
+         apply(IntFunction<Double> func)
   {
     for (int i = 0; i < size; i++)
     {
@@ -1347,77 +1414,28 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   }
 
   @Override
-  public void write(SeekableByteChannel channel) throws IOException
+  public void
+         write(SeekableByteChannel channel) throws IOException
   {
     createMiMatrix().write(channel);
   }
 
-  public static Vector loadAscii(String filename) throws IOException
-  {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename))));
-    String tokens[] = reader.readLine().split("\t");
-    Vector x = new Vector(tokens.length);
-    for (int i = 0; i < x.size(); i++)
-    {
-      x.set(i, Double.valueOf(tokens[i]));
-    }
-    reader.close();
-    return x;
-  }
-
-  /**
-   * 
-   * @param dt
-   *          in units of seconds
-   * @return
-   */
-  public Vector discretize(final double dt)
-  {
-    double t0 = get(0);
-    double T = get(size() - 1) - t0;
-    int m = (int) (T / dt);
-
-    Vector A = new Vector(m);
-
-    stream().forEach(t -> {
-      int tk = (int) ((t - t0) / dt);
-      A.set(tk, 1);
-    });
-
-    return A;
-  }
-
-  public double variance()
+  public double
+         variance()
   {
     final int n = size();
     final double mean = mean();
     return Functions.sum(i -> Math.pow(get(i) - mean, 2), 0, n - 1) / n;
   }
 
-  public double getStdev()
+  public double
+         getStdev()
   {
     return Math.sqrt(variance());
   }
 
-  public Vector getRescaledRange()
-  {
-    Vector Z = copy().add(-mean()).cumulativeSum();
-    Vector h = new Vector(size());
-
-    for (int i = 0; i < size(); i++)
-    {
-      Vector partialCumSum = Z.slice(0, i);
-      double max = partialCumSum.fmax();
-      double min = partialCumSum.fmin();
-      double r = max - min;
-      double s = partialCumSum.getStdev();
-      h.set(i, r / s);
-    }
-
-    return h;
-  }
-
-  public Vector cumulativeSum()
+  public Vector
+         cumulativeSum()
   {
     Vector x = new Vector(size());
     double d = 0;
@@ -1428,7 +1446,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return x;
   }
 
-  public Vector subtract(double subtrahend)
+  public Vector
+         subtract(double subtrahend)
   {
     for (int i = 0; i < size(); i++)
     {
@@ -1437,36 +1456,57 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return this;
   }
 
-  public double autocorAtLag(int lag)
+  /**
+   * calculate autocovariance coefficient
+   * 
+   * @param lag
+   * @return this{@link #autocovAtLag(int)} / this{@link #variance()}
+   */
+  public double
+         autocovAtLag(int lag)
   {
     int N = size();
-    final double Mean = mean();
-    final double Variance = variance();
+    final double m = mean();
 
     double autocov = 0.0;
     for (int i = 0; i < N - lag; i++)
     {
-      autocov += (get(i) - Mean) * (get(i + lag) - Mean);
+      autocov += (get(i) - m) * (get(i + lag) - m);
     }
     autocov *= (1.0 / (N - lag));
 
-    // Autocorrelation is autocovariance divided by variance
-    return autocov / Variance;
+    return autocov;
   }
 
-  public Vector autocor(int maxLag)
+  /**
+   * calculate autocorrelation coefficient
+   * 
+   * @param lag
+   * @return this{@link #autocovAtLag(int)} / this{@link #variance()}
+   */
+  public double
+         autocorAtLag(int lag)
   {
-    return new Vector(rangeClosed(0, maxLag).mapToDouble(lag -> autocorAtLag(lag)).toArray());
+    return autocovAtLag(lag) / variance();
   }
 
-  public double getLjungBoxStatistic(int maxLag)
+  public Vector
+         autocor(int maxLag)
+  {
+    double var = variance();
+    return new Vector(rangeClosed(0, maxLag).mapToDouble(lag -> autocovAtLag(lag) / var));
+  }
+
+  public double
+         getLjungBoxStatistic(int maxLag)
   {
     Vector ac = autocor(maxLag);
     int n = size();
     return n * (n + 2) * Functions.sum(k -> Math.pow(ac.get(k), 2) / (n - k), 1, maxLag);
   }
 
-  public Vector append(double d)
+  public Vector
+         append(double d)
   {
     int len = size();
     Vector newVec = extend(1);
@@ -1474,5 +1514,91 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return newVec;
   }
 
+  @Override
+  public boolean
+         add(Double arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public boolean
+         addAll(Collection<? extends Double> arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public void
+         clear()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public boolean
+         contains(Object arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public boolean
+         containsAll(Collection<?> arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public boolean
+         isEmpty()
+  {
+    return size == 0;
+  }
+
+  @Override
+  public boolean
+         remove(Object arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  @Override
+  public boolean
+         removeAll(Collection<?> arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public boolean
+         retainAll(Collection<?> arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public Object[]
+         toArray()
+  {
+    Double[] x = new Double[size];
+
+    // TODO: optimize
+    for (int i = 0; i < size; i++)
+    {
+      x[i] = get(i);
+    }
+
+    return x;
+  }
+
+  @Override
+  public <T>
+         T[]
+         toArray(T[] arg0)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
 
 }

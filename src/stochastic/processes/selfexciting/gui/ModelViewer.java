@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.DoubleFunction;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,6 +26,7 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.style.XYStyler;
 
 import fastmath.Vector;
+import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
@@ -40,9 +40,8 @@ public class ModelViewer
 
   public JFrame frame;
   private JTable table;
-  private XYChart chart;
   private List<AbstractSelfExcitingProcess> processes;
-  private XChartPanel<XYChart> chartPanel;
+  private XChartPanel<XYChart> priceChartPanel;
   private JPanel bottomPanel;
 
   public static void
@@ -83,7 +82,9 @@ public class ModelViewer
   public static Object[][]
          getProcessParametersAndStatisticsMatrix(List<AbstractSelfExcitingProcess> processes)
   {
-    List<Object[]> processStats = processes.stream().map(process -> process.evaluateParameterStatistics(process.getParameters().toArray())).collect(toList());
+    List<Object[]> processStats = processes.stream()
+                                           .map(process -> process.evaluateParameterStatistics(process.getParameters().toDoubleArray()))
+                                           .collect(toList());
     int N = processStats.get(0).length;
     Object[][] stats = new Object[processStats.size()][N];
     for (int i = 0; i < processStats.size(); i++)
@@ -119,10 +120,7 @@ public class ModelViewer
     bottomPanel = new JPanel();
 
     splitPane.setBottomComponent(bottomPanel);
-    chart = new XYChart(2000, 500);
-    chartPanel = new XChartPanel<XYChart>(chart);
     bottomPanel.setLayout(new GridLayout(3, 1));
-    bottomPanel.add(chartPanel);
 
     frame.getContentPane().add(splitPane, BorderLayout.CENTER);
   }
@@ -133,71 +131,81 @@ public class ModelViewer
 
     plotData();
 
-    EventQueue.invokeLater(new Runnable()
-    {
-      public void
-             run()
-      {
-        try
-        {
-          frame.setVisible(true);
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace();
-        }
-      }
-    });
-
+    EventQueue.invokeLater(() -> frame.setVisible(true));
   }
 
   public void
          plotData()
   {
     AbstractSelfExcitingProcess firstProcess = processes.get(0);
-    double ν0 = firstProcess.ν(0);
-    double z = firstProcess.Z();
-    out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
-    XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", firstProcess::ν, 0, 100);
+
+    plotProcess(firstProcess);
+
+  }
+
+  public void
+         plotProcess(AbstractSelfExcitingProcess process)
+  {
+    XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", process::ν, 0, 100);
 
     impulseResponseChart.getChart().setTitle("impulse response kernel (ms)");
 
     double millisecondsToHours = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
     double millisecondsToSeconds = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-    Vector timesInHours = firstProcess.T.copy().multiply(millisecondsToHours);
-    Vector timesInSeconds = firstProcess.T.copy().multiply(millisecondsToSeconds);
-    Vector timesInMilliseconds = firstProcess.T.copy().multiply(millisecondsToHours);
-    assert timesInHours.equals(firstProcess.X.col(0));
-    Vector logPrices = firstProcess.X.col(1).copy().add(1).log();
+    Vector elapsedTimesInMilliseconds = process.T;
+    Vector timesInHours = elapsedTimesInMilliseconds.copy().multiply(millisecondsToHours);
+    Vector elapsedTimesInSeconds = elapsedTimesInMilliseconds.copy().multiply(millisecondsToSeconds);
+    assert timesInHours.equals(process.X.col(0));
+    Vector logPrices = process.X.col(1).copy().add(1).log();
     double logReferencePrice = logPrices.get(0);
-    logPrices = logPrices.subtract(logReferencePrice).multiply(100);
+    Vector relativeLogPricePercentages = logPrices.subtract(logReferencePrice).multiply(100);
     double referencePrice = exp(logReferencePrice);
-    String logPriceName = format("(ln(price)-ln(%4.2f))*100", referencePrice);
-    chart.addSeries(logPriceName, timesInHours.toArray(), logPrices.toArray());
-    chart.setTitle("price Δ%");
-    chart.setXAxisTitle("t (hours)");
-    chart.setYAxisTitle(logPriceName);
-    XYStyler styler = chart.getStyler();
+    String logPriceName = format("(ln(1+price)-ln(1+%4.2f))*100", referencePrice);
+
+    XYChart priceChart = new XYChart(2000, 500);
+    priceChartPanel = new XChartPanel<XYChart>(priceChart);
+
+    priceChart.addSeries(logPriceName, timesInHours.toDoubleArray(), relativeLogPricePercentages.toDoubleArray());
+    priceChart.setTitle("price Δ%");
+    priceChart.setXAxisTitle("t (hours)");
+    priceChart.setYAxisTitle(logPriceName);
+
+    XYStyler styler = priceChart.getStyler();
     styler.setToolTipsEnabled(true);
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);
 
-    double firstTime = firstProcess.T.fmin();
+    double firstTime = process.T.fmin();
+    double intensityPlotLengthInSeconds = 5;
+    double lastTime = firstTime + 1000 * intensityPlotLengthInSeconds;
+
+//    XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)",
+//                                                       "λ(t)",
+//                                                       t -> process.λ(t) * 1000,
+//                                                       firstTime,
+//                                                       lastTime,
+//                                                       2000,
+//                                                       t -> (t - firstTime) / 1000,
+//                                                       process.T,
+//                                                       process.λvector());
+
     XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)",
                                                        "λ(t)",
-                                                       t -> firstProcess.λ(t) * 1000,
+                                                       t -> process.λ(t) * 1000,
                                                        firstTime,
-                                                       firstTime + 1000 * 5,
+                                                       lastTime,
                                                        2000,
-                                                       t -> (t - firstTime) / 1000);
+                                                       t -> (t - firstTime) / 1000,
+                                                       process.T,
+                                                       process.λvector());
 
     intensityChart.getChart().setTitle("conditional intensity (events per second)");
     intensityChart.getChart().getStyler().setSeriesColors(new Color[]
     { Color.RED });
 
+    bottomPanel.add(priceChartPanel);
     bottomPanel.add(intensityChart);
     bottomPanel.add(impulseResponseChart);
-
   }
 
 }

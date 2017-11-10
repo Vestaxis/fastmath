@@ -69,7 +69,7 @@ public class MiDouble extends MiElement
    */
   public double[] toArray()
   {
-    return vector.toArray();
+    return vector.toDoubleArray();
   }
 
   /**

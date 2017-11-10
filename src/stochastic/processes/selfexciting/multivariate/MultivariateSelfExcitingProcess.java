@@ -46,7 +46,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
     try
     {
       MultivariateSelfExcitingProcess spawn = getClass().getDeclaredConstructor(int.class).newInstance(dim);
-      spawn.assignParameters(getParameters().toArray());
+      spawn.assignParameters(getParameters().toDoubleArray());
       spawn.T = T;
       spawn.X = X;
       spawn.K = K;

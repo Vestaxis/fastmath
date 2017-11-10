@@ -73,7 +73,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                           Vector X,
                           Vector Y)
   {
-    chart.addSeries(name, X.toArray(), Y.toArray());
+    chart.addSeries(name, X.toDoubleArray(), Y.toDoubleArray());
   }
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
@@ -242,8 +242,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getΛKolmogorovSmirnovStatistic()
   {
-    Vector sortedCompensator = new Vector(Λ().stream().sorted()).reverse();
-    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toArray());
+    Vector sortedCompensator = new Vector(Λ().doubleStream().sorted()).reverse();
+    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toDoubleArray());
     return 1 - ksStatistic;
   }
 
@@ -330,7 +330,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       }
       dis.close();
       fileInputStream.close();
-      assignParameters(params.toArray());
+      assignParameters(params.toDoubleArray());
     }
     catch (Exception e)
     {
@@ -621,7 +621,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double s;
     for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
     {
-      sum.add(ν(t - s));
+      double dt = t - s;
+      sum.add(ν(dt));
     }
     return sum.doubleValue();
   }
