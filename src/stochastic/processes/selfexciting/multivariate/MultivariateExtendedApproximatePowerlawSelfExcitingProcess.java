@@ -120,4 +120,10 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     return 1 / τ0.get(j);
   }
 
+  @Override
+  public double getLjungBoxMeasure()
+  {
+    throw new UnsupportedOperationException( "TODO" );
+  }
+
 }

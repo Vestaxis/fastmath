@@ -20,6 +20,8 @@ import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 
+import fastmath.Vector;
+
 /**
  * Multi-start optimizer.
  *
@@ -167,19 +169,18 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       {
         final PointValuePair result = optimizer.optimize(instanceOptimData);
         String iterString = String.format("#%d/%d", iterationCounter.incrementAndGet(), starts);
-        
+
         synchronized (optima)
         {
           boolean valid = _validator == null || _validator.apply(result);
           if (valid)
           {
-            out.println(Thread.currentThread().getName() + " " + iterString + " Storing " + Arrays.toString(result.getKey()));
-            
+            out.format("%20s %10s %s\n", Thread.currentThread().getName(), iterString, " Storing " + new Vector(result.getKey()));
             optima.add(result);
           }
           else
           {
-            out.println(Thread.currentThread().getName() + " " + iterString + " Rejecting " + Arrays.toString(result.getKey()));
+            out.format("%20s %10s %s\n", Thread.currentThread().getName(), iterString, " Rejecting " + new Vector(result.getKey()));
           }
         }
       }

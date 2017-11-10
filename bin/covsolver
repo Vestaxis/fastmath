@@ -1,7 +1,0 @@
-#!/bin/sh 
-
-FMDIR=$(dirname $(readlink -f $0))/..
-cd $FMDIR
-~/c/jdk9/bin/java.exe --class-path=`$FMDIR/bin/echoWineClasspath`  stochastic.processes.hawkes.solvers.ExponentialHawkesProcessAutocovarianceSolver $@
-
-

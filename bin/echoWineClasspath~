@@ -1,5 +1,0 @@
-#!/bin/sh
-
-FMDIR=$(dirname $(readlink -f $0))/..
-
-( echo $FMDIR/target/classes && echo $FMDIR/lib/Maple.jar && cat $FMDIR/class.path ) | sed -e 's/:/\n/g' | xargs -n 1 winepath -w |  tr '\n' ';'

@@ -29,7 +29,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   {
 
     
-    ρ( 0.25, 1 ), y(0.5, 0.6), ε(0, 0.5), τ0(0, 10);
+    y(0, 0.25), ε(0, 0.5), τ(0, 10);
 
     private double min;
     private double max;

@@ -1,6 +1,0 @@
-#!/bin/sh 
-
-FMDIR=$(dirname $(readlink -f $0))/..
-cd $FMDIR
-~/c/jdk9/bin/jshell.exe --class-path=`$FMDIR/bin/echoWineClasspath` --startup=$(winepath -w $FMDIR/shell.startup)
-

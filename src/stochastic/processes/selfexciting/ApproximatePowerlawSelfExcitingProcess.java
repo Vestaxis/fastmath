@@ -108,6 +108,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     return M;
   }
 
+
   @Override
   public double Z()
   {

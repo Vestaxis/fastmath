@@ -56,9 +56,7 @@ import fastmath.optim.SolutionValidator;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
- 
 
-  
   public static enum ScoringMethod
   {
     LikelihoodMaximization, MomentMatching
@@ -101,14 +99,39 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return measure which is greater the closer the first two moments of the
    *         compensator are to unity
    */
-  public double compensatorMomentMeasure()
+  public double ΛmomentMeasure()
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
     Vector normalizedSampleMoments = (moments.copy().subtract(1)).pow(2);
-    return (((normalizedSampleMoments))).sum();
-
+    return normalizedSampleMoments.sum();
   }
+
+  /**
+   * functions which takes its minimum when the mean and the variance of the
+   * compensator is closer to 1
+   * 
+   * @return this{@link #ΛmomentMeasure()} * this{@link #getLjungBoxMeasure()}
+   */
+  public double ΛmomentLjungBoxMeasure()
+  {
+    return ΛmomentMeasure() * getLjungBoxMeasure();
+  }
+
+  /**
+   * return a function of the Ljung-Box statistic which measures the amount of
+   * autocorrelation remaining in the compensator up to lags of
+   * this{@link #LJUNG_BOX_ORDER}
+   * 
+   * @return (Λ().getLjungBoxStatistic( this{@link #LJUNG_BOX_ORDER} ) - (
+   *         this{@link #LJUNG_BOX_ORDER} - 2 ))^2
+   */
+  public double getLjungBoxMeasure()
+  {
+    return pow(Λ().getLjungBoxStatistic(LJUNG_BOX_ORDER) - (LJUNG_BOX_ORDER - 2), 2);
+  }
+
+  public static final int LJUNG_BOX_ORDER = 10;
 
   public final ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
   {
@@ -129,16 +152,21 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                                                                                                    numStarts,
                                                                                                    getRandomVectorGenerator(simpleBounds));
 
-    PointValuePairComparator momentMatchingComparator = (a, b) -> {
+    PointValuePairComparator momentMatchingAutocorrelationComparator = (a, b) -> {
       ExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
       ExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.compensatorMomentMeasure();
-      double mmb = processB.compensatorMomentMeasure();
+      double mma = processA.getLjungBoxMeasure();
+      double mmb = processB.getLjungBoxMeasure();
       return Double.compare(mma, mmb);
     };
 
     double startTime = currentTimeMillis();
-    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
+    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
+                                               momentMatchingAutocorrelationComparator,
+                                               validator,
+                                               maxEval,
+                                               objectiveFunctionSupplier,
+                                               simpleBounds);
     double stopTime = currentTimeMillis();
     double secondsElapsed = (stopTime - startTime) / 1000;
     double evaluationsPerSecond = multiopt.getEvaluations() / secondsElapsed;
@@ -154,7 +182,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "MMLB(Λ)" };
 
   protected final double evolveλ(double dt, double t, double[] S)
   {
@@ -480,7 +508,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     else if (scoringMethod == ScoringMethod.MomentMatching)
     {
-      score = compensatorMomentMeasure();
+      score = ΛmomentMeasure();
     }
     else
     {
@@ -510,14 +538,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   /**
    * 
-   * @param j index in [0,order()-1]
+   * @param j
+   *          index in [0,order()-1]
    * @return the j-th α parameter
    */
   protected abstract double α(int j);
 
   /**
    * 
-   * @param j index in [0,order()-1]
+   * @param j
+   *          index in [0,order()-1]
    * @return the j-th β parameter
    */
   protected abstract double β(int j);
@@ -623,7 +653,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return intensity;
   }
 
-  
   /**
    * kernel function
    * 
@@ -635,6 +664,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
 
+  /**
+   * @return an array whose elements correspond to this{@link #statisticNames}
+   */
   public Object[] evaluateParameterStatistics(double[] point)
   {
     AbstractSelfExcitingProcess process = newProcess(point);
@@ -649,9 +681,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       ksStatistic,
       compensated.mean(),
       compensated.variance(),
-      process.compensatorMomentMeasure(),
-      pow(compensated.getLjungBoxStatistic(10) - 8, 2),
-      process.mean() };
+      process.ΛmomentMeasure(),
+      process.getLjungBoxMeasure(),
+      process.ΛmomentLjungBoxMeasure() };
 
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }

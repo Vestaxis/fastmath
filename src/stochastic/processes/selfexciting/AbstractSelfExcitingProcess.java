@@ -118,8 +118,12 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
   public abstract double mean();
 
-  public abstract double compensatorMomentMeasure();
+  public abstract double ΛmomentMeasure();
 
+  public abstract double ΛmomentLjungBoxMeasure();
+
+  public abstract double getLjungBoxMeasure();
+  
   public abstract double getΛKolmogorovSmirnovStatistic();
 
 

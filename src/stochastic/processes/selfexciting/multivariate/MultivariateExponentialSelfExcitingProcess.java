@@ -55,6 +55,7 @@ import fastmath.optim.SolutionValidator;
 public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
 {
 
+
   public abstract int order();
 
   // baseline intensity parameters
@@ -188,8 +189,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       MultivariateExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
       MultivariateExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.compensatorMomentMeasure();
-      double mmb = processB.compensatorMomentMeasure();
+      double mma = processA.ΛmomentMeasure();
+      double mmb = processB.ΛmomentMeasure();
       return Double.compare(mma, mmb);
     };
 
@@ -207,7 +208,13 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     return optimizer;
   }
 
-  public double compensatorMomentMeasure()
+  public double ΛmomentMeasure()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double ΛmomentLjungBoxMeasure()
   {
     throw new UnsupportedOperationException("TODO");
   }

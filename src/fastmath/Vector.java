@@ -1107,9 +1107,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     assert size == x.size() : "Dimensions must agree, this.size=" + size + " != x.size = " + x.size();
 
     return add(x, -alpha);
-    // BLAS1.daxpy(alpha * -1.0, x, this);
-    //
-    // return this;
   }
 
   /**
@@ -1120,18 +1117,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public double sum()
   {
     return stream().sum();
-  }
-
-  public double sumOfSquares()
-  {
-
-    double sum = 0.0;
-    for (int i = 0; i < size; i++)
-    {
-      double d = get(i);
-      sum += d * d;
-    }
-    return sum;
   }
 
   /**
@@ -1488,4 +1473,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     newVec.set(len, d);
     return newVec;
   }
+
+
 }
