@@ -6,7 +6,7 @@ import fastmath.DoubleColMatrix;
 import fastmath.Fastmath;
 import fastmath.Vector;
 import fastmath.exceptions.FastMathException;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcitingProcess implements SelfExcitingProcess
 {
@@ -574,7 +574,7 @@ public class StandardExponentialSelfExcitingProcess extends ExponentialSelfExcit
   public Type
          getType()
   {
-    return Type.Standard;
+    return Type.StandardExponential;
   }
 
 }

@@ -23,7 +23,7 @@ import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
@@ -52,7 +52,7 @@ public class SelfExcitingProcessEstimator
                              CloneNotSupportedException
   {
 
-    ExponentialSelfExcitingProcessFactory.Type type = Type.ConstrainedApproximatePowerlaw; // Type.ExtendedApproximatePowerlaw;
+    SelfExcitingProcessFactory.Type type = Type.ConstrainedApproximatePowerlaw; // Type.ExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
     int cpuMultiplier = 1;
     if (type == Type.ConstrainedApproximatePowerlaw)
@@ -97,7 +97,7 @@ public class SelfExcitingProcessEstimator
    * @throws IOException
    */
   public static ArrayList<AbstractSelfExcitingProcess>
-         estimateSelfExcitingProcess(ExponentialSelfExcitingProcessFactory.Type type,
+         estimateSelfExcitingProcess(SelfExcitingProcessFactory.Type type,
                                      String filename,
                                      String symbol) throws IOException
 
@@ -106,7 +106,7 @@ public class SelfExcitingProcessEstimator
   }
 
   public static ArrayList<AbstractSelfExcitingProcess>
-         estimateSelfExcitingProcess(ExponentialSelfExcitingProcessFactory.Type type,
+         estimateSelfExcitingProcess(SelfExcitingProcessFactory.Type type,
                                      String filename,
                                      int trajectoryCount,
                                      String symbol) throws IOException
@@ -131,7 +131,7 @@ public class SelfExcitingProcessEstimator
    * @throws IOException
    */
   public static ArrayList<AbstractSelfExcitingProcess>
-         estimateSelfExcitingProcesses(ExponentialSelfExcitingProcessFactory.Type type,
+         estimateSelfExcitingProcesses(SelfExcitingProcessFactory.Type type,
                                        int trajectoryCount,
                                        Vector times) throws IOException
   {
@@ -146,7 +146,7 @@ public class SelfExcitingProcessEstimator
 
     range(0, n).forEachOrdered(i -> {
       Vector slice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
-      AbstractSelfExcitingProcess process = ExponentialSelfExcitingProcessFactory.spawnNewProcess(type, 1);
+      AbstractSelfExcitingProcess process = SelfExcitingProcessFactory.spawnNewProcess(type, 1);
       SelfExcitingProcessEstimator estimator = new SelfExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
       estimator.estimate(slice);

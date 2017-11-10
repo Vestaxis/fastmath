@@ -2,18 +2,18 @@ package stochastic.processes.selfexciting;
 
 import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
 
-public class ExponentialSelfExcitingProcessFactory
+public class SelfExcitingProcessFactory
 {
   public static enum Type
   {
-    Standard, ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation, MultivariateExtendedApproximatePowerlaw;
+    StandardExponential, ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation, MultivariateExtendedApproximatePowerlaw;
 
     public String
            getFilenameExtension()
     {
       switch (this)
       {
-      case Standard:
+      case StandardExponential:
         return "stdexp";
       case ApproximatePowerlaw:
         return "apl";
@@ -46,7 +46,7 @@ public class ExponentialSelfExcitingProcessFactory
     case 1:
       switch (type)
       {
-      case Standard:
+      case StandardExponential:
         return new StandardExponentialSelfExcitingProcess();
       case ApproximatePowerlaw:
         return new ApproximatePowerlawSelfExcitingProcess();

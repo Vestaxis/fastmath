@@ -5,7 +5,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
 {

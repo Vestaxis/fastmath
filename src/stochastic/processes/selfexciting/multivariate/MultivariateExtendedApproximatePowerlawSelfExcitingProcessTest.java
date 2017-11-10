@@ -1,15 +1,10 @@
 package stochastic.processes.selfexciting.multivariate;
 
 import static java.lang.Math.random;
-import static java.lang.System.out;
-import static util.Plotter.chart;
-import static util.Plotter.display;
-import static util.Plotter.plot;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
-import util.Plotter;
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {

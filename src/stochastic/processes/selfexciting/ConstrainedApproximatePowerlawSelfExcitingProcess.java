@@ -6,19 +6,29 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
+
 /**
- * Exponential power-law approximation kernel with arbitrary instantaneous-response
- * constant ψ(0)=y and branching rate exactly equal to 1
+ * Exponential power-law approximation kernel with arbitrary
+ * instantaneous-response constant ψ(0)=y and branching rate exactly equal to 1
  * 
  */
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
 public class ConstrainedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
+  @Override
+  public Type
+         getType()
+  {
+    return Type.ConstrainedApproximatePowerlaw;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     return Parameter.values();
   }
@@ -26,7 +36,6 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   protected static enum Parameter implements BoundedParameter
   {
 
-    
     y(0, 0.25), ε(0, 0.5), τ(0, 10);
 
     private double min;
@@ -39,25 +48,29 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
     }
 
     @Override
-    public String getName()
+    public String
+           getName()
     {
       return name();
     }
 
     @Override
-    public double getMin()
+    public double
+           getMin()
     {
       return min;
     }
 
     @Override
-    public double getMax()
+    public double
+           getMax()
     {
       return max;
     }
 
     @Override
-    public int getOrdinal()
+    public int
+           getOrdinal()
     {
       return ordinal();
     }
@@ -77,7 +90,8 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   public double y;
 
   @Override
-  public double Z()
+  public double
+         Z()
   {
     return (-pow(m, -(ε * (M - 1))) / (-1 + pow(m, ε)) * pow(τ, -ε) + pow(m, ε) / (-1 + pow(m, ε)) * pow(τ, -ε)
             + (1 / (pow(m, (1 + ε)) - 1)
@@ -91,18 +105,21 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   }
 
   @Override
-  public double α(int i)
+  public double
+         α(int i)
   {
     return i < M ? super.α(i) : αS();
   }
 
   @Override
-  public double β(int i)
+  public double
+         β(int i)
   {
     return i < M ? super.β(i) : βS();
   }
 
-  public double αS()
+  public double
+         αS()
   {
     return m
            * (1 / (pow(m, (1 + ε)) - 1)
@@ -113,7 +130,8 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
            / ((-m * pow(m, ε) + m) * ρ() + pow(m, ε) * τ * y - τ * y);
   }
 
-  public double βS()
+  public double
+         βS()
   {
     return m / τ;
   }
@@ -126,14 +144,16 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
    * @return ∫this{@link #ψ}(t)dt
    */
   @Override
-  public double iψ(double t)
+  public double
+         iψ(double t)
   {
 
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  public int order()
+  public int
+         order()
   {
     return M + 1;
   }

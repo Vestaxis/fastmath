@@ -1,8 +1,9 @@
 package stochastic.processes.selfexciting.gui;
 
+import static java.lang.Math.exp;
+import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
-import static util.Plotter.plot;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -19,7 +20,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.style.XYStyler;
@@ -29,9 +29,9 @@ import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.DateUtils;
+import util.Plotter;
 
 public class ModelViewer
 {
@@ -49,10 +49,8 @@ public class ModelViewer
     final String matFile = args.length > 0 ? args[0] : "/home/stephen/fm/SPY.mat";
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
-    TradingFiltration tradingFiltration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
-    ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile,
-                                                                                                    tradingFiltration,
-                                                                                                    Type.ConstrainedApproximatePowerlaw);
+    TradingFiltration filtration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
+    ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, filtration, Type.ConstrainedApproximatePowerlaw);
 
     NasdaqTradingStrategy.launchModelViewer(processes);
 
@@ -131,24 +129,7 @@ public class ModelViewer
          show()
   {
 
-    AbstractSelfExcitingProcess firstProcess = processes.get(0);
-    double ν0 = firstProcess.ν(0);
-    double z = firstProcess.Z();
-    out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
-    bottomPanel.add(plot("ν", firstProcess::ν, 0, 100));
-
-    double factor = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
-    Vector times = firstProcess.T.copy().multiply(factor);
-    assert times.equals(firstProcess.X.col(0));
-    Vector prices = firstProcess.X.col(1);
-    chart.addSeries("price", times.toArray(), prices.toArray());
-
-    chart.setTitle(firstProcess.X.getName());
-    chart.setXAxisTitle("hour");
-    chart.setYAxisTitle("price($)");
-    XYStyler styler = chart.getStyler();
-    styler.setMarkerSize(0);
-    styler.setYAxisLogarithmic(true);
+    plotData();
 
     EventQueue.invokeLater(new Runnable()
     {
@@ -166,6 +147,35 @@ public class ModelViewer
       }
     });
 
+  }
+
+  public void
+         plotData()
+  {
+    AbstractSelfExcitingProcess firstProcess = processes.get(0);
+    double ν0 = firstProcess.ν(0);
+    double z = firstProcess.Z();
+    out.println("ν0=" + ν0 + " params=" + firstProcess.getParamString() + " Z=" + z);
+    XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", firstProcess::ν, 0, 100);
+    
+    impulseResponseChart.getChart().setTitle("impulse response kernel");
+    bottomPanel.add(impulseResponseChart);
+
+    double factor = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
+    Vector times = firstProcess.T.copy().multiply(factor);
+    assert times.equals(firstProcess.X.col(0));
+    Vector logPrices = firstProcess.X.col(1).copy().add(1).log();
+    double logReferencePrice = logPrices.get(0);
+    logPrices = logPrices.subtract(logReferencePrice).multiply(100);
+    double referencePrice = exp(logReferencePrice);
+    String logPriceName = format("(ln(price)-ln(%4.2f)*100", referencePrice);
+    chart.addSeries(logPriceName, times.toArray(), logPrices.toArray());
+    chart.setTitle("price Δ%");
+    chart.setXAxisTitle("t (hour)");
+    chart.setYAxisTitle(logPriceName);
+    XYStyler styler = chart.getStyler();
+    styler.setMarkerSize(0);
+    styler.setYAxisTicksVisible(true);
   }
 
 }

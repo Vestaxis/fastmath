@@ -16,14 +16,11 @@ import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 import static org.apache.commons.math3.util.CombinatoricsUtils.factorial;
-import static util.Plotter.chart;
-import static util.Plotter.display;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,7 +53,6 @@ import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.multivariate.MultivariateExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
@@ -759,14 +755,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return
    */
   public static MultivariateExponentialSelfExcitingProcess
-         spawnNewProcess(ExponentialSelfExcitingProcessFactory.Type type,
+         spawnNewProcess(SelfExcitingProcessFactory.Type type,
                          TradingFiltration filtration)
   {
     assert filtration.times != null : "tradingProcess.times is null";
     assert filtration.types != null : "tradingProcess.types is null";
     assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
 
-    if (type == ExponentialSelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
+    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
     {
       MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
       process.T = filtration.times;

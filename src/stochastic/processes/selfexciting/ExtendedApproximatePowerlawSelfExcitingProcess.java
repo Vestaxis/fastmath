@@ -1,6 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.sum;
 import static java.lang.Math.pow;
 import static util.Plotter.chart;
 import static util.Plotter.display;
@@ -17,7 +16,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     // κ(0, 1), η(0, 4), b(0, 2), ε(0, 0.5), τ0(0, 3);
     univariateProcess.assignParameters(new double[]
     { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0, 1.8505814321703276 });
-    display(chart("ν", univariateProcess::ν, 0, 100, 1000));
+    display(chart("t", "ν(t)", univariateProcess::ν, 0, 100, 1000));
   }
 
   public ExtendedApproximatePowerlawSelfExcitingProcess()

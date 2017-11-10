@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -20,7 +19,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 public abstract class AbstractSelfExcitingProcess implements MultivariateFunction, SelfExcitingProcess
 {
 
-  public abstract ExponentialSelfExcitingProcessFactory.Type
+  public abstract SelfExcitingProcessFactory.Type
          getType();
 
   public Vector T;

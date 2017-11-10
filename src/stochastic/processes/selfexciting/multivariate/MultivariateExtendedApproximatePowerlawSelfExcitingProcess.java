@@ -10,8 +10,8 @@ import java.io.IOException;
 
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 /**
  * a multivariate version of

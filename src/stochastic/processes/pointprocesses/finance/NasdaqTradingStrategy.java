@@ -1,13 +1,11 @@
 package stochastic.processes.pointprocesses.finance;
 
 import static java.lang.System.out;
-import static java.util.stream.Collectors.toList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import fastmath.DoubleMatrix;
@@ -15,10 +13,8 @@ import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcessFactory.Type;
-import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import stochastic.processes.selfexciting.gui.ModelViewer;
 import util.DateUtils;
 
@@ -62,21 +58,21 @@ public class NasdaqTradingStrategy
   /**
    * 
    * @param matFile
-   * @param tradingFiltration
+   * @param filtration
    * 
    * @return an {@link ArrayList}
    * @throws IOException 
    */
   public static ArrayList<AbstractSelfExcitingProcess>
          getCalibratedProcesses(final String matFile,
-                                TradingFiltration tradingFiltration, Type type ) throws IOException
+                                TradingFiltration filtration, Type type ) throws IOException
   {
-    int n = tradingFiltration.tradeIndexes.length;
+    int n = filtration.tradeIndexes.length;
     ArrayList<AbstractSelfExcitingProcess> processes = new ArrayList<>();
     for (int i = 0; i < n; i++)
     {
-      DoubleMatrix markedPointSlice = tradingFiltration.markedPoints.sliceRows(i == 0 ? 0 : tradingFiltration.tradeIndexes[i - 1],
-                                                                               tradingFiltration.tradeIndexes[i]);
+      DoubleMatrix markedPointSlice = filtration.markedPoints.sliceRows(i == 0 ? 0 : filtration.tradeIndexes[i - 1],
+                                                                               filtration.tradeIndexes[i]);
       Vector timeSlice = markedPointSlice.col(0);
 
       AbstractSelfExcitingProcess process = type.instantiate(1);
