@@ -1,4 +1,4 @@
-package stochastic.processes.point;
+package stochastic.processes.pointprocesses.finance;
 
 import static java.lang.System.out;
 
@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.matfile.MatFile;
-import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 
 public class MPP2Mat
 {

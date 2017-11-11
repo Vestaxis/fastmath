@@ -4,9 +4,9 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
-public interface Lapack extends Library
+public interface LAPACK extends Library
 {
-  public static final Lapack instance = (Lapack) Native.loadLibrary( "lapack", Lapack.class );
+  public static final LAPACK instance = (LAPACK) Native.loadLibrary( "lapack", LAPACK.class );
 
   /**
    * ILAENV returns problem-dependent parameters for the local environment. See

@@ -4,7 +4,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
@@ -13,10 +12,6 @@ import stochastics.annotations.Units;
 public class DateUtilsTest extends TestCase
 {
 
-  public void testIsToday()
-  {
-    assert ( DateUtils.isToday( new Date() ) );
-  }
 
   public static final double millisecondsPerHour = TimeUnit.MILLISECONDS.convert( 1, TimeUnit.HOURS );
 

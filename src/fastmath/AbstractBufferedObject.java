@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+
 import fastmath.matfile.MiDouble;
 import fastmath.matfile.Writable;
 
@@ -14,9 +17,10 @@ public abstract class AbstractBufferedObject implements Writable
 {
 
   @Override
-  public void write( SeekableByteChannel channel ) throws IOException
+  public void
+         write(SeekableByteChannel channel) throws IOException
   {
-    writeBuffer( channel );
+    writeBuffer(channel);
   }
 
   public transient ByteBuffer buffer;
@@ -27,29 +31,31 @@ public abstract class AbstractBufferedObject implements Writable
   }
 
   /**
-   * Resizes the internal buffer, preserving contents if the new size is at
-   * least as big as the existing present size
+   * Resizes the internal buffer, preserving contents if the new size is at least
+   * as big as the existing present size
    * 
    * @param newSize
    *          number of doubles to hold
    * 
    *          TODO: This moves the backing buffer, if there are any views into
    *          this matrix then they will no longer point to this matrix and the
-   *          coupling will be lost. Solution: Views should register themselves
-   *          as listeners to buffer changes, e.g. BufferResizeListener
+   *          coupling will be lost. Solution: Views should register themselves as
+   *          listeners to buffer changes, e.g. BufferResizeListener
    * 
-   *          CAUTION: This function uses a direct memory copy, so this means
-   *          for row-major matrices the number of columns cannot change and
-   *          vice versa.
+   *          CAUTION: This function uses a direct memory copy, so this means for
+   *          row-major matrices the number of columns cannot change and vice
+   *          versa.
    */
-  protected void resizeBuffer( int prevSize, int newSize )
+  protected void
+            resizeBuffer(int prevSize,
+                         int newSize)
   {
-    ByteBuffer newBuffer = BufferUtils.newNativeBuffer( newSize * MiDouble.BYTES );
+    ByteBuffer newBuffer = BufferUtils.newNativeBuffer(newSize * MiDouble.BYTES);
 
     newBuffer.mark();
-    if  ( buffer != null )
+    if (buffer != null)
     {
-    	newBuffer.put(buffer);
+      newBuffer.put(buffer);
     }
     newBuffer.reset();
     buffer = newBuffer;
@@ -70,52 +76,68 @@ public abstract class AbstractBufferedObject implements Writable
 
   public AbstractBufferedObject(int bufferSize)
   {
-    this( BufferUtils.newNativeBuffer( bufferSize ) );
+    this(BufferUtils.newNativeBuffer(bufferSize));
   }
 
-  public void writeBuffer( SeekableByteChannel channel ) throws IOException
+  public void
+         writeBuffer(SeekableByteChannel channel) throws IOException
   {
     buffer.mark();
     while (buffer.hasRemaining())
     {
-      channel.write( buffer );
+      channel.write(buffer);
     }
     buffer.reset();
   }
 
-  public ByteBuffer getBuffer()
+  public ByteBuffer
+         getBuffer()
   {
     return buffer;
   }
 
   /**
-   * Return the size of this element in bytes, excluding header and padding
-   * bytes if written from this pos Note: this will always be the same
-   * regardless of position, except for Matrix types
+   * 
+   * @return a {@link Pointer} to this{@link #getBuffer()}
+   */
+  public Pointer
+         getPointer()
+  {
+    return Native.getDirectBufferPointer(getBuffer());
+  }
+
+  /**
+   * Return the size of this element in bytes, excluding header and padding bytes
+   * if written from this pos Note: this will always be the same regardless of
+   * position, except for Matrix types
    * 
    * @param pos
    *          TODO!
    * 
    * @return TODO!
    */
-  public long numBytes( long pos )
+  public long
+         numBytes(long pos)
   {
     assert getBuffer() != null : "buffer is null. Class=" + getClass();
     return getBuffer().capacity();
   }
 
-  public int limit()
+  public int
+         limit()
   {
     assert getBuffer() != null : "buffer is null. Class=" + getClass();
     return getBuffer().limit();
   }
 
-  public int capactity()
+  public int
+         capactity()
   {
     return getBuffer().capacity();
   }
 
-  public int position()
+  public int
+         position()
   {
     return getBuffer().position();
   }
