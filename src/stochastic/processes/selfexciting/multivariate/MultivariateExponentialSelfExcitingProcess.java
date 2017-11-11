@@ -51,6 +51,9 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import stochastic.processes.pointprocesses.finance.TradingFiltration;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
 {
@@ -793,5 +796,34 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   public void storeParameters(File modelFile)
   {
     throw new UnsupportedOperationException("TODO");
+  }
+
+  /**
+   * 
+   * @param type
+   *          type of process to spawn
+   * @param filtration
+   * @return
+   */
+  public static MultivariateExponentialSelfExcitingProcess
+         spawnNewProcess(SelfExcitingProcessFactory.Type type,
+                         TradingFiltration filtration)
+  {
+    assert filtration.times != null : "tradingProcess.times is null";
+    assert filtration.types != null : "tradingProcess.types is null";
+    assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
+  
+    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
+    {
+      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+      process.T = filtration.times;
+      process.K = filtration.types;
+      process.X = filtration.markedPoints;
+      return process;
+    }
+    else
+    {
+      throw new UnsupportedOperationException("TODO: " + type);
+    }
   }
 }

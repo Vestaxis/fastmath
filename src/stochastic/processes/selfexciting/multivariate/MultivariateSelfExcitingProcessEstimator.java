@@ -26,7 +26,6 @@ import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.BoundedParameter;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import stochastics.annotations.Units;
 import util.DateUtils;
@@ -146,7 +145,7 @@ public class MultivariateSelfExcitingProcessEstimator
       IntVector typeSlice = tradingProcess.types.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       DoubleMatrix markedPointSlice = tradingProcess.markedPoints.sliceRows(i == 0 ? 0 : tradingProcess.tradeIndexes[i - 1], tradingProcess.tradeIndexes[i]);
 
-      MultivariateExponentialSelfExcitingProcess process = ExponentialSelfExcitingProcess.spawnNewProcess(type, tradingProcess);
+      MultivariateExponentialSelfExcitingProcess process = MultivariateExponentialSelfExcitingProcess.spawnNewProcess(type, tradingProcess);
 
       MultivariateSelfExcitingProcessEstimator estimator = new MultivariateSelfExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);

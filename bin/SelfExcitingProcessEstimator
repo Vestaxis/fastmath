@@ -1,7 +1,7 @@
 #!/bin/sh
 
 FMDIR=$(dirname $(readlink -f $0))/..
-cd $FMDIR
-java --class-path=`cat $FMDIR/class.path`:$FMDIR/target/classes stochastic.processes.selfexciting.SelfExcitingProcessEstimator $@
+$FMDIR/bin/runfm stochastic.processes.selfexciting.SelfExcitingProcessEstimator $@
+
 
 

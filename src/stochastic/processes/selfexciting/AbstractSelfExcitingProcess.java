@@ -58,7 +58,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }
     catch (Exception e)
     {
-      if (e instanceof RuntimeException) { throw (RuntimeException) e; }
+      if (e instanceof RuntimeException)
+      {
+        throw (RuntimeException) e;
+      }
       throw new RuntimeException(e.getMessage(), e);
     }
 
@@ -104,7 +107,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
           nsfe = e;
         }
       }
-      if (field == null) { throw new RuntimeException(nsfe.getMessage(), nsfe); }
+      if (field == null)
+      {
+        throw new RuntimeException(nsfe.getMessage(), nsfe);
+      }
       field.setAccessible(true);
       return field;
     }
@@ -263,13 +269,47 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          ν(double t);
 
   /**
-   * integrated kernel function
+   * integrated kernel function, regarded as a cumulative distribution function
+   * when this{@link #ρ()}=1, it gives the probability that an event happens
+   * before time t
    * 
    * @param t
-   * @return ∫ν(s)ds(0,t) integral of this{@link #ν(double)} over t=0..t
+   * @return ∫ν(s)ds(0,t) integral of this{@link #ν(double)} over s=0..t
    */
   public abstract double
          iν(double t);
+
+  /**
+   * the survivor/reliability function is the complementary cumulative
+   * distribution function, it gives the probability of an event NOT happening
+   * before t
+   * 
+   * @param t
+   * @return 1-this{@link #iν(double)}
+   */
+  public double
+         s(double t)
+  {
+    return 1 - iν(t);
+  }
+
+  /**
+   * the hazard function at time t is an instantaneous rate that an event will
+   * occur at time t, the probability that an event will occur in a small interval
+   * of length dt around t is h(t)*dt. If h(t)<=1 then h(t) is also an
+   * instantaneous probability. In the case of an
+   * {@link ExponentialSelfExcitingProcess} the limit of h(t) as t->∞ is equal to
+   * min({@link ExponentialSelfExcitingProcess#β(int)}) and the limit as t->-∞ is
+   * equal to max({@link ExponentialSelfExcitingProcess#β(int)})
+   * 
+   * @param t
+   * @return
+   */
+  public double
+         h(double t)
+  {
+    return ν(t) / s(t);
+  }
 
   /**
    * normalization factor which ensures the integral of this{@link #ν(double)}

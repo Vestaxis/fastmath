@@ -50,9 +50,6 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
-import stochastic.processes.pointprocesses.finance.TradingFiltration;
-import stochastic.processes.selfexciting.multivariate.MultivariateExponentialSelfExcitingProcess;
-import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
@@ -585,7 +582,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *          index in [0,order()-1]
    * @return the j-th α parameter
    */
-  protected abstract double
+  public abstract double
             α(int j);
 
   /**
@@ -594,7 +591,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *          index in [0,order()-1]
    * @return the j-th β parameter
    */
-  protected abstract double
+  public abstract double
             β(int j);
 
   /**
@@ -737,35 +734,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       process.getΛmomentLjungBoxMeasure() };
 
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
-  }
-
-  /**
-   * 
-   * @param type
-   *          type of process to spawn
-   * @param filtration
-   * @return
-   */
-  public static MultivariateExponentialSelfExcitingProcess
-         spawnNewProcess(SelfExcitingProcessFactory.Type type,
-                         TradingFiltration filtration)
-  {
-    assert filtration.times != null : "tradingProcess.times is null";
-    assert filtration.types != null : "tradingProcess.types is null";
-    assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
-
-    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
-    {
-      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
-      process.T = filtration.times;
-      process.K = filtration.types;
-      process.X = filtration.markedPoints;
-      return process;
-    }
-    else
-    {
-      throw new UnsupportedOperationException("TODO: " + type);
-    }
   }
 
 }

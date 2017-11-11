@@ -152,6 +152,38 @@ public class ModelViewer
     integratedImpulseResponseStyler.setYAxisMin(0.0);
     integratedImpulseResponseStyler.setYAxisMax(1.0);
 
+    XYChart priceChart = getLogPriceChart(process);
+
+    XChartPanel<XYChart> intensityChart = getIntensityChartPanel(process);
+
+    bottomPanel.add(priceChartPanel);
+    bottomPanel.add(intensityChart);
+    JPanel kernelPanel = new JPanel(new GridLayout(1, 2));
+    kernelPanel.add(impulseResponseChart);
+    kernelPanel.add(integratedImpulseResponseChart);
+    // TODO: add hazard function here
+    
+    bottomPanel.add(kernelPanel);
+  }
+
+  public XChartPanel<XYChart>
+         getIntensityChartPanel(AbstractSelfExcitingProcess process)
+  {
+    double firstTime = process.T.fmin();
+    double intensityPlotLengthInSeconds = 5;
+    double lastTime = firstTime + 1000 * intensityPlotLengthInSeconds;
+
+    XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)", "λ(t)", t -> process.λ(t) * 1000, firstTime, lastTime, 2000, t -> (t - firstTime) / 1000);
+
+    intensityChart.getChart().setTitle("conditional intensity (events per second)");
+    intensityChart.getChart().getStyler().setSeriesColors(new Color[]
+    { Color.RED });
+    return intensityChart;
+  }
+
+  public XYChart
+         getLogPriceChart(AbstractSelfExcitingProcess process)
+  {
     double millisecondsToHours = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
     double millisecondsToSeconds = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
     Vector elapsedTimesInMilliseconds = process.T;
@@ -171,28 +203,11 @@ public class ModelViewer
     priceChart.setTitle("price Δ%");
     priceChart.setXAxisTitle("t (hours)");
     priceChart.setYAxisTitle(logPriceName);
-
     XYStyler styler = priceChart.getStyler();
     styler.setToolTipsEnabled(true);
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);
-
-    double firstTime = process.T.fmin();
-    double intensityPlotLengthInSeconds = 5;
-    double lastTime = firstTime + 1000 * intensityPlotLengthInSeconds;
-
-    XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)", "λ(t)", t -> process.λ(t) * 1000, firstTime, lastTime, 2000, t -> (t - firstTime) / 1000);
-
-    intensityChart.getChart().setTitle("conditional intensity (events per second)");
-    intensityChart.getChart().getStyler().setSeriesColors(new Color[]
-    { Color.RED });
-
-    bottomPanel.add(priceChartPanel);
-    bottomPanel.add(intensityChart);
-    JPanel kernelPanel = new JPanel(new GridLayout(1, 2));
-    kernelPanel.add(impulseResponseChart);
-    kernelPanel.add(integratedImpulseResponseChart);
-    bottomPanel.add(kernelPanel);
+    return priceChart;
   }
 
 }
