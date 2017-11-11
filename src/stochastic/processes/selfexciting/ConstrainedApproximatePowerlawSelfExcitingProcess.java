@@ -136,21 +136,6 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
     return m / τ;
   }
 
-  /**
-   * integrated kernel function which is the anti-derivative/indefinite integral
-   * of this{@link #ρ}
-   * 
-   * @param t
-   * @return ∫this{@link #ψ}(t)dt
-   */
-  @Override
-  public double
-         iψ(double t)
-  {
-
-    throw new UnsupportedOperationException("TODO");
-  }
-
   @Override
   public int
          order()

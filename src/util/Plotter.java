@@ -42,13 +42,26 @@ public class Plotter
     return new XChartPanel<XYChart>(chart);
   }
 
+  public static XChartPanel<XYChart>
+         plot(String xAxisTitle,
+              String yAxisTitle,
+              UnivariateFunction func,
+              double left,
+              double right,
+              int n,
+              ToDoubleFunction<Double> xAxisTransformer)
+  {
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, xAxisTransformer);
+    return new XChartPanel<XYChart>(chart);
+  }
+
   public static XYChart
          chart(String xAxisTitle,
                String yAxisTitle,
                UnivariateFunction func,
                double left,
                double right,
-               DoubleFunction<Double> timeAxisTransformer)
+               ToDoubleFunction<Double> timeAxisTransformer)
   {
     return chart(xAxisTitle, yAxisTitle, func, left, right, 1000, timeAxisTransformer);
   }
@@ -74,14 +87,14 @@ public class Plotter
                double left,
                double right,
                int n,
-               DoubleFunction<Double> timeAxisTransformer)
+               ToDoubleFunction<Double> timeAxisTransformer)
   {
     XYChart chart = new XYChart(800, 600);
     chart.setXAxisTitle(xAxisTitle);
     chart.setYAxisTitle(yAxisTitle);
     XYStyler styler = chart.getStyler();
-    styler.setXAxisMin(timeAxisTransformer.apply(left));
-    styler.setXAxisMax(timeAxisTransformer.apply(right));
+    styler.setXAxisMin(timeAxisTransformer.applyAsDouble(left));
+    styler.setXAxisMax(timeAxisTransformer.applyAsDouble(right));
     styler.setMarkerSize(0);
     styler.setToolTipsEnabled(true);
     double W = right - left;
@@ -92,7 +105,7 @@ public class Plotter
 
     for (int i = 0; i < n; i++, t = left + dt * i)
     {
-      x[i] = timeAxisTransformer.apply(t);
+      x[i] = timeAxisTransformer.applyAsDouble(t);
       y[i] = func.value(t);
     }
     chart.addSeries(yAxisTitle, x, y);
@@ -142,7 +155,7 @@ public class Plotter
 
     times = times.slice(firstTimeIndex, lastTimeIndex);
     values = values.slice(firstTimeIndex, lastTimeIndex);
-    
+
     TreeSet<DoublePair> expandedTimes = new TreeSet<>(DoublePair.compareLeft);
     for (int i = 0; i < n; i++)
     {

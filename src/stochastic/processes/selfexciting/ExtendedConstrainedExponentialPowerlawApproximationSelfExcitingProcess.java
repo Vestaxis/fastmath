@@ -128,7 +128,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
    * @param t
    * @return ∫this{@link #ψ}(t)dt
    */
-  public double iψ(double t)
+  public double iν(double t)
   {
     throw new UnsupportedOperationException("TODO");
   }

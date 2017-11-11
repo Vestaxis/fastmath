@@ -259,6 +259,15 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          ν(double t);
   
   /**
+   * integrated kernel function
+   * 
+   * @param t
+   * @return integral of 
+   */
+  public abstract double
+         iν(double t);
+  
+  /**
    * normalization factor which ensures the integral of this{@link #ν(double)} over [0,∞] is equal to this#ρ()
    * @return
    */

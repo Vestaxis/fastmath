@@ -5,6 +5,11 @@ import fastmath.IntVector;
 import fastmath.Vector;
 import util.TradeClassifier;
 
+/**
+ * Also called a "list-history"
+ * 
+ *
+ */
 public class TradingFiltration
 {
   public TradingFiltration(DoubleMatrix markedPoints)

@@ -22,4 +22,13 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcessTest extends TestC
     assertEquals( process.ρ(), integral, 0.00001 );
 
   }
+  
+  public void testRecursiveVsNonRecursiveIntensity()
+  {
+    double ε = 0.45;
+    double τ0 = 1;
+    
+    ConstrainedApproximatePowerlawSelfExcitingProcess process = new ConstrainedApproximatePowerlawSelfExcitingProcess(τ0, ε);
+    process.y = 2;
+  }
 }

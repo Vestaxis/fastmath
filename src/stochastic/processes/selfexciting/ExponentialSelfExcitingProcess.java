@@ -188,7 +188,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "MMLB(Λ)" };
+  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   protected final double
             evolveλ(double dt,
@@ -310,8 +310,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param t
    * @return
    */
+  @Override
   public double
-         iψ(double t)
+         iν(double t)
   {
     return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
   }
@@ -693,7 +694,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       for (int i = 1; i < n; i++)
       {
         double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+        double prevdt = i == 1 ? κ : (T.get(i - 1) - T.get(i - 2));
         double dt = t - T.get(i - 1);
         λ.set(i, evolveλ(dt, T.get(i), S));
       }

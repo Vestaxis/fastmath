@@ -95,7 +95,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
    */
   @Override
   public double
-         iψ(double t)
+         iν(double t)
   {
     throw new UnsupportedOperationException("TODO");
   }
