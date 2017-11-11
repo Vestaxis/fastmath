@@ -6,15 +6,13 @@ public class SelfExcitingProcessFactory
 {
   public static enum Type
   {
-    StandardExponential, ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation, MultivariateExtendedApproximatePowerlaw;
+    ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation, MultivariateExtendedApproximatePowerlaw;
 
     public String
            getFilenameExtension()
     {
       switch (this)
       {
-      case StandardExponential:
-        return "stdexp";
       case ApproximatePowerlaw:
         return "apl";
       case ExtendedApproximatePowerlaw:
@@ -46,8 +44,6 @@ public class SelfExcitingProcessFactory
     case 1:
       switch (type)
       {
-      case StandardExponential:
-        return new StandardExponentialSelfExcitingProcess();
       case ApproximatePowerlaw:
         return new ApproximatePowerlawSelfExcitingProcess();
       case ExtendedApproximatePowerlaw:
