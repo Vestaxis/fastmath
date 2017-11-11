@@ -7,8 +7,6 @@ import java.nio.IntBuffer;
 import java.text.NumberFormat;
 import java.util.function.BiFunction;
 
-import com.sleepycat.persist.model.Persistent;
-
 import fastmath.exceptions.FastMathException;
 import fastmath.exceptions.IllegalValueError;
 import fastmath.exceptions.SingularFactorException;
@@ -16,7 +14,6 @@ import fastmath.io.ThreadLocalNumberFormat;
 import fastmath.matfile.MiDouble;
 import fastmath.matfile.NamedWritable;
 
-@Persistent
 @SuppressWarnings("unchecked")
 public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritable
 {

@@ -289,12 +289,6 @@
 
 
 		<dependency>
-			<groupId>com.sleepycat</groupId>
-			<artifactId>je</artifactId>
-			<version>7.3.7</version>
-		</dependency>
-
-		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
 			<version>4.2.2</version>

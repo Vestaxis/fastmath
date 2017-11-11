@@ -1,10 +1,8 @@
 package util;
 
-import static java.lang.System.out;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.TreeSet;
-import java.util.function.DoubleFunction;
 import java.util.function.ToDoubleFunction;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -261,6 +259,15 @@ public class Plotter
               Vector values)
   {
     return new XChartPanel<XYChart>(chart(xAxisName, yAxisName, func, fmin, fmax, n, timeAxisTransformer, times, values));
+  }
+
+  public static void
+         addSeriesToChart(XYChart chart,
+                          String name,
+                          Vector X,
+                          Vector Y)
+  {
+    chart.addSeries(name, X.toDoubleArray(), Y.toDoubleArray());
   }
 
 }

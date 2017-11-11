@@ -4,8 +4,6 @@ import static java.lang.String.format;
 
 import java.util.function.Consumer;
 
-import com.sleepycat.persist.model.Persistent;
-
 import fastmath.Vector.Condition;
 import fastmath.matfile.MiDouble;
 
@@ -14,7 +12,6 @@ import fastmath.matfile.MiDouble;
  * {@link #appendRow(Vector)} method, which {@link DoubleColMatrix} does not
  * have, since it has {@link DoubleColMatrix#appendColumn(Vector)}
  */
-@Persistent
 @SuppressWarnings("unchecked")
 public class DoubleRowMatrix extends DoubleMatrix
 {

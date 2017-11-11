@@ -42,7 +42,6 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
-import org.knowm.xchart.XYChart;
 
 import fastmath.Pair;
 import fastmath.Vector;
@@ -66,15 +65,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   final static ExponentialDistribution expDist = new ExponentialDistribution(1);
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
-
-  public static void
-         addSeriesToChart(XYChart chart,
-                          String name,
-                          Vector X,
-                          Vector Y)
-  {
-    chart.addSeries(name, X.toDoubleArray(), Y.toDoubleArray());
-  }
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
@@ -100,7 +90,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *         compensator are to unity
    */
   public double
-         ΛmomentMeasure()
+         getΛmomentMeasure()
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
@@ -112,13 +102,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * functions which takes its minimum when the mean and the variance of the
    * compensator is closer to 1
    * 
-   * @return this{@link #ΛmomentMeasure()} * log( 1 +
+   * @return this{@link #getΛmomentMeasure()} * log( 1 +
    *         this{@link #getLjungBoxMeasure()} )
    */
   public double
          getΛmomentLjungBoxMeasure()
   {
-    return ΛmomentMeasure() * log(1 + getLjungBoxMeasure());
+    return getΛmomentMeasure() * log(1 + getLjungBoxMeasure());
   }
 
   /**
@@ -559,7 +549,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     else if (scoringMethod == ScoringMethod.MomentMatching)
     {
-      score = ΛmomentMeasure();
+      score = getΛmomentMeasure();
     }
     else
     {
@@ -742,7 +732,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       ksStatistic,
       compensated.mean(),
       compensated.variance(),
-      process.ΛmomentMeasure(),
+      process.getΛmomentMeasure(),
       process.getLjungBoxMeasure(),
       process.getΛmomentLjungBoxMeasure() };
 

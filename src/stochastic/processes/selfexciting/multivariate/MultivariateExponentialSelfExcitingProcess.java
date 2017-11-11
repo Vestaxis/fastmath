@@ -189,8 +189,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     PointValuePairComparator momentMatchingComparator = (a, b) -> {
       MultivariateExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
       MultivariateExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.ΛmomentMeasure();
-      double mmb = processB.ΛmomentMeasure();
+      double mma = processA.getΛmomentMeasure();
+      double mmb = processB.getΛmomentMeasure();
       return Double.compare(mma, mmb);
     };
 
@@ -208,7 +208,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     return optimizer;
   }
 
-  public double ΛmomentMeasure()
+  public double getΛmomentMeasure()
   {
     throw new UnsupportedOperationException("TODO");
   }

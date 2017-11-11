@@ -1,13 +1,13 @@
 package stochastic.processes.selfexciting;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -15,6 +15,7 @@ import org.apache.commons.math3.optim.SimpleBounds;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import stochastic.processes.selfexciting.multivariate.MultivariateSelfExcitingProcess;
 
 public abstract class AbstractSelfExcitingProcess implements MultivariateFunction, SelfExcitingProcess
 {
@@ -27,7 +28,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public boolean verbose = false;
 
   /**
-   * constant baseline intensity
+   * constant deterministic intensity
    */
   public double κ = 0;
 
@@ -47,6 +48,12 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
       spawn.assignParameters(getParameters().toDoubleArray());
       spawn.T = T;
       spawn.X = X;
+      if (spawn instanceof MultivariateSelfExcitingProcess)
+      {
+        MultivariateSelfExcitingProcess multivariateSpawn = (MultivariateSelfExcitingProcess) spawn;
+        MultivariateSelfExcitingProcess multivariateThis = (MultivariateSelfExcitingProcess) this;
+        multivariateSpawn.K = multivariateThis.K;
+      }
       return spawn;
     }
     catch (Exception e)
@@ -115,12 +122,12 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public Vector
          getParameters()
   {
-    return new Vector(Arrays.stream(getParameterFields()).mapToDouble(field -> {
+    return new Vector(stream(getParameterFields()).mapToDouble(field -> {
       try
       {
         return field.getDouble(this);
       }
-      catch (IllegalArgumentException | IllegalAccessException e)
+      catch (Exception e)
       {
         throw new RuntimeException(e.getMessage(), e);
       }
@@ -137,7 +144,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          mean();
 
   public abstract double
-         ΛmomentMeasure();
+         getΛmomentMeasure();
 
   public abstract double
          getΛmomentLjungBoxMeasure();
@@ -148,11 +155,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public abstract double
          getΛKolmogorovSmirnovStatistic();
 
-  private AbstractSelfExcitingProcess
-          newProcess(double[] point)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
+  public abstract AbstractSelfExcitingProcess
+         newProcess(double[] point);
 
   public final synchronized Field[]
          getParameterFields()
@@ -228,7 +232,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     {
       return param.getDouble(this);
     }
-    catch (IllegalArgumentException | IllegalAccessException e)
+    catch (Exception e)
     {
       throw new RuntimeException(e.getMessage(), e);
     }
@@ -257,26 +261,30 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    */
   public abstract double
          ν(double t);
-  
+
   /**
    * integrated kernel function
    * 
    * @param t
-   * @return integral of 
+   * @return ∫ν(s)ds(0,t) integral of this{@link #ν(double)} over t=0..t
    */
   public abstract double
          iν(double t);
-  
+
   /**
-   * normalization factor which ensures the integral of this{@link #ν(double)} over [0,∞] is equal to this#ρ()
+   * normalization factor which ensures the integral of this{@link #ν(double)}
+   * over [0,∞] is equal to this#ρ()
+   * 
    * @return
    */
-  public abstract double Z();
-  
+  public abstract double
+         Z();
+
   /**
    * 
-   * @return the integral of this{@link #ν(double)} over [0,∞]
+   * @return ∫ν(s)ds(0,∞) the integral of this{@link #ν(double)} over [0,∞]
    */
-  public abstract double ρ();
+  public abstract double
+         ρ();
 
 }

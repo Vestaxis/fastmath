@@ -2,7 +2,6 @@ package stochastic.processes.selfexciting.gui;
 
 import static java.lang.Math.exp;
 import static java.lang.String.format;
-import static java.lang.System.out;
 import static java.util.stream.Collectors.toList;
 
 import java.awt.BorderLayout;
@@ -26,7 +25,6 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.style.XYStyler;
 
 import fastmath.Vector;
-import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;

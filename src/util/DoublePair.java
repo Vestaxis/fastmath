@@ -3,7 +3,6 @@ package util;
 import static java.lang.String.format;
 
 import java.util.Comparator;
-import java.util.function.BinaryOperator;
 
 import fastmath.Pair;
 

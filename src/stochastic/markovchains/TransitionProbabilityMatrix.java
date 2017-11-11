@@ -3,14 +3,11 @@ package stochastic.markovchains;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import com.sleepycat.persist.model.Persistent;
-
 import fastmath.AbstractMatrix;
 import fastmath.Pair;
 import fastmath.SquareDoubleColMatrix;
 import fastmath.Vector;
 
-@Persistent
 public class TransitionProbabilityMatrix extends SquareDoubleColMatrix
 {
 

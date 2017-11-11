@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
-import com.sleepycat.persist.model.Persistent;
-
 import fastmath.matfile.MiDouble;
 import fastmath.matfile.Writable;
 
 /**
  * Basic functionality of buffered classes
  */
-@Persistent
 public abstract class AbstractBufferedObject implements Writable
 {
 
