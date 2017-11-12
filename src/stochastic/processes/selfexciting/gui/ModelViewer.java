@@ -148,11 +148,11 @@ public class ModelViewer
     XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
     plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
 
-    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::iν, 0, 1000);
-    integratedImpulseResponseChartPanel.getChart().setTitle("integrated impulse response kernel (ms)");
-    XYStyler integratedImpulseResponseStyler = integratedImpulseResponseChartPanel.getChart().getStyler();
-    integratedImpulseResponseStyler.setYAxisMin(0.0);
-    integratedImpulseResponseStyler.setYAxisMax(1.0);
+    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::iν, 0, 1000, chart -> {
+      XYStyler styler = chart.getStyler();
+      styler.setYAxisMin(0.0);
+      styler.setYAxisMax(1.0);
+    });
 
     XYChart priceChart = getLogPriceChart(process);
 
@@ -175,11 +175,14 @@ public class ModelViewer
     double intensityPlotLengthInSeconds = 5;
     double lastTime = firstTime + 1000 * intensityPlotLengthInSeconds;
 
-    XChartPanel<XYChart> intensityChart = Plotter.plot("t (seconds)", "λ(t)", t -> process.λ(t) * 1000, firstTime, lastTime, 2000, t -> (t - firstTime) / 1000);
+    XChartPanel<XYChart> intensityChart =
+                                        plot("t (seconds)", "λ(t)", t -> process.λ(t) * 1000, firstTime, lastTime, 2000, t -> (t - firstTime) / 1000, chart -> {
+                                          chart.setTitle("conditional intensity(event rate)");
+                                          chart.setYAxisTitle("events per second");
+                                          chart.getStyler().setSeriesColors(new Color[]
+                                          { Color.RED });
+                                        });
 
-    intensityChart.getChart().setTitle("conditional intensity (events per second)");
-    intensityChart.getChart().getStyler().setSeriesColors(new Color[]
-    { Color.RED });
     return intensityChart;
   }
 
@@ -196,7 +199,7 @@ public class ModelViewer
     double logReferencePrice = logPrices.get(0);
     Vector relativeLogPricePercentages = logPrices.subtract(logReferencePrice).multiply(100);
     double referencePrice = exp(logReferencePrice);
-    String logPriceName = format("(ln(1+price)-ln(1+%4.2f))*100", referencePrice);
+    String logPriceName = format("(ln(1+price)-ln(1+%4.2f))%%", referencePrice);
 
     XYChart priceChart = new XYChart(2000, 500);
     priceChartPanel = new XChartPanel<XYChart>(priceChart);
@@ -206,6 +209,7 @@ public class ModelViewer
     priceChart.setXAxisTitle("t (hours)");
     priceChart.setYAxisTitle(logPriceName);
     XYStyler styler = priceChart.getStyler();
+    styler.setLegendVisible(false);
     styler.setToolTipsEnabled(true);
     styler.setMarkerSize(0);
     styler.setYAxisTicksVisible(true);

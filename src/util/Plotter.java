@@ -3,6 +3,8 @@ package util;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.TreeSet;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -17,6 +19,17 @@ import fastmath.Vector.Condition;
 
 public class Plotter
 {
+
+  public static XChartPanel<XYChart>
+         plot(String xAxisTitle,
+              String yAxisTitle,
+              UnivariateFunction func,
+              double left,
+              double right,
+              Consumer<XYChart> chartInitializer)
+  {
+    return plot(xAxisTitle, yAxisTitle, func, left, right, 1000, chartInitializer);
+  }
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
@@ -68,9 +81,37 @@ public class Plotter
               double left,
               double right,
               int n,
+              Consumer<XYChart> chartInitializer)
+  {
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t);
+    return new XChartPanel<XYChart>(chart);
+  }
+
+  public static XChartPanel<XYChart>
+         plot(String xAxisTitle,
+              String yAxisTitle,
+              UnivariateFunction func,
+              double left,
+              double right,
+              int n,
               ToDoubleFunction<Double> xAxisTransformer)
   {
     XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, xAxisTransformer);
+    return new XChartPanel<XYChart>(chart);
+  }
+
+  public static XChartPanel<XYChart>
+         plot(String xAxisTitle,
+              String yAxisTitle,
+              UnivariateFunction func,
+              double left,
+              double right,
+              int n,
+              ToDoubleFunction<Double> xAxisTransformer,
+              Consumer<XYChart> chartInitializer)
+  {
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, xAxisTransformer);
+    chartInitializer.accept(chart);
     return new XChartPanel<XYChart>(chart);
   }
 
@@ -144,6 +185,21 @@ public class Plotter
       y[i] = func.value(t);
     }
     chart.addSeries(seriesName, x, y);
+    return chart;
+  }
+
+  public static XYChart
+         chart(String xAxisTitle,
+               String seriesName,
+               UnivariateFunction func,
+               double left,
+               double right,
+               int n,
+               ToDoubleFunction<Double> timeAxisTransformer,
+               Consumer<XYChart> chartInitializer)
+  {
+    XYChart chart = chart(xAxisTitle, seriesName, func, left, right, n, timeAxisTransformer);
+    chartInitializer.accept(chart);
     return chart;
   }
 
