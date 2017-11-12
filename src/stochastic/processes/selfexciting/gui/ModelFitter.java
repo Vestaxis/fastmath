@@ -3,7 +3,6 @@ package stochastic.processes.selfexciting.gui;
 import static java.lang.Math.exp;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import static util.Plotter.display;
 import static util.Plotter.plot;
 
 import java.awt.BorderLayout;
@@ -35,7 +34,12 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.DateUtils;
 import util.Plotter;
 
-public class ModelViewer
+/**
+ * 
+ * @author stephen
+ *
+ */
+public class ModelFitter
 {
 
   public JFrame frame;
@@ -57,7 +61,7 @@ public class ModelViewer
 
   }
 
-  public ModelViewer(List<AbstractSelfExcitingProcess> processes)
+  public ModelFitter(List<AbstractSelfExcitingProcess> processes)
   {
     Object[][] data = getProcessParametersAndStatisticsMatrix(processes);
 
@@ -149,7 +153,7 @@ public class ModelViewer
 
     XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
     plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
-    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::ih, 0, 60000*3.5, chart -> {
+    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::ih, 0, 60000 * 3.5, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
 

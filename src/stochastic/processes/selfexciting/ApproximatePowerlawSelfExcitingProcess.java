@@ -61,7 +61,6 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
 
   }
 
-  public int M = 15;
 
   public double τ;
 
@@ -81,6 +80,9 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     return 1 / (τ * pow(m, i));
   }
 
+  public int M = 15;
+
+  
   /**
    * choose m such that m^M=1 minute, in milliseconds
    */

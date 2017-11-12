@@ -92,6 +92,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return product(j -> j == k ? α(j) : β(j), 0, order() - 1);
   }
 
+  public double
+         βproduct()
+  {
+    return product(this::β, 0, order() - 1);
+  }
+
   public static enum ScoringMethod
   {
     LikelihoodMaximization, MomentMatching,
@@ -213,7 +219,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static String[] statisticNames =
-  { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
+  { "∏β", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   protected final double
             evolveλ(double dt,
@@ -758,7 +764,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public Object[]
          evaluateParameterStatistics(double[] point)
   {
-    AbstractSelfExcitingProcess process = newProcess(point);
+    ExponentialSelfExcitingProcess process = newProcess(point);
     double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
 
     Vector compensated = process.Λ();
@@ -766,7 +772,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     // out.println(compensated.autocor(30));
 
     Object[] statisticsVector = new Object[]
-    { process.logLik(),
+    { process.βproduct(),
+      process.logLik(),
       ksStatistic,
       compensated.mean(),
       compensated.variance(),
