@@ -1,5 +1,6 @@
 package stochastic.processes.selfexciting;
 
+import static java.lang.Math.log;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -309,6 +310,18 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          h(double t)
   {
     return ν(t) / s(t);
+  }
+
+  /**
+   * the integrated hazard function
+   * 
+   * @param t
+   * @return -log(1-this{@link #iν(double)}
+   */
+  public double
+         ih(double t)
+  {
+    return -log(1 - iν(t));
   }
 
   /**
