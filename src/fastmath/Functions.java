@@ -3,6 +3,7 @@ package fastmath;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.util.function.IntToDoubleFunction;
+import java.util.stream.DoubleStream;
 
 public class Functions
 {
@@ -21,7 +22,8 @@ public class Functions
   // return z[0];
   // }
   //
-  public static final double δ(double z)
+  public static final double
+         δ(double z)
   {
     return (z == 0.0 ? 1.0 : 0.0);
   };
@@ -36,9 +38,13 @@ public class Functions
    * @param z
    *          upon return is set to [Re(ϑ(x+iy)),Im(ϑ(x+iy))]
    */
-  public static native void ϑd(double x, double y, double[] z);
+  public static native void
+         ϑd(double x,
+            double y,
+            double[] z);
 
-  public static void main(String args[])
+  public static void
+         main(String args[])
   {
   }
 
@@ -52,7 +58,8 @@ public class Functions
    * @param t
    * @return
    */
-  public static long trimMilli(long t)
+  public static long
+         trimMilli(long t)
   {
     return t - (t % 1000);
   }
@@ -64,7 +71,9 @@ public class Functions
    * @param decimals
    * @return
    */
-  public static double round(double x, int decimals)
+  public static double
+         round(double x,
+               int decimals)
   {
     double y = Math.pow(10, decimals);
     return Math.round(x * y) / y;
@@ -76,7 +85,8 @@ public class Functions
    * @param x
    * @return
    */
-  public static boolean isReal(double x)
+  public static boolean
+         isReal(double x)
   {
     return !Double.isInfinite(x) && !Double.isNaN(x);
   }
@@ -89,7 +99,9 @@ public class Functions
    *          -6 for CST
    * @return
    */
-  public static double unixTimeToHours(double x, double timezoneOffset)
+  public static double
+         unixTimeToHours(double x,
+                         double timezoneOffset)
   {
     return ((x % (1000 * 60 * 60 * 24)) / 1000 / 60 / 60) + timezoneOffset;
   }
@@ -102,7 +114,9 @@ public class Functions
    *          -6 for CST
    * @return
    */
-  public static double unixTimeToMinutes(double x, double timezoneOffset)
+  public static double
+         unixTimeToMinutes(double x,
+                           double timezoneOffset)
   {
     return ((x % (1000 * 60 * 60 * 24)) / 1000 / 60) + (timezoneOffset * 60);
   }
@@ -113,7 +127,8 @@ public class Functions
    * @param x
    * @return
    */
-  public static int sign(double x)
+  public static int
+         sign(double x)
   {
     return (x == 0) ? 0 : (x > 0) ? 1 : -1;
   }
@@ -124,7 +139,8 @@ public class Functions
    * @param x
    * @return
    */
-  public static double roundToZero(double x)
+  public static double
+         roundToZero(double x)
   {
     return Math.signum(x) >= 0 ? Math.floor(x) : Math.ceil(x);
   }
@@ -135,7 +151,8 @@ public class Functions
    * @param x
    * @return
    */
-  public static double frac(double x)
+  public static double
+         frac(double x)
   {
     return x - Math.floor(x);
   }
@@ -144,7 +161,8 @@ public class Functions
    * @param range
    * @return random number uniformly distributed within range
    */
-  public static double uniformRandom(Pair<Double, Double> range)
+  public static double
+         uniformRandom(Pair<Double, Double> range)
   {
     return Math.random() * (range.right - range.left) + range.left;
   }
@@ -156,7 +174,9 @@ public class Functions
    * @param b
    * @return
    */
-  public static DoubleMatrix outerProduct(Vector a, Vector b)
+  public static DoubleMatrix
+         outerProduct(Vector a,
+                      Vector b)
   {
     DoubleMatrix amatrix = a.asMatrix().trans();
     DoubleMatrix bmatrix = b.asMatrix();
@@ -164,12 +184,19 @@ public class Functions
     return amatrix.prod(bmatrix);
   }
 
-  public static Vector range(double xmin, double xmax, double step)
+  public static Vector
+         range(double xmin,
+               double xmax,
+               double step)
   {
     return range(xmin, xmax, step, (int) ((xmax - xmin) / step) + 1);
   }
 
-  public static Vector range(double xmin, double xmax, double step, int n)
+  public static Vector
+         range(double xmin,
+               double xmax,
+               double step,
+               int n)
   {
     assert step > 0;
     Vector data = new Vector(n);
@@ -189,7 +216,8 @@ public class Functions
    * @param n
    * @return n*n identity matrix
    */
-  public static DoubleColMatrix eye(int n)
+  public static DoubleColMatrix
+         eye(int n)
   {
     DoubleColMatrix eye = new DoubleColMatrix(n, n);
     eye.diag().assign(1.0);
@@ -202,7 +230,9 @@ public class Functions
    * @param n
    * @return n*n identity matrix
    */
-  public static DoubleColMatrix eye(int n, DoubleColMatrix eye)
+  public static DoubleColMatrix
+         eye(int n,
+             DoubleColMatrix eye)
   {
     eye.assign(0.0);
     eye.diag().assign(1.0);
@@ -212,24 +242,50 @@ public class Functions
   @Deprecated
   public static final double EPSILON = 1e-9;
 
-  public static double sum(IntToDoubleFunction elements, int lowerIndex, int upperIndex)
+  public static double
+         sum(IntToDoubleFunction elements,
+             int lowerIndex,
+             int upperIndex)
   {
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).sum();
   }
 
-  public static double sumExcluding(IntToDoubleFunction elements, int lowerIndex, int upperIndex, int excluding)
+  public static DoubleStream
+         seq(IntToDoubleFunction elements,
+             int lowerIndex,
+             int upperIndex)
+  {
+    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements);
+  }
+
+  public static double
+         sumExcluding(IntToDoubleFunction elements,
+                      int lowerIndex,
+                      int upperIndex,
+                      int excluding)
   {
     return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).sum();
   }
 
-  public static double prod(IntToDoubleFunction elements, int lowerIndex, int upperIndex)
+  public static double
+         product(IntToDoubleFunction elements,
+                 int lowerIndex,
+                 int upperIndex)
   {
-    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).reduce(1, (a, b) -> a * b);
+    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).reduce(1,
+                                                                            (a,
+                                                                             b) -> a * b);
   }
 
-  public static double prodExcluding(IntToDoubleFunction elements, int lowerIndex, int upperIndex, int excluding)
+  public static double
+         productExcluding(IntToDoubleFunction elements,
+                          int lowerIndex,
+                          int upperIndex,
+                          int excluding)
   {
-    return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).reduce(1, (a, b) -> a * b);
+    return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).reduce(1,
+                                                                                                        (a,
+                                                                                                         b) -> a * b);
   }
 
 }

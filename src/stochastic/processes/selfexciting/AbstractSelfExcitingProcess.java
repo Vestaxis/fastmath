@@ -1,5 +1,7 @@
 package stochastic.processes.selfexciting;
 
+import static fastmath.Functions.product;
+import static fastmath.Functions.sum;
 import static java.lang.Math.log;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.DoubleMatrix;
@@ -327,13 +330,13 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   /**
    * inverse integrated hazard
    * 
-   * @param h
-   * @return
+   * @param y
+   * @return the value {t:ih(t)=y}
    */
   public double
-         invih(double h)
+         invih(double y)
   {
-    throw new UnsupportedOperationException("TODO: use numerical method to invert");
+    throw new UnsupportedOperationException();
   }
 
   /**

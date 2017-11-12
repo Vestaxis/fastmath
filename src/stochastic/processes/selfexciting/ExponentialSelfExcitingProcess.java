@@ -1,6 +1,7 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.prod;
+import static fastmath.Functions.product;
+import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.sumExcluding;
 import static fastmath.Functions.uniformRandom;
@@ -54,9 +55,46 @@ import fastmath.optim.SolutionValidator;
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
 
+  /**
+   * @return RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
+   *         .. P)), k = 1 .. P), z)
+   */
+  @Override
+  public double
+         invih(double h)
+  {
+    Vector αβ = new Vector(seq(this::αβproduct, 0, order() - 1));
+
+    UnivariateFunction f = t -> sum(k -> (exp(h - t * β(k)) - 1) * αβ.get(k), 0, order() - 1);
+    UnivariateFunction df = t -> sum(k -> (-β(k) * exp(h - t * β(k))) * αβ.get(k), 0, order() - 1);
+    UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
+    double t = 0;
+    double prevt = Double.NEGATIVE_INFINITY;
+    double dt = 0;
+    while ((dt = (t - prevt)) >= 1E-14)
+    {
+      prevt = t;
+      t = fNewton.value(prevt);
+    }
+
+    return t;
+  }
+
+  /**
+   * product(j -> j == k ? α(j) : β(j), 0, order() - 1)
+   * 
+   * @param k
+   * @return
+   */
+  public double
+         αβproduct(int k)
+  {
+    return product(j -> j == k ? α(j) : β(j), 0, order() - 1);
+  }
+
   public static enum ScoringMethod
   {
-    LikelihoodMaximization, MomentMatching
+    LikelihoodMaximization, MomentMatching,
   }
 
   final static ExponentialDistribution expDist = new ExponentialDistribution(1);
@@ -281,7 +319,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     {
       return Double.POSITIVE_INFINITY;
     }
-    else if (branchingRate == 1) { return 1 / mean(); }
+    else if (branchingRate == 1)
+    {
+      return 1 / mean();
+    }
     return κ / (1 - branchingRate);
   }
 
@@ -450,7 +491,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          predict()
   {
-    final double v = prod(k -> β(k), 0, order() - 1);
+    final double v = product(k -> β(k), 0, order() - 1);
     final double w = sum(k -> β(k), 0, order() - 1);
     double maxT = T.fmax();
     int N = T.size();
@@ -461,7 +502,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     UnivariateFunction η = t -> exp((t + maxT) * w);
     BivariateFunction τ = (t,
                            ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
-    IntFunction<Double> Φ = m -> prod(k -> k == m ? α(k) : β(k), 0, order() - 1);
+    IntFunction<Double> Φ = m -> product(k -> k == m ? α(k) : β(k), 0, order() - 1);
     QuadvariateFunction σ = (m,
                              k,
                              t,
@@ -583,7 +624,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return the j-th α parameter
    */
   public abstract double
-            α(int j);
+         α(int j);
 
   /**
    * 
@@ -592,7 +633,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return the j-th β parameter
    */
   public abstract double
-            β(int j);
+         β(int j);
 
   /**
    * intensity function

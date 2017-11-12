@@ -6,16 +6,11 @@ import static util.Plotter.*;
 import static java.util.Arrays.*;
 import static fastmath.matfile.MatFile.loadMatrix;
 import static fastmath.matfile.MatFile.write;
-import stochastic.processes.hawkes.*;
-import stochastic.processes.hawkes.ExponentialHawkesProcessFactory.Type;
-import static stochastic.processes.hawkes.HawkesProcessEstimator.estimateHawkesProcess;
-import stochastic.processes.point.*;
 import static java.lang.Math.*;
-import static stochastic.processes.point.MarkedPointProcessIterator.ls;
-import static stochastic.processes.point.MPP2Mat.mpp2mat;
 import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 import org.apache.commons.math3.analysis.integration.*;
+import stochastic.processes.pointprocesses.finance.*;
 
 
 
