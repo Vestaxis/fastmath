@@ -10,19 +10,6 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
 {
 
-//  @Override
-//  public double nthNormalizedMoment(int n)
-//  {
-//    if (ε == 0)
-//    {
-//      return (pow(m, n * M) - 1) / M / (pow(m, n) - 1) * pow(τ0, n);
-//    }
-//    else
-//    {
-//      return -1 / (pow(m, ε) - pow(m, n)) * (-pow(m, ε * M) + pow(m, n * M)) * pow(τ0, n) * (-1 + pow(m, ε)) / (-1 + pow(m, ε * M));
-//    }
-//  }
-
   public ApproximatePowerlawSelfExcitingProcess(double ε, double τ)
   {
     super();
@@ -45,25 +32,29 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     }
 
     @Override
-    public String getName()
+    public String
+           getName()
     {
       return name();
     }
 
     @Override
-    public double getMin()
+    public double
+           getMin()
     {
       return min;
     }
 
     @Override
-    public double getMax()
+    public double
+           getMax()
     {
       return max;
     }
 
     @Override
-    public int getOrdinal()
+    public int
+           getOrdinal()
     {
       return ordinal();
     }
@@ -77,13 +68,15 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public double ε = 0;
 
   @Override
-  public double α(int i)
+  public double
+         α(int i)
   {
     return pow(1 / (τ * pow(m, i)), 1 + ε);
   }
 
   @Override
-  public double β(int i)
+  public double
+         β(int i)
   {
     return 1 / (τ * pow(m, i));
   }
@@ -99,20 +92,22 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   }
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     return Parameter.values();
   }
 
   @Override
-  public int order()
+  public int
+         order()
   {
     return M;
   }
 
-
   @Override
-  public double Z()
+  public double
+         Z()
   {
     return sum(j -> α(j) / β(j), 0, order() - 1);
   }
@@ -123,14 +118,16 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
    * @return the branching rate which will result in k/(1-r)=this{@link #mean()}
    */
   @Override
-  public double ρ()
+  public double
+         ρ()
   {
     return 1;
 
   }
 
   @Override
-  public Type getType()
+  public Type
+         getType()
   {
     return Type.ApproximatePowerlaw;
   }

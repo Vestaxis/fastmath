@@ -65,7 +65,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Vector αβ = new Vector(seq(this::αβproduct, 0, order() - 1));
 
-    UnivariateFunction f = t -> sum(k -> (exp(h - t * β(k)) - 1) * αβ.get(k), 0, order() - 1);
+    UnivariateFunction f = t -> sum(k -> exp(h - t * β(k) - 1) * αβ.get(k), 0, order() - 1);
     UnivariateFunction df = t -> sum(k -> (-β(k) * exp(h - t * β(k))) * αβ.get(k), 0, order() - 1);
     UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
     double t = 0;

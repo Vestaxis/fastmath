@@ -83,7 +83,7 @@ public class Plotter
               int n,
               Consumer<XYChart> chartInitializer)
   {
-    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t);
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t, chartInitializer );
     return new XChartPanel<XYChart>(chart);
   }
 
