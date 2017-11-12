@@ -297,7 +297,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   /**
    * the hazard function at time t is an instantaneous rate that an event will
    * occur at time t, the probability that an event will occur in a small interval
-   * of length dt around t is h(t)*dt. If h(t)<=1 then h(t) is also an
+   * of length dt around time t is h(t)*dt. If h(t)<=1 then h(t) is also an
    * instantaneous probability. In the case of an
    * {@link ExponentialSelfExcitingProcess} the limit of h(t) as t->∞ is equal to
    * min({@link ExponentialSelfExcitingProcess#β(int)}) and the limit as t->-∞ is
@@ -313,15 +313,27 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   /**
-   * the integrated hazard function
+   * integrated hazard function
    * 
    * @param t
-   * @return -log(1-this{@link #iν(double)}
+   * @return -log(this{@link #s(double)}
    */
   public double
          ih(double t)
   {
-    return -log(1 - iν(t));
+    return -log(s(t));
+  }
+
+  /**
+   * inverse integrated hazard
+   * 
+   * @param h
+   * @return
+   */
+  public double
+         invih(double h)
+  {
+    throw new UnsupportedOperationException("TODO: use numerical method to invert");
   }
 
   /**
