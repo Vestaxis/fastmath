@@ -216,6 +216,7 @@ public class ModelViewer
     priceChart.setXAxisTitle("t (hours)");
     priceChart.setYAxisTitle(logPriceName);
     XYStyler styler = priceChart.getStyler();
+    Plotter.configureStyler(styler);
     styler.setLegendVisible(false);
     styler.setToolTipsEnabled(true);
     styler.setMarkerSize(0);

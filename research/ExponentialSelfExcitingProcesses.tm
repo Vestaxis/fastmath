@@ -28,33 +28,37 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-3>>
 
-    <with|par-left|2tab|1.1.2.<space|2spc>The case when P=1
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.2.<space|2spc>The Integrated Hazard Function and
+    its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-4>>
 
-    <with|par-left|1tab|1.2.<space|2spc>An Expression for the Density of the
-    Duration Until the Next Event <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|2tab|1.2.1.<space|2spc>The case when P=1
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-5>>
 
-    <with|par-left|2tab|1.2.1.<space|2spc>The Case of Any Order
-    <with|mode|math|P=n> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.3.<space|2spc>An Expression for the Density of the
+    Duration Until the Next Event <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-6>>
 
-    <with|par-left|1tab|1.3.<space|2spc>Filtering, Prediction, Estimation,
-    etc <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|2tab|1.3.1.<space|2spc>The Case of Any Order
+    <with|mode|math|P=n> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-7>>
 
-    <with|par-left|1tab|1.4.<space|2spc>Calculation of the Expected Number of
-    Events Any Given Time From Now <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.4.<space|2spc>Filtering, Prediction, Estimation,
+    etc <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-8>>
 
-    <with|par-left|2tab|1.4.1.<space|2spc>Prediction
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.5.<space|2spc>Calculation of the Expected Number of
+    Events Any Given Time From Now <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-9>>
+
+    <with|par-left|2tab|1.5.1.<space|2spc>Prediction
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-10>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-10><vspace|0.5fn>
+    <no-break><pageref|auto-11><vspace|0.5fn>
   </table-of-contents>
 
   <section|Hawkes Processes>
@@ -117,7 +121,7 @@
   </equation>
 
   since <math| e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|i-1>|)>>=e<rsup|-\<beta\><rsub|j>0>=e<rsup|-0>=1>.
-  A uni-variate Hawkes process is stationary if the branching ratio
+  A uni-variate self-exciting process is stationary if the branching ratio
   <math|\<rho\>> is less than one.
 
   <\equation>
@@ -205,12 +209,40 @@
   the parameters so for the purposes of estimation can be removed from the
   equation. \ 
 
+  <subsection|The Integrated Hazard Function and its Inverse>
+
+  Let
+
+  <\equation>
+    i h<around*|(|t|)>=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t
+  </equation>
+
+  be the integrated hazard function and
+
+  <\equation>
+    \<varphi\><around*|(|t,r|)>=<around*|(|<big|sum><rsub|k=1><rsup|P><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)><big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>|)>
+  </equation>
+
+  then the inverse of this function
+
+  <\equation>
+    i h<rsup|-1><around*|(|r|)>=<around*|{|t:i h<around*|(|t|)>=r|}>
+  </equation>
+
+  solves
+
+  <\equation>
+    i h<around*|(|i h<rsup|-1><around*|(|r|)>|)>=r
+  </equation>
+
+  \;
+
   <subsubsection|The case when P=1>
 
   <subsection|An Expression for the Density of the Duration Until the Next
   Event>
 
-  The simplest case occurs when the baseline intensity
+  The simplest case occurs when the deterministic intensity
   <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>> is constant and
   <math|P=1> where we have
 
@@ -220,7 +252,7 @@
     e<rsup|-\<beta\><rsub|> <around*|(|t-t<rsub|i>|)>><label|Hawkes1>
   </equation>
 
-  where
+  and
 
   <\equation>
     \<lambda\>=E<around*|[|\<lambda\><around*|(|t|)>|]>=<frac|\<kappa\>|1-<frac|\<alpha\>|\<beta\>>>
@@ -245,9 +277,9 @@
 
   \;
 
-  The expected time of the next point can be obtained by integrating over the
-  unit exponentially distributed parameter \ <math|\<varepsilon\>> appearing
-  in the inverse of the compensator
+  The expected time until the next point can be obtained by integrating over
+  the unit exponentially distributed parameter \ <math|\<varepsilon\>>
+  appearing in the inverse of the compensator
 
   <with|font-base-size|12|<\equation>
     <with|font-base-size|14|<with|font-base-size|12|\<Lambda\><rsub|><rsup|-1><around*|(|\<varepsilon\>,\<alpha\><rsub|>,\<beta\><rsub|><rsub|>|)>>=<tabular|<tformat|<table|<row|<cell|<with|font-base-size|12|e<rsup|-\<beta\><rsub|>
@@ -258,16 +290,14 @@
     c<rsub|n>|)>|A<rsub|1><around*|(|n|)>>|)>>>>>>><label|P1pred>>
   </equation>>
 
-  so that\ 
+  where <math|A<rsub|j><around*|(|i|)>=<big|sum><rsub|k=0><rsup|i-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>
+  \ is defined recursively in Equation (<reference|A>) so that
 
   <\equation>
     \<Epsilon\><rsub|\<varepsilon\>><around*|[|\<Lambda\><rsub|><rsup|-1><rsub|><around*|\||\<cal-F\><rsub|t>|\<nobracket\>>,\<alpha\><rsub|>,\<beta\>|]>=<big|int><rsub|0><rsup|\<infty\>>e<rsup|-\<varepsilon\>>\<Lambda\><rsub|><rsup|-1><around*|(|\<varepsilon\>,\<alpha\><rsub|>,\<beta\><rsub|><rsub|>|)>\<mathd\>\<varepsilon\>
   </equation>
 
-  where <math|A<rsub|1><around*|(|n|)>> is some expression that I need to dig
-  out of the Maple worksheet, or re-derive somehow. The recursive equations
-  with initial conditions <math|b<rsub|0>=1> and
-  <math|d<rsub|0>=e<rsup|\<beta\><rsub|>t<rsub|0>>> are
+  \;
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|a<rsub|n>>|<cell|=a<rsub|n-1>e<rsup|-\<beta\><rsub|>\<Delta\>t<rsub|n>>+1>>|<row|<cell|b<rsub|n><rsup|>>|<cell|=b<rsub|n-1>
@@ -692,44 +722,45 @@
 
 <\references>
   <\collection>
-    <associate|A|<tuple|10|3|TheHawkesProcess.tm>>
-    <associate|Bj|<tuple|6|2|TheHawkesProcess.tm>>
-    <associate|Etn1|<tuple|43|7|TheHawkesProcess.tm>>
-    <associate|Hawkes1|<tuple|16|4|TheHawkesProcess.tm>>
-    <associate|HawkesIntensity|<tuple|3|1|TheHawkesProcess.tm>>
-    <associate|P1pred|<tuple|21|5|TheHawkesProcess.tm>>
-    <associate|auto-1|<tuple|1|1|TheHawkesProcess.tm>>
-    <associate|auto-10|<tuple|60|9|TheHawkesProcess.tm>>
-    <associate|auto-2|<tuple|1.1|1|TheHawkesProcess.tm>>
-    <associate|auto-3|<tuple|1.1.1|3|TheHawkesProcess.tm>>
-    <associate|auto-4|<tuple|1.1.2|4|TheHawkesProcess.tm>>
-    <associate|auto-5|<tuple|1.2|4|TheHawkesProcess.tm>>
-    <associate|auto-6|<tuple|1.2.1|5|TheHawkesProcess.tm>>
-    <associate|auto-7|<tuple|1.3|7|TheHawkesProcess.tm>>
-    <associate|auto-8|<tuple|1.4|7|TheHawkesProcess.tm>>
-    <associate|auto-9|<tuple|1.4.1|8|TheHawkesProcess.tm>>
-    <associate|bib-Mti|<tuple|7|9|TheHawkesProcess.tm>>
-    <associate|bib-RandomIntegralEquations|<tuple|2|9|TheHawkesProcess.tm>>
-    <associate|bib-chavez2012high|<tuple|3|9|TheHawkesProcess.tm>>
-    <associate|bib-hawkes-finance|<tuple|9|9|TheHawkesProcess.tm>>
-    <associate|bib-hawkes1971spectra|<tuple|4|9|TheHawkesProcess.tm>>
-    <associate|bib-ocvshjb|<tuple|1|9|TheHawkesProcess.tm>>
-    <associate|bib-ogata1981lewis|<tuple|5|9|TheHawkesProcess.tm>>
-    <associate|bib-ozaki1979maximum|<tuple|6|9|TheHawkesProcess.tm>>
-    <associate|bib-shek2010modeling|<tuple|8|9|TheHawkesProcess.tm>>
-    <associate|comp|<tuple|9|3|TheHawkesProcess.tm>>
-    <associate|footnote-1|<tuple|1|1|TheHawkesProcess.tm>>
-    <associate|footnr-1|<tuple|1|1|TheHawkesProcess.tm>>
-    <associate|hawkesll|<tuple|15|4|TheHawkesProcess.tm>>
-    <associate|kernel|<tuple|4|1|TheHawkesProcess.tm>>
-    <associate|lambertW6|<tuple|24|5|TheHawkesProcess.tm>>
-    <associate|mc|<tuple|52|8|TheHawkesProcess.tm>>
-    <associate|mp|<tuple|47|8|TheHawkesProcess.tm>>
-    <associate|multivarPred|<tuple|1.4.1|8|TheHawkesProcess.tm>>
-    <associate|prediction|<tuple|27|5|TheHawkesProcess.tm>>
-    <associate|uc|<tuple|37|6|TheHawkesProcess.tm>>
-    <associate|univarPred|<tuple|1.3|7|TheHawkesProcess.tm>>
-    <associate|up|<tuple|45|7|TheHawkesProcess.tm>>
+    <associate|A|<tuple|10|3>>
+    <associate|Bj|<tuple|6|2>>
+    <associate|Etn1|<tuple|47|8>>
+    <associate|Hawkes1|<tuple|20|5>>
+    <associate|HawkesIntensity|<tuple|3|1>>
+    <associate|P1pred|<tuple|25|5>>
+    <associate|auto-1|<tuple|1|1>>
+    <associate|auto-10|<tuple|1.5.1|8>>
+    <associate|auto-11|<tuple|64|10>>
+    <associate|auto-2|<tuple|1.1|1>>
+    <associate|auto-3|<tuple|1.1.1|3>>
+    <associate|auto-4|<tuple|1.2|4>>
+    <associate|auto-5|<tuple|1.2.1|5>>
+    <associate|auto-6|<tuple|1.3|5>>
+    <associate|auto-7|<tuple|1.3.1|6>>
+    <associate|auto-8|<tuple|1.4|8>>
+    <associate|auto-9|<tuple|1.5|8>>
+    <associate|bib-Mti|<tuple|7|10>>
+    <associate|bib-RandomIntegralEquations|<tuple|2|10>>
+    <associate|bib-chavez2012high|<tuple|3|10>>
+    <associate|bib-hawkes-finance|<tuple|9|10>>
+    <associate|bib-hawkes1971spectra|<tuple|4|10>>
+    <associate|bib-ocvshjb|<tuple|1|10>>
+    <associate|bib-ogata1981lewis|<tuple|5|10>>
+    <associate|bib-ozaki1979maximum|<tuple|6|10>>
+    <associate|bib-shek2010modeling|<tuple|8|10>>
+    <associate|comp|<tuple|9|3>>
+    <associate|footnote-1|<tuple|1|1>>
+    <associate|footnr-1|<tuple|1|1>>
+    <associate|hawkesll|<tuple|15|4>>
+    <associate|kernel|<tuple|4|1>>
+    <associate|lambertW6|<tuple|28|6>>
+    <associate|mc|<tuple|56|9>>
+    <associate|mp|<tuple|51|9>>
+    <associate|multivarPred|<tuple|1.5.1|8>>
+    <associate|prediction|<tuple|31|6>>
+    <associate|uc|<tuple|41|7>>
+    <associate|univarPred|<tuple|1.4|8>>
+    <associate|up|<tuple|49|8>>
   </collection>
 </references>
 
@@ -768,35 +799,39 @@
       Estimation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3>>
 
-      <with|par-left|<quote|2tab>|1.1.2.<space|2spc>The case when P=1
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|1.2.<space|2spc>The Integrated Hazard
+      Function and its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>>
 
-      <with|par-left|<quote|1tab>|1.2.<space|2spc>An Expression for the
-      Density of the Duration Until the Next Event
+      <with|par-left|<quote|2tab>|1.2.1.<space|2spc>The case when P=1
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-5>>
 
-      <with|par-left|<quote|2tab>|1.2.1.<space|2spc>The Case of Any Order
-      <with|mode|<quote|math>|P=n> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|1.3.<space|2spc>An Expression for the
+      Density of the Duration Until the Next Event
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-6>>
 
-      <with|par-left|<quote|1tab>|1.3.<space|2spc>Filtering, Prediction,
-      Estimation, etc <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|2tab>|1.3.1.<space|2spc>The Case of Any Order
+      <with|mode|<quote|math>|P=n> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-7>>
 
-      <with|par-left|<quote|1tab>|1.4.<space|2spc>Calculation of the Expected
-      Number of Events Any Given Time From Now
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|1.4.<space|2spc>Filtering, Prediction,
+      Estimation, etc <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-8>>
 
-      <with|par-left|<quote|2tab>|1.4.1.<space|2spc>Prediction
+      <with|par-left|<quote|1tab>|1.5.<space|2spc>Calculation of the Expected
+      Number of Events Any Given Time From Now
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9>>
 
+      <with|par-left|<quote|2tab>|1.5.1.<space|2spc>Prediction
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-10>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-10><vspace|0.5fn>
+      <no-break><pageref|auto-11><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

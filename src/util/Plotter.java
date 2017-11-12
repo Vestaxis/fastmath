@@ -2,9 +2,10 @@ package util;
 
 import static java.util.stream.IntStream.rangeClosed;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.util.TreeSet;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -83,7 +84,7 @@ public class Plotter
               int n,
               Consumer<XYChart> chartInitializer)
   {
-    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t, chartInitializer );
+    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t, chartInitializer);
     return new XChartPanel<XYChart>(chart);
   }
 
@@ -171,8 +172,7 @@ public class Plotter
     XYStyler styler = chart.getStyler();
     styler.setXAxisMin(timeAxisTransformer.applyAsDouble(left));
     styler.setXAxisMax(timeAxisTransformer.applyAsDouble(right));
-    styler.setMarkerSize(0);
-    styler.setToolTipsEnabled(true);
+    configureStyler(styler);
     double W = right - left;
     double dt = W / n;
     double t = left;
@@ -186,6 +186,25 @@ public class Plotter
     }
     chart.addSeries(seriesName, x, y);
     return chart;
+  }
+
+  public static void
+         configureStyler(XYStyler styler)
+  {
+    styler.setMarkerSize(0);
+    styler.setAntiAlias(true);
+    styler.setPlotGridLinesStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+    styler.setPlotGridLinesColor(Color.DARK_GRAY);
+    styler.setSeriesLines(new BasicStroke[]
+    { new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER),
+      new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]
+      { 3.0f, 1.0f }, 1.0f),
+      new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]
+      { 3.0f, 3.0f }, 0.0f),
+      new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 10.0f, new float[]
+      { 2.0f }, 0.0f) });
+    styler.setToolTipsEnabled(true);
+    styler.setPlotBackgroundColor(Color.BLACK);
   }
 
   public static XYChart
