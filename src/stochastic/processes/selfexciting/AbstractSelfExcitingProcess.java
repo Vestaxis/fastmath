@@ -219,7 +219,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public String
          getParamString()
   {
-    return "[" + asList(getParameterFields()).stream().map(param -> {
+    return "{" + asList(getParameterFields()).stream().map(param -> {
       try
       {
         return param.getName() + "=" + param.getDouble(this);
@@ -228,7 +228,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
       {
         throw new RuntimeException(e.getMessage(), e);
       }
-    }).collect(joining(",")) + "]";
+    }).collect(joining(",")) + "}";
   }
 
   public double

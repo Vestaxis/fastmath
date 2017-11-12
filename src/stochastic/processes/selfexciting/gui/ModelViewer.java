@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting.gui;
 import static java.lang.Math.exp;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static util.Plotter.plot;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -144,11 +145,12 @@ public class ModelViewer
   public void
          plotProcess(AbstractSelfExcitingProcess process)
   {
-    XChartPanel<XYChart> impulseResponseChart = Plotter.plot("t (ms)", "ν(t)", process::ν, 0, 100);
-    impulseResponseChart.getChart().setTitle("impulse response kernel (ms)");
-    XChartPanel<XYChart> integratedImpulseResponseChart = Plotter.plot("t (ms)", "∫ν(t)dt", process::iν, 0, 1000);
-    integratedImpulseResponseChart.getChart().setTitle("integrated impulse response kernel (ms)");
-    XYStyler integratedImpulseResponseStyler = integratedImpulseResponseChart.getChart().getStyler();
+    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
+    plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
+
+    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::iν, 0, 1000);
+    integratedImpulseResponseChartPanel.getChart().setTitle("integrated impulse response kernel (ms)");
+    XYStyler integratedImpulseResponseStyler = integratedImpulseResponseChartPanel.getChart().getStyler();
     integratedImpulseResponseStyler.setYAxisMin(0.0);
     integratedImpulseResponseStyler.setYAxisMax(1.0);
 
@@ -158,11 +160,11 @@ public class ModelViewer
 
     bottomPanel.add(priceChartPanel);
     bottomPanel.add(intensityChart);
+
     JPanel kernelPanel = new JPanel(new GridLayout(1, 2));
-    kernelPanel.add(impulseResponseChart);
-    kernelPanel.add(integratedImpulseResponseChart);
-    // TODO: add hazard function here
-    
+    kernelPanel.add(impulseResponseChartPanel);
+    kernelPanel.add(integratedImpulseResponseChartPanel);
+
     bottomPanel.add(kernelPanel);
   }
 

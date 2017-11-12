@@ -1,4 +1,4 @@
-package fastmath;
+package util;
 
 import static java.lang.System.out;
 
