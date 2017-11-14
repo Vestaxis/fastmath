@@ -6,7 +6,8 @@ public class SelfExcitingProcessFactory
 {
   public static enum Type
   {
-    ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation, MultivariateExtendedApproximatePowerlaw;
+    ApproximatePowerlaw, ExtendedApproximatePowerlaw, ConstrainedApproximatePowerlaw, ExtendedConstrainedExponentialPowerlawApproximation;
+    //, MultivariateExtendedApproximatePowerlaw;
 
     public String
            getFilenameExtension()
@@ -21,8 +22,8 @@ public class SelfExcitingProcessFactory
         return "capl";
       case ExtendedConstrainedExponentialPowerlawApproximation:
         return "ecpl";
-      case MultivariateExtendedApproximatePowerlaw:
-        return "meapl";
+//      case MultivariateExtendedApproximatePowerlaw:
+//        return "meapl";
       default:
         throw new UnsupportedOperationException("TODO: " + this);
       }
@@ -58,8 +59,8 @@ public class SelfExcitingProcessFactory
     default:
       switch (type)
       {
-      case MultivariateExtendedApproximatePowerlaw:
-        return new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(dim);
+//      case MultivariateExtendedApproximatePowerlaw:
+//        return new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(dim);
       default:
         throw new UnsupportedOperationException("TODO: " + type);
       }

@@ -813,15 +813,15 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     assert filtration.types != null : "tradingProcess.types is null";
     assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
   
-    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
-    {
-      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
-      process.T = filtration.times;
-      process.K = filtration.types;
-      process.X = filtration.markedPoints;
-      return process;
-    }
-    else
+//    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
+//    {
+//      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+//      process.T = filtration.times;
+//      process.K = filtration.types;
+//      process.X = filtration.markedPoints;
+//      return process;
+//    }
+//    else
     {
       throw new UnsupportedOperationException("TODO: " + type);
     }

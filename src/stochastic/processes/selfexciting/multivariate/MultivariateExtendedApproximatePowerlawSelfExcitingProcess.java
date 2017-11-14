@@ -147,7 +147,8 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   public Type
          getType()
   {
-    return Type.MultivariateExtendedApproximatePowerlaw;
+    return null;
+    //return Type.MultivariateExtendedApproximatePowerlaw;
   }
 
   @Override

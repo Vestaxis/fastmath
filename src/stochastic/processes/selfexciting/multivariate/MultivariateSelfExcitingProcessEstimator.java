@@ -53,7 +53,7 @@ public class MultivariateSelfExcitingProcessEstimator
          main(String[] args) throws IOException,
                              CloneNotSupportedException
   {
-    Type type = Type.MultivariateExtendedApproximatePowerlaw;
+    Type type = null; // Type.MultivariateExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
 
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * 1;
