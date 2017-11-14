@@ -98,11 +98,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return product(this::β, 0, order() - 1);
   }
 
-  public static enum ScoringMethod
-  {
-    LikelihoodMaximization, MomentMatching,
-  }
-
   final static ExponentialDistribution expDist = new ExponentialDistribution(1);
 
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
@@ -110,8 +105,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
   protected boolean recursive = true;
-
-  private ScoringMethod scoringMethod = ScoringMethod.LikelihoodMaximization;
 
   public boolean trace = false;
 
@@ -218,9 +211,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return multiopt;
   }
 
-  public static String[] statisticNames =
-  { "∏β", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
-
   protected final double
             evolveλ(double dt,
                     double t,
@@ -299,12 +289,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         return null;
       }
     };
-  }
-
-  public ScoringMethod
-         getScoringMethod()
-  {
-    return scoringMethod;
   }
 
   public Vector
@@ -545,12 +529,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public void
-         setScoringMethod(ScoringMethod scoringMethod)
-  {
-    this.scoringMethod = scoringMethod;
-  }
-
-  public void
          storeParameters(File file) throws IOException
   {
     FileOutputStream fileOutputStream = new FileOutputStream(file, false);
@@ -584,29 +562,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          value(double[] point)
   {
     assignParameters(point);
-
-    double score = Double.NaN;
-
-    if (scoringMethod == ScoringMethod.LikelihoodMaximization)
-    {
-      score = logLik();
-    }
-    else if (scoringMethod == ScoringMethod.MomentMatching)
-    {
-      score = getΛmomentMeasure();
-    }
-    else
-    {
-      throw new IllegalStateException("unhandled scoringMethod");
-
-    }
-
-    if (verbose)
-    {
-      out.println(Thread.currentThread().getName() + " score{" + getParamString() + "}=" + score);
-    }
-
-    return score;
+    return logLik();
 
   }
 
@@ -654,7 +610,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     DoubleAdder sum = new DoubleAdder();
     sum.add(λ0.value(t));
     double s;
-    for (int i = 0; i < T.size() && (s = T.get(i)) < t; i++)
+    for (int i = 0; i < T.size() && (s = T.get(i)) <= t; i++)
     {
       double dt = t - s;
       sum.add(ν(dt));
@@ -757,6 +713,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }
+
+  public static String[] statisticNames =
+  { "∏β", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
