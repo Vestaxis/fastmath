@@ -510,9 +510,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double ε = expDist.sample();
-    double fuck = τ.value(T.fmax(), ε);
-    double shit = φ.value(T.fmax() + 1, ε);
-    out.println("shit=" + shit + " fuck=" + fuck + " maxT=" + maxT);
+
     // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
     return 0;
 

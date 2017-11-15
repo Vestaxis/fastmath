@@ -100,9 +100,17 @@ public class ModelFitterDesign
     /**
      * TODO: add m and M here
      */
+     JPanel mrowPanel = getParameterRow("m", 0.1, 5 );
+     JPanel MrowPanel = getParameterRow("M", 0.1, 5 );
+
+    // JPanel MowPanel = new JPanel(new GridLayout(1, 5));
+
     for (BoundedParameter param : process.getBoundedParameters())
     {
-      parameterPanel.add(getParameterRow(param));
+      double minValue = param.getMin();
+      double maxValue = param.getMax();
+      String paramName = param.getName();
+      parameterPanel.add(getParameterRow(paramName, minValue, maxValue));
     }
     SpringLayoutUtils.makeGrid(parameterPanel, process.getBoundedParameters().length, 1, 5, 5, 5, 5);
     frame.validate();
@@ -110,21 +118,24 @@ public class ModelFitterDesign
   }
 
   public JPanel
-         getParameterRow(BoundedParameter param)
+         getParameterRow(String paramName,
+                         double minValue,
+                         double maxValue)
   {
+
     JPanel rowPanel = new JPanel(new GridLayout(1, 5));
     rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
-    rowPanel.add(new JLabel(param.getName()));
+    rowPanel.add(new JLabel(paramName));
 
-    JLabel minValueLabel = new JLabel(Double.toString(param.getMin()));
+    JLabel minValueLabel = new JLabel(Double.toString(minValue));
     rowPanel.add(minValueLabel);
     minValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    JSlider slider = new JSlider((int) (param.getMin() * sliderResolution), (int) (param.getMax() * sliderResolution));
-    slider.setName(param.getName());
+    JSlider slider = new JSlider((int) (minValue * sliderResolution), (int) (maxValue * sliderResolution));
+    slider.setName(paramName);
     slider.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
     rowPanel.add(slider);
 
-    JLabel maxValueLabel = new JLabel(Double.toString(param.getMax()));
+    JLabel maxValueLabel = new JLabel(Double.toString(maxValue));
     rowPanel.add(maxValueLabel);
     maxValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
     JTextField textField = new JTextField();
