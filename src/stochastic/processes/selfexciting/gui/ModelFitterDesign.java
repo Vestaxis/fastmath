@@ -31,7 +31,7 @@ public class ModelFitterDesign
 
   private JFrame frame;
   private JComboBox<SelfExcitingProcessFactory.Type> processTypeComboBox;
-  private int resolution = 1000;
+  private int sliderResolution = 1000;
   private JPanel parameterPanel;
 
   /**
@@ -73,7 +73,7 @@ public class ModelFitterDesign
           initialize()
   {
     frame = new JFrame();
-    frame.setBounds(100, 100, 450, 300);
+    frame.setBounds(100, 100, 2000, 700);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     Container contentPane = frame.getContentPane();
     contentPane.setLayout(new BorderLayout());
@@ -84,7 +84,9 @@ public class ModelFitterDesign
     contentPane.add(parameterPanel, BorderLayout.CENTER);
 
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
+    contentPane.add(ModelViewer.getKernelPanel(null), BorderLayout.PAGE_END);
     refreshTypeComboBox(null);
+
   }
 
   public void
@@ -94,7 +96,6 @@ public class ModelFitterDesign
     out.println(type + " ...");
     AbstractSelfExcitingProcess process = type.instantiate(1);
     parameterPanel.setLayout(new SpringLayout());
-    // ArrayList<JTextField> parameterTextFields = new ArrayList<JTextField>( );
     parameterPanel.removeAll();
     for (BoundedParameter param : process.getBoundedParameters())
     {
@@ -115,7 +116,7 @@ public class ModelFitterDesign
     JLabel minValueLabel = new JLabel(Double.toString(param.getMin()));
     rowPanel.add(minValueLabel);
     minValueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    JSlider slider = new JSlider((int) (param.getMin() * resolution), (int) (param.getMax() * resolution));
+    JSlider slider = new JSlider((int) (param.getMin() * sliderResolution), (int) (param.getMax() * sliderResolution));
     slider.setName(param.getName());
     slider.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
     rowPanel.add(slider);
@@ -125,7 +126,10 @@ public class ModelFitterDesign
     maxValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
     JTextField textField = new JTextField();
 
-    ChangeListener sliderUpdated = sliderEvent -> textField.setText(Double.toString((double) slider.getValue() / (double) resolution));
+    ChangeListener sliderUpdated = sliderEvent -> {
+      textField.setText(Double.toString((double) slider.getValue() / (double) sliderResolution));
+      
+    };
     slider.addChangeListener(sliderUpdated);
     sliderUpdated.stateChanged(null);
 

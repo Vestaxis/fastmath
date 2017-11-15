@@ -3,7 +3,6 @@ package stochastic.processes.selfexciting.gui;
 import static java.lang.Math.exp;
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import static util.Plotter.display;
 import static util.Plotter.plot;
 
 import java.awt.BorderLayout;
@@ -147,32 +146,37 @@ public class ModelViewer
          plotProcess(AbstractSelfExcitingProcess process)
   {
 
-    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
-    plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
-    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::ih, 0, 60000*3.5, chart -> {
-      chart.setYAxisTitle("t (ms)");
-    });
-
-    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::iν, 0, 100, chart -> {
-      XYStyler styler = chart.getStyler();
-      styler.setYAxisMin(0.0);
-      styler.setYAxisMax(1.0);
-    });
-    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process::ih, 0, 100);
-
     XYChart priceChart = getLogPriceChart(process);
 
     XChartPanel<XYChart> intensityChart = getIntensityChartPanel(process);
 
     bottomPanel.add(priceChartPanel);
     bottomPanel.add(intensityChart);
+    bottomPanel.add(getKernelPanel(process));
+  }
+
+  public static JPanel
+         getKernelPanel(AbstractSelfExcitingProcess process)
+  {
+    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process == null ? t -> 0 : process::ih, 0, 20, chart -> {
+      chart.setYAxisTitle("t (ms)");
+    });
+
+    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process == null ? t -> 0 : process::ν, 0, 100);
+    plot(impulseResponseChartPanel.getChart(), "h(t)", process == null ? t -> 0 : process::h, 0, 100);
+
+    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process == null ? t -> 0 : process::iν, 0, 100, chart -> {
+      XYStyler styler = chart.getStyler();
+      styler.setYAxisMin(0.0);
+      styler.setYAxisMax(1.0);
+    });
+    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process == null ? t -> 0 : process::ih, 0, 100);
 
     JPanel kernelPanel = new JPanel(new GridLayout(1, 3));
     kernelPanel.add(impulseResponseChartPanel);
     kernelPanel.add(integratedImpulseResponseChartPanel);
     kernelPanel.add(inverseIntegratedHazardChartPanel);
-
-    bottomPanel.add(kernelPanel);
+    return kernelPanel;
   }
 
   public XChartPanel<XYChart>

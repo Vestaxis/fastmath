@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.analysis.BivariateFunction;
@@ -63,7 +64,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          invih(double h)
   {
-    Vector αβ = new Vector(seq(this::αβproduct, 0, order() - 1));
+    Vector α = new Vector(seq(this::α, 0, order() - 1));
+    Vector β = new Vector(seq(this::β, 0, order() - 1));
+    IntToDoubleFunction bp = k -> product(j -> β(k), 0, k);
+    Vector sbp = new Vector(seq(bp, 0, order() - 1));
+    Vector αβ = new Vector(seq(k -> product(j -> j == k ? α(j) : β(j), 0, order() - 1), 0, order() - 1));
 
     UnivariateFunction f = t -> sum(k -> exp(h - t * β(k) - 1) * αβ.get(k), 0, order() - 1);
     UnivariateFunction df = t -> sum(k -> (-β(k) * exp(h - t * β(k))) * αβ.get(k), 0, order() - 1);
@@ -74,7 +79,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     while ((dt = (t - prevt)) >= 1E-14)
     {
       prevt = t;
-      t = fNewton.value(prevt);
+      double ft = f.value(t);
+      double dft = f.value(t);
+      t = t - ft / dft;
+      // t = fNewton.value(prevt);
     }
 
     return t;
