@@ -15,7 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeListener;
@@ -31,7 +33,6 @@ public class ModelFitterDesign
 
   private JFrame frame;
   private JComboBox<SelfExcitingProcessFactory.Type> processTypeComboBox;
-  private int sliderResolution = 1000;
   private JPanel parameterPanel;
 
   /**
@@ -100,9 +101,11 @@ public class ModelFitterDesign
     /**
      * TODO: add m and M here
      */
-     JPanel mrowPanel = getParameterRow("m", 0.1, 5 );
-     JPanel MrowPanel = getParameterRow("M", 0.1, 5 );
-
+    //JPanel mrowPanel = getParameterRow("m", 0.1, 5, 1000);
+    JPanel MrowPanel = getParameterRow("M", 1, 15, 15);
+    JSpinner Mspinner = new JSpinner(new SpinnerNumberModel(15, 1, 15, 1));
+    
+    //parameterPanel.add(Mspinner);
     // JPanel MowPanel = new JPanel(new GridLayout(1, 5));
 
     for (BoundedParameter param : process.getBoundedParameters())
@@ -110,7 +113,7 @@ public class ModelFitterDesign
       double minValue = param.getMin();
       double maxValue = param.getMax();
       String paramName = param.getName();
-      parameterPanel.add(getParameterRow(paramName, minValue, maxValue));
+      parameterPanel.add(getParameterRow(paramName, minValue, maxValue, 1000));
     }
     SpringLayoutUtils.makeGrid(parameterPanel, process.getBoundedParameters().length, 1, 5, 5, 5, 5);
     frame.validate();
@@ -120,7 +123,8 @@ public class ModelFitterDesign
   public JPanel
          getParameterRow(String paramName,
                          double minValue,
-                         double maxValue)
+                         double maxValue,
+                         double sliderResolution)
   {
 
     JPanel rowPanel = new JPanel(new GridLayout(1, 5));
