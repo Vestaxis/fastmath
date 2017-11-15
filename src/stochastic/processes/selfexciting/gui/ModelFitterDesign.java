@@ -97,6 +97,9 @@ public class ModelFitterDesign
     AbstractSelfExcitingProcess process = type.instantiate(1);
     parameterPanel.setLayout(new SpringLayout());
     parameterPanel.removeAll();
+    /**
+     * TODO: add m and M here
+     */
     for (BoundedParameter param : process.getBoundedParameters())
     {
       parameterPanel.add(getParameterRow(param));
@@ -128,7 +131,7 @@ public class ModelFitterDesign
 
     ChangeListener sliderUpdated = sliderEvent -> {
       textField.setText(Double.toString((double) slider.getValue() / (double) sliderResolution));
-      
+
     };
     slider.addChangeListener(sliderUpdated);
     sliderUpdated.stateChanged(null);
