@@ -12,10 +12,13 @@ import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.style.XYStyler;
 
+import fastmath.Pair;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
+import util.Plotter;
 
 public class KernelPanel extends JPanel
 {
+  private static final String ANTI_H = "anti(∫h)";
   private AbstractSelfExcitingProcess process;
   private XChartPanel<XYChart> inverseIntegratedHazardChartPanel;
   private XChartPanel<XYChart> impulseResponseChartPanel;
@@ -27,7 +30,7 @@ public class KernelPanel extends JPanel
     this.process = process;
     assert process != null;
 
-    inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process == null ? t -> 0 : process::ih, 0, 20, chart -> {
+    inverseIntegratedHazardChartPanel = plot("h", ANTI_H, process == null ? t -> 0 : process::ih, 0, 20, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
 
@@ -57,6 +60,11 @@ public class KernelPanel extends JPanel
          refreshGraphs()
   {
     out.println("refresh graphs " + process.getParamString());
+    XYChart inverseIntegratedHazardChart = inverseIntegratedHazardChartPanel.getChart();
+    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::ih, 1000, 0, 20, t -> t);
+    inverseIntegratedHazardChart.updateXYSeries(ANTI_H, ihSample.left, ihSample.right, null);
+    inverseIntegratedHazardChartPanel.revalidate();
+    inverseIntegratedHazardChartPanel.repaint();   
   }
 
 }

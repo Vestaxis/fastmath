@@ -15,6 +15,7 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.XYStyler;
 
+import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.Vector.Condition;
 
@@ -23,23 +24,23 @@ public class Plotter
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
-              String yAxisTitle,
+              String seriesName,
               UnivariateFunction func,
               double left,
               double right,
               Consumer<XYChart> chartInitializer)
   {
-    return plot(xAxisTitle, yAxisTitle, func, left, right, 1000, chartInitializer);
+    return plot(xAxisTitle, seriesName, func, left, right, 1000, chartInitializer);
   }
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
-              String yAxisTitle,
+              String seriesName,
               UnivariateFunction func,
               double left,
               double right)
   {
-    return plot(xAxisTitle, yAxisTitle, func, left, right, 1000);
+    return plot(xAxisTitle, seriesName, func, left, right, 1000);
   }
 
   public static XChartPanel<XYChart>
@@ -65,26 +66,26 @@ public class Plotter
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
-              String yAxisTitle,
+              String seriesName,
               UnivariateFunction func,
               double left,
               double right,
               int n)
   {
-    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t);
+    XYChart chart = chart(xAxisTitle, seriesName, func, left, right, n, t -> t);
     return new XChartPanel<XYChart>(chart);
   }
 
   public static XChartPanel<XYChart>
          plot(String xAxisTitle,
-              String yAxisTitle,
+              String seriesName,
               UnivariateFunction func,
               double left,
               double right,
               int n,
               Consumer<XYChart> chartInitializer)
   {
-    XYChart chart = chart(xAxisTitle, yAxisTitle, func, left, right, n, t -> t, chartInitializer);
+    XYChart chart = chart(xAxisTitle, seriesName, func, left, right, n, t -> t, chartInitializer);
     return new XChartPanel<XYChart>(chart);
   }
 
@@ -173,19 +174,31 @@ public class Plotter
     styler.setXAxisMin(timeAxisTransformer.applyAsDouble(left));
     styler.setXAxisMax(timeAxisTransformer.applyAsDouble(right));
     configureStyler(styler);
-    double W = right - left;
-    double dt = W / n;
-    double t = left;
+
+    Pair<double[], double[]> sample = sampleFunction(func, n, left, right, timeAxisTransformer);
+    chart.addSeries(seriesName, sample.left, sample.right);
+    return chart;
+  }
+
+  public static Pair<double[], double[]>
+         sampleFunction(UnivariateFunction func,
+                        int n,
+                        double left,
+                        double right,
+                        ToDoubleFunction<Double> timeAxisTransformer)
+  {
     double x[] = new double[n];
     double y[] = new double[n];
+    double t = left;
+    double W = right - left;
+    double dt = W / n;
 
     for (int i = 0; i < n; i++, t = left + dt * i)
     {
       x[i] = timeAxisTransformer.applyAsDouble(t);
       y[i] = func.value(t);
     }
-    chart.addSeries(seriesName, x, y);
-    return chart;
+    return new Pair<double[], double[]>(x, y);
   }
 
   public static void
