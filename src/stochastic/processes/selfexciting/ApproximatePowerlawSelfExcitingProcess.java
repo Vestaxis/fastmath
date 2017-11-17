@@ -111,7 +111,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public double
          Z()
   {
-    return sum(j -> α(j) / β(j), 0, order() - 1);
+    return sum(j -> α(j) / β(j), 0, order() - 1) / ρ;
   }
 
   @Override
