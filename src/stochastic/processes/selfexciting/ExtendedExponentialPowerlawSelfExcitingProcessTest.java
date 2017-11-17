@@ -62,7 +62,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     RombergIntegrator integrator = new RombergIntegrator();
     double integral = integrator.integrate(5000000, process::ν, 0, 60000 * 10);
     out.println("integral=" + integral);
-    assertEquals(.9984865549, integral, 1E-7);
+    assertEquals(1, integral, 1E-3);
   }
 
   public void

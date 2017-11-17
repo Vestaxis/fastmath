@@ -18,6 +18,8 @@ import util.Plotter;
 
 public class KernelPanel extends JPanel
 {
+  private static final String INT_HAZARD = "∫h(t)";
+  private static final String INT_KERNEL = "∫ν(t)dt";
   private static final String HAZARD = "h(t)";
   private static final String KERNEL = "ν(t)";
   private static final int ν_MAXRANGE = 100;
@@ -30,6 +32,7 @@ public class KernelPanel extends JPanel
   private XChartPanel<XYChart> integratedImpulseResponseChartPanel;
   private XYChart inverseIntegratedHazardChart;
   private XYChart impulseResponseChart;
+  private XYChart integratedImpulseResponseChart;
 
   public KernelPanel(AbstractSelfExcitingProcess process)
   {
@@ -37,7 +40,7 @@ public class KernelPanel extends JPanel
     this.process = process;
     assert process != null;
 
-    inverseIntegratedHazardChartPanel = plot("h", ANTI_H, process == null ? t -> 0 : process::ih, 0, IH_MAXRANGE, chart -> {
+    inverseIntegratedHazardChartPanel = plot("h", ANTI_H, process == null ? t -> 0 : process::invih, 0, IH_MAXRANGE, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
     inverseIntegratedHazardChart = inverseIntegratedHazardChartPanel.getChart();
@@ -47,12 +50,13 @@ public class KernelPanel extends JPanel
 
     plot(impulseResponseChart, HAZARD, process == null ? t -> 0 : process::h, 0, 100);
 
-    integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process == null ? t -> 0 : process::iν, 0, 100, chart -> {
+    integratedImpulseResponseChartPanel = plot("t (ms)", INT_KERNEL, process == null ? t -> 0 : process::iν, 0, ν_MAXRANGE, chart -> {
       XYStyler styler = chart.getStyler();
       styler.setYAxisMin(0.0);
       styler.setYAxisMax(1.0);
     });
-    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process == null ? t -> 0 : process::ih, 0, 100);
+    integratedImpulseResponseChart = integratedImpulseResponseChartPanel.getChart();
+    plot(integratedImpulseResponseChart, INT_HAZARD, process == null ? t -> 0 : process::ih, 0, ν_MAXRANGE);
 
     add(impulseResponseChartPanel);
     add(integratedImpulseResponseChartPanel);
@@ -70,8 +74,8 @@ public class KernelPanel extends JPanel
          refreshGraphs()
   {
     out.println("refresh graphs " + process.getParamString());
-    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::ih, SAMPLES, 0, IH_MAXRANGE, t -> t);
-    inverseIntegratedHazardChart.updateXYSeries(ANTI_H, ihSample.left, ihSample.right, null);
+    Pair<double[], double[]> invhSample = Plotter.sampleFunction(process::invih, SAMPLES, 0, IH_MAXRANGE, t -> t);
+    inverseIntegratedHazardChart.updateXYSeries(ANTI_H, invhSample.left, invhSample.right, null);
     inverseIntegratedHazardChartPanel.revalidate();
     inverseIntegratedHazardChartPanel.repaint();
 
@@ -83,6 +87,14 @@ public class KernelPanel extends JPanel
     impulseResponseChartPanel.revalidate();
     impulseResponseChartPanel.repaint();
 
+    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::ih, SAMPLES, 0, ν_MAXRANGE, t -> t);
+    Pair<double[], double[]> iνSample = Plotter.sampleFunction(process::iν, SAMPLES, 0, ν_MAXRANGE, t -> t);
+
+    integratedImpulseResponseChart.updateXYSeries(INT_HAZARD, ihSample.left, ihSample.right, null);
+    integratedImpulseResponseChart.updateXYSeries(INT_KERNEL, iνSample.left, iνSample.right, null);
+
+    integratedImpulseResponseChartPanel.revalidate();
+    integratedImpulseResponseChartPanel.repaint();
   }
 
 }

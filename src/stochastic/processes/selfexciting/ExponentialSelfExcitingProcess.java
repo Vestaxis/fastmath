@@ -93,10 +93,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     while ((dt = (t - prevt)) >= 1E-14)
     {
       prevt = t;
-      double ft = f.value(t);
-      double dft = f.value(t);
-      t = t - ft / dft;
-      // t = fNewton.value(prevt);
+      // double ft = f.value(t);
+      // double dft = df.value(t);
+      // t = t - ft / dft;
+         t = fNewton.value(prevt);
     }
 
     return t;
