@@ -71,7 +71,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
     assert 0 <= ε && ε <= 0.5 : "ε must be in [0,1/2]";
     assert τ0 > 0 : "τ0 must be positive";
     assert τ > 0 : "τ must be positive";
-    this.τ = τ0;
+    this.τ0 = τ0;
     this.τ = τ;
     this.ε = ε;
     this.b = b;
@@ -100,7 +100,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
   /**
    * powerlaw scale
    */
-  private double τ;
+  private double τ0;
 
   private double b;
 

@@ -19,7 +19,7 @@ CFLAGS := -std=c++11 $(CFLAGS) -I/usr/include/flint -I /usr/include/x86_64-linux
 
 all: $(OUTLIB) cool cmpzeros
 
-OBJS := fastmath.o jni.o Matrix.o Vector.o LambertW.o chebychev.o cnlnewt.o cbroyden.o cged.o Hawkes.o
+OBJS := fastmath.o jni.o Matrix.o Vector.o LambertW.o chebychev.o cnlnewt.o cbroyden.o cged.o selfexciting.o
 
 cool: $(OBJS) cool.o
 	g++ -o $@ $(filter %.o,$^) $(LDFLAGS) $(LIBS)
