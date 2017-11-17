@@ -36,7 +36,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   protected static enum Parameter implements BoundedParameter
   {
 
-    y(0, 0.25), ε(0, 0.5), τ(0, 10);
+    ρ(0.00001, 1 - 0.00001), y(0, 0.25 * 1000), ε(0, 0.5), τ(0.00001, 10*10000);
 
     private double min;
     private double max;
@@ -97,11 +97,11 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
             + (1 / (pow(m, (1 + ε)) - 1)
                * pow(τ, (-1 - ε))
                * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-               * ρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+               * ρ + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
                - pow(τ, -ε) * pow(m, ε) * y)
-              / ((-m * pow(m, ε) + m) * ρ() + pow(m, ε) * τ * y - τ * y)
+              / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ * y - τ * y)
               * τ)
-           / ρ();
+           / ρ;
   }
 
   @Override
@@ -125,9 +125,9 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
            * (1 / (pow(m, (1 + ε)) - 1)
               * pow(τ, (-1 - ε))
               * (pow(m, -((1 + ε) * (M - 1))) - pow(m, (-ε * M - M + 2 * ε + 1)) + pow(m, (2 * ε + 1)) - pow(m, (1 + ε)))
-              * ρ() + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
+              * ρ + pow(m, -(ε * (M - 1))) * pow(τ, -ε) * y
               - pow(τ, -ε) * pow(m, ε) * y)
-           / ((-m * pow(m, ε) + m) * ρ() + pow(m, ε) * τ * y - τ * y);
+           / ((-m * pow(m, ε) + m) * ρ + pow(m, ε) * τ * y - τ * y);
   }
 
   public double

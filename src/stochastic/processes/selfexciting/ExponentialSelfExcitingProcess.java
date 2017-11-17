@@ -56,6 +56,20 @@ import fastmath.optim.SolutionValidator;
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
 
+  @Override
+  public double
+         minh()
+  {
+    return getβVector().fmin();
+  }
+
+  @Override
+  public double
+         maxh()
+  {
+    return getβVector().fmax();
+  }
+
   /**
    * @return RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
    *         .. P)), k = 1 .. P), z)
@@ -64,9 +78,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          invih(double h)
   {
-    Vector α = new Vector(seq(this::α, 0, order() - 1));
-    Vector β = new Vector(seq(this::β, 0, order() - 1));
-    IntToDoubleFunction bp = k -> product(j -> β(k), 0, k);
+    Vector α = getαVector();
+    Vector β = getβVector();
+    IntToDoubleFunction bp = k -> product(j -> β(j), 0, k);
     Vector sbp = new Vector(seq(bp, 0, order() - 1));
     Vector αβ = new Vector(seq(k -> product(j -> j == k ? α(j) : β(j), 0, order() - 1), 0, order() - 1));
 
@@ -86,6 +100,18 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
 
     return t;
+  }
+
+  public Vector
+         getαVector()
+  {
+    return new Vector(seq(this::α, 0, order() - 1));
+  }
+
+  public Vector
+         getβVector()
+  {
+    return new Vector(seq(this::β, 0, order() - 1));
   }
 
   /**
@@ -312,7 +338,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getStationaryλ()
   {
-    double branchingRate = ρ();
+    double branchingRate = ρ;
     if (branchingRate > 1)
     {
       return Double.POSITIVE_INFINITY;
@@ -324,11 +350,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return κ / (1 - branchingRate);
   }
 
-  /**
-   * branching rate
-   */
-  public abstract double
-         ρ();
+  public double  ρ = 1;
 
   /**
    * integrated kernel function
@@ -721,7 +743,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static String[] statisticNames =
-  { "∏β", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
+  { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
@@ -738,6 +760,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     Object[] statisticsVector = new Object[]
     { process.βproduct(),
+      process.minh(),
+      process.maxh(),
       process.logLik(),
       ksStatistic,
       compensated.mean(),

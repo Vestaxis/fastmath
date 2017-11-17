@@ -315,6 +315,16 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return ν(t) / s(t);
   }
 
+  public double minh( )
+  {
+    throw new UnsupportedOperationException( "TODO" );
+  }
+
+  public double maxh( )
+  {
+    throw new UnsupportedOperationException( "TODO" );
+  }
+
   /**
    * integrated hazard function
    * 
@@ -348,11 +358,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public abstract double
          Z();
 
-  /**
-   * 
-   * @return ∫ν(s)ds(0,∞) the integral of this{@link #ν(double)} over [0,∞]
-   */
-  public abstract double
-         ρ();
+
 
 }

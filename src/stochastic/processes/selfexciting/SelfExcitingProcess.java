@@ -5,7 +5,6 @@ import fastmath.Vector;
 public interface SelfExcitingProcess
 {
 
-
   double getBranchingRatio();
 
   double logLikelihood(Vector t);
@@ -23,9 +22,22 @@ public interface SelfExcitingProcess
    */
   double λ(double t);
 
-  public Vector Λ();
+  public Vector
+         Λ();
 
-  public Vector λvector();
-  
+  public Vector
+         λvector();
+
+  /*
+   * maximum hazard rate
+   */
+  public double
+         maxh();
+
+  /**
+   * minimum hazard rate
+   */
+  public double
+         minh();
 
 }

@@ -85,11 +85,12 @@ public class ModelFitterDesign
     contentPane.add(parameterPanel, BorderLayout.CENTER);
 
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
-    contentPane.add(ModelViewer.getKernelPanel(null), BorderLayout.PAGE_END);
+    contentPane.add(new KernelPanel(null), BorderLayout.PAGE_END);
     refreshTypeComboBox(null);
 
   }
 
+  
   public void
          refreshTypeComboBox(ActionEvent event)
   {
@@ -102,7 +103,7 @@ public class ModelFitterDesign
      * TODO: add m and M here
      */
     //JPanel mrowPanel = getParameterRow("m", 0.1, 5, 1000);
-    JPanel MrowPanel = getParameterRow("M", 1, 15, 15);
+    JPanel MrowPanel = getParameterRowPanel("M", 1, 15, 15);
     JSpinner Mspinner = new JSpinner(new SpinnerNumberModel(15, 1, 15, 1));
     
     //parameterPanel.add(Mspinner);
@@ -113,15 +114,16 @@ public class ModelFitterDesign
       double minValue = param.getMin();
       double maxValue = param.getMax();
       String paramName = param.getName();
-      parameterPanel.add(getParameterRow(paramName, minValue, maxValue, 1000));
+      parameterPanel.add(getParameterRowPanel(paramName, minValue, maxValue, 1000));
     }
     SpringLayoutUtils.makeGrid(parameterPanel, process.getBoundedParameters().length, 1, 5, 5, 5, 5);
     frame.validate();
     frame.pack();
   }
 
+  
   public JPanel
-         getParameterRow(String paramName,
+         getParameterRowPanel(String paramName,
                          double minValue,
                          double maxValue,
                          double sliderResolution)
@@ -146,7 +148,7 @@ public class ModelFitterDesign
 
     ChangeListener sliderUpdated = sliderEvent -> {
       textField.setText(Double.toString((double) slider.getValue() / (double) sliderResolution));
-
+      refreshPlots();
     };
     slider.addChangeListener(sliderUpdated);
     sliderUpdated.stateChanged(null);
@@ -155,5 +157,14 @@ public class ModelFitterDesign
 
     return rowPanel;
   }
+
+  private void
+          refreshPlots()
+  {
+    // TODO Auto-generated method stub
+    
+  }
+
+
 
 }

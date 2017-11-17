@@ -57,7 +57,7 @@ public class SelfExcitingProcessEstimator
     int cpuMultiplier = 1;
     if (type == Type.ConstrainedApproximatePowerlaw)
     {
-      cpuMultiplier = 2;
+      cpuMultiplier = 4;
     }
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * cpuMultiplier;
     if (args.length > 1)
@@ -284,9 +284,9 @@ public class SelfExcitingProcessEstimator
   {
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
-    Vector data = matrix.col(0).setName("data");
+    Vector times = matrix.col(0).copy().setName("times").divide(1000);
 
-    return data;
+    return times;
   }
 
 }

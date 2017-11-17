@@ -221,7 +221,7 @@
     h<around*|(|t|)>=<frac|\<nu\><around*|(|t|)>|s<around*|(|t|)>>
   </equation>
 
-  where is the survivor function defined by
+  where <math|s<around*|(|t|)>> is the survivor function defined by
 
   <\equation>
     s<around*|(|t|)>=1-F<around*|(|t|)>
@@ -244,7 +244,7 @@
     t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>|)>>>>>>
   </equation>
 
-  be the integrated hazard function and define
+  be the integrated, or cumulative, hazard function and define
 
   <\equation>
     \<varphi\><around*|(|t,r|)>=<around*|(|<big|sum><rsub|k=1><rsup|P><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)><big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>|)>
@@ -761,45 +761,45 @@
 
 <\references>
   <\collection>
-    <associate|A|<tuple|10|3>>
-    <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|52|8>>
-    <associate|Hawkes1|<tuple|25|5>>
-    <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|30|5>>
-    <associate|auto-1|<tuple|1|1>>
-    <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|69|10>>
-    <associate|auto-2|<tuple|1.1|1>>
-    <associate|auto-3|<tuple|1.1.1|3>>
-    <associate|auto-4|<tuple|1.2|4>>
-    <associate|auto-5|<tuple|1.2.1|5>>
-    <associate|auto-6|<tuple|1.3|5>>
-    <associate|auto-7|<tuple|1.3.1|6>>
-    <associate|auto-8|<tuple|1.4|8>>
-    <associate|auto-9|<tuple|1.5|8>>
-    <associate|bib-Mti|<tuple|7|10>>
-    <associate|bib-RandomIntegralEquations|<tuple|2|10>>
-    <associate|bib-chavez2012high|<tuple|3|10>>
-    <associate|bib-hawkes-finance|<tuple|9|10>>
-    <associate|bib-hawkes1971spectra|<tuple|4|10>>
-    <associate|bib-ocvshjb|<tuple|1|10>>
-    <associate|bib-ogata1981lewis|<tuple|5|10>>
-    <associate|bib-ozaki1979maximum|<tuple|6|10>>
-    <associate|bib-shek2010modeling|<tuple|8|10>>
-    <associate|comp|<tuple|9|3>>
-    <associate|footnote-1|<tuple|1|1>>
-    <associate|footnr-1|<tuple|1|1>>
-    <associate|hawkesll|<tuple|15|4>>
-    <associate|kernel|<tuple|4|1>>
-    <associate|lambertW6|<tuple|33|6>>
-    <associate|mc|<tuple|61|9>>
-    <associate|mp|<tuple|56|9>>
-    <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|36|6>>
-    <associate|uc|<tuple|46|7>>
-    <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|54|8>>
+    <associate|A|<tuple|10|3|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|Bj|<tuple|6|2|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|Etn1|<tuple|52|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|Hawkes1|<tuple|25|5|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|HawkesIntensity|<tuple|3|1|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|P1pred|<tuple|30|5|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-1|<tuple|1|1|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-10|<tuple|1.5.1|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-11|<tuple|69|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-2|<tuple|1.1|1|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-3|<tuple|1.1.1|3|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-4|<tuple|1.2|4|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-5|<tuple|1.2.1|5|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-6|<tuple|1.3|5|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-7|<tuple|1.3.1|6|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-8|<tuple|1.4|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|auto-9|<tuple|1.5|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-Mti|<tuple|7|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-RandomIntegralEquations|<tuple|2|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-chavez2012high|<tuple|3|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-hawkes-finance|<tuple|9|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-hawkes1971spectra|<tuple|4|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-ocvshjb|<tuple|1|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-ogata1981lewis|<tuple|5|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-ozaki1979maximum|<tuple|6|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|bib-shek2010modeling|<tuple|8|10|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|comp|<tuple|9|3|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|footnote-1|<tuple|1|1|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|footnr-1|<tuple|1|1|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|hawkesll|<tuple|15|4|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|kernel|<tuple|4|2|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|lambertW6|<tuple|33|6|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|mc|<tuple|61|9|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|mp|<tuple|56|9|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|multivarPred|<tuple|1.5.1|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|prediction|<tuple|36|6|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|uc|<tuple|46|7|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|univarPred|<tuple|1.4|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
+    <associate|up|<tuple|54|8|../../workspace/b2tf/research/ExponentialSelfExcitingProcesses.tm>>
   </collection>
 </references>
 
@@ -838,8 +838,9 @@
       Estimation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3>>
 
-      <with|par-left|<quote|1tab>|1.2.<space|2spc>The Integrated Hazard
-      Function and its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|1tab>|1.2.<space|2spc>The Hazard Function,
+      Cumulative Hazard Function, and its Inverse
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>>
 
       <with|par-left|<quote|2tab>|1.2.1.<space|2spc>The case when P=1

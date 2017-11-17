@@ -109,7 +109,7 @@ public class NasdaqTradingStrategy
       double startPoint = NasdaqTradingProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
       double endPoint = NasdaqTradingProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
 
-      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
+      double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.SECONDS);
       int idx = times.find(t, Condition.GTE, i == 0 ? 0 : indexes[i - 1]);
       if (idx == -1)
       {

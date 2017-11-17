@@ -80,13 +80,6 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   }
 
   @Override
-  public double
-         ρ()
-  {
-    return 1;
-  }
-
-  @Override
   public int
          order()
   {

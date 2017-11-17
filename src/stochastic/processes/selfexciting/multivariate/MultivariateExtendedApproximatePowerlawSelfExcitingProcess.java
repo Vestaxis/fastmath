@@ -209,13 +209,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   @Override
   public double
-         ρ()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
          iν(double t)
   {
     throw new UnsupportedOperationException("TODO");

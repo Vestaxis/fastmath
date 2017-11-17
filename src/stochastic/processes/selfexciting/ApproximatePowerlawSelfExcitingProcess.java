@@ -80,7 +80,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     return 1 / (τ * pow(m, i));
   }
 
-  public int M = 15;
+  public int M = 10;
 
   
   /**
@@ -112,19 +112,6 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
          Z()
   {
     return sum(j -> α(j) / β(j), 0, order() - 1);
-  }
-
-  /**
-   * `
-   * 
-   * @return the branching rate which will result in k/(1-r)=this{@link #mean()}
-   */
-  @Override
-  public double
-         ρ()
-  {
-    return 1;
-
   }
 
   @Override

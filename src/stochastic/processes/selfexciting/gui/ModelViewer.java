@@ -152,31 +152,7 @@ public class ModelViewer
 
     bottomPanel.add(priceChartPanel);
     bottomPanel.add(intensityChart);
-    bottomPanel.add(getKernelPanel(process));
-  }
-
-  public static JPanel
-         getKernelPanel(AbstractSelfExcitingProcess process)
-  {
-    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process == null ? t -> 0 : process::ih, 0, 20, chart -> {
-      chart.setYAxisTitle("t (ms)");
-    });
-
-    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process == null ? t -> 0 : process::ν, 0, 100);
-    plot(impulseResponseChartPanel.getChart(), "h(t)", process == null ? t -> 0 : process::h, 0, 100);
-
-    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process == null ? t -> 0 : process::iν, 0, 100, chart -> {
-      XYStyler styler = chart.getStyler();
-      styler.setYAxisMin(0.0);
-      styler.setYAxisMax(1.0);
-    });
-    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process == null ? t -> 0 : process::ih, 0, 100);
-
-    JPanel kernelPanel = new JPanel(new GridLayout(1, 3));
-    kernelPanel.add(impulseResponseChartPanel);
-    kernelPanel.add(integratedImpulseResponseChartPanel);
-    kernelPanel.add(inverseIntegratedHazardChartPanel);
-    return kernelPanel;
+    bottomPanel.add(new KernelPanel(process));
   }
 
   public XChartPanel<XYChart>

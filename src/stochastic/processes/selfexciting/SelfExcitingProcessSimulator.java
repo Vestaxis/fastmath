@@ -48,9 +48,8 @@ public class SelfExcitingProcessSimulator
 
     String symbol = "SPY";
 
-    AbstractSelfExcitingProcess process = SelfExcitingProcessFactory.spawnNewProcess(type, 1);
+    ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) SelfExcitingProcessFactory.spawnNewProcess(type, 1);
     process.loadParameters(new File(args[0]));
-    out.println( "Loaded " + process );
     ExponentialDistribution expDist = new ExponentialDistribution(1);
 
     double t = 0;

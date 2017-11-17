@@ -25,7 +25,7 @@ public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
     range(0, process.order() - 1).mapToObj(i -> new DoublePair(process.α(i), process.β(i))).forEach(out::println);
     double fuck = product( i-> pow( process.β(i), 2), 0, process.order() - 1 );
     out.println( "prod(β)=" + fuck );
-    double RHO = process.ρ();
+    double RHO = process.ρ;
     out.println("ρ=" + RHO);
 
     double mean = process.mean();
