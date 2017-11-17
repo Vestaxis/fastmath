@@ -331,7 +331,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     double ih = -log(survival);
     if (!Double.isFinite(ih))
     {
-      throw new IllegalArgumentException("integrated hazard function is not finite: " + ih + " params=" + getParamString());
+      ih = 0;
+      //throw new IllegalArgumentException("integrated hazard function is not finite: " + ih + " params=" + getParamString());
     }
     return ih;
   }

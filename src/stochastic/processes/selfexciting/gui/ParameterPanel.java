@@ -69,6 +69,14 @@ public class ParameterPanel extends JPanel
       Field field = process.getField(paramName);
       try
       {
+        if (value < minValue)
+        {
+          value = minValue;
+        }
+        else if (value > maxValue)
+        {
+          value = maxValue;
+        }
         if (field.getType().equals(double.class))
         {
           field.setDouble(process, value);
@@ -89,7 +97,7 @@ public class ParameterPanel extends JPanel
       textField.setText(Double.toString(value));
       if (callback != null)
       {
-        callback.run();        
+        callback.run();
       }
     };
     slider.addChangeListener(sliderUpdated);
