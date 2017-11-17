@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Field;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -158,7 +159,29 @@ public class ModelFitterDesign
     JTextField textField = new JTextField();
 
     ChangeListener sliderUpdated = sliderEvent -> {
-      textField.setText(Double.toString((double) slider.getValue() / (double) sliderResolution));
+      double value = (double) slider.getValue() / (double) sliderResolution;
+      Field field = process.getField(paramName);
+      try
+      {
+        if (field.getType().equals(double.class))
+        {
+
+          field.setDouble(process, value);
+        }
+        else if (field.getType().equals(int.class))
+        {
+          field.setInt(process, (int) value);
+        }
+        else
+        {
+          throw new UnsupportedOperationException("unhandled field type " + field.getType() + " in " + this.getClass().getSimpleName() );
+        }
+      }
+      catch (IllegalArgumentException | IllegalAccessException e)
+      {
+        throw new UnsupportedOperationException(e.getMessage(), e);
+      }
+      textField.setText(Double.toString(value));
       refreshPlots();
     };
     slider.addChangeListener(sliderUpdated);
