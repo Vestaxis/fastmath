@@ -22,12 +22,12 @@ import fastmath.IntVector;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import stochastic.annotations.Units;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.BoundedParameter;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
-import stochastics.annotations.Units;
 import util.DateUtils;
 import util.TerseThreadFactory;
 

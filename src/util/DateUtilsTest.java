@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
-import stochastics.annotations.Units;
+import stochastic.annotations.Units;
 
 public class DateUtilsTest extends TestCase
 {

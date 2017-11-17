@@ -15,10 +15,6 @@ import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
-/**
- * TODO: add emperical autocorrelation and histogram
- * 
- */
 public class ModelFitterDesign
 {
 
@@ -27,6 +23,7 @@ public class ModelFitterDesign
   private ParameterPanel parameterPanel;
   private AbstractSelfExcitingProcess process;
   private Container contentPane;
+  private KernelPanel kernelPanel;
 
   /**
    * Launch the application.
@@ -71,12 +68,12 @@ public class ModelFitterDesign
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
     contentPane.add(processTypeComboBox, BorderLayout.PAGE_START);
     refreshProcess();
-    
+
     updateParameterPanel();
 
     refreshTypeComboBox(null);
 
-    contentPane.add(new KernelPanel(process), BorderLayout.PAGE_END);
+    contentPane.add(kernelPanel = new KernelPanel(process), BorderLayout.PAGE_END);
 
     doLayout();
   }
@@ -88,7 +85,12 @@ public class ModelFitterDesign
     {
       contentPane.remove(parameterPanel);
     }
-    contentPane.add(parameterPanel = new ParameterPanel(process), BorderLayout.CENTER);
+    contentPane.add(parameterPanel = new ParameterPanel(process, () -> {
+      if (kernelPanel != null)
+      {
+        kernelPanel.refreshGraphs();
+      }
+    }), BorderLayout.CENTER);
     doLayout();
   }
 
@@ -122,9 +124,13 @@ public class ModelFitterDesign
     Type type = getSelectedType();
     if (process == null || !process.getType().equals(type))
     {
-      out.println("Switched kernel to " + type );
+      out.println("Switched kernel to " + type);
       process = type.instantiate(1);
       updateParameterPanel();
+      if (kernelPanel != null)
+      {
+        kernelPanel.setProcess(process);
+      }
     }
     return process;
   }
@@ -133,13 +139,6 @@ public class ModelFitterDesign
          getSelectedType()
   {
     return SelfExcitingProcessFactory.Type.values()[processTypeComboBox.getSelectedIndex()];
-  }
-
-  private void
-          refreshPlots()
-  {
-    // TODO Auto-generated method stub
-
   }
 
 }

@@ -34,6 +34,10 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.DateUtils;
 import util.Plotter;
 
+/**
+ * TODO: add emperical autocorrelation and histogram
+ * 
+ */
 public class ModelViewer
 {
 

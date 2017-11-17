@@ -1,4 +1,4 @@
-package stochastics.annotations;
+package stochastic.annotations;
 
 import java.util.concurrent.TimeUnit;
 

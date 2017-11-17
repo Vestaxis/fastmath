@@ -20,10 +20,12 @@ import util.SpringLayoutUtils;
 public class ParameterPanel extends JPanel
 {
   private AbstractSelfExcitingProcess process;
+  private Runnable callback;
 
-  public ParameterPanel(AbstractSelfExcitingProcess process)
+  public ParameterPanel(AbstractSelfExcitingProcess process, Runnable callback)
   {
     super(new SpringLayout());
+    this.callback = callback;
     this.process = process;
 
     for (BoundedParameter param : process.getBoundedParameters())
@@ -85,6 +87,10 @@ public class ParameterPanel extends JPanel
         throw new UnsupportedOperationException(e.getMessage(), e);
       }
       textField.setText(Double.toString(value));
+      if (callback != null)
+      {
+        callback.run();        
+      }
     };
     slider.addChangeListener(sliderUpdated);
     sliderUpdated.stateChanged(null);

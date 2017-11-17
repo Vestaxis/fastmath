@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import fastmath.Vector;
-import stochastics.annotations.Units;
+import stochastic.annotations.Units;
 import util.DateUtils;
 import util.ThreadLocalDateFormat;
 

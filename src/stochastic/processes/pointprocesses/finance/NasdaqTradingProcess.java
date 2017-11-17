@@ -22,7 +22,7 @@ import java.util.stream.StreamSupport;
 import fastmath.DoubleRowMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
-import stochastics.annotations.Units;
+import stochastic.annotations.Units;
 import util.DateUtils;
 import util.TradeClassifier;
 
