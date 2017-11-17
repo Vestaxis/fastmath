@@ -223,16 +223,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public String
          getParamString()
   {
-    return "{" + asList(getParameterFields()).stream().map(param -> {
-      try
-      {
-        return param.getName() + "=" + param.getDouble(this);
-      }
-      catch (IllegalArgumentException | IllegalAccessException e)
-      {
-        throw new RuntimeException(e.getMessage(), e);
-      }
-    }).collect(joining(",")) + "}";
+    return "{" + asList(getParameterFields()).stream().map(param -> param.getName() + "=" + Double.toString(getFieldValue(param))).collect(joining(",")) + "}";
   }
 
   public double
@@ -315,14 +306,16 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return ν(t) / s(t);
   }
 
-  public double minh( )
+  public double
+         minh()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
-  public double maxh( )
+  public double
+         maxh()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
   /**
@@ -334,7 +327,13 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public double
          ih(double t)
   {
-    return -log(s(t));
+    double survival = s(t);
+    double ih = -log(survival);
+    if (!Double.isFinite(ih))
+    {
+      throw new IllegalArgumentException("integrated hazard function is not finite: " + ih + " params=" + getParamString());
+    }
+    return ih;
   }
 
   /**
@@ -357,7 +356,5 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    */
   public abstract double
          Z();
-
-
 
 }

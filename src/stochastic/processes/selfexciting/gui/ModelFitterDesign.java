@@ -28,12 +28,17 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.SpringLayoutUtils;
 
+/**
+ * TODO: add emperical autocorrelation and histogram
+ * 
+ */
 public class ModelFitterDesign
 {
 
   private JFrame frame;
   private JComboBox<SelfExcitingProcessFactory.Type> processTypeComboBox;
   private JPanel parameterPanel;
+  private AbstractSelfExcitingProcess process;
 
   /**
    * Launch the application.
@@ -85,28 +90,36 @@ public class ModelFitterDesign
     contentPane.add(parameterPanel, BorderLayout.CENTER);
 
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
-    contentPane.add(new KernelPanel(null), BorderLayout.PAGE_END);
     refreshTypeComboBox(null);
 
+    contentPane.add(new KernelPanel(process), BorderLayout.PAGE_END);
+
+    doLayout();
   }
 
-  
+  public void
+         doLayout()
+  {
+    frame.validate();
+    frame.pack();
+  }
+
   public void
          refreshTypeComboBox(ActionEvent event)
   {
     Type type = SelfExcitingProcessFactory.Type.values()[processTypeComboBox.getSelectedIndex()];
     out.println(type + " ...");
-    AbstractSelfExcitingProcess process = type.instantiate(1);
+    process = type.instantiate(1);
     parameterPanel.setLayout(new SpringLayout());
     parameterPanel.removeAll();
     /**
      * TODO: add m and M here
      */
-    //JPanel mrowPanel = getParameterRow("m", 0.1, 5, 1000);
+    // JPanel mrowPanel = getParameterRow("m", 0.1, 5, 1000);
     JPanel MrowPanel = getParameterRowPanel("M", 1, 15, 15);
     JSpinner Mspinner = new JSpinner(new SpinnerNumberModel(15, 1, 15, 1));
-    
-    //parameterPanel.add(Mspinner);
+
+    // parameterPanel.add(Mspinner);
     // JPanel MowPanel = new JPanel(new GridLayout(1, 5));
 
     for (BoundedParameter param : process.getBoundedParameters())
@@ -117,16 +130,14 @@ public class ModelFitterDesign
       parameterPanel.add(getParameterRowPanel(paramName, minValue, maxValue, 1000));
     }
     SpringLayoutUtils.makeGrid(parameterPanel, process.getBoundedParameters().length, 1, 5, 5, 5, 5);
-    frame.validate();
-    frame.pack();
+
   }
 
-  
   public JPanel
          getParameterRowPanel(String paramName,
-                         double minValue,
-                         double maxValue,
-                         double sliderResolution)
+                              double minValue,
+                              double maxValue,
+                              double sliderResolution)
   {
 
     JPanel rowPanel = new JPanel(new GridLayout(1, 5));
@@ -162,9 +173,7 @@ public class ModelFitterDesign
           refreshPlots()
   {
     // TODO Auto-generated method stub
-    
+
   }
-
-
 
 }

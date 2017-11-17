@@ -60,14 +60,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          minh()
   {
-    return getβVector().fmin();
+    return getβVector().fmin() * ρ;
   }
 
   @Override
   public double
          maxh()
   {
-    return getβVector().fmax();
+    return getβVector().fmax() * ρ;
   }
 
   /**
@@ -362,6 +362,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          iν(double t)
   {
+    out.println( this.getParamString() );
     return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
   }
 

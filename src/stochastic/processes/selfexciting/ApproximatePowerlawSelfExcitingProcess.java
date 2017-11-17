@@ -20,7 +20,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   protected static enum Parameter implements BoundedParameter
   {
 
-    κ(0, 1), ε(0, 0.5), τ0(0, 3);
+    κ(0, 1), ε(0, 0.5), τ(0, 3);
 
     private double min;
     private double max;

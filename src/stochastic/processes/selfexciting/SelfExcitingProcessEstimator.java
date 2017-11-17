@@ -57,7 +57,7 @@ public class SelfExcitingProcessEstimator
     int cpuMultiplier = 1;
     if (type == Type.ConstrainedApproximatePowerlaw)
     {
-      cpuMultiplier = 4;
+      cpuMultiplier = 40;
     }
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * cpuMultiplier;
     if (args.length > 1)
