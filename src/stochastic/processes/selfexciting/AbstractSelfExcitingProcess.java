@@ -303,7 +303,12 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public double
          h(double t)
   {
-    return ν(t) / s(t);
+    double haz = ν(t) / s(t);
+    if ( !Double.isFinite( haz ))
+    {
+      return 0;
+    }
+    return haz;
   }
 
   public double
