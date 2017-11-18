@@ -2,8 +2,12 @@ package fastmath;
 
 import static java.util.stream.IntStream.rangeClosed;
 
+import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
+
+import fastmath.arb.Real;
 
 public class Functions
 {
@@ -258,6 +262,14 @@ public class Functions
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements);
   }
 
+  public static Stream<Real>
+         seq(IntFunction<Real> elements,
+             int lowerIndex,
+             int upperIndex)
+  {
+    return rangeClosed(lowerIndex, upperIndex).mapToObj(elements);
+  }
+
   public static double
          sumExcluding(IntToDoubleFunction elements,
                       int lowerIndex,
@@ -265,6 +277,16 @@ public class Functions
                       int excluding)
   {
     return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).sum();
+  }
+
+  public static Real
+         product(IntFunction<Real> elements,
+                 int lowerIndex,
+                 int upperIndex)
+  {
+    return rangeClosed(lowerIndex, upperIndex).mapToObj(elements).reduce(Real.ONE,
+                                                                         (a,
+                                                                          b) -> a.multiply(b));
   }
 
   public static double

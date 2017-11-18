@@ -3,6 +3,8 @@ package fastmath;
 
 import static java.lang.Math.pow;
 
+import java.util.function.IntToDoubleFunction;
+
 import junit.framework.TestCase;
 
 public class FunctionsTest extends TestCase
@@ -19,7 +21,7 @@ public class FunctionsTest extends TestCase
   public void testProd()
   {
     double a[] = new double[] { 1,2,4};
-    double x = Functions.product( i->a[i] , 0,2);
+    double x = Functions.product( (IntToDoubleFunction)i->a[i] , 0,2);
     assertEquals(8.0, x);
   }
 

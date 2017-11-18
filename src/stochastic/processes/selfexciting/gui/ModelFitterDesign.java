@@ -16,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import fastmath.arb.Real;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
@@ -181,14 +182,14 @@ public class ModelFitterDesign
     {
       double amplitude = process.α(i);
       double decayRate = process.β(i);
-      double amplifiedJointDecayRate = process.γ(i);
+      Real amplifiedJointDecayRate = process.γ(i);
       double halfLife = process.getHalfLife(i);
       amplitudeDecayModel.setValueAt(i, i, 0);
       amplitudeDecayModel.setValueAt(amplitude, i, 1);
       amplitudeDecayModel.setValueAt(decayRate, i, 2);
-      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate, i, 3);
+      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate.toString(), i, 3);
       amplitudeDecayModel.setValueAt(halfLife, i, 4);
-      out.format("i=%d α=%f β=%f γ=%f halfLife=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate, halfLife);
+      out.format("i=%d α=%f β=%f γ=%s halfLife=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate, halfLife);
     }
     amplitudeDecayTable.repaint();
   }

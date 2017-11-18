@@ -5,15 +5,19 @@ import static java.lang.Math.pow;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
 
+import java.util.function.IntFunction;
+
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
+import fastmath.arb.Real;
 import junit.framework.TestCase;
 import util.DoublePair;
 
 public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {
 
-  public void testIntegralOfKernel()
+  public void
+         testIntegralOfKernel()
   {
 
     double ε = 0.25;
@@ -23,8 +27,8 @@ public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
     process.κ = 0.01;
 
     range(0, process.order() - 1).mapToObj(i -> new DoublePair(process.α(i), process.β(i))).forEach(out::println);
-    double fuck = product( i-> pow( process.β(i), 2), 0, process.order() - 1 );
-    out.println( "prod(β)=" + fuck );
+    Real fuck = product((IntFunction<Real>) i -> new Real(pow(process.β(i), 2)), 0, process.order() - 1);
+    out.println("prod(β)=" + fuck);
     double RHO = process.ρ;
     out.println("ρ=" + RHO);
 

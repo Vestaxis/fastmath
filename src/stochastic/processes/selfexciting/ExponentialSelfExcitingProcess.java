@@ -3,7 +3,6 @@ package stochastic.processes.selfexciting;
 import static fastmath.Functions.product;
 import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
-import static fastmath.Functions.sumExcluding;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -27,10 +26,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntFunction;
-import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
-import org.apache.commons.math3.analysis.BivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
@@ -47,7 +44,8 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
 import fastmath.Pair;
 import fastmath.Vector;
-import fastmath.functions.QuadvariateFunction;
+import fastmath.arb.Real;
+import fastmath.arb.RealVector;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
@@ -78,29 +76,36 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          invih(double h)
   {
+
     Vector α = getαVector();
     Vector β = getβVector();
-    IntToDoubleFunction bp = k -> product(j -> β(j), 0, k);
-    Vector sbp = new Vector(seq(bp, 0, order() - 1));
-    Vector αβ = new Vector(seq(k -> product(j -> j == k ? α(j) : β(j), 0, order() - 1), 0, order() - 1));
-
-    UnivariateFunction f = t -> sum(k -> exp(h - t * β(k) - 1) * αβ.get(k), 0, order() - 1);
-    UnivariateFunction df = t -> sum(k -> (-β(k) * exp(h - t * β(k))) * αβ.get(k), 0, order() - 1);
-    UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
-    double t = 0;
-    double prevt = Double.NEGATIVE_INFINITY;
-    double dt = 0;
+    IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, order());
+    RealVector sbp = new RealVector(seq(bp, 0, order() - 1));
     return 0;
-    // while ((dt = (t - prevt)) >= 1E-14)
-    // {
-    // prevt = t;
-    // // double ft = f.value(t);
-    // // double dft = df.value(t);
-    // // t = t - ft / dft;
-    // t = fNewton.value(prevt);
-    // }
-    //
-    // return t;
+//    IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, k);
+//
+//    IntFunction<Real> gamma = j -> γ(j);
+//    RealVector αβ = new RealVector(seq(gamma, 0, order() - 1));
+//
+//    UnivariateFunction f = t -> sum(k -> exp(h - αβ.get(k).multiply(t * β(k) - 1).fpValue()), 0, order() - 1);
+//    UnivariateFunction df = t -> sum(k -> -β(k) * exp(h - αβ.get(k).multiply(t * β(k)).fpValue()), 0, order() - 1);
+//    UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
+//
+//    return 0;
+//    double t = 0;
+//    double prevt = Double.NEGATIVE_INFINITY;
+//    double dt = t - prevt;
+//    int iters = 0;
+//    while ((dt = (t - prevt)) >= 1E-14 && iters < 10 )
+//    {
+//      prevt = t;
+//      // double ft = f.value(t);
+//      // double dft = df.value(t);
+//      // t = t - ft / dft;
+//      t = fNewton.value(prevt);
+//    }
+//
+//    return t;
   }
 
   public Vector
@@ -121,10 +126,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param k
    * @return
    */
-  public double
+  public Real
          γ(int k)
   {
-    return product(j -> j == k ? α(j) : β(j), 0, order() - 1);
+    return product((IntFunction<Real>) j -> new Real(j == k ? α(j) : β(j)), 0, order() - 1);
   }
 
   public double
@@ -512,30 +517,34 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          predict()
   {
-    final double v = product(k -> β(k), 0, order() - 1);
-    final double w = sum(k -> β(k), 0, order() - 1);
-    double maxT = T.fmax();
-    int N = T.size();
-
-    out.println("v=" + v);
-    out.println("w=" + w);
-
-    UnivariateFunction η = t -> exp((t + maxT) * w);
-    BivariateFunction τ = (t,
-                           ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
-    IntFunction<Double> Φ = m -> product(k -> k == m ? α(k) : β(k), 0, order() - 1);
-    QuadvariateFunction σ = (m,
-                             k,
-                             t,
-                             s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() - 1, m);
-    BivariateFunction φ = (t,
-                           ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) - σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
-
-    ExponentialDistribution expDist = new ExponentialDistribution(1);
-    double ε = expDist.sample();
-
-    // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
-    return 0;
+    throw new UnsupportedOperationException("TODO");
+    // final double v = product(k -> β(k), 0, order() - 1);
+    // final double w = sum(k -> β(k), 0, order() - 1);
+    // double maxT = T.fmax();
+    // int N = T.size();
+    //
+    // out.println("v=" + v);
+    // out.println("w=" + w);
+    //
+    // UnivariateFunction η = t -> exp((t + maxT) * w);
+    // BivariateFunction τ = (t,
+    // ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
+    // IntFunction<Double> Φ = m -> product(k -> k == m ? α(k) : β(k), 0, order() -
+    // 1);
+    // QuadvariateFunction σ = (m,
+    // k,
+    // t,
+    // s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() -
+    // 1, m);
+    // BivariateFunction φ = (t,
+    // ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) -
+    // σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
+    //
+    // ExponentialDistribution expDist = new ExponentialDistribution(1);
+    // double ε = expDist.sample();
+    //
+    // // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
+    // return 0;
 
     // throw new UnsupportedOperationException("TODO: for each exponentially
     // distributed ε find the critical point t which maximizes the score φ(t,ε) ");

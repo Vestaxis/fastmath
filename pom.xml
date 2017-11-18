@@ -270,6 +270,11 @@
 	</build>
 
 	<dependencies>
+			<dependency>
+			<groupId>gnu</groupId>
+			<artifactId>arb</artifactId>
+			<version>0.1</version>	
+		</dependency>
 		<dependency>
 			<groupId>org.fusesource.jansi</groupId>
 			<artifactId>jansi</artifactId>
