@@ -92,7 +92,7 @@
   where <math|\<lambda\><rsub|0><around*|(|t|)>> is a deterministic function
   which will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
   <cite|hawkes-finance><cite|hawkes1971spectra><cite|shek2010modeling><cite|chavez2012high>
-  Here, \ <math|\<nu\>:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a
+  and <math|\<nu\>:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a
   kernel function which expresses the positive influence of past events
   <math|T<rsub|i>> on the current value of the intensity process. The
   self-exciting process of order <math|P> is a defined by the

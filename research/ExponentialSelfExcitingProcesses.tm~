@@ -92,7 +92,7 @@
   where <math|\<lambda\><rsub|0><around*|(|t|)>> is a deterministic function
   which will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
   <cite|hawkes-finance><cite|hawkes1971spectra><cite|shek2010modeling><cite|chavez2012high>
-  Here, \ <math|\<nu\>:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a
+  and <math|\<nu\>:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a
   kernel function which expresses the positive influence of past events
   <math|T<rsub|i>> on the current value of the intensity process. The
   self-exciting process of order <math|P> is a defined by the
@@ -239,8 +239,7 @@
   \ Let
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|i
-    h<around*|(|t|)>>|<cell|=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=-ln<around*|(|1-F<around*|(|t|)>|)>>>|<row|<cell|>|<cell|=-ln<around*|(|1-<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
+    <tabular|<tformat|<table|<row|<cell|H<around*|(|t|)>>|<cell|=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=-ln<around*|(|1-F<around*|(|t|)>|)>>>|<row|<cell|>|<cell|=-ln<around*|(|1-<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
     t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>|)>>>>>>
   </equation>
 
@@ -254,14 +253,14 @@
   <math|r> is such that
 
   <\equation>
-    i h<rsup|-1><around*|(|r|)>=<around*|{|t:i
+    H<rsup|-1><around*|(|r|)>=<around*|{|t:i
     h<around*|(|t|)>=r|}>=<around*|{|t:\<varphi\><around*|(|t,r|)>=0|}>
   </equation>
 
   is a solution to
 
   <\equation>
-    i h<around*|(|i h<rsup|-1><around*|(|r|)>|)>=r
+    H<around*|(|H<rsup|-1><around*|(|r|)>|)>=r
   </equation>
 
   The derivative of <math|\<varphi\><around*|(|t,r|)>> is
@@ -283,8 +282,6 @@
   </equation>
 
   is the amplitude of <math|j>-th joint decay rate.
-
-  \;
 
   <subsubsection|The case when P=1>
 

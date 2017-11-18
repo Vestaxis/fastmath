@@ -15,7 +15,7 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
   static enum Parameter implements BoundedParameter
   {
 
-    y(0, 50), τ(0.00001, 20), ε(0, 0.5), τ0(0.00001, 50);
+    y(0, 0.25), τ(0.00001, 10), ε(0, 0.5), τ0(0.00001, 10);
 
     Parameter(double min, double max)
     {
@@ -28,25 +28,29 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
     double max;
 
     @Override
-    public double getMin()
+    public double
+           getMin()
     {
       return min;
     }
 
     @Override
-    public double getMax()
+    public double
+           getMax()
     {
       return max;
     }
 
     @Override
-    public String getName()
+    public String
+           getName()
     {
       return name();
     }
 
     @Override
-    public int getOrdinal()
+    public int
+           getOrdinal()
     {
       return ordinal();
     }
@@ -84,13 +88,15 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
   {
   }
 
-  private double[] getParameterArray()
+  private double[]
+          getParameterArray()
   {
     return getParameters().toDoubleArray();
   }
 
   @Override
-  public BoundedParameter[] getBoundedParameters()
+  public BoundedParameter[]
+         getBoundedParameters()
   {
     Parameter[] parameters = Parameter.values();
     return parameters;
@@ -109,7 +115,8 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
    * @returnnormalization factor such that the branching rate is equal to
    *                      this{@link #ρ}
    */
-  public double Z()
+  public double
+         Z()
   {
     if (abs(ε - pow(10, -15)) < 0)
     {
@@ -121,34 +128,25 @@ public class ExtendedConstrainedExponentialPowerlawApproximationSelfExcitingProc
     }
   }
 
-  /**
-   * integrated kernel function which is the anti-derivative/indefinite integral
-   * of this{@link #ρ}
-   * 
-   * @param t
-   * @return ∫this{@link #ψ}(t)dt
-   */
-  public double iν(double t)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
   private int iterations = 0;
 
   @Override
-  public int order()
+  public int
+         order()
   {
     return M + 1;
   }
 
   @Override
-  public double βS()
+  public double
+         βS()
   {
     return τ;
   }
 
   @Override
-  public double αS()
+  public double
+         αS()
   {
     return τ
            * (-1 / (pow(m, (1 + ε)) - 1)

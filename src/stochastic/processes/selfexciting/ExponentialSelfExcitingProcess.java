@@ -76,10 +76,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          invih(double h)
   {
 
-    Vector α = getαVector();
-    Vector β = getβVector();
-    IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, order());
-    Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
+//    Vector α = getαVector();
+//    Vector β = getβVector();
+//    IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, order());
+//    Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
 
     return 0;
     // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),

@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -63,6 +64,8 @@ public class ModelFitterDesign
 
   /**
    * Initialize the contents of the frame.
+   * 
+   * @wbp.parser.entryPoint
    */
   private void
           initialize()
@@ -75,12 +78,12 @@ public class ModelFitterDesign
 
     JPanel topPanel = new JPanel(new BorderLayout());
 
-    processTypeComboBox = new JComboBox<>(SelfExcitingProcessFactory.Type.values());
+    Type[] processTypes = SelfExcitingProcessFactory.Type.values();
+    processTypeComboBox = new JComboBox<>(processTypes);
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
 
     JPanel topLeftPanel = new JPanel(new BorderLayout());
 
-    topPanel.add(processTypeComboBox, BorderLayout.WEST);
     topLeftPanel.add(processTypeComboBox, BorderLayout.PAGE_START);
     topLeftPanel.add(new JButton("Load points"), BorderLayout.PAGE_END);
     topPanel.add(topLeftPanel, BorderLayout.WEST);
@@ -182,7 +185,7 @@ public class ModelFitterDesign
     {
       double amplitude = process.α(i);
       double decayRate = process.β(i);
-      Real amplifiedJointDecayRate = process.getScalingTime(i);
+      Real amplifiedJointDecayRate = process.γ(i);
       double halfLife = process.getHalfLife(i);
       amplitudeDecayModel.setValueAt(i, i, 0);
       amplitudeDecayModel.setValueAt(amplitude, i, 1);
@@ -201,7 +204,7 @@ public class ModelFitterDesign
   }
 
   String[] tableColumnNames = new String[]
-  { "order", "α", "β", "γ", "scaling time" };
+  { "order", "α", "β", "γ", "half-life" };
 
   private JScrollPane tableScroller;
 

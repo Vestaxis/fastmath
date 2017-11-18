@@ -52,13 +52,11 @@ public class SelfExcitingProcessEstimator
                              CloneNotSupportedException
   {
 
-    SelfExcitingProcessFactory.Type type = Type.ConstrainedApproximatePowerlaw; // Type.ExtendedApproximatePowerlaw;
+    SelfExcitingProcessFactory.Type type = Type.ExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
     int cpuMultiplier = 1;
-    if (type == Type.ConstrainedApproximatePowerlaw)
-    {
-      cpuMultiplier = 40;
-    }
+
+      cpuMultiplier = 4;
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * cpuMultiplier;
     if (args.length > 1)
     {
@@ -284,7 +282,7 @@ public class SelfExcitingProcessEstimator
   {
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
-    Vector times = matrix.col(0).copy().setName("times").divide(1000);
+    Vector times = matrix.col(0).copy().setName("times");
 
     return times;
   }
