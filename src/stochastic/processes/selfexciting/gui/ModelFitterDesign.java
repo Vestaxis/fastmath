@@ -76,12 +76,15 @@ public class ModelFitterDesign
     processTypeComboBox = new JComboBox<>(SelfExcitingProcessFactory.Type.values());
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
     topPanel.add(processTypeComboBox, BorderLayout.WEST);
-    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, 2);
-    amplitudeDecayModel.setColumnIdentifiers(new String[]
-    { "α", "β" });
+    process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
+
+    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
+    amplitudeDecayModel.setColumnIdentifiers(tableColumnNames);
     amplitudeDecayTable = new JTable(amplitudeDecayModel);
-    JScrollPane tableScroller = new JScrollPane(amplitudeDecayTable);
-    topPanel.add(tableScroller, BorderLayout.EAST);
+    setAmplitudeDecayValues();
+
+    tableScroller = new JScrollPane(amplitudeDecayTable);
+    topPanel.add(tableScroller, BorderLayout.CENTER);
 
     contentPane.add(topPanel, BorderLayout.PAGE_START);
     refreshProcess();
@@ -102,13 +105,18 @@ public class ModelFitterDesign
     {
       contentPane.remove(parameterPanel);
     }
-    contentPane.add(parameterPanel = new ParameterPanel(process, () -> {
-      if (kernelPanel != null)
-      {
-        kernelPanel.refreshGraphs();
-      }
-    }), BorderLayout.CENTER);
+    contentPane.add(parameterPanel = new ParameterPanel(process, this::onParameterUpdated), BorderLayout.CENTER);
     doLayout();
+  }
+
+  public void
+         onParameterUpdated()
+  {
+    if (kernelPanel != null)
+    {
+      kernelPanel.refreshGraphs();
+    }
+    setAmplitudeDecayValues();
   }
 
   public void
@@ -122,6 +130,7 @@ public class ModelFitterDesign
          refreshTypeComboBox(ActionEvent event)
   {
     refreshProcess();
+    setAmplitudeDecayValues();
 
     /**
      * TODO: add m and M here
@@ -148,13 +157,28 @@ public class ModelFitterDesign
       {
         kernelPanel.setProcess(process);
       }
-      for (int i = 0; i < process.order(); i++)
-      {
-        amplitudeDecayModel.addRow(new Double[]
-        { process.α(i), process.β(i) });
-      }
+
     }
+    setAmplitudeDecayValues();
+    tableScroller.revalidate();
+
     return process;
+  }
+
+  public void
+         setAmplitudeDecayValues()
+  {
+    for (int i = 0; i < process.order(); i++)
+    {
+      double amplitude = process.α(i);
+      double decayRate = process.β(i);
+      double amplifiedJointDecayRate = process.γ(i);
+      amplitudeDecayModel.setValueAt(amplitude, i, 0);
+      amplitudeDecayModel.setValueAt(decayRate, i, 1);
+      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate, i, 2);
+      out.format("i=%d α=%f β=%f γ=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate);
+    }
+    amplitudeDecayTable.repaint();
   }
 
   public Type
@@ -162,5 +186,10 @@ public class ModelFitterDesign
   {
     return SelfExcitingProcessFactory.Type.values()[processTypeComboBox.getSelectedIndex()];
   }
+
+  String[] tableColumnNames = new String[]
+  { "α", "β", "γ" };
+
+  private JScrollPane tableScroller;
 
 }

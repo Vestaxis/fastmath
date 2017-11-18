@@ -122,7 +122,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return
    */
   public double
-         αβproduct(int k)
+         γ(int k)
   {
     return product(j -> j == k ? α(j) : β(j), 0, order() - 1);
   }
