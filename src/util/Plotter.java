@@ -196,7 +196,9 @@ public class Plotter
     for (int i = 0; i < n; i++, t = left + dt * i)
     {
       x[i] = timeAxisTransformer.applyAsDouble(t);
-      y[i] = func.value(t);
+      double v = func.value(t);
+     
+      y[i] = v;
     }
     return new Pair<double[], double[]>(x, y);
   }
