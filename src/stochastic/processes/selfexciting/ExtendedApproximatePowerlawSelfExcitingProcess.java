@@ -1,23 +1,21 @@
 package stochastic.processes.selfexciting;
 
 import static java.lang.Math.pow;
-import static util.Plotter.chart;
-import static util.Plotter.display;
 
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
+
 public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
-  public static void
-         main(String args[])
+
+  @Override
+  public Type
+         getType()
   {
-    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
-    // κ(0, 1), η(0, 4), b(0, 2), ε(0, 0.5), τ0(0, 3);
-    univariateProcess.assignParameters(new double[]
-    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0, 1.8505814321703276 });
-    display(chart("t", "ν(t)", univariateProcess::ν, 0, 100, 1000, t -> t / 1000));
+    return Type.ExtendedApproximatePowerlaw;
   }
 
   public ExtendedApproximatePowerlawSelfExcitingProcess()

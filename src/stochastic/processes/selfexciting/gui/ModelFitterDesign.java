@@ -8,7 +8,6 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -192,7 +191,6 @@ public class ModelFitterDesign
       amplitudeDecayModel.setValueAt(decayRate, i, 2);
       amplitudeDecayModel.setValueAt(amplifiedJointDecayRate.toString(), i, 3);
       amplitudeDecayModel.setValueAt(halfLife, i, 4);
-      out.format("i=%d α=%f β=%f γ=%s scaling time=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate, halfLife);
     }
     amplitudeDecayTable.repaint();
   }
