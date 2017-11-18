@@ -91,16 +91,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double prevt = Double.NEGATIVE_INFINITY;
     double dt = 0;
     return 0;
-//    while ((dt = (t - prevt)) >= 1E-14)
-//    {
-//      prevt = t;
-//      // double ft = f.value(t);
-//      // double dft = df.value(t);
-//      // t = t - ft / dft;
-//         t = fNewton.value(prevt);
-//    }
-//
-//    return t;
+    // while ((dt = (t - prevt)) >= 1E-14)
+    // {
+    // prevt = t;
+    // // double ft = f.value(t);
+    // // double dft = df.value(t);
+    // // t = t - ft / dft;
+    // t = fNewton.value(prevt);
+    // }
+    //
+    // return t;
   }
 
   public Vector
@@ -351,7 +351,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return κ / (1 - branchingRate);
   }
 
-  public double  ρ = 1;
+  public double ρ = 1;
 
   /**
    * integrated kernel function
@@ -762,8 +762,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Object[] statisticsVector = new Object[]
     { process.βproduct(),
       process.minh(),
-      process.maxh(),
       process.logLik(),
+      process.maxh(),
       ksStatistic,
       compensated.mean(),
       compensated.variance(),
@@ -772,6 +772,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       process.getΛmomentLjungBoxMeasure() };
 
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+  }
+
+  public double
+         getHalfLife(int i)
+  {
+    return log(2) / β(i);
   }
 
 }

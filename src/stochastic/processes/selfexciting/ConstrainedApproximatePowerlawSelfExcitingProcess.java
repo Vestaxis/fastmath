@@ -36,7 +36,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   protected static enum Parameter implements BoundedParameter
   {
 
-    ρ(0.00001, 1 - 0.00001), y(0, 0.25 ), ε(0, 0.5), τ(0.0001, 10);
+    ρ(0.00001, 1 - 0.00001), y(0, 0.25), ε(0, 0.5), τ(0.0001, 10);
 
     private double min;
     private double max;
@@ -108,14 +108,14 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcess extends Approxima
   public double
          α(int i)
   {
-    return i < M ? super.α(i) : αS();
+    return i == 0 ? αS() : super.α(i - 1);
   }
 
   @Override
   public double
          β(int i)
   {
-    return i < M ? super.β(i) : βS();
+    return i == 0 ? βS() : super.β(i - 1);
   }
 
   public double

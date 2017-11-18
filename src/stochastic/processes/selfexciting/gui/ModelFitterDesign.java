@@ -78,7 +78,7 @@ public class ModelFitterDesign
     topPanel.add(processTypeComboBox, BorderLayout.WEST);
     process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
 
-    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
+    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length );
     amplitudeDecayModel.setColumnIdentifiers(tableColumnNames);
     amplitudeDecayTable = new JTable(amplitudeDecayModel);
     setAmplitudeDecayValues();
@@ -152,6 +152,7 @@ public class ModelFitterDesign
     {
       out.println("Switched kernel to " + type);
       process = (ExponentialSelfExcitingProcess) type.instantiate(1);
+      amplitudeDecayModel.setRowCount(process.order());
       updateParameterPanel();
       if (kernelPanel != null)
       {
@@ -173,10 +174,13 @@ public class ModelFitterDesign
       double amplitude = process.α(i);
       double decayRate = process.β(i);
       double amplifiedJointDecayRate = process.γ(i);
-      amplitudeDecayModel.setValueAt(amplitude, i, 0);
-      amplitudeDecayModel.setValueAt(decayRate, i, 1);
-      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate, i, 2);
-      out.format("i=%d α=%f β=%f γ=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate);
+      double halfLife = process.getHalfLife(i);
+      amplitudeDecayModel.setValueAt(i, i, 0);
+      amplitudeDecayModel.setValueAt(amplitude, i, 1);
+      amplitudeDecayModel.setValueAt(decayRate, i, 2);
+      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate, i, 3);
+      amplitudeDecayModel.setValueAt(halfLife, i, 4);
+      out.format("i=%d α=%f β=%f γ=%f halfLife=%f\n", i, amplitude, decayRate, amplifiedJointDecayRate, halfLife);
     }
     amplitudeDecayTable.repaint();
   }
@@ -188,7 +192,7 @@ public class ModelFitterDesign
   }
 
   String[] tableColumnNames = new String[]
-  { "α", "β", "γ" };
+  { "order", "α", "β", "γ", "half-life" };
 
   private JScrollPane tableScroller;
 
