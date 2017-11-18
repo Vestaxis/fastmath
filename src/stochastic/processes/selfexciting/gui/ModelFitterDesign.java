@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -75,10 +76,17 @@ public class ModelFitterDesign
 
     processTypeComboBox = new JComboBox<>(SelfExcitingProcessFactory.Type.values());
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
+
+    JPanel topLeftPanel = new JPanel(new BorderLayout());
+
     topPanel.add(processTypeComboBox, BorderLayout.WEST);
+    topLeftPanel.add(processTypeComboBox, BorderLayout.PAGE_START);
+    topLeftPanel.add(new JButton("Load points"), BorderLayout.PAGE_END);
+    topPanel.add(topLeftPanel, BorderLayout.WEST);
+
     process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
 
-    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length );
+    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
     amplitudeDecayModel.setColumnIdentifiers(tableColumnNames);
     amplitudeDecayTable = new JTable(amplitudeDecayModel);
     setAmplitudeDecayValues();
