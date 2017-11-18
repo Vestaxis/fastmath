@@ -284,9 +284,12 @@ public class Functions
                  int lowerIndex,
                  int upperIndex)
   {
-    return rangeClosed(lowerIndex, upperIndex).mapToObj(elements).reduce(Real.ONE,
-                                                                         (a,
-                                                                          b) -> a.multiply(b));
+    Real Π = Real.ONE;
+    for (int i = lowerIndex; i <= upperIndex; i++)
+    {
+      Π = Π.multiply(elements.apply(i));
+    }
+    return Π;
   }
 
   public static double

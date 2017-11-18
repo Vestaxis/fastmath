@@ -45,7 +45,6 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.arb.Real;
-import fastmath.arb.RealVector;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
@@ -80,32 +79,36 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Vector α = getαVector();
     Vector β = getβVector();
     IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, order());
-    RealVector sbp = new RealVector(seq(bp, 0, order() - 1));
+    Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
+
     return 0;
-//    IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, k);
-//
-//    IntFunction<Real> gamma = j -> γ(j);
-//    RealVector αβ = new RealVector(seq(gamma, 0, order() - 1));
-//
-//    UnivariateFunction f = t -> sum(k -> exp(h - αβ.get(k).multiply(t * β(k) - 1).fpValue()), 0, order() - 1);
-//    UnivariateFunction df = t -> sum(k -> -β(k) * exp(h - αβ.get(k).multiply(t * β(k)).fpValue()), 0, order() - 1);
-//    UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
-//
-//    return 0;
-//    double t = 0;
-//    double prevt = Double.NEGATIVE_INFINITY;
-//    double dt = t - prevt;
-//    int iters = 0;
-//    while ((dt = (t - prevt)) >= 1E-14 && iters < 10 )
-//    {
-//      prevt = t;
-//      // double ft = f.value(t);
-//      // double dft = df.value(t);
-//      // t = t - ft / dft;
-//      t = fNewton.value(prevt);
-//    }
-//
-//    return t;
+    // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
+    // 0, k);
+    //
+    // IntFunction<Real> gamma = j -> γ(j);
+    // RealVector αβ = new RealVector(seq(gamma, 0, order() - 1));
+    //
+    // UnivariateFunction f = t -> sum(k -> exp(h - αβ.get(k).multiply(t * β(k) -
+    // 1).fpValue()), 0, order() - 1);
+    // UnivariateFunction df = t -> sum(k -> -β(k) * exp(h - αβ.get(k).multiply(t *
+    // β(k)).fpValue()), 0, order() - 1);
+    // UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
+    //
+    // return 0;
+    // double t = 0;
+    // double prevt = Double.NEGATIVE_INFINITY;
+    // double dt = t - prevt;
+    // int iters = 0;
+    // while ((dt = (t - prevt)) >= 1E-14 && iters < 10 )
+    // {
+    // prevt = t;
+    // // double ft = f.value(t);
+    // // double dft = df.value(t);
+    // // t = t - ft / dft;
+    // t = fNewton.value(prevt);
+    // }
+    //
+    // return t;
   }
 
   public Vector
