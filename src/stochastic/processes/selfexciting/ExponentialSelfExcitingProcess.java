@@ -135,6 +135,20 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return product((IntFunction<Real>) j -> new Real(j == k ? α(j) : β(j)), 0, order() - 1);
   }
 
+  /**
+   * The mean lifetime can be looked at as a "scaling time", because the
+   * exponential decay equation can be written in terms of the mean lifetime, τ,
+   * instead of the decay constant, λ
+   * 
+   * @param k
+   * @return
+   */
+  public Real
+         getScalingTime(int k)
+  {
+    return Real.ONE.div(γ(k));
+  }
+
   public double
          βproduct()
   {

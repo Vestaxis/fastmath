@@ -70,14 +70,14 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public double
          α(int i)
   {
-    return pow(1 / (τ * pow(m, i)), 1 + ε);
+    return pow( τ * pow(m, i), -(1 + ε));
   }
 
   @Override
   public double
          β(int i)
   {
-    return 1 / (τ * pow(m, i));
+    return τ * pow(m, -i);
   }
 
   public int M = 15;
