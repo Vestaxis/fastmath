@@ -10,8 +10,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
@@ -21,9 +26,11 @@ public class ModelFitterDesign
   private JFrame frame;
   private JComboBox<SelfExcitingProcessFactory.Type> processTypeComboBox;
   private ParameterPanel parameterPanel;
-  private AbstractSelfExcitingProcess process;
+  private ExponentialSelfExcitingProcess process;
   private Container contentPane;
   private KernelPanel kernelPanel;
+  private DefaultTableModel amplitudeDecayModel;
+  private JTable amplitudeDecayTable;
 
   /**
    * Launch the application.
@@ -64,9 +71,19 @@ public class ModelFitterDesign
     contentPane = frame.getContentPane();
     contentPane.setLayout(new BorderLayout());
 
+    JPanel topPanel = new JPanel(new BorderLayout());
+
     processTypeComboBox = new JComboBox<>(SelfExcitingProcessFactory.Type.values());
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
-    contentPane.add(processTypeComboBox, BorderLayout.PAGE_START);
+    topPanel.add(processTypeComboBox, BorderLayout.WEST);
+    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, 2);
+    amplitudeDecayModel.setColumnIdentifiers(new String[]
+    { "α", "β" });
+    amplitudeDecayTable = new JTable(amplitudeDecayModel);
+    JScrollPane tableScroller = new JScrollPane(amplitudeDecayTable);
+    topPanel.add(tableScroller, BorderLayout.EAST);
+
+    contentPane.add(topPanel, BorderLayout.PAGE_START);
     refreshProcess();
 
     updateParameterPanel();
@@ -125,11 +142,16 @@ public class ModelFitterDesign
     if (process == null || !process.getType().equals(type))
     {
       out.println("Switched kernel to " + type);
-      process = type.instantiate(1);
+      process = (ExponentialSelfExcitingProcess) type.instantiate(1);
       updateParameterPanel();
       if (kernelPanel != null)
       {
         kernelPanel.setProcess(process);
+      }
+      for (int i = 0; i < process.order(); i++)
+      {
+        amplitudeDecayModel.addRow(new Double[]
+        { process.α(i), process.β(i) });
       }
     }
     return process;
