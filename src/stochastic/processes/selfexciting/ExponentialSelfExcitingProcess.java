@@ -788,8 +788,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Object[] statisticsVector = new Object[]
     { process.βproduct(),
       process.minh(),
-      process.logLik(),
       process.maxh(),
+      process.logLik(),
       ksStatistic,
       compensated.mean(),
       compensated.variance(),
