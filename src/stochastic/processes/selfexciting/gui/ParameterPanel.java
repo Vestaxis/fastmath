@@ -1,11 +1,14 @@
 package stochastic.processes.selfexciting.gui;
 
+import static java.lang.System.out;
+
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import javax.print.attribute.standard.PrinterLocation;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -41,7 +44,11 @@ public class ParameterPanel extends JPanel
 
   HashMap<String, JSlider> sliders = new HashMap<>();
 
+  HashMap<String, JTextField> textFields = new HashMap<>();
+
   public static final int sliderResolution = 1000;
+
+  boolean sliderEnabled = true;
 
   public JPanel
          getParameterRowPanel(String paramName,
@@ -68,36 +75,40 @@ public class ParameterPanel extends JPanel
     rowPanel.add(maxValueLabel);
     maxValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
     JTextField textField = new JTextField();
+    textFields.put(paramName, textField);
 
     ChangeListener sliderUpdated = sliderEvent -> {
       double value = (double) slider.getValue() / (double) sliderResolution;
-      Field field = process.getField(paramName);
-      try
+      if (sliderEnabled)
       {
-        if (value < minValue)
+        Field field = process.getField(paramName);
+        try
         {
-          value = minValue;
+          if (value < minValue)
+          {
+            value = minValue;
+          }
+          else if (value > maxValue)
+          {
+            value = maxValue;
+          }
+          if (field.getType().equals(double.class))
+          {
+            field.setDouble(process, value);
+          }
+          else if (field.getType().equals(int.class))
+          {
+            field.setInt(process, (int) value);
+          }
+          else
+          {
+            throw new UnsupportedOperationException("unhandled field type " + field.getType() + " in " + this.getClass().getSimpleName());
+          }
         }
-        else if (value > maxValue)
+        catch (IllegalArgumentException | IllegalAccessException e)
         {
-          value = maxValue;
+          throw new UnsupportedOperationException(e.getMessage(), e);
         }
-        if (field.getType().equals(double.class))
-        {
-          field.setDouble(process, value);
-        }
-        else if (field.getType().equals(int.class))
-        {
-          field.setInt(process, (int) value);
-        }
-        else
-        {
-          throw new UnsupportedOperationException("unhandled field type " + field.getType() + " in " + this.getClass().getSimpleName());
-        }
-      }
-      catch (IllegalArgumentException | IllegalAccessException e)
-      {
-        throw new UnsupportedOperationException(e.getMessage(), e);
       }
       textField.setText(Double.toString(value));
       if (callback != null)
@@ -114,15 +125,18 @@ public class ParameterPanel extends JPanel
   }
 
   public void
-         setSliderValue(String name,
-                        double fieldValue)
+         setParameterValue(String name,
+                           double fieldValue)
   {
     BoundedParameter boundedParameter = process.getBoundedParameter(name);
     double parameterRange = boundedParameter.getMax() - boundedParameter.getMin();
     JSlider slider = sliders.get(name);
+    JTextField textField = textFields.get(name);
     int sliderRange = slider.getMaximum() - slider.getMinimum();
     double paramδ = parameterRange / sliderRange;
 
     slider.setValue(slider.getMinimum() + (int) ((process.getFieldValue(name) - slider.getMinimum()) / paramδ));
+    textField.setText(Double.toString(fieldValue));
+
   }
 }

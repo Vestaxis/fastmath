@@ -4,6 +4,7 @@ import static java.lang.System.err;
 import static java.lang.System.out;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -11,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import fastmath.arb.Real;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
@@ -110,7 +114,7 @@ public class SelfExcitingProcessModeller
     topLeftPanel.add(processTypeComboBox);
     JButton loadParameterButton = new JButton("Load parameters");
     loadParameterButton.addActionListener(event -> {
-      JFileChooser fileChooser = new JFileChooser();
+      JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
       fileChooser.setFileFilter(new FileFilter()
       {
 
@@ -133,11 +137,14 @@ public class SelfExcitingProcessModeller
         EventQueue.invokeLater(() -> {
           out.println("Loading parameters from " + fileChooser.getSelectedFile());
           process.loadParameters(fileChooser.getSelectedFile());
+          parameterPanel.sliderEnabled = false;
           for (Field field : process.getParameterFields())
           {
-            parameterPanel.setSliderValue(field.getName(), process.getFieldValue(field));
+            parameterPanel.setParameterValue(field.getName(), process.getFieldValue(field));            
           }
-        });
+          parameterPanel.sliderEnabled = true;
+          //process.loadParameters(fileChooser.getSelectedFile());
+       });
       }
 
     });
@@ -150,6 +157,7 @@ public class SelfExcitingProcessModeller
     coeffecientModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
     coeffecientModel.setColumnIdentifiers(tableColumnNames);
     coeffecientTable = new JTable(coeffecientModel);
+    coeffecientTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     setAmplitudeDecayValues();
 
     JPanel topRightPanel = new JPanel(new BorderLayout());
@@ -162,6 +170,25 @@ public class SelfExcitingProcessModeller
     topRightBottomPanel = new JPanel();
     topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
     return topPanel;
+  }
+
+  public static void
+         resizeColumns(JTable table)
+  {
+    final TableColumnModel columnModel = table.getColumnModel();
+    for (int column = 0; column < table.getColumnCount(); column++)
+    {
+      int width = 50; // Min width
+      for (int row = 0; row < table.getRowCount(); row++)
+      {
+        TableCellRenderer renderer = table.getCellRenderer(row, column);
+        Component comp = table.prepareRenderer(renderer, row, column);
+        width = Math.max(comp.getPreferredSize().width + 1, width);
+      }
+      // if (width > 300)
+      // width = 300;
+      columnModel.getColumn(column).setPreferredWidth(width + 10);
+    }
   }
 
   JPanel topRightBottomPanel;
@@ -231,6 +258,8 @@ public class SelfExcitingProcessModeller
 
     }
     setAmplitudeDecayValues();
+    resizeColumns(coeffecientTable);
+
     tableScroller.revalidate();
 
     return process;
@@ -261,7 +290,7 @@ public class SelfExcitingProcessModeller
   }
 
   String[] tableColumnNames = new String[]
-  { "order", "α", "β", "γ", "half-life" };
+  { "#", "α", "β", "γ", "half-life" };
 
   private JScrollPane tableScroller;
 
