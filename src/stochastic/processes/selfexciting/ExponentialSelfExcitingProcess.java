@@ -185,7 +185,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Vector dT = Λ();
     Vector moments = dT.normalizedMoments(2);
-    Vector normalizedSampleMoments = (moments.copy().subtract(1)).pow(2);
+    Vector normalizedSampleMoments = (moments.copy().subtract(1)).abs();
     return normalizedSampleMoments.sum();
   }
 

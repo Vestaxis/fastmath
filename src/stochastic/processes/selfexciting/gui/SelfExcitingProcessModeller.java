@@ -76,6 +76,7 @@ public class SelfExcitingProcessModeller
           initialize()
   {
     frame = new JFrame();
+    frame.setTitle(getClass().getSimpleName());
     frame.setBounds(100, 100, 2000, 700);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     contentPane = frame.getContentPane();

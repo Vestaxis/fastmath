@@ -38,7 +38,7 @@ import util.Plotter;
  * TODO: add emperical autocorrelation and histogram
  * 
  */
-public class ModelViewer
+public class CalibratedNasdaqStrategyViewer
 {
 
   public JFrame frame;
@@ -54,14 +54,14 @@ public class ModelViewer
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
     TradingFiltration filtration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
-    
+
     ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, filtration, Type.ExtendedApproximatePowerlaw);
 
-    NasdaqTradingStrategy.launchModelViewer(processes);
+    CalibratedNasdaqStrategyViewer.launchModelViewer(processes);
 
   }
 
-  public ModelViewer(List<AbstractSelfExcitingProcess> processes)
+  public CalibratedNasdaqStrategyViewer(List<AbstractSelfExcitingProcess> processes)
   {
     Object[][] data = getProcessParametersAndStatisticsMatrix(processes);
 
@@ -109,6 +109,7 @@ public class ModelViewer
           initialize()
   {
     frame = new JFrame();
+    frame.setTitle(getClass().getSimpleName());
     frame.setBounds(100, 100, 2200, 1057);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -177,6 +178,14 @@ public class ModelViewer
                                         });
 
     return intensityChart;
+  }
+
+  public static CalibratedNasdaqStrategyViewer
+         launchModelViewer(ArrayList<AbstractSelfExcitingProcess> processes)
+  {
+    CalibratedNasdaqStrategyViewer viewer = new CalibratedNasdaqStrategyViewer(processes);
+    viewer.show();
+    return viewer;
   }
 
   public static XYChart

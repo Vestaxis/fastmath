@@ -15,7 +15,7 @@ import fastmath.matfile.MatFile;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
-import stochastic.processes.selfexciting.gui.ModelViewer;
+import stochastic.processes.selfexciting.gui.CalibratedNasdaqStrategyViewer;
 import util.DateUtils;
 
 public class NasdaqTradingStrategy
@@ -31,7 +31,7 @@ public class NasdaqTradingStrategy
 
     ArrayList<AbstractSelfExcitingProcess> processes = getCalibratedProcesses(matFile, data, Type.ConstrainedApproximatePowerlaw);
 
-    launchModelViewer(processes).frame.setTitle(ModelViewer.class.getSimpleName() + ": " + matFile);
+    CalibratedNasdaqStrategyViewer.launchModelViewer(processes).frame.setTitle(CalibratedNasdaqStrategyViewer.class.getSimpleName() + ": " + matFile);
 
     // TODO: 1. finish implementing the multivariate exponential self-exciting
     // process code
@@ -45,14 +45,6 @@ public class NasdaqTradingStrategy
     // some
     // threshold to trigger trades and see if its profitable
 
-  }
-
-  public static ModelViewer
-         launchModelViewer(ArrayList<AbstractSelfExcitingProcess> processes)
-  {
-    ModelViewer viewer = new ModelViewer(processes);
-    viewer.show();
-    return viewer;
   }
 
   /**

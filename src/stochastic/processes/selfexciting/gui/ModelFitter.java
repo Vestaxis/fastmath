@@ -57,7 +57,7 @@ public class ModelFitter
     TradingFiltration filtration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
     ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, filtration, Type.ConstrainedApproximatePowerlaw);
 
-    NasdaqTradingStrategy.launchModelViewer(processes);
+    CalibratedNasdaqStrategyViewer.launchModelViewer(processes);
 
   }
 
@@ -109,6 +109,7 @@ public class ModelFitter
           initialize()
   {
     frame = new JFrame();
+    frame.setTitle(getClass().getSimpleName());
     frame.setBounds(100, 100, 2200, 1057);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

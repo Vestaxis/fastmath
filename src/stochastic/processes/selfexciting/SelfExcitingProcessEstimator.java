@@ -136,7 +136,7 @@ public class SelfExcitingProcessEstimator
       processes.add(process);
 
       File testFile = new File("test" + i + ".mat");
-      File modelFile = new File(testFile.getAbsolutePath() + "." + type.getFilenameExtension() + "." + i + ".model");
+      File modelFile = new File(testFile.getAbsolutePath() + "." + type.getFilenameExtension() + ".model");
 
       storeParameterEstimationResults(testFile, slice, process, modelFile );
 
