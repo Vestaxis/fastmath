@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting;
 import static fastmath.Functions.product;
 import static fastmath.Functions.sum;
 import static java.lang.Math.log;
+import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -11,6 +12,7 @@ import static java.util.stream.IntStream.range;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -194,6 +196,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public void
          assignParameters(double[] point)
   {
+    out.println( "assigning parameters " + Arrays.toString(point));
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
     assert fields.length == params.length;
@@ -209,6 +212,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
         throw new RuntimeException(e.getMessage(), e);
       }
     }
+    out.println( "assigned " + getParameters() );
   }
 
   public abstract BoundedParameter[]
@@ -304,7 +308,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          h(double t)
   {
     double haz = ν(t) / s(t);
-    if ( !Double.isFinite( haz ))
+    if (!Double.isFinite(haz))
     {
       return 0;
     }
@@ -337,7 +341,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     if (!Double.isFinite(ih))
     {
       ih = 0;
-      //throw new IllegalArgumentException("integrated hazard function is not finite: " + ih + " params=" + getParamString());
+      // throw new IllegalArgumentException("integrated hazard function is not finite:
+      // " + ih + " params=" + getParamString());
     }
     return ih;
   }
@@ -362,5 +367,29 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    */
   public abstract double
          Z();
+
+  /**
+   * @see this{@link #getFieldValue(Field)} and this{@link #getField(String)}
+   * @param paramName
+   * @return
+   */
+  public double
+         getFieldValue(String paramName)
+  {
+    return getFieldValue(getField(paramName));
+  }
+
+  public BoundedParameter
+         getBoundedParameter(String name)
+  {
+    for ( BoundedParameter param : getBoundedParameters() )
+    {
+      if ( param.getName().equals( name ) )
+      {
+        return param;
+      }
+    }
+    return null;
+  }
 
 }

@@ -4,6 +4,7 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,16 +34,19 @@ public class ParameterPanel extends JPanel
       double minValue = param.getMin();
       double maxValue = param.getMax();
       String paramName = param.getName();
-      add(getParameterRowPanel(paramName, minValue, maxValue, 1000));
+      add(getParameterRowPanel(paramName, minValue, maxValue));
     }
     SpringLayoutUtils.makeGrid(this, process.getParamCount(), 1, 5, 5, 5, 5);
   }
 
+  HashMap<String, JSlider> sliders = new HashMap<>();
+
+  public static final int sliderResolution = 1000;
+
   public JPanel
          getParameterRowPanel(String paramName,
                               double minValue,
-                              double maxValue,
-                              double sliderResolution)
+                              double maxValue)
   {
 
     JPanel rowPanel = new JPanel(new GridLayout(1, 5));
@@ -58,6 +62,7 @@ public class ParameterPanel extends JPanel
     slider.setName(paramName);
     slider.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
     rowPanel.add(slider);
+    sliders.put(paramName, slider);
 
     JLabel maxValueLabel = new JLabel(Double.toString(maxValue));
     rowPanel.add(maxValueLabel);
@@ -106,5 +111,18 @@ public class ParameterPanel extends JPanel
     rowPanel.add(textField);
 
     return rowPanel;
+  }
+
+  public void
+         setSliderValue(String name,
+                        double fieldValue)
+  {
+    BoundedParameter boundedParameter = process.getBoundedParameter(name);
+    double parameterRange = boundedParameter.getMax() - boundedParameter.getMin();
+    JSlider slider = sliders.get(name);
+    int sliderRange = slider.getMaximum() - slider.getMinimum();
+    double paramδ = parameterRange / sliderRange;
+
+    slider.setValue(slider.getMinimum() + (int) ((process.getFieldValue(name) - slider.getMinimum()) / paramδ));
   }
 }

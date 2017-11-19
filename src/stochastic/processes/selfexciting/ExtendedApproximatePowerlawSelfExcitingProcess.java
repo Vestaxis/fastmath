@@ -6,10 +6,13 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 
+import fastmath.Vector;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
+
+ 
 
   @Override
   public Type

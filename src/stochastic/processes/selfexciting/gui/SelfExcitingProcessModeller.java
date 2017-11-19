@@ -9,14 +9,17 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.lang.reflect.Field;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 import fastmath.arb.Real;
@@ -25,7 +28,7 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
-public class ModelFitterDesign
+public class SelfExcitingProcessModeller
 {
 
   private JFrame frame;
@@ -46,7 +49,7 @@ public class ModelFitterDesign
     EventQueue.invokeLater(() -> {
       try
       {
-        ModelFitterDesign window = new ModelFitterDesign();
+        SelfExcitingProcessModeller window = new SelfExcitingProcessModeller();
         window.frame.setVisible(true);
       }
       catch (Exception e)
@@ -59,7 +62,7 @@ public class ModelFitterDesign
   /**
    * Create the application.
    */
-  public ModelFitterDesign()
+  public SelfExcitingProcessModeller()
   {
     initialize();
   }
@@ -79,7 +82,7 @@ public class ModelFitterDesign
     contentPane.setLayout(new BorderLayout());
 
     JPanel topPanel = getTopPanel();
-    topPanel.setMaximumSize(new Dimension(3000,500));
+    topPanel.setMaximumSize(new Dimension(3000, 500));
     contentPane.add(topPanel, BorderLayout.PAGE_START);
     refreshProcess();
 
@@ -104,7 +107,40 @@ public class ModelFitterDesign
     JPanel topLeftPanel = new JPanel(new FlowLayout());
 
     topLeftPanel.add(processTypeComboBox);
-    topLeftPanel.add(new JButton("Load parameters"));
+    JButton loadParameterButton = new JButton("Load parameters");
+    loadParameterButton.addActionListener(event -> {
+      JFileChooser fileChooser = new JFileChooser();
+      fileChooser.setFileFilter(new FileFilter()
+      {
+
+        @Override
+        public String
+               getDescription()
+        {
+          return process.getClass().getSimpleName() + " parameters (" + process.getType().getFilenameExtension() + " )";
+        }
+
+        @Override
+        public boolean
+               accept(File f)
+        {
+          return f.getName().contains("." + process.getType().getFilenameExtension() + ".") || f.isDirectory();
+        }
+      });
+      if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+      {
+        EventQueue.invokeLater(() -> {
+          out.println("Loading parameters from " + fileChooser.getSelectedFile());
+          process.loadParameters(fileChooser.getSelectedFile());
+          for (Field field : process.getParameterFields())
+          {
+            parameterPanel.setSliderValue(field.getName(), process.getFieldValue(field));
+          }
+        });
+      }
+
+    });
+    topLeftPanel.add(loadParameterButton);
     topLeftPanel.add(new JButton("Load points"));
     topPanel.add(topLeftPanel, BorderLayout.WEST);
 
@@ -126,10 +162,11 @@ public class ModelFitterDesign
     topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
     return topPanel;
   }
-  
+
   JPanel topRightBottomPanel;
-  
+
   public void
+
          updateParameterPanel()
   {
     if (parameterPanel != null)
@@ -137,6 +174,7 @@ public class ModelFitterDesign
       topRightBottomPanel.remove(parameterPanel);
     }
     topRightBottomPanel.add(parameterPanel = new ParameterPanel(process, this::onParameterUpdated), BorderLayout.PAGE_END);
+    topRightBottomPanel.revalidate();
     doLayout();
   }
 
