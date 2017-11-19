@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting.gui;
 import static java.lang.System.out;
 import static util.Plotter.plot;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 

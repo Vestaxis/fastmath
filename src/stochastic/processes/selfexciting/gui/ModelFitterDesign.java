@@ -5,12 +5,14 @@ import static java.lang.System.out;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,8 +33,8 @@ public class ModelFitterDesign
   private ExponentialSelfExcitingProcess process;
   private Container contentPane;
   private KernelPanel kernelPanel;
-  private DefaultTableModel amplitudeDecayModel;
-  private JTable amplitudeDecayTable;
+  private DefaultTableModel coeffecientModel;
+  private JTable coeffecientTable;
 
   /**
    * Launch the application.
@@ -75,6 +77,23 @@ public class ModelFitterDesign
     contentPane = frame.getContentPane();
     contentPane.setLayout(new BorderLayout());
 
+    JPanel topPanel = getTopPanel();
+    topPanel.setMaximumSize(new Dimension(3000,500));
+    contentPane.add(topPanel, BorderLayout.PAGE_START);
+    refreshProcess();
+
+    updateParameterPanel();
+
+    refreshTypeComboBox(null);
+
+    contentPane.add(kernelPanel = new KernelPanel(process), BorderLayout.PAGE_END);
+
+    doLayout();
+  }
+
+  public JPanel
+         getTopPanel()
+  {
     JPanel topPanel = new JPanel(new BorderLayout());
 
     Type[] processTypes = SelfExcitingProcessFactory.Type.values();
@@ -89,24 +108,22 @@ public class ModelFitterDesign
 
     process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
 
-    amplitudeDecayModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
-    amplitudeDecayModel.setColumnIdentifiers(tableColumnNames);
-    amplitudeDecayTable = new JTable(amplitudeDecayModel);
+    coeffecientModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
+    coeffecientModel.setColumnIdentifiers(tableColumnNames);
+    coeffecientTable = new JTable(coeffecientModel);
     setAmplitudeDecayValues();
 
-    tableScroller = new JScrollPane(amplitudeDecayTable);
-    topPanel.add(tableScroller, BorderLayout.CENTER);
+    JPanel topRightPanel = new JPanel(new BorderLayout());
 
-    contentPane.add(topPanel, BorderLayout.PAGE_START);
-    refreshProcess();
-
-    updateParameterPanel();
-
-    refreshTypeComboBox(null);
-
-    contentPane.add(kernelPanel = new KernelPanel(process), BorderLayout.PAGE_END);
-
-    doLayout();
+    tableScroller = new JScrollPane(coeffecientTable);
+    topRightPanel.add(tableScroller, BorderLayout.PAGE_START);
+    topPanel.add(topRightPanel, BorderLayout.CENTER);
+    topRightPanel.revalidate();
+    // ModelViewer.getLogPriceChart(process);
+    JPanel timesPanel = new JPanel();
+    topRightPanel.add(timesPanel, BorderLayout.PAGE_END);
+    timesPanel.add(new JLabel("hmmmm"));
+    return topPanel;
   }
 
   public void
@@ -163,7 +180,7 @@ public class ModelFitterDesign
     {
       out.println("Switched kernel to " + type);
       process = (ExponentialSelfExcitingProcess) type.instantiate(1);
-      amplitudeDecayModel.setRowCount(process.order());
+      coeffecientModel.setRowCount(process.order());
       updateParameterPanel();
       if (kernelPanel != null)
       {
@@ -186,13 +203,13 @@ public class ModelFitterDesign
       double decayRate = process.β(i);
       Real amplifiedJointDecayRate = process.γ(i);
       double halfLife = process.getHalfLife(i);
-      amplitudeDecayModel.setValueAt(i, i, 0);
-      amplitudeDecayModel.setValueAt(amplitude, i, 1);
-      amplitudeDecayModel.setValueAt(decayRate, i, 2);
-      amplitudeDecayModel.setValueAt(amplifiedJointDecayRate.toString(), i, 3);
-      amplitudeDecayModel.setValueAt(halfLife, i, 4);
+      coeffecientModel.setValueAt(i, i, 0);
+      coeffecientModel.setValueAt(amplitude, i, 1);
+      coeffecientModel.setValueAt(decayRate, i, 2);
+      coeffecientModel.setValueAt(amplifiedJointDecayRate.toString(), i, 3);
+      coeffecientModel.setValueAt(halfLife, i, 4);
     }
-    amplitudeDecayTable.repaint();
+    coeffecientTable.repaint();
   }
 
   public Type

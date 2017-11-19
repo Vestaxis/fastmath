@@ -197,7 +197,7 @@ public class Plotter
     {
       x[i] = timeAxisTransformer.applyAsDouble(t);
       double v = func.value(t);
-     
+
       y[i] = v;
     }
     return new Pair<double[], double[]>(x, y);
@@ -206,6 +206,7 @@ public class Plotter
   public static void
          configureStyler(XYStyler styler)
   {
+
     styler.setMarkerSize(0);
     styler.setAntiAlias(true);
     styler.setPlotGridLinesStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
@@ -233,7 +234,10 @@ public class Plotter
                Consumer<XYChart> chartInitializer)
   {
     XYChart chart = chart(xAxisTitle, seriesName, func, left, right, n, timeAxisTransformer);
-    chartInitializer.accept(chart);
+    if (chartInitializer != null)
+    {
+      chartInitializer.accept(chart);
+    }
     return chart;
   }
 
@@ -264,7 +268,7 @@ public class Plotter
                Vector values)
   {
     assert times.size() == values.size();
-    XYChart chart = new XYChart(800, 600);
+    XYChart chart = new XYChart(800, 400);
     chart.setXAxisTitle(xAxisTitle);
     chart.setYAxisTitle(yAxisTitle);
     XYStyler styler = chart.getStyler();
@@ -358,7 +362,7 @@ public class Plotter
               Vector y,
               String seriesName)
   {
-    XYChart chart = new XYChart(800, 600);
+    XYChart chart = new XYChart(800, 400);
     double left = x.fmin();
     XYStyler styler = chart.getStyler();
     styler.setXAxisMin(left);

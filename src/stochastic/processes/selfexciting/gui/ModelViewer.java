@@ -152,6 +152,7 @@ public class ModelViewer
   {
 
     XYChart priceChart = getLogPriceChart(process);
+    priceChartPanel = new XChartPanel<XYChart>(priceChart);
 
     XChartPanel<XYChart> intensityChart = getIntensityChartPanel(process);
 
@@ -178,7 +179,7 @@ public class ModelViewer
     return intensityChart;
   }
 
-  public XYChart
+  public static XYChart
          getLogPriceChart(AbstractSelfExcitingProcess process)
   {
     double millisecondsToHours = DateUtils.convertTimeUnits(1, TimeUnit.MILLISECONDS, TimeUnit.HOURS);
@@ -194,7 +195,6 @@ public class ModelViewer
     String logPriceName = format("(ln(1+price)-ln(1+%4.2f))%%", referencePrice);
 
     XYChart priceChart = new XYChart(2000, 500);
-    priceChartPanel = new XChartPanel<XYChart>(priceChart);
 
     priceChart.addSeries(logPriceName, timesInHours.toDoubleArray(), relativeLogPricePercentages.toDoubleArray());
     priceChart.setTitle("price Δ%");
