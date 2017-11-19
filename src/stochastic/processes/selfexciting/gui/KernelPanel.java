@@ -16,6 +16,7 @@ import org.knowm.xchart.style.XYStyler;
 import fastmath.Pair;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import util.Plotter;
+import util.RelativeLayout;
 
 public class KernelPanel extends JPanel
 {
@@ -37,7 +38,7 @@ public class KernelPanel extends JPanel
 
   public KernelPanel(AbstractSelfExcitingProcess process)
   {
-    super(new GridLayout(1, 3));
+    super(new RelativeLayout());
     this.process = process;
     assert process != null;
 

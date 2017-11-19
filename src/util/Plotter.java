@@ -167,7 +167,7 @@ public class Plotter
                int n,
                ToDoubleFunction<Double> timeAxisTransformer)
   {
-    XYChart chart = new XYChart(800, 600);
+    XYChart chart = new XYChart(600, 400);
     chart.setXAxisTitle(xAxisTitle);
 
     XYStyler styler = chart.getStyler();
@@ -268,7 +268,7 @@ public class Plotter
                Vector values)
   {
     assert times.size() == values.size();
-    XYChart chart = new XYChart(800, 400);
+    XYChart chart = new XYChart(600, 400);
     chart.setXAxisTitle(xAxisTitle);
     chart.setYAxisTitle(yAxisTitle);
     XYStyler styler = chart.getStyler();
@@ -362,7 +362,7 @@ public class Plotter
               Vector y,
               String seriesName)
   {
-    XYChart chart = new XYChart(800, 400);
+    XYChart chart = new XYChart(600, 400);
     double left = x.fmin();
     XYStyler styler = chart.getStyler();
     styler.setXAxisMin(left);

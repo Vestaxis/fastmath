@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
@@ -100,10 +101,11 @@ public class ModelFitterDesign
     processTypeComboBox = new JComboBox<>(processTypes);
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
 
-    JPanel topLeftPanel = new JPanel(new BorderLayout());
+    JPanel topLeftPanel = new JPanel(new FlowLayout());
 
-    topLeftPanel.add(processTypeComboBox, BorderLayout.PAGE_START);
-    topLeftPanel.add(new JButton("Load points"), BorderLayout.PAGE_END);
+    topLeftPanel.add(processTypeComboBox);
+    topLeftPanel.add(new JButton("Load parameters"));
+    topLeftPanel.add(new JButton("Load points"));
     topPanel.add(topLeftPanel, BorderLayout.WEST);
 
     process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
