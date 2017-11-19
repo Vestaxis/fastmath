@@ -120,20 +120,21 @@ public class ModelFitterDesign
     topPanel.add(topRightPanel, BorderLayout.CENTER);
     topRightPanel.revalidate();
     // ModelViewer.getLogPriceChart(process);
-    JPanel timesPanel = new JPanel();
-    topRightPanel.add(timesPanel, BorderLayout.PAGE_END);
-    timesPanel.add(new JLabel("hmmmm"));
+    topRightBottomPanel = new JPanel();
+    topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
     return topPanel;
   }
-
+  
+  JPanel topRightBottomPanel;
+  
   public void
          updateParameterPanel()
   {
     if (parameterPanel != null)
     {
-      contentPane.remove(parameterPanel);
+      topRightBottomPanel.remove(parameterPanel);
     }
-    contentPane.add(parameterPanel = new ParameterPanel(process, this::onParameterUpdated), BorderLayout.CENTER);
+    topRightBottomPanel.add(parameterPanel = new ParameterPanel(process, this::onParameterUpdated), BorderLayout.PAGE_END);
     doLayout();
   }
 
