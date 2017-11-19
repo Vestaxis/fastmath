@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
@@ -34,6 +35,23 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class SelfExcitingProcessModeller
 {
+
+  private final class ModelParametersFileFilter extends FileFilter
+  {
+    @Override
+    public String
+           getDescription()
+    {
+      return process.getClass().getSimpleName() + " parameters (" + process.getType().getFilenameExtension() + " )";
+    }
+
+    @Override
+    public boolean
+           accept(File f)
+    {
+      return f.getName().contains("." + process.getType().getFilenameExtension() + ".") || f.isDirectory();
+    }
+  }
 
   private JFrame frame;
   private JComboBox<SelfExcitingProcessFactory.Type> processTypeComboBox;
@@ -115,23 +133,7 @@ public class SelfExcitingProcessModeller
     JButton loadParameterButton = new JButton("Load parameters");
     loadParameterButton.addActionListener(event -> {
       JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
-      fileChooser.setFileFilter(new FileFilter()
-      {
-
-        @Override
-        public String
-               getDescription()
-        {
-          return process.getClass().getSimpleName() + " parameters (" + process.getType().getFilenameExtension() + " )";
-        }
-
-        @Override
-        public boolean
-               accept(File f)
-        {
-          return f.getName().contains("." + process.getType().getFilenameExtension() + ".") || f.isDirectory();
-        }
-      });
+      fileChooser.setFileFilter(new ModelParametersFileFilter());
       if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
         EventQueue.invokeLater(() -> {
@@ -140,16 +142,45 @@ public class SelfExcitingProcessModeller
           parameterPanel.sliderEnabled = false;
           for (Field field : process.getParameterFields())
           {
-            parameterPanel.setParameterValue(field.getName(), process.getFieldValue(field));            
+            parameterPanel.setParameterValue(field.getName(), process.getFieldValue(field));
           }
           parameterPanel.sliderEnabled = true;
-          //process.loadParameters(fileChooser.getSelectedFile());
-       });
+        });
       }
 
     });
     topLeftPanel.add(loadParameterButton);
-    topLeftPanel.add(new JButton("Load points"));
+    JButton loadPointsButton = new JButton("Load points");
+    topLeftPanel.add(loadPointsButton);
+    loadPointsButton.addActionListener((ActionListener) event -> {
+      JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
+      fileChooser.setFileFilter(new FileFilter()
+      {
+
+        @Override
+        public boolean
+               accept(File f)
+        {
+          return f.getName().toLowerCase().endsWith(".mat") || f.isDirectory();
+        }
+
+        @Override
+        public String
+               getDescription()
+        {
+
+          return ".mat files";
+        }
+      });
+
+      if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+      {
+        EventQueue.invokeLater(() -> {
+          out.println("Loading (marked) points from " + fileChooser.getSelectedFile());
+        });
+      }
+    });
+
     topPanel.add(topLeftPanel, BorderLayout.WEST);
 
     process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
@@ -173,6 +204,7 @@ public class SelfExcitingProcessModeller
   }
 
   public static void
+
          resizeColumns(JTable table)
   {
     final TableColumnModel columnModel = table.getColumnModel();
