@@ -196,7 +196,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public void
          assignParameters(double[] point)
   {
-    out.println( "assigning parameters " + Arrays.toString(point));
+    if (verbose)
+    {
+      out.println("assigning parameters " + Arrays.toString(point));
+    }
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
     assert fields.length == params.length;
@@ -212,7 +215,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
         throw new RuntimeException(e.getMessage(), e);
       }
     }
-    out.println( "assigned " + getParameters() );
+    if (verbose)
+    {
+      out.println("assigned " + getParameters());
+    }
   }
 
   public abstract BoundedParameter[]
@@ -382,9 +388,9 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public BoundedParameter
          getBoundedParameter(String name)
   {
-    for ( BoundedParameter param : getBoundedParameters() )
+    for (BoundedParameter param : getBoundedParameters())
     {
-      if ( param.getName().equals( name ) )
+      if (param.getName().equals(name))
       {
         return param;
       }

@@ -66,22 +66,7 @@ public class SelfExcitingProcessEstimator
 
     out.println("Estimating parameters for " + filename);
     ArrayList<AbstractSelfExcitingProcess> processes = estimateSelfExcitingProcess(type, filename, trajectoryCount, symbol);
-    for (int i = 0; i < processes.size(); i++)
-    {
-      File modelFile = new File(filename + "." + type.getFilenameExtension() + "." + i + ".model");
-      AbstractSelfExcitingProcess process = processes.get(i);
-      double firstTimestampInInterval = DateUtils.convertTimeUnits(process.T.getLeftmostValue(), TimeUnit.MILLISECONDS, TimeUnit.HOURS);
-      double lastTimestampInInterval = DateUtils.convertTimeUnits(process.T.getRightmostValue(), TimeUnit.MILLISECONDS, TimeUnit.HOURS);
-
-      out.println("Storing estimated parameters in " + modelFile
-                  + " covering the range "
-                  + firstTimestampInInterval
-                  + " to "
-                  + lastTimestampInInterval
-                  + " hours");
-
-      process.storeParameters(modelFile);
-    }
+    
 
   }
 
@@ -151,7 +136,9 @@ public class SelfExcitingProcessEstimator
       processes.add(process);
 
       File testFile = new File("test" + i + ".mat");
-      storeParameterEstimationResults(testFile, slice, process);
+      File modelFile = new File(testFile.getAbsolutePath() + "." + type.getFilenameExtension() + "." + i + ".model");
+
+      storeParameterEstimationResults(testFile, slice, process, modelFile );
 
     });
 
@@ -161,17 +148,15 @@ public class SelfExcitingProcessEstimator
   public static void
          storeParameterEstimationResults(File testFile,
                                          Vector data,
-                                         AbstractSelfExcitingProcess process)
+                                         AbstractSelfExcitingProcess process, File modelFile) 
   {
     Vector compensator = process.Λ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
-    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath()
-                + " E[data.dt]="
-                + data.diff().mean()
-                + " 1/k="
-                + (1 / process.κ));
+    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath() + " and parameters to " + modelFile  );
+
     try
     {
+      process.storeParameters(modelFile);
       MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
     }
     catch (IOException e)
