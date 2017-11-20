@@ -44,11 +44,11 @@ import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
 import fastmath.Pair;
 import fastmath.Vector;
-import fastmath.arb.Real;
 import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import gnu.arb.Real;
 import util.AutoArrayList;
 import util.AutoHashMap;
 

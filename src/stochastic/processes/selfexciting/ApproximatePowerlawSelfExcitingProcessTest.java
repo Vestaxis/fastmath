@@ -9,7 +9,7 @@ import java.util.function.IntFunction;
 
 import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 
-import fastmath.arb.Real;
+import gnu.arb.Real;
 import junit.framework.TestCase;
 import util.DoublePair;
 

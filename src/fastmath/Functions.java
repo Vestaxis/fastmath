@@ -7,7 +7,7 @@ import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import fastmath.arb.Real;
+import gnu.arb.Real;
 
 public class Functions
 {
