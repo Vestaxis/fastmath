@@ -154,7 +154,7 @@ public class ModelFitter
 
     XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
     plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
-    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::ih, 0, 60000 * 3.5, chart -> {
+    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::H, 0, 60000 * 3.5, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
 
@@ -163,7 +163,7 @@ public class ModelFitter
       styler.setYAxisMin(0.0);
       styler.setYAxisMax(1.0);
     });
-    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process::ih, 0, 100);
+    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process::H, 0, 100);
 
     XYChart priceChart = getLogPriceChart(process);
 

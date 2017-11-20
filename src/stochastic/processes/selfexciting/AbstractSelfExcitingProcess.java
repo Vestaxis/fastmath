@@ -203,7 +203,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     BoundedParameter[] params = getBoundedParameters();
     Field[] fields = getParameterFields();
     assert fields.length == params.length;
-
+    assert point.length == params.length;
+    
     for (int i = 0; i < fields.length; i++)
     {
       try
@@ -340,7 +341,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * @return -log(this{@link #s(double)}
    */
   public double
-         ih(double t)
+         H(double t)
   {
     double survival = s(t);
     double ih = -log(survival);
@@ -360,7 +361,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * @return the value {t:ih(t)=y}
    */
   public double
-         invih(double y)
+         invH(double y)
   {
     throw new UnsupportedOperationException();
   }

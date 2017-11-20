@@ -59,7 +59,7 @@ public class SelfExcitingProcessSimulator
     for (int i = 0; i < n; i++)
     {
       double h = expDist.sample();
-      double dt = process.invih(h);
+      double dt = process.invH(h);
       Λ.set(i, h);
       T.set(i, t += dt);
     }

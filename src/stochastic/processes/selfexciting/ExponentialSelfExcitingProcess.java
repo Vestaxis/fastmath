@@ -49,6 +49,8 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
+import util.AutoArrayList;
+import util.AutoHashMap;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
@@ -67,48 +69,54 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return getβVector().fmax() * ρ;
   }
 
+  public double
+         Hphase(double H,
+                double t)
+  {
+    return sum(k -> exp(H - γ(k).multiply(t * β(k) - 1).fpValue()), 0, order() - 1);
+  }
+
+  public double
+         HphaseDt(double H,
+                  double t)
+  {
+    return sum(k -> -β(k) * exp(H - γ(k).fpValue()) * (t * β(k)), 0, order() - 1);
+  }
+
   /**
-   * @return RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
+   * @return t=RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
    *         .. P)), k = 1 .. P), z)
    */
   @Override
   public double
-         invih(double h)
+         invH(double H)
   {
 
-//    Vector α = getαVector();
-//    Vector β = getβVector();
-//    IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)), 0, order());
-//    Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
+    // Vector α = getαVector();
+    // Vector β = getβVector();
+    // IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
+    // 0, order());
+    // Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
 
-    return 0;
     // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
     // 0, k);
-    //
-    // IntFunction<Real> gamma = j -> γ(j);
-    // RealVector αβ = new RealVector(seq(gamma, 0, order() - 1));
-    //
-    // UnivariateFunction f = t -> sum(k -> exp(h - αβ.get(k).multiply(t * β(k) -
-    // 1).fpValue()), 0, order() - 1);
-    // UnivariateFunction df = t -> sum(k -> -β(k) * exp(h - αβ.get(k).multiply(t *
-    // β(k)).fpValue()), 0, order() - 1);
-    // UnivariateFunction fNewton = t -> t - f.value(t) / df.value(t);
-    //
-    // return 0;
-    // double t = 0;
-    // double prevt = Double.NEGATIVE_INFINITY;
-    // double dt = t - prevt;
-    // int iters = 0;
-    // while ((dt = (t - prevt)) >= 1E-14 && iters < 10 )
-    // {
-    // prevt = t;
-    // // double ft = f.value(t);
-    // // double dft = df.value(t);
-    // // t = t - ft / dft;
-    // t = fNewton.value(prevt);
-    // }
-    //
-    // return t;
+
+    double t = 0;
+    double prevt = Double.NEGATIVE_INFINITY;
+    double dt = t - prevt;
+    int iters = 0;
+    while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
+    {
+
+      prevt = t;
+      double ft = Hphase(H, t);
+      double dft = HphaseDt(H, t);
+      dt = ft / dft;
+      out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
+      t = t - dt;
+    }
+
+    return t;
   }
 
   public Vector
@@ -132,8 +140,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public Real
          γ(int k)
   {
-    return product((IntFunction<Real>) j -> new Real(j == k ? α(j) : β(j)), 0, order() - 1);
+    return γs.getOrCreate(k);
   }
+
+  private AutoArrayList<Real> γs = new AutoArrayList<>(order(), k -> product((IntFunction<Real>) j -> new Real(j == k ? α(j) : β(j)), 0, order() - 1));
 
   /**
    * The mean lifetime can be looked at as a "scaling time", because the

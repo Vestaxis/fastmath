@@ -42,7 +42,7 @@ public class KernelPanel extends JPanel
     this.process = process;
     assert process != null;
 
-    inverseIntegratedHazardChartPanel = plot("h", ANTI_H, process == null ? t -> 0 : process::invih, 0, IH_MAXRANGE, chart -> {
+    inverseIntegratedHazardChartPanel = plot("h", ANTI_H, process == null ? t -> 0 : process::invH, 0, IH_MAXRANGE, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
     inverseIntegratedHazardChart = inverseIntegratedHazardChartPanel.getChart();
@@ -58,7 +58,7 @@ public class KernelPanel extends JPanel
       styler.setYAxisMax(1.0);
     });
     integratedImpulseResponseChart = integratedImpulseResponseChartPanel.getChart();
-    plot(integratedImpulseResponseChart, INT_HAZARD, process == null ? t -> 0 : process::ih, 0, ν_MAXRANGE);
+    plot(integratedImpulseResponseChart, INT_HAZARD, process == null ? t -> 0 : process::H, 0, ν_MAXRANGE);
 
     add(impulseResponseChartPanel);
     add(integratedImpulseResponseChartPanel);
@@ -76,7 +76,7 @@ public class KernelPanel extends JPanel
          refreshGraphs()
   {
     out.println("refresh graphs " + process.getParamString());
-    Pair<double[], double[]> invhSample = Plotter.sampleFunction(process::invih, SAMPLES, 0, IH_MAXRANGE, t -> t);
+    Pair<double[], double[]> invhSample = Plotter.sampleFunction(process::invH, SAMPLES, 0, IH_MAXRANGE, t -> t);
     inverseIntegratedHazardChart.updateXYSeries(ANTI_H, invhSample.left, invhSample.right, null);
     inverseIntegratedHazardChartPanel.revalidate();
     inverseIntegratedHazardChartPanel.repaint();
@@ -89,7 +89,7 @@ public class KernelPanel extends JPanel
     impulseResponseChartPanel.revalidate();
     impulseResponseChartPanel.repaint();
 
-    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::ih, SAMPLES, 0, ν_MAXRANGE, t -> t);
+    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::H, SAMPLES, 0, ν_MAXRANGE, t -> t);
     Pair<double[], double[]> iνSample = Plotter.sampleFunction(process::iν, SAMPLES, 0, ν_MAXRANGE, t -> t);
 
     integratedImpulseResponseChart.updateXYSeries(INT_HAZARD, ihSample.left, ihSample.right, null);

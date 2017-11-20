@@ -47,23 +47,17 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     assertEquals(process.getParameters(), loaded.getParameters());
   }
 
-  public void
-         testIntegralOfKernel()
-  {
-    double b = 1;
-    double τ = 1;
-    double ε = 0.25;
-    double τ0 = 1;
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-
-    process.assignParameters(new double[]
-    { 0.415615720308202e-2, 6.336276907099262, 8.584836461335403 * pow(10, (-10)), 2.9618207529175997, 3.5152151867967496 });
-
-    RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(5000000, process::ν, 0, 60000 * 10);
-    out.println("integral=" + integral);
-    assertEquals(1, integral, 1E-3);
-  }
+//  public void
+//         testIntegralOfKernel()
+//  {
+//    ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+//
+//
+//    RombergIntegrator integrator = new RombergIntegrator();
+//    double integral = integrator.integrate(5000000, process::ν, 0, 30000 * 10);
+//    out.println("integral=" + integral);
+//    assertEquals(1, integral, 1E-1);
+//  }
 
   public void
          testν()
@@ -83,24 +77,31 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   }
 
   public void
-         testinv()
+         testInverseIntegratedHazard()
   {
-    double b = 1;
-    double τ = 1;
-    double ε = 0.25;
-    double τ0 = 1;
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-
-    process.assignParameters(new double[]
-    { 0.415615720308202e-2, 6.336276907099262, 8.584836461335403 * pow(10, (-10)), 2.9618207529175997, 3.5152151867967496 });
+  
+    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+    
     println(process.getParamString());
 
-    double h = 0.7;
-    double t = process.invih(h);
-    double r = process.ih(t);
+    double h = 0.824;
+    double t = process.invH(h);
+    out.println( "invih(" + h + ")=" + t );
+    double r = process.H(t);
+    
     assertEquals(t, r);
 
   
+  }
+
+  public ExtendedApproximatePowerlawSelfExcitingProcess
+         constructProcess()
+  {
+    final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+
+    process.assignParameters(new double[]
+    { 0.9823698690692471, 1.040211400901333E-9, 3.3396446609638866, 1.9804509685365386 });
+    return process;
   }
 
 }
