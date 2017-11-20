@@ -1,12 +1,12 @@
 package stochastic.processes.selfexciting.gui;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 
 import javax.swing.JFrame;
-import javax.swing.JSplitPane;
-import java.awt.BorderLayout;
 import javax.swing.JPanel;
-import java.awt.GridLayout;
+import javax.swing.JSplitPane;
 
 public class fdgfdgfdg
 {

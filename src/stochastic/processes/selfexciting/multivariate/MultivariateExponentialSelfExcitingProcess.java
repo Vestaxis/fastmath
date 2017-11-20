@@ -53,7 +53,6 @@ import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
-import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
 {

@@ -1,7 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.product;
-import static fastmath.Functions.sum;
 import static java.lang.Math.log;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
@@ -15,7 +13,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
 
 import fastmath.DoubleMatrix;

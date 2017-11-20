@@ -4,7 +4,6 @@ import java.awt.Container;
 
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
-import javax.swing.SpringLayout.Constraints;
 
 public class SpringLayoutUtils
 {

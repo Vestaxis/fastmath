@@ -3,16 +3,11 @@ package stochastic.processes.selfexciting;
 import static java.lang.Math.pow;
 import static java.lang.System.out;
 import static util.Console.println;
-import static util.Plotter.display;
-import static util.Plotter.plot;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.math3.analysis.integration.RombergIntegrator;
-
 import junit.framework.TestCase;
-import util.Plotter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })

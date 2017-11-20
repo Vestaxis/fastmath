@@ -1,7 +1,6 @@
 package util;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /*
@@ -72,15 +71,7 @@ public class AutoArrayList<V> extends ArrayList<V>
       {
         try
         {
-          V previousValue = value;
-          if (previousValue == null)
-          {
-            value = (valueClass == null ? newValueInstance(key) : (V) valueClass.getConstructor().newInstance());
-          }
-          else
-          {
-            value = previousValue;
-          }
+          value = (valueClass == null ? newValueInstance(key) : (V) valueClass.getConstructor().newInstance());
         }
         catch (Exception e)
         {

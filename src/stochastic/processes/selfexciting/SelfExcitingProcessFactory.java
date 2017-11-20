@@ -1,7 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
-
 public class SelfExcitingProcessFactory
 {
   public static enum Type

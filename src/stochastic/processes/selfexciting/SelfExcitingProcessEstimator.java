@@ -25,7 +25,6 @@ import stochastic.annotations.Units;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
-import util.DateUtils;
 import util.TerseThreadFactory;
 
 public class SelfExcitingProcessEstimator

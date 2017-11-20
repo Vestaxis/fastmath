@@ -1,14 +1,11 @@
 package stochastic.processes.selfexciting.gui;
 
-import static java.lang.System.out;
-
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import javax.print.attribute.standard.PrinterLocation;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
