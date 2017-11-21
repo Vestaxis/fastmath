@@ -200,11 +200,9 @@ public class ParameterPanel extends JPanel
     int sliderRange = slider.getMaximum() - slider.getMinimum();
     double paramδ = parameterRange / sliderRange;
 
-    out.println("slider before " + slider.getValue() + " paramδ=" + paramδ);
     double wtf = (fieldValue - boundedParameter.getMin()) / paramδ;
 
     slider.setValue(slider.getMinimum() + (int) ((double) wtf));
-    out.println("slider after " + slider.getValue() + " wtf=" + wtf);
     textField.setText(Double.toString(fieldValue));
 
   }
