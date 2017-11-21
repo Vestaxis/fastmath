@@ -214,4 +214,12 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     throw new UnsupportedOperationException("TODO");
   }
 
+  @Override
+  public double
+         Hphase(double H,
+                double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
 }

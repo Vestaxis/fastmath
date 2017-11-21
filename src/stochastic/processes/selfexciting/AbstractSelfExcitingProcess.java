@@ -296,6 +296,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return 1 - iν(t);
   }
 
+  public abstract double Hphase( double H, double t );
+  
   /**
    * the hazard function at time t is an instantaneous rate that an event will
    * occur at time t, the probability that an event will occur in a small interval
@@ -395,5 +397,9 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }
     return null;
   }
+
+//  public abstract double
+//         Hphase(double h,
+//                double t);
 
 }

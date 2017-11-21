@@ -72,7 +72,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Hphase(double H,
                 double t)
   {
-    return sum(k -> exp(H - γ(k).multiply(t * β(k) - 1).fpValue()), 0, order() - 1);
+    return sum(k -> exp(H - γ(k).fpValue()*(t * β(k) - 1)), 0, order() - 1);
   }
 
   public double
@@ -99,23 +99,23 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
     // 0, k);
-
-    double t = 0;
-    double prevt = Double.NEGATIVE_INFINITY;
-    double dt = t - prevt;
-    int iters = 0;
-    while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
-    {
-
-      prevt = t;
-      double ft = Hphase(H, t);
-      double dft = HphaseDt(H, t);
-      dt = ft / dft;
-      out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
-      t = t - dt;
-    }
-
-    return t;
+    return 0;
+//     //double t = 0;
+//   double prevt = Double.NEGATIVE_INFINITY;
+//    double dt = t - prevt;
+//    int iters = 0;
+//    while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
+//    {
+//
+//      prevt = t;
+//      double ft = Hphase(H, t);
+//      double dft = HphaseDt(H, t);
+//      dt = ft / dft;
+//      out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
+//      t = t - dt;
+//    }
+//
+//    return t;
   }
 
   public Vector

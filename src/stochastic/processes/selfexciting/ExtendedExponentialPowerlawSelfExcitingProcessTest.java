@@ -7,12 +7,24 @@ import static util.Console.println;
 import java.io.File;
 import java.io.IOException;
 
+import jdk.net.NetworkPermission;
 import junit.framework.TestCase;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
 public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 {
+
+  public void
+         testHphase()
+  {
+    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+
+    double phase = process.Hphase(0.7, 0.2);
+    out.println("phase=" + phase);
+    phase = process.Hphase(0.7, 9.3);
+    out.println("phase=" + phase);
+  }
 
   public void
          testNormalization()
@@ -42,17 +54,17 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     assertEquals(process.getParameters(), loaded.getParameters());
   }
 
-//  public void
-//         testIntegralOfKernel()
-//  {
-//    ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-//
-//
-//    RombergIntegrator integrator = new RombergIntegrator();
-//    double integral = integrator.integrate(5000000, process::ν, 0, 30000 * 10);
-//    out.println("integral=" + integral);
-//    assertEquals(1, integral, 1E-1);
-//  }
+  // public void
+  // testIntegralOfKernel()
+  // {
+  // ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+  //
+  //
+  // RombergIntegrator integrator = new RombergIntegrator();
+  // double integral = integrator.integrate(5000000, process::ν, 0, 30000 * 10);
+  // out.println("integral=" + integral);
+  // assertEquals(1, integral, 1E-1);
+  // }
 
   public void
          testν()
@@ -74,19 +86,18 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   public void
          testInverseIntegratedHazard()
   {
-  
+
     final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-    
+
     println(process.getParamString());
 
     double h = 0.824;
     double t = process.invH(h);
-    out.println( "invih(" + h + ")=" + t );
+    out.println("invih(" + h + ")=" + t);
     double r = process.H(t);
-    
+
     assertEquals(t, r);
 
-  
   }
 
   public ExtendedApproximatePowerlawSelfExcitingProcess
