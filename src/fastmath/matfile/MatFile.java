@@ -602,6 +602,12 @@ public class MatFile implements Iterable<MiElement>
   }
 
   public static List<DoubleColMatrix>
+         loadMatrices(File file) throws IOException
+  {
+    return new MatFile(file).loadMatrices();
+  }
+
+  public static List<DoubleColMatrix>
          loadMatrices(String filename) throws IOException
   {
     return new MatFile(new File(filename)).loadMatrices();

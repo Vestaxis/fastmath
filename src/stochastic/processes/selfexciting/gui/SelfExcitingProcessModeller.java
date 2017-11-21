@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
 
@@ -27,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import fastmath.matfile.MatFile;
 import gnu.arb.Real;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
@@ -176,7 +178,16 @@ public class SelfExcitingProcessModeller
       if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
         EventQueue.invokeLater(() -> {
-          out.println("Loading (marked) points from " + fileChooser.getSelectedFile());
+          File selectedFile = fileChooser.getSelectedFile();
+          try
+          {
+            MatFile.loadMatrices(selectedFile);
+          }
+          catch (IOException e)
+          {
+            
+          }
+          out.println("Loading (marked) points from " + selectedFile);
         });
       }
     });
