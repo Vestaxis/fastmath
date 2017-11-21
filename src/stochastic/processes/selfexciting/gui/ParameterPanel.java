@@ -1,8 +1,18 @@
 package stochastic.processes.selfexciting.gui;
 
+import static java.awt.EventQueue.invokeLater;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.System.out;
+
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
@@ -72,6 +82,58 @@ public class ParameterPanel extends JPanel
     rowPanel.add(maxValueLabel);
     maxValueLabel.setHorizontalAlignment(SwingConstants.LEFT);
     JTextField textField = new JTextField();
+    textField.addKeyListener(new KeyAdapter()
+    {
+      @Override
+      public void
+             keyPressed(KeyEvent e)
+      {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+        {
+          try
+          {
+            double value = Double.valueOf(textField.getText().toString());
+            setParameterValue(paramName, value);
+          }
+          catch (Exception exception)
+          {
+            out.println(exception.getMessage());
+            textField.setText(Double.toString(process.getFieldValue(paramName)));
+          }
+        }
+      }
+    });
+    textField.addFocusListener(new FocusListener()
+    {
+
+      @Override
+      public void
+             focusLost(FocusEvent e)
+      {
+        try
+        {
+          double prevValue = process.getFieldValue(paramName);
+          double value = Double.valueOf(textField.getText().toString());
+          if (prevValue != value)
+          {
+            setParameterValue(paramName, value);
+          }
+        }
+        catch (Exception exception)
+        {
+          out.println(exception.getMessage());
+          textField.setText(Double.toString(process.getFieldValue(paramName)));
+        }
+
+      }
+
+      @Override
+      public void
+             focusGained(FocusEvent e)
+      {
+
+      }
+    });
     textFields.put(paramName, textField);
 
     ChangeListener sliderUpdated = sliderEvent -> {
@@ -125,14 +187,22 @@ public class ParameterPanel extends JPanel
          setParameterValue(String name,
                            double fieldValue)
   {
+
     BoundedParameter boundedParameter = process.getBoundedParameter(name);
+
+    fieldValue = max(boundedParameter.getMin(), min(boundedParameter.getMax(), fieldValue));
+
+    out.println("value of " + name + " changed to " + fieldValue);
+
     double parameterRange = boundedParameter.getMax() - boundedParameter.getMin();
     JSlider slider = sliders.get(name);
     JTextField textField = textFields.get(name);
     int sliderRange = slider.getMaximum() - slider.getMinimum();
     double paramδ = parameterRange / sliderRange;
 
-    slider.setValue(slider.getMinimum() + (int) ((process.getFieldValue(name) - slider.getMinimum()) / paramδ));
+    out.println("slider before " + slider.getValue());
+    slider.setValue(slider.getMinimum() + (int) ((fieldValue - slider.getMinimum()) / paramδ));
+    out.println("slider after " + slider.getValue());
     textField.setText(Double.toString(fieldValue));
 
   }

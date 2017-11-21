@@ -201,7 +201,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     Field[] fields = getParameterFields();
     assert fields.length == params.length;
     assert point.length == params.length;
-    
+
     for (int i = 0; i < fields.length; i++)
     {
       try
@@ -296,8 +296,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return 1 - iν(t);
   }
 
-  public abstract double Hphase( double H, double t );
-  
+  public abstract double
+         Hphase(double H,
+                double t);
+
   /**
    * the hazard function at time t is an instantaneous rate that an event will
    * occur at time t, the probability that an event will occur in a small interval
@@ -398,8 +400,29 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return null;
   }
 
-//  public abstract double
-//         Hphase(double h,
-//                double t);
+  /**
+   * Calls {@link Field#setDouble(Object, double)} on
+   * this{@link #getField(String)}
+   * 
+   * @param paramName
+   * @return
+   */
+  public void
+         setFieldValue(String paramName,
+                       double value)
+  {
+    try
+    {
+      getField(paramName).setDouble(this, value);
+    }
+    catch (Exception e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
+  }
+
+  // public abstract double
+  // Hphase(double h,
+  // double t);
 
 }
