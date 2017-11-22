@@ -195,7 +195,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   @Override
   public double
-         ν(double t)
+         f(double t)
   {
     throw new UnsupportedOperationException("TODO");
   }
@@ -209,7 +209,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   @Override
   public double
-         iν(double t)
+         F(double t)
   {
     throw new UnsupportedOperationException("TODO");
   }
@@ -217,6 +217,14 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   @Override
   public double
          Hphase(double H,
+                double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         Fphase(double U,
                 double t)
   {
     throw new UnsupportedOperationException("TODO");

@@ -152,13 +152,13 @@ public class ModelFitter
          plotProcess(AbstractSelfExcitingProcess process)
   {
 
-    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::ν, 0, 100);
+    XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::f, 0, 100);
     plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
     XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::H, 0, 60000 * 3.5, chart -> {
       chart.setYAxisTitle("t (ms)");
     });
 
-    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::iν, 0, 100, chart -> {
+    XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::F, 0, 100, chart -> {
       XYStyler styler = chart.getStyler();
       styler.setYAxisMin(0.0);
       styler.setYAxisMax(1.0);

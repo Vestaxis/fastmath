@@ -36,7 +36,7 @@ public class ApproximatePowerlawSelfExcitingProcessTest extends TestCase
     out.println("mean=" + mean);
 
     RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(5000000, t -> process.ν(t), 0, 100000);
+    double integral = integrator.integrate(5000000, t -> process.f(t), 0, 100000);
     out.println("integral=" + integral);
 
     double hmm = process.κ / (1 - RHO);

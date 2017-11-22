@@ -632,7 +632,6 @@ is the first derivative of the Newton map of $f (t)$
   contradiction to the already established fact that $m_Z (\alpha) = 1$ when
   $Z (\alpha) = 0$.
 \end{proof}
-
 \begin{conjecture}
   Let
   \begin{equation}

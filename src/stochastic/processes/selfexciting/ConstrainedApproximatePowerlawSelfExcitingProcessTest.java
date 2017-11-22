@@ -17,7 +17,7 @@ public class ConstrainedApproximatePowerlawSelfExcitingProcessTest extends TestC
     process.y = 2;
     IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 10, 1000);
        
-    double integral = integrator.integrate(50_000_000, process::ν, 0, 60000 * 5);
+    double integral = integrator.integrate(50_000_000, process::f, 0, 60000 * 5);
     out.println( "integral=" + integral + " branching ratio ρ=" + process.getBranchingRatio() );
     assertEquals( process.ρ, integral, 0.00001 );
 

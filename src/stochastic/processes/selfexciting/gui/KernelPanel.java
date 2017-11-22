@@ -48,12 +48,12 @@ public class KernelPanel extends JPanel
 //    });
     //inverseIntegratedHazardChart = inverseIntegratedHazardChartPanel.getChart();
 
-    impulseResponseChartPanel = plot("t (ms)", KERNEL, process == null ? t -> 0 : process::ν, 0, ν_MAXRANGE);
+    impulseResponseChartPanel = plot("t (ms)", KERNEL, process == null ? t -> 0 : process::f, 0, ν_MAXRANGE);
     impulseResponseChart = impulseResponseChartPanel.getChart();
 
     plot(impulseResponseChart, HAZARD, process == null ? t -> 0 : process::h, 0, 100);
 
-    integratedImpulseResponseChartPanel = plot("t (ms)", INT_KERNEL, process == null ? t -> 0 : process::iν, 0, ν_MAXRANGE, chart -> {
+    integratedImpulseResponseChartPanel = plot("t (ms)", INT_KERNEL, process == null ? t -> 0 : process::F, 0, ν_MAXRANGE, chart -> {
       XYStyler styler = chart.getStyler();
       styler.setYAxisMin(0.0);
       styler.setYAxisMax(1.0);
@@ -90,7 +90,7 @@ public class KernelPanel extends JPanel
 //    inverseIntegratedHazardChartPanel.revalidate();
 //    inverseIntegratedHazardChartPanel.repaint();
 
-    Pair<double[], double[]> νSample = Plotter.sampleFunction(process::ν, SAMPLES, 0, ν_MAXRANGE, t -> t);
+    Pair<double[], double[]> νSample = Plotter.sampleFunction(process::f, SAMPLES, 0, ν_MAXRANGE, t -> t);
     impulseResponseChart.updateXYSeries(KERNEL, νSample.left, νSample.right, null);
 
     Pair<double[], double[]> hSample = Plotter.sampleFunction(process::h, SAMPLES, 0, ν_MAXRANGE, t -> t);
@@ -99,7 +99,7 @@ public class KernelPanel extends JPanel
     impulseResponseChartPanel.repaint();
 
     Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::H, SAMPLES, 0, ν_MAXRANGE, t -> t);
-    Pair<double[], double[]> iνSample = Plotter.sampleFunction(process::iν, SAMPLES, 0, ν_MAXRANGE, t -> t);
+    Pair<double[], double[]> iνSample = Plotter.sampleFunction(process::F, SAMPLES, 0, ν_MAXRANGE, t -> t);
 
     integratedImpulseResponseChart.updateXYSeries(INT_HAZARD, ihSample.left, ihSample.right, null);
     integratedImpulseResponseChart.updateXYSeries(INT_KERNEL, iνSample.left, iνSample.right, null);

@@ -76,22 +76,36 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public double
-         HphaseLim(double H,
-                   double t)
+         Fphase(double U,
+                double t)
+  {
+    return sum(k -> γ(k).fpValue() * (exp(-β(k) * t) + U - 1), 0, order() - 1);
+  }
+
+  public double
+         FphaseUnscaled(double u,
+                        double t)
+  {
+    return sum(k -> (exp(-β(k) * t) + u - 1), 0, order() - 1);
+  }
+
+  public double
+         HphaseUnscaled(double H,
+                        double t)
   {
     return sum(k -> exp(H - (t * β(k) - 1)), 0, order() - 1);
   }
 
   public double
-         HphaseDt(double H,
-                  double t)
+         HphaseDtUnscaled(double H,
+                          double t)
   {
     return sum(k -> -β(k) * exp(H - γ(k).fpValue()) * (t * β(k)), 0, order() - 1);
   }
 
   public double
-         HphaseDtLim(double H,
-                     double t)
+         FphaseDtUnscaled(double H,
+                          double t)
   {
     return sum(k -> -β(k) * exp(H) * (t * β(k)), 0, order() - 1);
   }
@@ -425,7 +439,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    */
   @Override
   public double
-         iν(double t)
+         F(double t)
   {
     return sum(i -> (α(i) / β(i)) * (1 - exp(-β(i) * t)), 0, order() - 1) / Z();
   }
@@ -710,7 +724,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     for (int i = 0; i < T.size() && (s = T.get(i)) <= t; i++)
     {
       double dt = t - s;
-      sum.add(ν(dt));
+      sum.add(f(dt));
     }
     return sum.doubleValue();
   }
@@ -806,7 +820,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return
    */
   public final double
-         ν(double t)
+         f(double t)
   {
     return sum(i -> α(i) * exp(-β(i) * t), 0, order() - 1) / Z();
   }

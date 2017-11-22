@@ -269,7 +269,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * @return
    */
   public abstract double
-         ν(double t);
+         f(double t);
 
   /**
    * integrated kernel function, regarded as a cumulative distribution function
@@ -277,10 +277,26 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * before time t
    * 
    * @param t
-   * @return ∫ν(s)ds(0,t) integral of this{@link #ν(double)} over s=0..t
+   * @return ∫ν(s)ds(0,t) integral of this{@link #f(double)} over s=0..t
    */
   public abstract double
-         iν(double t);
+         F(double t);
+
+  public abstract double
+         Fphase(double U,
+                double t);
+
+  /**
+   * inverse integrated kernel function
+   * 
+   * @param y
+   * @return the value {t:F(t)=u}
+   */
+  public double
+         invF(double y)
+  {
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * the survivor/reliability function is the complementary cumulative
@@ -288,12 +304,12 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * before t
    * 
    * @param t
-   * @return 1-this{@link #iν(double)}
+   * @return 1-this{@link #F(double)}
    */
   public double
          s(double t)
   {
-    return 1 - iν(t);
+    return 1 - F(t);
   }
 
   public abstract double
@@ -315,7 +331,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public double
          h(double t)
   {
-    double haz = ν(t) / s(t);
+    double haz = f(t) / s(t);
     if (!Double.isFinite(haz))
     {
       return 0;
@@ -359,7 +375,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    * inverse integrated hazard
    * 
    * @param y
-   * @return the value {t:ih(t)=y}
+   *          exponentially distributed random variable
+   * @return the value {t:H(t)=y}
    */
   public double
          invH(double y)
@@ -368,7 +385,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   }
 
   /**
-   * normalization factor which ensures the integral of this{@link #ν(double)}
+   * normalization factor which ensures the integral of this{@link #f(double)}
    * over [0,∞] is equal to this#ρ()
    * 
    * @return

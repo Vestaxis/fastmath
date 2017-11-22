@@ -118,4 +118,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   {
     return 1 / η;
   }
+
+ 
+
 }
