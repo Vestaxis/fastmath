@@ -1,7 +1,9 @@
 package stochastic.processes.selfexciting.gui;
 
+import static java.awt.EventQueue.invokeLater;
 import static java.lang.System.err;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.rangeClosed;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -15,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,12 +32,21 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XChartPanel;
+import org.knowm.xchart.XYChart;
+import org.oxbow.swingbits.dialog.task.TaskDialog;
+import org.oxbow.swingbits.dialog.task.TaskDialogs;
+
+import fastmath.DoubleColMatrix;
+import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import gnu.arb.Real;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
+import util.Plotter;
 
 public class SelfExcitingProcessModeller
 {
@@ -177,18 +190,24 @@ public class SelfExcitingProcessModeller
 
       if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
       {
-        EventQueue.invokeLater(() -> {
-          File selectedFile = fileChooser.getSelectedFile();
-          try
-          {
-            MatFile.loadMatrices(selectedFile);
-          }
-          catch (IOException e)
-          {
-            
-          }
-          out.println("Loading (marked) points from " + selectedFile);
-        });
+        Map<String, DoubleColMatrix> data = null;
+        File selectedFile = fileChooser.getSelectedFile();
+        try
+        {
+          data = MatFile.matrixMap(selectedFile);
+        }
+        catch (IOException e)
+        {
+          invokeLater(() -> {
+            TaskDialogs.showException(e);
+          });
+        }
+        out.println("Loading (marked) points from " + selectedFile + ": " + data.keySet() );
+        Vector times = data.get("SPY").col(0);
+        times = times.copy().subtract(times.get(0)).divide(1000);
+        Vector counts = new Vector(rangeClosed(1, times.size()).mapToDouble(i -> i));
+        topLeftPanel.add( new XChartPanel<XYChart>( Plotter.plot(times, counts, "counts") ));
+        doLayout();
       }
     });
 
@@ -313,8 +332,8 @@ public class SelfExcitingProcessModeller
   {
     for (int i = 0; i < process.order(); i++)
     {
-      double amplitude = process.α(i);
-      double decayRate = process.β(i);
+      double amplitude = process.α(i)/process.Z();
+      double decayRate = process.β(i)/process.Z();
       Real amplifiedJointDecayRate = process.γ(i);
       double halfLife = process.getHalfLife(i);
       coeffecientModel.setValueAt(i, i, 0);
@@ -333,7 +352,7 @@ public class SelfExcitingProcessModeller
   }
 
   String[] tableColumnNames = new String[]
-  { "#", "α", "β", "γ", "half-life" };
+  { "#", "α/Z", "β/Z", "γ", "half-life" };
 
   private JScrollPane tableScroller;
 

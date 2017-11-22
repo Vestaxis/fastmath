@@ -601,6 +601,22 @@ public class MatFile implements Iterable<MiElement>
     return map;
   }
 
+  /**
+   * a map version of this{@link #loadMatrices()}
+   * 
+   * @return
+   * @throws IOException
+   */
+  public static Map<String, DoubleColMatrix>
+         matrixMap(File file) throws IOException
+  {
+    TreeMap<String, DoubleColMatrix> map = new TreeMap<>();
+    loadMatrices(file).forEach(matrix -> {
+      map.put(matrix.getName(), matrix);
+    });
+    return map;
+  }
+
   public static List<DoubleColMatrix>
          loadMatrices(File file) throws IOException
   {
