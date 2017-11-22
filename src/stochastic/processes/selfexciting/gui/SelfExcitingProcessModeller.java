@@ -204,7 +204,7 @@ public class SelfExcitingProcessModeller
         }
         out.println("Loading (marked) points from " + selectedFile + ": " + data.keySet() );
         Vector times = data.get("SPY").col(0);
-        times = times.copy().subtract(times.get(0)).divide(1000);
+        times = times.copy().subtract(times.get(0));
         Vector counts = new Vector(rangeClosed(1, times.size()).mapToDouble(i -> i));
         topLeftPanel.add( new XChartPanel<XYChart>( Plotter.plot(times, counts, "counts") ));
         doLayout();
@@ -219,7 +219,7 @@ public class SelfExcitingProcessModeller
     coeffecientModel.setColumnIdentifiers(tableColumnNames);
     coeffecientTable = new JTable(coeffecientModel);
     coeffecientTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    setAmplitudeDecayValues();
+    populateCoeffecientTableValues();
 
     JPanel topRightPanel = new JPanel(new BorderLayout());
 
@@ -275,7 +275,7 @@ public class SelfExcitingProcessModeller
     {
       kernelPanel.refreshGraphs();
     }
-    setAmplitudeDecayValues();
+    populateCoeffecientTableValues();
   }
 
   public void
@@ -289,7 +289,7 @@ public class SelfExcitingProcessModeller
          refreshTypeComboBox(ActionEvent event)
   {
     refreshProcess();
-    setAmplitudeDecayValues();
+    populateCoeffecientTableValues();
 
     /**
      * TODO: add m and M here
@@ -319,7 +319,7 @@ public class SelfExcitingProcessModeller
       }
 
     }
-    setAmplitudeDecayValues();
+    populateCoeffecientTableValues();
     resizeColumns(coeffecientTable);
 
     tableScroller.revalidate();
@@ -328,18 +328,18 @@ public class SelfExcitingProcessModeller
   }
 
   public void
-         setAmplitudeDecayValues()
+         populateCoeffecientTableValues()
   {
     for (int i = 0; i < process.order(); i++)
     {
       double amplitude = process.α(i)/process.Z();
       double decayRate = process.β(i)/process.Z();
-      Real amplifiedJointDecayRate = process.γ(i);
+      Real γ = process.γ(i);
       double halfLife = process.getHalfLife(i);
       coeffecientModel.setValueAt(i, i, 0);
       coeffecientModel.setValueAt(amplitude, i, 1);
       coeffecientModel.setValueAt(decayRate, i, 2);
-      coeffecientModel.setValueAt(amplifiedJointDecayRate.toString(), i, 3);
+      coeffecientModel.setValueAt(γ.toString(), i, 3);
       coeffecientModel.setValueAt(halfLife, i, 4);
     }
     coeffecientTable.repaint();

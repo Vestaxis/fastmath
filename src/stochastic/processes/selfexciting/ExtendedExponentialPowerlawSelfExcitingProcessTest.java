@@ -21,21 +21,45 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
 
     double phase = process.Hphase(0.7, 0.2);
-    out.println("phase=" + phase);
+    assertEquals(32.22004331952762, phase, 1E-13);
+    out.println("Hphase(0.7, 0.2)=" + phase);
+    double otherPhase = phase;
     phase = process.Hphase(0.7, 9.3);
-    out.println("phase=" + phase);
+    assertEquals(phase, otherPhase);
+
+    assertEquals(32.22004331952762, phase, 1E-13);
+    out.println("Hphase(0.7, 9.3)=" + phase);
+    phase = process.HphaseLim(0.7, 9.3);
+    out.println("HphaseLim(0.7, 9.3)=" + phase);
+    assertEquals(58.89407091608037, phase, 1E-13);
+
+    phase = process.HphaseDt(0.7, 9.3);
+    out.println("HphaseDt=" + phase);
+    assertEquals(-25.17023354150973, phase, 1E-13);
+    phase = process.HphaseDtLim(0.7, 9.3);
+    out.println("HphaseDtlim=" + phase);
+    assertEquals(-25.17023354150973, phase, 1E-13);
+    double Hphase = process.Hphase(0.7, 0.2);
+    double HphaseDt = process.HphaseDt(0.7, 0.2);
+    double HphaseHphaseDtRatio = Hphase / HphaseDt;
+    out.println("HphaseHphaseDtRatio=" + HphaseHphaseDtRatio);
+
+    double HphaseLim = process.HphaseLim(0.7, 0.2);
+    double HphaseLimDt = process.HphaseDtLim(0.7, 0.2);
+    double HphaseLimHphaseLimDtRatio = Hphase / HphaseDt;
+    double HphaseLimHphaseDtRatio = HphaseLim / HphaseLimDt;
+    out.println("HphaseLimHphaseLimDtRatio=" + HphaseLimHphaseLimDtRatio);
+    assertEquals(HphaseHphaseDtRatio, HphaseLimHphaseLimDtRatio);
   }
 
   public void
          testNormalization()
   {
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
-
-    process.assignParameters(new double[]
-    { 0.415615720308202e-2, 6.336276907099262, 8.584836461335403 * pow(10, (-10)), 2.9618207529175997, 3.5152151867967496 });
+    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
 
     double z = process.Z();
-    assertEquals(25.411437201334711, z, 1E-5);
+    assertEquals(21.614003667762162, z, 1E-5);
+
   }
 
   public void
@@ -73,13 +97,11 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     double τ = 1;
     double ε = 0.25;
     double τ0 = 1;
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
+    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
 
-    process.assignParameters(new double[]
-    { 0.415615720308202e-2, 6.336276907099262, 8.584836461335403 * pow(10, (-10)), 2.9618207529175997, 3.5152151867967496 });
     println(process.getParamString());
-    assertEquals(0.08264706038914209, process.ν(1.9));
-    assertEquals(0.2145872753, process.iν(1.9), 1E-7);
+    assertEquals(0.08419992894465983, process.ν(1.9), 1E-7);
+    assertEquals(0.23625053002496527, process.iν(1.9), 1E-7);
 
   }
 
@@ -96,7 +118,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println("invih(" + h + ")=" + t);
     double r = process.H(t);
 
-    assertEquals(t, r);
+    assertEquals(t, r, 0.000000001);
 
   }
 

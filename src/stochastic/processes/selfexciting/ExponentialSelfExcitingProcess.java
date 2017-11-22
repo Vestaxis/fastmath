@@ -72,7 +72,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Hphase(double H,
                 double t)
   {
-    return sum(k -> exp(H - γ(k).fpValue()*(t * β(k) - 1)), 0, order() - 1);
+    return sum(k -> exp(H - γ(k).fpValue() * (t * β(k) - 1)), 0, order() - 1);
+  }
+
+  public double
+         HphaseLim(double H,
+                   double t)
+  {
+    return sum(k -> exp(H - (t * β(k) - 1)), 0, order() - 1);
   }
 
   public double
@@ -80,6 +87,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                   double t)
   {
     return sum(k -> -β(k) * exp(H - γ(k).fpValue()) * (t * β(k)), 0, order() - 1);
+  }
+
+  public double
+         HphaseDtLim(double H,
+                     double t)
+  {
+    return sum(k -> -β(k) * exp(H) * (t * β(k)), 0, order() - 1);
   }
 
   /**
@@ -100,22 +114,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
     // 0, k);
     return 0;
-//     //double t = 0;
-//   double prevt = Double.NEGATIVE_INFINITY;
-//    double dt = t - prevt;
-//    int iters = 0;
-//    while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
-//    {
-//
-//      prevt = t;
-//      double ft = Hphase(H, t);
-//      double dft = HphaseDt(H, t);
-//      dt = ft / dft;
-//      out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
-//      t = t - dt;
-//    }
-//
-//    return t;
+    // //double t = 0;
+    // double prevt = Double.NEGATIVE_INFINITY;
+    // double dt = t - prevt;
+    // int iters = 0;
+    // while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
+    // {
+    //
+    // prevt = t;
+    // double ft = Hphase(H, t);
+    // double dft = HphaseDt(H, t);
+    // dt = ft / dft;
+    // out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
+    // t = t - dt;
+    // }
+    //
+    // return t;
   }
 
   public Vector
@@ -142,7 +156,26 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return γs.getOrCreate(k);
   }
 
-  private AutoArrayList<Real> γs = new AutoArrayList<>(order(), k -> product((IntFunction<Real>) j -> new Real(j == k ? α(j) : β(j)), 0, order() - 1));
+  public Real
+         γproduct(int k)
+  {
+    IntFunction<Real> a = j -> new Real(j == k ? α(j) : β(j));
+    if (trace)
+    {
+      for (int i = 0; i < k; i++)
+      {
+        out.format("a=%s\n", a.apply(i).fpValue());
+      }
+    }
+    Real product = product(a, 0, order() - 1);
+    if (trace)
+    {
+      out.format("k=%d product=%s\n", k, product);
+    }
+    return product;
+  };
+
+  private AutoArrayList<Real> γs = new AutoArrayList<>(order(), this::γproduct);
 
   /**
    * The mean lifetime can be looked at as a "scaling time", because the
@@ -809,10 +842,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
 
+  /**
+   * time it takes the impulse to decay to half its initial value
+   * 
+   * @param i
+   * @return log(2) / β(i) / Z
+   */
   public double
          getHalfLife(int i)
   {
-    return log(2) / β(i);
+    return log(2) / (β(i) / Z());
   }
 
 }
