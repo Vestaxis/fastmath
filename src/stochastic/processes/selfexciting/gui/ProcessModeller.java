@@ -55,6 +55,7 @@ import gnu.arb.Real;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
+import stochastic.processes.selfexciting.BoundedParameter;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
@@ -187,22 +188,46 @@ public class ProcessModeller
     int numStarts = Runtime.getRuntime().availableProcessors() * 2;
 
     JProgressBar progressBar = new JProgressBar(0, numStarts);
-    progressBar.setEnabled(false);
     progressBar.setEnabled(true);
     progressBar.setStringPainted(true);
     progressBar.setString("Adaption...");
     adaptButton.addActionListener(event -> {
-      frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-      process.estimateParameters(numStarts, j -> {
-     
+      new Thread(() -> {
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        process.estimateParameters(numStarts, j -> {
+          try
+          {
+            SwingUtilities.invokeAndWait(() -> {
               progressBar.setValue(j);
-              out.println("set value " + j);
               progressBar.repaint();
-      
+            });
+          }
+          catch (InvocationTargetException | InterruptedException e)
+          {
+            e.printStackTrace(System.err);
+            throw new RuntimeException(e.getMessage(), e);
+          }
+        });
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-      });
-      updateParameterPanel();
-      refreshProcess();
+
+        progressBar.setValue(0);
+        progressBar.setEnabled(false);
+        try
+        {
+          SwingUtilities.invokeAndWait(() -> {
+            for (BoundedParameter param : process.getBoundedParameters())
+            {
+              parameterPanel.setParameterValue(param.getName(), process.getFieldValue(param.getName()));
+            }
+          });
+        }
+        catch (InvocationTargetException | InterruptedException e)
+        {
+          e.printStackTrace(System.err);
+          throw new RuntimeException(e.getMessage(), e);
+        }
+        onParameterUpdated();
+      }).start();
     });
     buttonPanel.add(adaptButton);
     buttonPanel.add(progressBar);
@@ -217,7 +242,7 @@ public class ProcessModeller
     coeffecientTable = new JTable(coeffecientModel);
     coeffecientTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-    populateCoeffecientTableValues();
+    updateCoeffecientTableValues();
 
     JPanel topRightPanel = new JPanel(new BorderLayout());
 
@@ -243,12 +268,12 @@ public class ProcessModeller
         EventQueue.invokeLater(() -> {
           out.println("Loading parameters from " + fileChooser.getSelectedFile());
           process.loadParameters(fileChooser.getSelectedFile());
-          parameterPanel.sliderEnabled = false;
+          parameterPanel.sliderHandlerEnabled = false;
           for (Field field : process.getParameterFields())
           {
             parameterPanel.setParameterValue(field.getName(), process.getFieldValue(field));
           }
-          parameterPanel.sliderEnabled = true;
+          parameterPanel.sliderHandlerEnabled = true;
         });
       }
 
@@ -316,7 +341,6 @@ public class ProcessModeller
   }
 
   public static void
-
          resizeColumns(JTable table)
   {
     final TableColumnModel columnModel = table.getColumnModel();
@@ -338,7 +362,6 @@ public class ProcessModeller
   JPanel topRightBottomPanel;
 
   public void
-
          updateParameterPanel()
   {
     if (parameterPanel != null)
@@ -357,7 +380,7 @@ public class ProcessModeller
     {
       kernelPanel.refreshGraphs();
     }
-    populateCoeffecientTableValues();
+    updateCoeffecientTableValues();
   }
 
   public void
@@ -371,7 +394,7 @@ public class ProcessModeller
          refreshTypeComboBox(ActionEvent event)
   {
     refreshProcess();
-    populateCoeffecientTableValues();
+    updateCoeffecientTableValues();
 
     /**
      * TODO: add m and M here
@@ -392,7 +415,13 @@ public class ProcessModeller
     if (process == null || !process.getType().equals(type))
     {
       out.println("Switched kernel to " + type);
+      ExponentialSelfExcitingProcess prevProcess = process;
       process = (ExponentialSelfExcitingProcess) type.instantiate(1);
+      if ( prevProcess != null )
+      {
+        process.T = prevProcess.T;
+        process.X = prevProcess.X;
+      }
       coeffecientModel.setRowCount(process.order());
       updateParameterPanel();
       if (kernelPanel != null)
@@ -401,8 +430,7 @@ public class ProcessModeller
       }
 
     }
-    populateCoeffecientTableValues();
-    resizeColumns(coeffecientTable);
+    updateCoeffecientTableValues();
 
     tableScroller.revalidate();
 
@@ -410,7 +438,7 @@ public class ProcessModeller
   }
 
   public void
-         populateCoeffecientTableValues()
+         updateCoeffecientTableValues()
   {
     for (int i = 0; i < process.order(); i++)
     {
@@ -424,6 +452,7 @@ public class ProcessModeller
       coeffecientModel.setValueAt(γ.toString(), i, 3);
       coeffecientModel.setValueAt(halfLife, i, 4);
     }
+    resizeColumns(coeffecientTable);
     coeffecientTable.repaint();
   }
 

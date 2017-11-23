@@ -55,7 +55,7 @@ public class ParameterPanel extends JPanel
 
   public static final int sliderResolution = 1000;
 
-  boolean sliderEnabled = true;
+  boolean sliderHandlerEnabled = true;
 
   public JPanel
          getParameterRowPanel(String paramName,
@@ -138,7 +138,7 @@ public class ParameterPanel extends JPanel
 
     ChangeListener sliderUpdated = sliderEvent -> {
       double value = (double) slider.getValue() / (double) sliderResolution;
-      if (sliderEnabled)
+      if (sliderHandlerEnabled)
       {
         Field field = process.getField(paramName);
         try
@@ -202,7 +202,9 @@ public class ParameterPanel extends JPanel
 
     double wtf = (fieldValue - boundedParameter.getMin()) / paramδ;
 
+    sliderHandlerEnabled = false;
     slider.setValue(slider.getMinimum() + (int) ((double) wtf));
+    sliderHandlerEnabled = true;
     textField.setText(Double.toString(fieldValue));
 
   }
