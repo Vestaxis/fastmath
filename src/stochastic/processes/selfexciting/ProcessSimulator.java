@@ -20,7 +20,7 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.Plotter;
 import util.TerseThreadFactory;
 
-public class SelfExcitingProcessSimulator
+public class ProcessSimulator
 {
 
   static
@@ -30,7 +30,7 @@ public class SelfExcitingProcessSimulator
 
   private AbstractSelfExcitingProcess process;
 
-  public SelfExcitingProcessSimulator(SelfExcitingProcess process)
+  public ProcessSimulator(SelfExcitingProcess process)
   {
     this.process = (AbstractSelfExcitingProcess) process;
   }

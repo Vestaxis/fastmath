@@ -11,6 +11,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.accessibility.AccessibleContext;
 import javax.swing.JDialog;
@@ -21,6 +22,51 @@ import javax.swing.UIManager;
 
 public class ProgressWindow extends JOptionPane
 {
+  private boolean cancelled = false;
+
+  @Override
+  public void
+         setValue(Object newValue)
+  {
+    if (newValue instanceof Integer)
+    {
+      myBar.setValue((Integer) newValue);
+    }
+    else if (newValue instanceof String)
+    {
+      String cmd = (String) newValue;
+      if ("Cancel".equals(cmd))
+      {
+        cancelled = true;
+      }
+      else
+      {
+        System.out.println("unhandled cmd = " + cmd);
+      }
+    }
+  }
+
+  public static void
+         main(String args[]) throws InterruptedException
+  {
+    ProgressWindow pw = new ProgressWindow("message", "note", 30);
+    pw.show(null);
+    AtomicInteger count = new AtomicInteger();
+    while (!pw.cancelled)
+    {
+      Thread.sleep(1000);
+      pw.setValue(count.incrementAndGet());
+    }
+    pw.close();
+  }
+
+  public void
+         close()
+  {
+    dialog.setVisible(false);
+    setVisible(false);
+
+  }
 
   private static Object[] cancelOption;
   private String note;
@@ -36,6 +82,11 @@ public class ProgressWindow extends JOptionPane
 
   }
 
+  public ProgressWindow(String message, String note, int max)
+  {
+    this(message, note, new JProgressBar(0, max));
+  }
+
   private JProgressBar myBar;
   private JLabel noteLabel;
   private JDialog dialog;
@@ -47,6 +98,7 @@ public class ProgressWindow extends JOptionPane
       noteLabel = new JLabel(note);
     dialog = createDialog(parentComponent, UIManager.getString("ProgressMonitor.progressText"));
     dialog.show();
+    
   }
 
   public int

@@ -57,6 +57,7 @@ import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import gnu.arb.Real;
 import util.AutoArrayList;
+import util.ProgressWindow;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
@@ -283,9 +284,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public void
          estimateParameters(int numStarts,
-                            ProgressMonitor progressMonitor)
+                            JProgressBar progressMonitor)
   {
-    estimateParameters(numStarts, j -> invokeLater(() -> progressMonitor.setProgress(j)));
+    estimateParameters(numStarts, j -> progressMonitor.setValue(j));
   }
 
   public final ParallelMultistartMultivariateOptimizer

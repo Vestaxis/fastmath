@@ -13,7 +13,7 @@ import fastmath.Vector;
 import fastmath.Vector.Condition;
 import fastmath.matfile.MatFile;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
-import stochastic.processes.selfexciting.SelfExcitingProcessEstimator;
+import stochastic.processes.selfexciting.ProcessEstimator;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import stochastic.processes.selfexciting.gui.CalibratedNasdaqStrategyViewer;
 import util.DateUtils;
@@ -86,20 +86,20 @@ public class NasdaqTradingStrategy
    *          {@link NasdaqTradingProcess#closeTime}
    * @return an array of offsets indicating the timestamp indexes which divides
    *         the data into n windows of length
-   *         {@link SelfExcitingProcessEstimator#W} hours over the interval
+   *         {@link ProcessEstimator#W} hours over the interval
    *         {@link NasdaqTradingProcess#openTime} to
    *         {@link NasdaqTradingProcess#closeTime}
    */
   public static int[]
          getIndices(Vector times)
   {
-    int n = (int) (NasdaqTradingProcess.tradingDuration / SelfExcitingProcessEstimator.W);
+    int n = (int) (NasdaqTradingProcess.tradingDuration / ProcessEstimator.W);
     out.println("Dividing the interval containing " + times.size() + " points into " + n + " pieces");
     int indexes[] = new int[n];
     for (int i = 0; i < n; i++)
     {
-      double startPoint = NasdaqTradingProcess.openTime + ((i) * SelfExcitingProcessEstimator.W);
-      double endPoint = NasdaqTradingProcess.openTime + ((i + 1) * SelfExcitingProcessEstimator.W);
+      double startPoint = NasdaqTradingProcess.openTime + ((i) * ProcessEstimator.W);
+      double endPoint = NasdaqTradingProcess.openTime + ((i + 1) * ProcessEstimator.W);
 
       double t = DateUtils.convertTimeUnits(endPoint, TimeUnit.HOURS, TimeUnit.MILLISECONDS);
       int idx = times.find(t, Condition.GTE, i == 0 ? 0 : indexes[i - 1]);

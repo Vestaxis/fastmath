@@ -1,5 +1,6 @@
 package stochastic.processes.selfexciting.gui;
 
+import static java.awt.EventQueue.invokeAndWait;
 import static java.awt.EventQueue.invokeLater;
 import static java.lang.System.err;
 import static java.lang.System.out;
@@ -19,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -56,8 +59,9 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.Plotter;
+import util.ProgressWindow;
 
-public class SelfExcitingProcessModeller
+public class ProcessModeller
 {
 
   private static final class MatFileFilter extends FileFilter
@@ -113,7 +117,7 @@ public class SelfExcitingProcessModeller
     EventQueue.invokeLater(() -> {
       try
       {
-        SelfExcitingProcessModeller window = new SelfExcitingProcessModeller();
+        ProcessModeller window = new ProcessModeller();
         window.frame.setVisible(true);
       }
       catch (Exception e)
@@ -126,7 +130,7 @@ public class SelfExcitingProcessModeller
   /**
    * Create the application.
    */
-  public SelfExcitingProcessModeller()
+  public ProcessModeller()
   {
     initialize();
   }
@@ -165,7 +169,7 @@ public class SelfExcitingProcessModeller
   {
     JPanel topPanel = new JPanel(new BorderLayout());
 
-    JPanel buttonPanel = new JPanel(new GridLayout(3, 1));
+    JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
 
     Type[] processTypes = SelfExcitingProcessFactory.Type.values();
     processTypeComboBox = new JComboBox<>(processTypes);
@@ -180,22 +184,29 @@ public class SelfExcitingProcessModeller
 
     buttonPanel.add(loadPointsButton);
     JButton adaptButton = new JButton("Adapt");
+    int numStarts = Runtime.getRuntime().availableProcessors() * 2;
+
+    JProgressBar progressBar = new JProgressBar(0, numStarts);
+    progressBar.setEnabled(false);
+    progressBar.setEnabled(true);
+    progressBar.setStringPainted(true);
+    progressBar.setString("Adaption...");
     adaptButton.addActionListener(event -> {
-      //invokeLater(()  {
-      //invokeLater(() -> {
-        int numStarts = Runtime.getRuntime().availableProcessors() * 2;
-        ProgressMonitor progressBar = new ProgressMonitor(frame, "Adapting..", "maximizing likelihood...", 0, numStarts);
-        progressBar.setMillisToDecideToPopup(0);
-        progressBar.setMillisToPopup(0);
-        progressBar.setProgress(0);
-        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        process.estimateParameters(numStarts, progressBar);
+      frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      process.estimateParameters(numStarts, j -> {
+     
+              progressBar.setValue(j);
+              out.println("set value " + j);
+              progressBar.repaint();
+      
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        updateParameterPanel();
-        refreshProcess();
-     // });
+      });
+      updateParameterPanel();
+      refreshProcess();
     });
     buttonPanel.add(adaptButton);
+    buttonPanel.add(progressBar);
+
     topLeftPanel.add(buttonPanel);
     topPanel.add(topLeftPanel, BorderLayout.WEST);
 

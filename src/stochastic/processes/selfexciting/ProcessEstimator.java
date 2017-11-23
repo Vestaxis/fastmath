@@ -27,7 +27,7 @@ import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.TerseThreadFactory;
 
-public class SelfExcitingProcessEstimator
+public class ProcessEstimator
 {
   @Units(time = TimeUnit.HOURS)
   public static final double W = 0.5; // half hour
@@ -41,7 +41,7 @@ public class SelfExcitingProcessEstimator
 
   private int trajectoryCount = Runtime.getRuntime().availableProcessors();
 
-  public SelfExcitingProcessEstimator(SelfExcitingProcess process)
+  public ProcessEstimator(SelfExcitingProcess process)
   {
     this.process = (AbstractSelfExcitingProcess) process;
   }
@@ -128,7 +128,7 @@ public class SelfExcitingProcessEstimator
     range(0, n).forEachOrdered(i -> {
       Vector slice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       AbstractSelfExcitingProcess process = SelfExcitingProcessFactory.spawnNewProcess(type, 1);
-      SelfExcitingProcessEstimator estimator = new SelfExcitingProcessEstimator(process);
+      ProcessEstimator estimator = new ProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
       estimator.estimate(slice);
       processes.add(process);
