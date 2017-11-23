@@ -1,10 +1,8 @@
 package stochastic.processes.selfexciting.gui;
 
-import static java.awt.EventQueue.invokeAndWait;
 import static java.awt.EventQueue.invokeLater;
 import static java.lang.System.err;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.awt.BorderLayout;
@@ -23,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -34,17 +31,14 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
-import org.oxbow.swingbits.dialog.task.TaskDialog;
 import org.oxbow.swingbits.dialog.task.TaskDialogs;
 
 import fastmath.DoubleColMatrix;
@@ -60,10 +54,10 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.Plotter;
-import util.ProgressWindow;
 
 public class ProcessModeller
 {
+  int numStarts = Runtime.getRuntime().availableProcessors() * 2;
 
   private static final class MatFileFilter extends FileFilter
   {
@@ -109,9 +103,6 @@ public class ProcessModeller
   private DefaultTableModel coeffecientModel;
   private JTable coeffecientTable;
 
-  /**
-   * Launch the application.
-   */
   public static void
          main(String[] args)
   {
@@ -165,60 +156,17 @@ public class ProcessModeller
     doLayout();
   }
 
-  public JPanel
-         getTopPanel()
+  private void
+          onAdaptButtonAction(ActionEvent event)
   {
-    JPanel topPanel = new JPanel(new BorderLayout());
-
-    JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
-
-    Type[] processTypes = SelfExcitingProcessFactory.Type.values();
-    processTypeComboBox = new JComboBox<>(processTypes);
-    processTypeComboBox.addActionListener(this::refreshTypeComboBox);
-
-    topLeftPanel = new JPanel(new FlowLayout());
-
-    topLeftPanel.add(processTypeComboBox);
-    JButton loadParameterButton = newLoadParametersButton();
-    buttonPanel.add(loadParameterButton);
-    JButton loadPointsButton = newLoadPointsButton();
-
-    buttonPanel.add(loadPointsButton);
-    JButton adaptButton = new JButton("Adapt");
-    int numStarts = Runtime.getRuntime().availableProcessors() * 2;
-
-    JProgressBar progressBar = new JProgressBar(0, numStarts);
-    progressBar.setEnabled(true);
-    progressBar.setStringPainted(true);
-    progressBar.setString("Adaption...");
-    adaptButton.addActionListener(event -> {
-      new Thread(() -> {
-        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        process.estimateParameters(numStarts, j -> {
-          try
-          {
-            SwingUtilities.invokeAndWait(() -> {
-              progressBar.setValue(j);
-              progressBar.repaint();
-            });
-          }
-          catch (InvocationTargetException | InterruptedException e)
-          {
-            e.printStackTrace(System.err);
-            throw new RuntimeException(e.getMessage(), e);
-          }
-        });
-        frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        progressBar.setValue(0);
-        progressBar.setEnabled(false);
+    new Thread(() -> {
+      frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      process.estimateParameters(numStarts, j -> {
         try
         {
           SwingUtilities.invokeAndWait(() -> {
-            for (BoundedParameter param : process.getBoundedParameters())
-            {
-              parameterPanel.setParameterValue(param.getName(), process.getFieldValue(param.getName()));
-            }
+            progressBar.setValue(j);
+            progressBar.repaint();
           });
         }
         catch (InvocationTargetException | InterruptedException e)
@@ -226,9 +174,58 @@ public class ProcessModeller
           e.printStackTrace(System.err);
           throw new RuntimeException(e.getMessage(), e);
         }
-        onParameterUpdated();
-      }).start();
-    });
+      });
+      frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+      progressBar.setValue(0);
+      progressBar.setEnabled(false);
+      try
+      {
+        SwingUtilities.invokeAndWait(() -> {
+          for (BoundedParameter param : process.getBoundedParameters())
+          {
+            parameterPanel.setParameterValue(param.getName(), process.getFieldValue(param.getName()));
+          }
+        });
+      }
+      catch (InvocationTargetException | InterruptedException e)
+      {
+        e.printStackTrace(System.err);
+        throw new RuntimeException(e.getMessage(), e);
+      }
+      onParameterUpdated();
+    }).start();
+  }
+
+  public JPanel
+         getTopPanel()
+  {
+    JPanel topPanel = new JPanel(new BorderLayout());
+
+    JPanel buttonPanel = new JPanel(new GridLayout(6, 1));
+
+    Type[] processTypes = SelfExcitingProcessFactory.Type.values();
+    processTypeComboBox = new JComboBox<>(processTypes);
+    processTypeComboBox.addActionListener(this::refreshTypeComboBox);
+
+    topLeftPanel = new JPanel(new FlowLayout());
+
+    JButton loadParameterButton = newLoadParametersButton();
+    buttonPanel.add(processTypeComboBox);
+
+    buttonPanel.add(loadParameterButton);
+    buttonPanel.add(newSaveParametersButton());
+    JButton loadPointsButton = newLoadPointsButton();
+
+    buttonPanel.add(loadPointsButton);
+    adaptButton = new JButton("Adapt");
+    adaptButton.setEnabled(false);
+
+    progressBar = new JProgressBar(0, numStarts);
+    progressBar.setEnabled(false);
+    progressBar.setStringPainted(true);
+    progressBar.setString("Adaption...");
+    adaptButton.addActionListener(this::onAdaptButtonAction);
     buttonPanel.add(adaptButton);
     buttonPanel.add(progressBar);
 
@@ -282,29 +279,49 @@ public class ProcessModeller
   }
 
   public JButton
+         newSaveParametersButton()
+  {
+    JButton saveParameterButton = new JButton("Save parameters");
+    saveParameterButton.addActionListener(event -> {
+      JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
+      fileChooser.setFileFilter(new ModelParametersFileFilter());
+      if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+      {
+        EventQueue.invokeLater(() -> {
+          out.println("Saving parameters to " + fileChooser.getSelectedFile());
+          process.storeParameters(fileChooser.getSelectedFile());
+         
+        });
+      }
+
+    });
+    return saveParameterButton;
+  }
+
+  public JButton
          newLoadPointsButton()
   {
     JButton loadPointsButton = new JButton("Load points");
     ActionListener actionListener = event -> {
-      chooseMarkedPointsFileToLoadFrom();
+      chooseAndLoadMarkedPoints();
     };
     loadPointsButton.addActionListener(actionListener);
     return loadPointsButton;
   }
 
   public void
-         chooseMarkedPointsFileToLoadFrom()
+         chooseAndLoadMarkedPoints()
   {
     JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
     fileChooser.setFileFilter(new MatFileFilter());
     if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
     {
-      loadMarkedPointsFromFile(topLeftPanel, fileChooser.getSelectedFile(), "SPY");
+      loadMarkedPointsFromFile(fileChooser.getSelectedFile(), "SPY");
     }
   }
 
   public void
-         loadMarkedPointsFromFile(JPanel topLeftPanel,
+         loadMarkedPointsFromFile(
                                   File selectedFile,
                                   String symbol)
   {
@@ -324,12 +341,13 @@ public class ProcessModeller
       out.println("Loaded the first 30 minutes of data containing " + markedPoints.getRowCount() + " points");
 
       ArrayList<AbstractSelfExcitingProcess> processes = new ArrayList<>();
-      ;
-      times = times.copy().subtract(times.get(0));
+      
+      times = times.copy().subtract(times.get(0)).divide(10);
       process.T = times;
       process.X = markedPoints;
       Vector counts = new Vector(rangeClosed(1, times.size()).mapToDouble(i -> i));
       topLeftPanel.add(new XChartPanel<XYChart>(Plotter.plot(times, counts, "counts")));
+      adaptButton.setEnabled(true);
       doLayout();
     }
     catch (IOException e)
@@ -417,7 +435,7 @@ public class ProcessModeller
       out.println("Switched kernel to " + type);
       ExponentialSelfExcitingProcess prevProcess = process;
       process = (ExponentialSelfExcitingProcess) type.instantiate(1);
-      if ( prevProcess != null )
+      if (prevProcess != null)
       {
         process.T = prevProcess.T;
         process.X = prevProcess.X;
@@ -467,5 +485,7 @@ public class ProcessModeller
 
   private JScrollPane tableScroller;
   private JPanel topLeftPanel;
+  private JProgressBar progressBar;
+  private JButton adaptButton;
 
 }
