@@ -4,6 +4,8 @@ import static fastmath.Functions.product;
 import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
+import static java.awt.EventQueue.invokeAndWait;
+import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
@@ -23,10 +25,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
+
+import javax.swing.JProgressBar;
+import javax.swing.ProgressMonitor;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -274,8 +281,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public static final int LJUNG_BOX_ORDER = 10;
 
+  public void
+         estimateParameters(int numStarts,
+                            ProgressMonitor progressMonitor)
+  {
+    estimateParameters(numStarts, j -> invokeLater(() -> progressMonitor.setProgress(j)));
+  }
+
   public final ParallelMultistartMultivariateOptimizer
-         estimateParameters(int numStarts)
+         estimateParameters(int numStarts,
+                            IntConsumer progressNotifier)
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
@@ -304,7 +319,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     };
 
     double startTime = currentTimeMillis();
-    PointValuePair optimum = multiopt.optimize(GoalType.MAXIMIZE,
+    PointValuePair optimum = multiopt.optimize(progressNotifier,
+                                               GoalType.MAXIMIZE,
                                                momentMatchingAutocorrelationComparator,
                                                validator,
                                                maxEval,

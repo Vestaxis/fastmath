@@ -3,20 +3,24 @@ package stochastic.processes.selfexciting.gui;
 import static java.awt.EventQueue.invokeLater;
 import static java.lang.System.err;
 import static java.lang.System.out;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +29,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -39,9 +45,12 @@ import org.oxbow.swingbits.dialog.task.TaskDialog;
 import org.oxbow.swingbits.dialog.task.TaskDialogs;
 
 import fastmath.DoubleColMatrix;
+import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import gnu.arb.Real;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
+import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
@@ -50,6 +59,24 @@ import util.Plotter;
 
 public class SelfExcitingProcessModeller
 {
+
+  private static final class MatFileFilter extends FileFilter
+  {
+    @Override
+    public boolean
+           accept(File f)
+    {
+      return f.getName().toLowerCase().endsWith(".mat") || f.isDirectory();
+    }
+
+    @Override
+    public String
+           getDescription()
+    {
+
+      return ".mat files";
+    }
+  }
 
   private final class ModelParametersFileFilter extends FileFilter
   {
@@ -138,13 +165,64 @@ public class SelfExcitingProcessModeller
   {
     JPanel topPanel = new JPanel(new BorderLayout());
 
+    JPanel buttonPanel = new JPanel(new GridLayout(3, 1));
+
     Type[] processTypes = SelfExcitingProcessFactory.Type.values();
     processTypeComboBox = new JComboBox<>(processTypes);
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
 
-    JPanel topLeftPanel = new JPanel(new FlowLayout());
+    topLeftPanel = new JPanel(new FlowLayout());
 
     topLeftPanel.add(processTypeComboBox);
+    JButton loadParameterButton = newLoadParametersButton();
+    buttonPanel.add(loadParameterButton);
+    JButton loadPointsButton = newLoadPointsButton();
+
+    buttonPanel.add(loadPointsButton);
+    JButton adaptButton = new JButton("Adapt");
+    adaptButton.addActionListener(event -> {
+      //invokeLater(()  {
+      //invokeLater(() -> {
+        int numStarts = Runtime.getRuntime().availableProcessors() * 2;
+        ProgressMonitor progressBar = new ProgressMonitor(frame, "Adapting..", "maximizing likelihood...", 0, numStarts);
+        progressBar.setMillisToDecideToPopup(0);
+        progressBar.setMillisToPopup(0);
+        progressBar.setProgress(0);
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        process.estimateParameters(numStarts, progressBar);
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        updateParameterPanel();
+        refreshProcess();
+     // });
+    });
+    buttonPanel.add(adaptButton);
+    topLeftPanel.add(buttonPanel);
+    topPanel.add(topLeftPanel, BorderLayout.WEST);
+
+    process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
+
+    coeffecientModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
+    coeffecientModel.setColumnIdentifiers(tableColumnNames);
+    coeffecientTable = new JTable(coeffecientModel);
+    coeffecientTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+    populateCoeffecientTableValues();
+
+    JPanel topRightPanel = new JPanel(new BorderLayout());
+
+    tableScroller = new JScrollPane(coeffecientTable);
+    topRightPanel.add(tableScroller, BorderLayout.PAGE_START);
+    topPanel.add(topRightPanel, BorderLayout.CENTER);
+    topRightPanel.revalidate();
+    // ModelViewer.getLogPriceChart(process);
+    topRightBottomPanel = new JPanel();
+    topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
+    return topPanel;
+  }
+
+  public JButton
+         newLoadParametersButton()
+  {
     JButton loadParameterButton = new JButton("Load parameters");
     loadParameterButton.addActionListener(event -> {
       JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
@@ -164,73 +242,66 @@ public class SelfExcitingProcessModeller
       }
 
     });
-    topLeftPanel.add(loadParameterButton);
+    return loadParameterButton;
+  }
+
+  public JButton
+         newLoadPointsButton()
+  {
     JButton loadPointsButton = new JButton("Load points");
-    topLeftPanel.add(loadPointsButton);
-    loadPointsButton.addActionListener((ActionListener) event -> {
-      JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
-      fileChooser.setFileFilter(new FileFilter()
-      {
+    ActionListener actionListener = event -> {
+      chooseMarkedPointsFileToLoadFrom();
+    };
+    loadPointsButton.addActionListener(actionListener);
+    return loadPointsButton;
+  }
 
-        @Override
-        public boolean
-               accept(File f)
-        {
-          return f.getName().toLowerCase().endsWith(".mat") || f.isDirectory();
-        }
+  public void
+         chooseMarkedPointsFileToLoadFrom()
+  {
+    JFileChooser fileChooser = new JFileChooser(Paths.get(".").toAbsolutePath().normalize().toString());
+    fileChooser.setFileFilter(new MatFileFilter());
+    if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
+    {
+      loadMarkedPointsFromFile(topLeftPanel, fileChooser.getSelectedFile(), "SPY");
+    }
+  }
 
-        @Override
-        public String
-               getDescription()
-        {
+  public void
+         loadMarkedPointsFromFile(JPanel topLeftPanel,
+                                  File selectedFile,
+                                  String symbol)
+  {
+    try
+    {
+      Map<String, DoubleColMatrix> data = null;
+      data = MatFile.matrixMap(selectedFile);
+      DoubleMatrix markedPoints = data.get(symbol);
 
-          return ".mat files";
-        }
+      Vector times = markedPoints.col(0);
+
+      out.println("Loading (marked) points from " + selectedFile + ": " + data.keySet());
+      int n = (int) (NasdaqTradingProcess.tradingDuration / 0.5);
+      int indexes[] = NasdaqTradingStrategy.getIndices(times);
+      markedPoints = markedPoints.sliceRows(0, indexes[0]);
+      times = markedPoints.col(0);
+      out.println("Loaded the first 30 minutes of data containing " + markedPoints.getRowCount() + " points");
+
+      ArrayList<AbstractSelfExcitingProcess> processes = new ArrayList<>();
+      ;
+      times = times.copy().subtract(times.get(0));
+      process.T = times;
+      process.X = markedPoints;
+      Vector counts = new Vector(rangeClosed(1, times.size()).mapToDouble(i -> i));
+      topLeftPanel.add(new XChartPanel<XYChart>(Plotter.plot(times, counts, "counts")));
+      doLayout();
+    }
+    catch (IOException e)
+    {
+      invokeLater(() -> {
+        TaskDialogs.showException(e);
       });
-
-      if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION)
-      {
-        Map<String, DoubleColMatrix> data = null;
-        File selectedFile = fileChooser.getSelectedFile();
-        try
-        {
-          data = MatFile.matrixMap(selectedFile);
-        }
-        catch (IOException e)
-        {
-          invokeLater(() -> {
-            TaskDialogs.showException(e);
-          });
-        }
-        out.println("Loading (marked) points from " + selectedFile + ": " + data.keySet() );
-        Vector times = data.get("SPY").col(0);
-        times = times.copy().subtract(times.get(0));
-        Vector counts = new Vector(rangeClosed(1, times.size()).mapToDouble(i -> i));
-        topLeftPanel.add( new XChartPanel<XYChart>( Plotter.plot(times, counts, "counts") ));
-        doLayout();
-      }
-    });
-
-    topPanel.add(topLeftPanel, BorderLayout.WEST);
-
-    process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
-
-    coeffecientModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
-    coeffecientModel.setColumnIdentifiers(tableColumnNames);
-    coeffecientTable = new JTable(coeffecientModel);
-    coeffecientTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    populateCoeffecientTableValues();
-
-    JPanel topRightPanel = new JPanel(new BorderLayout());
-
-    tableScroller = new JScrollPane(coeffecientTable);
-    topRightPanel.add(tableScroller, BorderLayout.PAGE_START);
-    topPanel.add(topRightPanel, BorderLayout.CENTER);
-    topRightPanel.revalidate();
-    // ModelViewer.getLogPriceChart(process);
-    topRightBottomPanel = new JPanel();
-    topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
-    return topPanel;
+    }
   }
 
   public static void
@@ -332,8 +403,8 @@ public class SelfExcitingProcessModeller
   {
     for (int i = 0; i < process.order(); i++)
     {
-      double amplitude = process.α(i)/process.Z();
-      double decayRate = process.β(i)/process.Z();
+      double amplitude = process.α(i) / process.Z();
+      double decayRate = process.β(i) / process.Z();
       Real γ = process.γ(i);
       double halfLife = process.getHalfLife(i);
       coeffecientModel.setValueAt(i, i, 0);
@@ -355,5 +426,6 @@ public class SelfExcitingProcessModeller
   { "#", "α/Z", "β/Z", "γ", "half-life" };
 
   private JScrollPane tableScroller;
+  private JPanel topLeftPanel;
 
 }

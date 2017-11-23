@@ -7,6 +7,7 @@ import static java.util.stream.IntStream.range;
 import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.exception.NotStrictlyPositiveException;
@@ -34,10 +35,13 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 {
 
   private OptimizationData[] optimData;
+  private IntConsumer progressNotifier;
 
-  @Override
-  public PointValuePair optimize(OptimizationData... optData)
+  public PointValuePair
+         optimize(IntConsumer progressNotifier,
+                  OptimizationData... optData)
   {
+    this.progressNotifier = progressNotifier;
     this.optimData = optData.clone();
     return super.optimize(optData);
   }
@@ -48,7 +52,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   {
     super(null);
 
-    if (starts < 1) { throw new NotStrictlyPositiveException(starts); }
+    if (starts < 1)
+    {
+      throw new NotStrictlyPositiveException(starts);
+    }
 
     this.optimizerSupplier = optimizerSupplier;
     this.starts = starts;
@@ -78,7 +85,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
 
   /** {@inheritDoc} */
   @Override
-  public int getEvaluations()
+  public int
+         getEvaluations()
   {
     return totalEvaluations.get();
   }
@@ -87,7 +95,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   TreeSet<PointValuePair> optima = null;
 
   @SuppressWarnings("unchecked")
-  protected PointValuePair doOptimize()
+  protected PointValuePair
+            doOptimize()
   {
     // Remove all instances of "MaxEval" and "InitialGuess" from the
     // array that will be passed to the internal optimizer.
@@ -127,13 +136,19 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
         objectiveFunctionSupplier = (ObjectiveFunctionSupplier) optimData[i];
       }
     }
-    if (maxEvalIndex == -1) { throw new IllegalArgumentException("MaxEval not specified"); }
+    if (maxEvalIndex == -1)
+    {
+      throw new IllegalArgumentException("MaxEval not specified");
+    }
     if (initialGuessIndex == -1)
     {
       optimData = Arrays.copyOf(optimData, optimData.length + 1);
       initialGuessIndex = optimData.length - 1;
     }
-    if (objectiveFunctionIndex == -1) { throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified"); }
+    if (objectiveFunctionIndex == -1)
+    {
+      throw new IllegalArgumentException("ObjectiveFunctionSupplier not specified");
+    }
     if (pairComparator == null)
     {
       pairComparator = new AbstractPointValuePairComparator(goalType);
@@ -153,6 +168,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     final int _objectiveFunctionIndex = objectiveFunctionIndex;
     final ObjectiveFunctionSupplier _objectiveFunctionSupplier = objectiveFunctionSupplier;
     final SolutionValidator _validator = validator;
+
+    AtomicInteger progress = new AtomicInteger();
 
     // Multi-start loop.
     range(0, starts).parallel().forEach(i -> {
@@ -190,6 +207,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
         e.printStackTrace(err);
       }
 
+      if (progressNotifier != null)
+      {
+        progressNotifier.accept(progress.incrementAndGet());
+      }
       int evalCount = totalEvaluations.addAndGet(optimizer.getEvaluations());
 
     });
@@ -197,7 +218,11 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     return optima.first();
   }
 
-  private double[] getStartingPoint(int i, final double[] min, final double[] max, final double[] startPoint)
+  private double[]
+          getStartingPoint(int i,
+                           final double[] min,
+                           final double[] max,
+                           final double[] startPoint)
   {
     // New start value.
     double[] s = null;
@@ -210,7 +235,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       int attempts = 0;
       while (s == null)
       {
-        if (attempts++ >= getMaxEvaluations()) { throw new TooManyEvaluationsException(getMaxEvaluations()); }
+        if (attempts++ >= getMaxEvaluations())
+        {
+          throw new TooManyEvaluationsException(getMaxEvaluations());
+        }
         s = generator.nextVector();
         for (int k = 0; s != null && k < s.length; ++k)
         {
@@ -225,7 +253,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     return s;
   }
 
-  public TreeSet<PointValuePair> getOptima()
+  public TreeSet<PointValuePair>
+         getOptima()
   {
     return optima;
   }
@@ -233,12 +262,14 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   /** suppplier of Underlying optimizer. */
   private final Supplier<MultivariateOptimizer> optimizerSupplier;
 
-  public boolean isVerbose()
+  public boolean
+         isVerbose()
   {
     return verbose;
   }
 
-  public void setVerbose(boolean verbose)
+  public void
+         setVerbose(boolean verbose)
   {
     this.verbose = verbose;
   }

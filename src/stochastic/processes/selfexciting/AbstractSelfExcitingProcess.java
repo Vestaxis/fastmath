@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.function.IntConsumer;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -251,7 +252,8 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          logLik();
 
   public abstract ParallelMultistartMultivariateOptimizer
-         estimateParameters(int numStarts);
+         estimateParameters(int numStarts,
+                            IntConsumer progressNotifier);
 
   public abstract String[]
          getColumnHeaders();

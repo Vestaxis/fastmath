@@ -55,7 +55,7 @@ public class SelfExcitingProcessEstimator
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
     int cpuMultiplier = 1;
 
-      cpuMultiplier = 4;
+    cpuMultiplier = 4;
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * cpuMultiplier;
     if (args.length > 1)
     {
@@ -65,7 +65,6 @@ public class SelfExcitingProcessEstimator
 
     out.println("Estimating parameters for " + filename);
     ArrayList<AbstractSelfExcitingProcess> processes = estimateSelfExcitingProcess(type, filename, trajectoryCount, symbol);
-    
 
   }
 
@@ -137,7 +136,7 @@ public class SelfExcitingProcessEstimator
       File testFile = new File("test" + i + ".mat");
       File modelFile = new File(testFile.getAbsolutePath() + "." + type.getFilenameExtension() + ".model");
 
-      storeParameterEstimationResults(testFile, slice, process, modelFile );
+      storeParameterEstimationResults(testFile, slice, process, modelFile);
 
     });
 
@@ -147,11 +146,12 @@ public class SelfExcitingProcessEstimator
   public static void
          storeParameterEstimationResults(File testFile,
                                          Vector data,
-                                         AbstractSelfExcitingProcess process, File modelFile) 
+                                         AbstractSelfExcitingProcess process,
+                                         File modelFile)
   {
     Vector compensator = process.Λ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
-    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath() + " and parameters to " + modelFile  );
+    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath() + " and parameters to " + modelFile);
 
     try
     {
@@ -213,7 +213,7 @@ public class SelfExcitingProcessEstimator
     }
 
     process.T = data;
-    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
+    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), j -> out.println("j=" + j));
     printResults(optimizer);
 
     return process;

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
@@ -126,7 +127,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
   protected boolean verbose = false;
 
-  public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts)
+  public ParallelMultistartMultivariateOptimizer estimateParameters(int numStarts, IntConsumer proigressNotifier )
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;

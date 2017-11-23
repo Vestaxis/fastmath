@@ -228,7 +228,7 @@ public class MultivariateSelfExcitingProcessEstimator
                     .reset());
     }
 
-    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount());
+    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), j -> out.println("j=" + j));
     printResults(optimizer);
 
     return process;
