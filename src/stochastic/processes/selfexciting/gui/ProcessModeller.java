@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -54,6 +55,7 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.Plotter;
+import util.RelativeLayout;
 
 public class ProcessModeller
 {
@@ -141,7 +143,7 @@ public class ProcessModeller
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     contentPane = frame.getContentPane();
     contentPane.setLayout(new BorderLayout());
-
+    process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
     JPanel topPanel = getTopPanel();
     topPanel.setMaximumSize(new Dimension(3000, 500));
     contentPane.add(topPanel, BorderLayout.PAGE_START);
@@ -197,18 +199,39 @@ public class ProcessModeller
     }).start();
   }
 
+  public static List<Component>
+         getAllComponents(final Container c)
+  {
+    Component[] comps = c.getComponents();
+    List<Component> compList = new ArrayList<Component>();
+    for (Component comp : comps)
+    {
+      compList.add(comp);
+      if (comp instanceof Container)
+      {
+        compList.addAll(getAllComponents((Container) comp));
+      }
+    }
+    return compList;
+  }
+
   public JPanel
          getTopPanel()
   {
-    JPanel topPanel = new JPanel(new BorderLayout());
+    
+    topRightBottomPanel = new JPanel();
 
-    JPanel buttonPanel = new JPanel(new GridLayout(6, 1));
+    JPanel topPanel = new JPanel(new RelativeLayout());
+    updateParameterPanel();
+    List<Component> components = getAllComponents(parameterPanel);
+
+    JPanel buttonPanel = new JPanel(new GridLayout(6 + components.size(), 1));
 
     Type[] processTypes = SelfExcitingProcessFactory.Type.values();
     processTypeComboBox = new JComboBox<>(processTypes);
     processTypeComboBox.addActionListener(this::refreshTypeComboBox);
 
-    topLeftPanel = new JPanel(new FlowLayout());
+    topLeftPanel = new JPanel(new RelativeLayout());
 
     JButton loadParameterButton = newLoadParametersButton();
     buttonPanel.add(processTypeComboBox);
@@ -228,11 +251,12 @@ public class ProcessModeller
     adaptButton.addActionListener(this::onAdaptButtonAction);
     buttonPanel.add(adaptButton);
     buttonPanel.add(progressBar);
-
+    for (Component comp : components)
+    {
+      buttonPanel.add(comp);
+    }
     topLeftPanel.add(buttonPanel);
-    topPanel.add(topLeftPanel, BorderLayout.WEST);
-
-    process = (ExponentialSelfExcitingProcess) Type.values()[0].instantiate(1);
+    topPanel.add(topLeftPanel, new Float( 10 ) );
 
     coeffecientModel = new DefaultTableModel(process != null ? process.order() : 0, tableColumnNames.length);
     coeffecientModel.setColumnIdentifiers(tableColumnNames);
@@ -245,10 +269,9 @@ public class ProcessModeller
 
     tableScroller = new JScrollPane(coeffecientTable);
     topRightPanel.add(tableScroller, BorderLayout.PAGE_START);
-    topPanel.add(topRightPanel, BorderLayout.CENTER);
+    topPanel.add(topRightPanel,new Float( 10 ) );
     topRightPanel.revalidate();
     // ModelViewer.getLogPriceChart(process);
-    topRightBottomPanel = new JPanel();
     topRightPanel.add(topRightBottomPanel, BorderLayout.PAGE_END);
     return topPanel;
   }
@@ -290,7 +313,7 @@ public class ProcessModeller
         EventQueue.invokeLater(() -> {
           out.println("Saving parameters to " + fileChooser.getSelectedFile());
           process.storeParameters(fileChooser.getSelectedFile());
-         
+
         });
       }
 
@@ -321,8 +344,7 @@ public class ProcessModeller
   }
 
   public void
-         loadMarkedPointsFromFile(
-                                  File selectedFile,
+         loadMarkedPointsFromFile(File selectedFile,
                                   String symbol)
   {
     try
@@ -341,7 +363,7 @@ public class ProcessModeller
       out.println("Loaded the first 30 minutes of data containing " + markedPoints.getRowCount() + " points");
 
       ArrayList<AbstractSelfExcitingProcess> processes = new ArrayList<>();
-      
+
       times = times.copy().subtract(times.get(0)).divide(10);
       process.T = times;
       process.X = markedPoints;
@@ -382,13 +404,7 @@ public class ProcessModeller
   public void
          updateParameterPanel()
   {
-    if (parameterPanel != null)
-    {
-      topRightBottomPanel.remove(parameterPanel);
-    }
-    topRightBottomPanel.add(parameterPanel = new ParameterPanel(process, this::onParameterUpdated), BorderLayout.PAGE_END);
-    topRightBottomPanel.revalidate();
-    doLayout();
+    parameterPanel = new ParameterPanel(process, this::onParameterUpdated);
   }
 
   public void
@@ -458,20 +474,23 @@ public class ProcessModeller
   public void
          updateCoeffecientTableValues()
   {
-    for (int i = 0; i < process.order(); i++)
+    if (coeffecientModel != null)
     {
-      double amplitude = process.α(i) / process.Z();
-      double decayRate = process.β(i) / process.Z();
-      Real γ = process.γ(i);
-      double halfLife = process.getHalfLife(i);
-      coeffecientModel.setValueAt(i, i, 0);
-      coeffecientModel.setValueAt(amplitude, i, 1);
-      coeffecientModel.setValueAt(decayRate, i, 2);
-      coeffecientModel.setValueAt(γ.toString(), i, 3);
-      coeffecientModel.setValueAt(halfLife, i, 4);
+      for (int i = 0; i < process.order(); i++)
+      {
+        double amplitude = process.α(i) / process.Z();
+        double decayRate = process.β(i) / process.Z();
+        Real γ = process.γ(i);
+        double halfLife = process.getHalfLife(i);
+        coeffecientModel.setValueAt(i, i, 0);
+        coeffecientModel.setValueAt(amplitude, i, 1);
+        coeffecientModel.setValueAt(decayRate, i, 2);
+        coeffecientModel.setValueAt(γ.toString(), i, 3);
+        coeffecientModel.setValueAt(halfLife, i, 4);
+      }
+      resizeColumns(coeffecientTable);
+      coeffecientTable.repaint();
     }
-    resizeColumns(coeffecientTable);
-    coeffecientTable.repaint();
   }
 
   public Type

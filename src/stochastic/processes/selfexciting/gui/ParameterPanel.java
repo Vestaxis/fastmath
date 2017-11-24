@@ -26,6 +26,7 @@ import javax.swing.event.ChangeListener;
 
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.BoundedParameter;
+import util.RelativeLayout;
 import util.SpringLayoutUtils;
 
 public class ParameterPanel extends JPanel
@@ -63,8 +64,8 @@ public class ParameterPanel extends JPanel
                               double maxValue)
   {
 
-    JPanel rowPanel = new JPanel(new GridLayout(1, 5));
-    rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 10));
+    JPanel rowPanel = new JPanel(new RelativeLayout(RelativeLayout.Y_AXIS));
+
     JLabel paramNameLabel = new JLabel(paramName);
     paramNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     rowPanel.add(paramNameLabel);
