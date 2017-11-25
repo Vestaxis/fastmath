@@ -23,7 +23,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -336,9 +335,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     assignParameters(optimum.getKey());
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
-
-    Object[] row = evaluateParameterStatistics(optimum.getKey());
-    out.println("stats: " + Arrays.asList(row));
 
     // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
 
@@ -661,26 +657,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public void
-         storeParameters(File file)
+         storeParameters(File file) throws IOException
   {
-    FileOutputStream fileOutputStream;
-    try
+    FileOutputStream fileOutputStream = new FileOutputStream(file, false);
+    DataOutputStream dos = new DataOutputStream(fileOutputStream);
+    Vector params = getParameters();
+    for (int i = 0; i < getParamCount(); i++)
     {
-      fileOutputStream = new FileOutputStream(file, false);
-      DataOutputStream dos = new DataOutputStream(fileOutputStream);
-      Vector params = getParameters();
-      for (int i = 0; i < getParamCount(); i++)
-      {
-        dos.writeDouble(params.get(i));
-      }
-      dos.close();
-      fileOutputStream.close();
+      dos.writeDouble(params.get(i));
     }
-    catch (Exception e)
-    {
-      e.printStackTrace(System.err);
-      throw new RuntimeException(e.getMessage(), e);
-    }
+    dos.close();
+    fileOutputStream.close();
   }
 
   @Override
