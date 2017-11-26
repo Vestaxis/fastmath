@@ -80,7 +80,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     return τ * pow(m, -i);
   }
 
-  public int M = 15;
+  final public int M = 15;
 
   
   /**

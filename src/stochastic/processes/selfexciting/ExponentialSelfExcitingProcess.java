@@ -4,11 +4,10 @@ import static fastmath.Functions.product;
 import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
-import static java.awt.EventQueue.invokeAndWait;
-import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
@@ -25,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntConsumer;
@@ -33,7 +31,6 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 import javax.swing.JProgressBar;
-import javax.swing.ProgressMonitor;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -57,10 +54,27 @@ import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import gnu.arb.Real;
 import util.AutoArrayList;
-import util.ProgressWindow;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
+
+  public String
+         getαβString()
+  {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{");
+
+    for (int i = 0; i < order(); i++)
+    {
+      if (i > 0)
+      {
+        sb.append(",");
+      }
+      sb.append(format("alpha[%d]=%f,beta[%d]=%f", i + 1, α(i), i + 1, β(i)));
+    }
+    sb.append("}");
+    return sb.toString();
+  }
 
   @Override
   public double
@@ -90,6 +104,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> γ(k).fpValue() * (exp(-β(k) * t) + U - 1), 0, order() - 1);
   }
 
+
+  public double
+         FphaseDtUnscaled(double H,
+                          double t)
+  {
+    return sum(k -> -β(k) * exp(H) * (t * β(k)), 0, order() - 1);
+  }
+  
   public double
          FphaseUnscaled(double u,
                         double t)
@@ -111,12 +133,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> -β(k) * exp(H - γ(k).fpValue()) * (t * β(k)), 0, order() - 1);
   }
 
-  public double
-         FphaseDtUnscaled(double H,
-                          double t)
-  {
-    return sum(k -> -β(k) * exp(H) * (t * β(k)), 0, order() - 1);
-  }
 
   /**
    * @return t=RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
