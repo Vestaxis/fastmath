@@ -83,7 +83,7 @@ public class ProcessSimulator
 
     
     Vector ac = dT.autocor(50);
-    
+    out.println( "ac=" + ac );
     new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
     new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
 
