@@ -1,5 +1,7 @@
 package stochastic.processes.selfexciting;
 
+import static java.lang.Math.floor;
+import static java.lang.Math.random;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -7,9 +9,11 @@ import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.PointValuePair;
+import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
@@ -17,6 +21,7 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
+import util.DateUtils;
 import util.Plotter;
 import util.TerseThreadFactory;
 
@@ -37,41 +42,49 @@ public class ProcessSimulator
 
   public static void
          main(String[] args) throws IOException,
-                             CloneNotSupportedException
+                             CloneNotSupportedException,
+                             InterruptedException
   {
-    SelfExcitingProcessFactory.Type type = Type.ConstrainedApproximatePowerlaw; // Type.ExtendedApproximatePowerlaw;
-    int cpuMultiplier = 1;
-    if (type == Type.ConstrainedApproximatePowerlaw)
-    {
-      cpuMultiplier = 2;
-    }
 
-    String symbol = "SPY";
-
-    ExponentialSelfExcitingProcess process = (ExponentialSelfExcitingProcess) SelfExcitingProcessFactory.spawnNewProcess(type, 1);
-    process.loadParameters(new File(args[0]));
-    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
 
     double t = 0;
-    int n = 1000;
+//    if (true)
+//    {
+//      throw new UnsupportedOperationException("under construction");
+//    }
+    int n = 17000;
+    Vector N = new Vector(n);
+    Vector U = new Vector(n);
     Vector T = new Vector(n);
-    Vector Λ = new Vector(n);
-    for (int i = 0; i < n; i++)
+    Vector dT = new Vector(n);
+    int i = 0;
+    for (; i < n; i++)
     {
-      double h = expDist.sample();
-      double dt = process.invH(h);
-      Λ.set(i, h);
+      double u = random();
+      double dt = process.invF(u);
+      N.set(i, i);
+      U.set(i, u);
       T.set(i, t += dt);
+      dT.set(i, dt);
     }
-    out.println( "Λ=" + Λ );
-    out.println( "T=" + T );
-    
-    Plotter.plot(T, Λ);
+    N = N.slice(0, i);
+    U = U.slice(0, i);
+    T = T.slice(0, i);
+    dT = dT.slice(0, i);
+    out.println("generated point set spans " + DateUtils.convertTimeUnits(T.fmax(), TimeUnit.MILLISECONDS, TimeUnit.HOURS) + " hours");
+    out.println("U=" + U);
+    out.println("dt=" + dT);
+    out.println("T=" + T);
+
+    out.println( "mean(dT)=" + dT.mean() );
+    new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
+
+    // while(true)
+    // {
+    // Thread.sleep(1000);
+    // }
   }
-
-
-
-
 
   public static void
          storeParameterEstimationResults(File testFile,

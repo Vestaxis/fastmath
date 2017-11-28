@@ -255,6 +255,16 @@ public class Functions
   }
 
   public static DoubleStream
+         grid(double left,
+              double right,
+              int n)
+  {
+    double dt = (right - left) / n;
+
+    return rangeClosed(0, n).mapToDouble(t -> left + (t * dt));
+  }
+
+  public static DoubleStream
          seq(IntToDoubleFunction elements,
              int lowerIndex,
              int upperIndex)
@@ -297,9 +307,12 @@ public class Functions
                  int lowerIndex,
                  int upperIndex)
   {
-    return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).reduce(1,
-                                                                            (a,
-                                                                             b) -> a * b);
+    double Π = 1;
+    for (int i = lowerIndex; i <= upperIndex; i++)
+    {
+      Π = Π * elements.applyAsDouble(i);
+    }
+    return Π;
   }
 
   public static double

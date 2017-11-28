@@ -4,6 +4,7 @@ import static fastmath.Functions.product;
 import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
+import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
 import javax.swing.JProgressBar;
@@ -57,6 +59,9 @@ import util.AutoArrayList;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
+  private static final int MAX_ITERS = 1000;
+
+  final public static double tolerance = 1E-16;
 
   public String
          getαβString()
@@ -90,84 +95,124 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return getβVector().fmax() * ρ;
   }
 
+  /**
+   *
+   * @param y
+   *          exponentially distributed random variable
+   *
+   */
   public double
-         Hphase(double H,
+         Hphase(double y,
                 double t)
   {
-    return sum(k -> exp(H - γ(k).fpValue() * (t * β(k) - 1)), 0, order() - 1);
+    return sum(k -> exp(y - γ(k) * (t * β(k) - 1)), 0, order() - 1);
   }
 
   public double
-         Fphase(double U,
+         HphaseTimeDifferential(double y,
+                                double t)
+  {
+    return sum(k -> -β(k) * γ(k) * exp(y - t * β(k)), 0, order() - 1);
+  }
+
+  public double
+         Fphase(double u,
                 double t)
   {
-    return sum(k -> γ(k).fpValue() * (exp(-β(k) * t) + U - 1), 0, order() - 1);
-  }
-
-
-  public double
-         FphaseDtUnscaled(double H,
-                          double t)
-  {
-    return sum(k -> -β(k) * exp(H) * (t * β(k)), 0, order() - 1);
-  }
-  
-  public double
-         FphaseUnscaled(double u,
-                        double t)
-  {
-    return sum(k -> (exp(-β(k) * t) + u - 1), 0, order() - 1);
+    return sum(k -> γ(k) * (exp(-β(k) * t) + u - 1), 0, order() - 1);
   }
 
   public double
-         HphaseUnscaled(double H,
-                        double t)
+         FphaseTimeDifferential(double u,
+                                double t)
   {
-    return sum(k -> exp(H - (t * β(k) - 1)), 0, order() - 1);
+    return sum(k -> -γ(k) * β(k) * exp(-t * β(k)), 0, order() - 1);
   }
 
+  /*
+   * @param u unit uniformly distributed random variable
+   * 
+   * @see this{@link #Fphase(double, double)} and this{@link
+   * #FphaseTimeDifferential(double, double)}
+   * 
+   * @return {t:Fphase(y,t)=0}
+   */
   public double
-         HphaseDtUnscaled(double H,
-                          double t)
+         invF(double u)
   {
-    return sum(k -> -β(k) * exp(H - γ(k).fpValue()) * (t * β(k)), 0, order() - 1);
+    double t = 0;
+    double prevdt = 0;
+    double dt = 0;
+    for (int i = 0; i < MAX_ITERS; i++)
+    {
+      double phase = Fphase(u, t);
+      double phasedt = FphaseTimeDifferential(u, t);
+      prevdt = dt;
+      dt = phase / phasedt;
+      if (!Double.isFinite(dt))
+      {
+        return Double.POSITIVE_INFINITY;
+      }
+      double newt = t - dt;
+      double relativeDifference = abs(abs(dt) - abs(prevdt));
+      if (trace)
+      {
+        out.format("invF[%d] u=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, u, t, dt, newt, relativeDifference);
+      }
+      t = newt;
+      if (relativeDifference < tolerance)
+      {
+        if (trace)
+        {
+          out.println("Converged in " + i + " iterations");
+        }
+        break;
+      }
+    }
+    return t;
   }
-
 
   /**
-   * @return t=RootOf(sum((exp(y-z*β[k])-1)*(∏(piecewise(j = k, α[j], β[j]), j = 1
-   *         .. P)), k = 1 .. P), z)
+   * @param y
+   *          unit exponentially distributed random variable
+   * 
+   * @see this{@link #Hphase(double, double)} and
+   *      this{@link #HphaseTimeDifferential(double, double)}
+   * 
+   * @return {t:Hphase(y,t)=0}
    */
   @Override
   public double
-         invH(double H)
+         invH(double y)
   {
-
-    // Vector α = getαVector();
-    // Vector β = getβVector();
-    // IntFunction<Real> bp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
-    // 0, order());
-    // Real[] sbp = seq(bp, 0, order() - 1).toArray(len -> new Real[len]);
-
-    // IntFunction<Real> abp = k -> product((IntFunction<Real>) j -> new Real(β(j)),
-    // 0, k);
-    return 0;
-    // //double t = 0;
-    // double prevt = Double.NEGATIVE_INFINITY;
-    // double dt = t - prevt;
-    // int iters = 0;
-    // while ((dt = (t - prevt)) >= 1E-14 && iters < 10)
-    // {
-    //
-    // prevt = t;
-    // double ft = Hphase(H, t);
-    // double dft = HphaseDt(H, t);
-    // dt = ft / dft;
-    // out.format("dt=%f H=%f t=%f ft=%f dft=%f\n", dt, H, t, ft, dft);
-    // t = t - dt;
-    // }
-    //
-    // return t;
+    if (true)
+    {
+      throw new UnsupportedOperationException("TODO: investigate numerical problems with this method");
+    }
+    double t = 0;
+    double prevdt = 0;
+    double dt = 0;
+    for (int i = 0; i < MAX_ITERS; i++)
+    {
+      double phase = Hphase(y, t);
+      double phasedt = HphaseTimeDifferential(y, t);
+      prevdt = dt;
+      dt = phase / phasedt;
+      if (!Double.isFinite(dt))
+      {
+        return Double.POSITIVE_INFINITY;
+      }
+      double newt = t - dt;
+      double relativeDifference = abs(abs(dt) - abs(prevdt));
+      out.format("invH[%d] y=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, y, t, dt, newt, relativeDifference);
+      t = newt;
+      if (relativeDifference < tolerance)
+      {
+        out.println("Converged in " + i + " iterations");
+        break;
+      }
+    }
+    return t;
   }
 
   public Vector
@@ -188,32 +233,35 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param k
    * @return
    */
-  public Real
+  public double
          γ(int k)
   {
-    return γs.getOrCreate(k);
+    return γsfp.getOrCreate(k);
   }
 
   public Real
          γproduct(int k)
   {
     IntFunction<Real> a = j -> new Real(j == k ? α(j) : β(j));
-    if (trace)
-    {
-      for (int i = 0; i < k; i++)
-      {
-        out.format("a=%s\n", a.apply(i).fpValue());
-      }
-    }
+
     Real product = product(a, 0, order() - 1);
-    if (trace)
-    {
-      out.format("k=%d product=%s\n", k, product);
-    }
+
+    return product;
+  };
+
+  public double
+         γproductfp(int k)
+  {
+    IntToDoubleFunction a = j -> j == k ? α(j) : β(j);
+
+    Double product = product(a, 0, order() - 1);
+
     return product;
   };
 
   private AutoArrayList<Real> γs = new AutoArrayList<>(order(), this::γproduct);
+
+  private AutoArrayList<Double> γsfp = new AutoArrayList<>(order(), this::γproductfp);
 
   /**
    * The mean lifetime can be looked at as a "scaling time", because the
@@ -223,10 +271,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @param k
    * @return
    */
-  public Real
+  public double
          getScalingTime(int k)
   {
-    return Real.ONE.div(γ(k));
+    return 1 / (γ(k));
   }
 
   public double
@@ -896,7 +944,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return log(2) / β(i) / Z
    */
   public double
-         getHalfLife(int i)
+         getHalfDuration(int i)
   {
     return log(2) / (β(i) / Z());
   }

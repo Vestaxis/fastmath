@@ -444,13 +444,12 @@ public class ProcessModeller
     {
       double amplitude = process.α(i) / process.Z();
       double decayRate = process.β(i) / process.Z();
-      Real γ = process.γ(i);
-      double halfLife = process.getHalfLife(i);
+      double γ = process.γ(i);
+      double halfDuration = process.getHalfDuration(i);
       coeffecientModel.setValueAt(i, i, 0);
       coeffecientModel.setValueAt(amplitude, i, 1);
       coeffecientModel.setValueAt(decayRate, i, 2);
-      coeffecientModel.setValueAt(γ.toString(), i, 3);
-      coeffecientModel.setValueAt(halfLife, i, 4);
+      coeffecientModel.setValueAt(halfDuration, i, 3);
     }
     resizeColumns(coeffecientTable);
     coeffecientTable.repaint();
@@ -463,7 +462,7 @@ public class ProcessModeller
   }
 
   String[] tableColumnNames = new String[]
-  { "#", "α/Z", "β/Z", "γ", "half-life" };
+  { "#", "α/Z", "β/Z", "1/2-duration" };
 
   private JScrollPane tableScroller;
   private JPanel topLeftPanel;
