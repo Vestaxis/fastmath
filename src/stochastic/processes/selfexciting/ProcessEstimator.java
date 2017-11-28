@@ -127,10 +127,7 @@ public class ProcessEstimator
 
     range(0, n).forEachOrdered(i -> {
       Vector slice = times.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
-      AbstractSelfExcitingProcess process = SelfExcitingProcessFactory.spawnNewProcess(type, 1);
-      ProcessEstimator estimator = new ProcessEstimator(process);
-      estimator.setTrajectoryCount(trajectoryCount);
-      estimator.estimate(slice);
+      AbstractSelfExcitingProcess process = estimateSelfExcitingProcess(type, trajectoryCount, slice);
       processes.add(process);
 
       File testFile = new File("test" + i + ".mat");
@@ -141,6 +138,18 @@ public class ProcessEstimator
     });
 
     return processes;
+  }
+
+  public static AbstractSelfExcitingProcess
+         estimateSelfExcitingProcess(SelfExcitingProcessFactory.Type type,
+                                     int trajectoryCount,
+                                     Vector slice)
+  {
+    AbstractSelfExcitingProcess process = SelfExcitingProcessFactory.spawnNewProcess(type, 1);
+    ProcessEstimator estimator = new ProcessEstimator(process);
+    estimator.setTrajectoryCount(trajectoryCount);
+    estimator.estimate(slice);
+    return process;
   }
 
   public static void

@@ -59,6 +59,7 @@ public class ProcessSimulator
     Vector T = new Vector(n);
     Vector dT = new Vector(n);
     int i = 0;
+      out.println( "generating " + n + " samples of " + process );
     for (; i < n; i++)
     {
       double u = random();
@@ -73,13 +74,22 @@ public class ProcessSimulator
     T = T.slice(0, i);
     dT = dT.slice(0, i);
     out.println("generated point set spans " + DateUtils.convertTimeUnits(T.fmax(), TimeUnit.MILLISECONDS, TimeUnit.HOURS) + " hours");
-    out.println("U=" + U);
-    out.println("dt=" + dT);
-    out.println("T=" + T);
 
     out.println( "mean(dT)=" + dT.mean() );
+    out.println( "process mean=" + process.mean() );
+
+    out.println( "variance(dT)=" + dT.variance() );
+    out.println( "process variance=" + process.variance() );
+
+    
+    Vector ac = dT.autocor(50);
+    
+    new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
     new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
 
+    AbstractSelfExcitingProcess estimatedProcess = ProcessEstimator.estimateSelfExcitingProcess(Type.ExtendedApproximatePowerlaw, Runtime.getRuntime().availableProcessors(), T);
+    out.println( "estimated " + process );
+    
     // while(true)
     // {
     // Thread.sleep(1000);
