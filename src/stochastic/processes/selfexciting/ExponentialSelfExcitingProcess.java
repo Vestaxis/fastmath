@@ -129,6 +129,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> -γ(k) * β(k) * exp(-t * β(k)), 0, order() - 1);
   }
 
+  public double
+         Λphase(double t,
+                double y,
+                int tk,
+                double A[][])
+  {
+    Vector durations = dT();
+
+    throw new UnsupportedOperationException("TODO");
+  }
+
   /*
    * @param u unit uniformly distributed random variable
    * 
@@ -423,15 +434,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
             evolveΛ(double prevdt,
                     double dt,
                     double t,
-                    double[] A)
+                    int tk,
+                    double[][] A)
   {
     double Λ = dt * λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
-      double a = α(j);
-      double b = β(j);
-      A[j] = 1 + exp(-b * prevdt) * A[j];
-      Λ += (a / b) * (1 - exp(-b * dt)) * A[j];
+      double alpha = α(j);
+      double beta = β(j);
+      double a = tk == 0 ? 0 : A[tk - 1][j];
+      A[tk][j] = 1 + exp(-beta * prevdt) * a;
+      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A[tk][j];
     }
     return Λ / Z();
   }
@@ -565,15 +578,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     if (recursive)
     {
-      double A[] = new double[order()];
+      double A[][] = new double[n][order()];
       double S[] = new double[order()];
-      for (int i = 1; i < n; i++)
+      for (int tk = 1; tk < n; tk++)
       {
-        double t = T.get(i);
-        double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
-        double dt = t - T.get(i - 1);
-        double λ = evolveλ(dt, T.get(i), S);
-        double Λ = evolveΛ(prevdt, dt, T.get(i), A);
+        double t = T.get(tk);
+        double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
+        double dt = t - T.get(tk - 1);
+        double λ = evolveλ(dt, t, S);
+        double Λ = evolveΛ(prevdt, dt, t, tk, A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -707,17 +720,32 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   protected Vector
             recursiveΛ(final int n)
   {
-    Vector durations = T.diff();
+    Vector durations = dT();
 
-    double A[] = new double[order()];
+    double A[][] = new double[n][order()];
     Vector compensator = new Vector(n);
-    for (int i = 0; i < n; i++)
+    for (int tk = 0; tk < n; tk++)
     {
-      double dtprev = i == 0 ? 0 : durations.get(i - 1);
-      double dt = durations.get(i);
-      compensator.set(i, evolveΛ(dtprev, dt, T.get(i), A));
+      double dtprev = tk == 0 ? 0 : durations.get(tk - 1);
+      double dt = durations.get(tk);
+      compensator.set(tk, evolveΛ(dtprev, dt, T.get(tk), tk, A));
     }
     return compensator;
+  }
+
+  Vector dT;
+
+  private Vector
+          dT()
+  {
+    if (dT != null)
+    {
+      return dT;
+    }
+    else
+    {
+      return dT = T.diff();
+    }
   }
 
   public void

@@ -232,7 +232,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public String
          getParamString()
   {
-    return "{" + asList(getParameterFields()).stream().map(param -> param.getName() + "=" + Double.toString(getFieldValue(param))).collect(joining(",")) + "}";
+    return "{" + asList(getParameterFields()).stream().map(param -> param.getName() + "=" + Double.toString(getFieldValue(param))).collect(joining(",")) + ",Z=" + Z() + "}";
   }
 
   public double

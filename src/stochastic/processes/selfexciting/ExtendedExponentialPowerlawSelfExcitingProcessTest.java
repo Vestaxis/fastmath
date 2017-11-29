@@ -103,7 +103,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   // }
   //
   public void
-         testν()
+         testfandF()
   {
 
     final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();

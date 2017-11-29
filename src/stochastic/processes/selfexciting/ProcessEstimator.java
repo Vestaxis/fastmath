@@ -222,7 +222,7 @@ public class ProcessEstimator
     }
 
     process.T = data;
-    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), j -> out.println("j=" + j));
+    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), null );
     printResults(optimizer);
 
     return process;
