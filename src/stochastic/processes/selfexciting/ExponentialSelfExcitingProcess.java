@@ -136,8 +136,39 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                 double A[][])
   {
     Vector durations = dT();
+    return sum(j -> γ(j) * A[tk][j] * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
 
-    throw new UnsupportedOperationException("TODO");
+  }
+
+  /**
+   * 
+   * @param y unit exponentially distributed random variable
+   * 
+   * @return
+   */
+  public double
+         Λphase( double dtnext, double y )
+  {
+    double S[] = new double[order()];
+    int n = T.size();
+    double A[][] = new double[n][order()];
+
+    int tk = 1;
+
+    for (; tk < n; tk++)
+    {
+      double t = T.get(tk);
+      double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
+      double dt = t - T.get(tk - 1);
+      for (int j = 0; j < order(); j++)
+      {
+        double beta = β(j);
+        double a = tk == 0 ? 0 : A[tk - 1][j];
+        A[tk][j] = 1 + exp(-beta * prevdt) * a;
+      }
+    }
+    
+    return Λphase( dtnext, y,tk, A );
   }
 
   /*
