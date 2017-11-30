@@ -13,6 +13,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
@@ -135,40 +136,43 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                 int tk,
                 double A[][])
   {
-    Vector durations = dT();
     return sum(j -> γ(j) * A[tk][j] * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
 
   }
 
   /**
    * 
-   * @param y unit exponentially distributed random variable
+   * @param y
+   *          unit exponentially distributed random variable
    * 
    * @return
    */
   public double
-         Λphase( double dtnext, double y )
+         Λphase(double dtnext,
+                double y)
   {
     double S[] = new double[order()];
     int n = T.size();
-    double A[][] = new double[n][order()];
+    double A[][] = new double[n ][order()];
 
-    int tk = 1;
+    int tk = 0;
 
     for (; tk < n; tk++)
     {
       double t = T.get(tk);
-      double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
-      double dt = t - T.get(tk - 1);
+      double dt = tk == 0 ? 0 : (T.get(tk) - T.get(tk - 1));
+      //out.println("tk=" + tk + " dt=" + dt);
       for (int j = 0; j < order(); j++)
       {
         double beta = β(j);
         double a = tk == 0 ? 0 : A[tk - 1][j];
-        A[tk][j] = 1 + exp(-beta * prevdt) * a;
+        A[tk][j] = 1 + exp(-beta * dt) * a;
       }
     }
+    tk--;
     
-    return Λphase( dtnext, y,tk, A );
+    //out.println("A=" + Arrays.stream(A).map(Arrays::toString).collect(joining(System.lineSeparator())));
+    return Λphase(dtnext, y, tk, A);
   }
 
   /*

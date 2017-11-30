@@ -464,6 +464,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public Vector
          diff()
   {
+    if ( size == 0 )
+    {
+      return new Vector();
+    }
     Vector fd = copy().slice(1, size());
     fd.subtract(slice(0, size() - 1));
     return fd;

@@ -15,9 +15,12 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
+import org.knowm.xchart.SwingWrapper;
 
+import fastmath.Vector;
 import jdk.net.NetworkPermission;
 import junit.framework.TestCase;
+import util.Plotter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
@@ -114,6 +117,21 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
   }
 
+  public void
+         testΛPhase() throws InterruptedException
+  {
+    ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+    process.T = new Vector(2);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+
+    double p = process.Λphase(0.6, 1.2);
+    out.println("Λphase=" + p);
+    p = process.Λphase(-14.2, 1.2);
+    out.println("Λphase=" + p);
+
+    
+  }
 
   public static ExtendedApproximatePowerlawSelfExcitingProcess
          constructProcess()
