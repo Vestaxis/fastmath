@@ -124,16 +124,25 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = new Vector(2);
     process.T.set(0, 0);
     process.T.set(1, 19);
+    process.refreshCompensator();
+    double y = 0;
+    double nextdt = process.invΛ( y);
 
-    double p = process.Λphase(0.6, 1.2);
-    out.println("Λphase=" + p);
-    p = process.Λphase(-14.2, 1.2);
-    out.println("Λphase=" + p);
-
+    Vector compensated = process.Λ();
+    out.println( "compensated=" + compensated );
+    
+    out.println("Λphase(y=" + y + ")=" + nextdt);
+    process.dT = process.dT.append( nextdt );
+    process.T = process.T.append(process.T.fmax() + nextdt );
+    
+    out.println( "T=" + process.T );
+    compensated = process.Λ();
+    out.println( "compensated=" + compensated );
     
   }
 
   public static ExtendedApproximatePowerlawSelfExcitingProcess
+
          constructProcess()
   {
     final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();

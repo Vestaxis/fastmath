@@ -133,11 +133,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          Λphase(double t,
                 double y,
-                int tk,
                 double A[][])
   {
+    int tk = A.length - 1;
     return sum(j -> γ(j) * A[tk][j] * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
+  }
 
+  public double
+         ΛphaseTimeDifferential(double t)
+  {
+    int tk = A.length - 1;
+    return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
   }
 
   /**
@@ -147,13 +153,73 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @return
    */
+  // public double
+  // Λphase(double dtnext,
+  // double y)
+  // {
+  // double S[] = new double[order()];
+  // int n = T.size();
+  // int tk = refreshCompensator(n);
+  // out.println("tk=" + tk + " n=" + n);
+  // // out.println("A=" +
+  // //
+  // Arrays.stream(A).map(Arrays::toString).collect(joining(System.lineSeparator())));
+  // return Λphase(dtnext, y, tk, A);
+  // }
+  //
+
+  /**
+   * 
+   * @param y
+   *          exponentially distributed random variable
+   * 
+   * @return inverse of the compensator for a given value of y
+   */
   public double
-         Λphase(double dtnext,
-                double y)
+         invΛ(double y)
   {
-    double S[] = new double[order()];
+    double dt = 0;
+
+    for (int i = 0; i < 1000; i++)
+    {
+      double p = 0;
+      if (trace)
+      {
+        out.println("******" + i + "*******");
+        out.println("dt=" + dt);
+      }
+      p = Λphase(dt, y, A);
+      if (trace)
+      {
+        out.println("Λphase=" + p);
+      }
+
+      double pd = ΛphaseTimeDifferential(dt);
+      if (trace)
+      {
+        out.println("ΛphaseTimeDiff=" + pd);
+      }
+
+      double ratio = p / pd;
+      if (trace)
+      {
+        out.println("Λphase/ΛPhaseTimeDiff=" + ratio);
+      }
+      if (abs(ratio) < 1E-15)
+      {
+        break;
+      }
+      dt = dt - ratio;
+
+    }
+    return dt;
+  }
+
+  public int
+         refreshCompensator()
+  {
     int n = T.size();
-    double A[][] = new double[n ][order()];
+    A = new double[n][order()];
 
     int tk = 0;
 
@@ -161,7 +227,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     {
       double t = T.get(tk);
       double dt = tk == 0 ? 0 : (T.get(tk) - T.get(tk - 1));
-      //out.println("tk=" + tk + " dt=" + dt);
+      // out.println("tk=" + tk + " dt=" + dt);
       for (int j = 0; j < order(); j++)
       {
         double beta = β(j);
@@ -170,9 +236,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       }
     }
     tk--;
-    
-    //out.println("A=" + Arrays.stream(A).map(Arrays::toString).collect(joining(System.lineSeparator())));
-    return Λphase(dtnext, y, tk, A);
+    return tk;
   }
 
   /*
@@ -971,6 +1035,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public static String[] statisticNames =
   { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
+
+  private double A[][];
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
