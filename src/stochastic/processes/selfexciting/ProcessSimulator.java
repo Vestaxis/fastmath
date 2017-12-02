@@ -47,53 +47,68 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
+    process.T = new Vector(1);
+    process.dT = new Vector(0);
+    process.trace = true;
 
-    double t = 0;
-//    if (true)
-//    {
-//      throw new UnsupportedOperationException("under construction");
-//    }
-    int n = 17000;
+    process.T.set(0, 0);
+    process.refreshCompensator();
+  
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    
+    int n = 10;
     Vector N = new Vector(n);
-    Vector U = new Vector(n);
+    Vector Λ = new Vector(n);
     Vector T = new Vector(n);
     Vector dT = new Vector(n);
     int i = 0;
-      out.println( "generating " + n + " samples of " + process );
+    out.println("generating " + n + " samples of " + process);
     for (; i < n; i++)
     {
-      double u = random();
-      double dt = process.invF(u);
+      double ε = expDist.sample();
+      out.println("ε=" + ε);
+      double dt = process.invΛ(ε);
+
+      out.println("invΛ(ε=" + ε + ")=" + dt);
+      process.dT = process.dT.append(dt);
+      process.T = process.T.append(process.T.fmax() + dt);
+
+      out.println("T=" + process.T);
+      out.println("dT=" + process.dT);
+      Vector compensated = process.Λ();
+      out.println("compensated=" + compensated);
+      double t = 0;
       N.set(i, i);
-      U.set(i, u);
+      Λ.set(i, ε);
       T.set(i, t += dt);
       dT.set(i, dt);
     }
     N = N.slice(0, i);
-    U = U.slice(0, i);
+    Λ = Λ.slice(0, i);
     T = T.slice(0, i);
     dT = dT.slice(0, i);
     out.println("generated point set spans " + DateUtils.convertTimeUnits(T.fmax(), TimeUnit.MILLISECONDS, TimeUnit.HOURS) + " hours");
 
-    out.println( "mean(dT)=" + dT.mean() );
-    out.println( "process mean=" + process.mean() );
+    out.println("mean(dT)=" + dT.mean());
+    out.println("process mean=" + process.mean());
 
-    out.println( "variance(dT)=" + dT.variance() );
-    out.println( "process variance=" + process.variance() );
+    out.println("variance(dT)=" + dT.variance());
+    out.println("process variance=" + process.variance());
 
-    
     Vector ac = dT.autocor(50);
-    out.println( "ac=" + ac );
-    new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
-    new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
-
-    AbstractSelfExcitingProcess estimatedProcess = ProcessEstimator.estimateSelfExcitingProcess(Type.ExtendedApproximatePowerlaw, Runtime.getRuntime().availableProcessors(), T);
-    out.println( "estimated " + process );
-    
-    // while(true)
-    // {
-    // Thread.sleep(1000);
-    // }
+    out.println("ac=" + ac);
+//    new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
+//    new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
+//
+//    AbstractSelfExcitingProcess estimatedProcess = ProcessEstimator.estimateSelfExcitingProcess(Type.ExtendedApproximatePowerlaw,
+//                                                                                                Runtime.getRuntime().availableProcessors(),
+//                                                                                                T);
+//    out.println("estimated " + process);
+//
+//    // while(true)
+//    // {
+//    // Thread.sleep(1000);
+//    // }
   }
 
   public static void

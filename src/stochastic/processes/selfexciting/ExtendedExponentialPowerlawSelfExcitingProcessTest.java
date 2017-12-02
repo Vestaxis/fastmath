@@ -14,6 +14,7 @@ import java.io.IOException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
 import org.knowm.xchart.SwingWrapper;
 
@@ -125,7 +126,10 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T.set(0, 0);
     process.T.set(1, 19);
     process.refreshCompensator();
-    double y = 0;
+    process.trace = true;
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+    double y = expDist.sample();
+    out.println( "y=" + y );
     double nextdt = process.invΛ( y);
 
     Vector compensated = process.Λ();
