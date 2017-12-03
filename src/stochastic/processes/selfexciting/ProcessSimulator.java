@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.math3.optim.PointValuePair;
+import org.fusesource.jansi.Ansi;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
@@ -40,79 +41,91 @@ public class ProcessSimulator
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
     process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
-    //process.T = process.T.subtract(process.T.get(0));
+    final double t0 = process.T.get(0);
+    for (int i = 0; i < process.T.size(); i++)
+    {
+      process.T.set(i, (int) (process.T.get(i) - t0));
+    }
+    // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    process.estimateParameters(10);
-    out.println( "estimated " + process + " from " + process.T.size() + " points" );
-    
+    process.estimateParameters(25);
+    out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
+
     process.refreshCompensator();
 
     double Λmean = process.Λ().mean();
     double Λvar = process.Λ().variance();
-    out.println( "Λmean=" + Λmean + " Λvar=" + Λvar );
-    
-    
-//    ExponentialDistribution expDist = new ExponentialDistribution(1);
-//
-//    int n = 1;
-//    Vector N = new Vector(n);
-//    Vector Λ = new Vector(n);
-//    Vector T = new Vector(n);
-//    Vector dT = new Vector(n);
-//    int i = 0;
-//    out.println("generating " + n + " samples of " + process);
-//    for (; i < n; i++)
-//    {
-//      double ε = expDist.sample();
-//      out.println("ε=" + ε);
-//      double dt = process.invΛ(ε);
-//
-//      out.println("invΛ(ε=" + ε + ")=" + dt);
-//      process.dT = process.dT().append(dt);
-//      process.T = process.T.append(process.T.fmax() + dt);
-//      process.refreshCompensator();
-//
-//      out.println("T=" + process.T);
-//      out.println("dT=" + process.dT);
-//      Vector compensated = process.Λ();
-//      out.println("compensated=" + compensated);
-//      double t = 0;
-//      N.set(i, i);
-//      Λ.set(i, ε);
-//      T.set(i, t += dt);
-//      dT.set(i, dt);
-//    }
-//    N = N.slice(0, i);
-//    Λ = Λ.slice(0, i);
-//    T = T.slice(0, i);
-//    dT = dT.slice(0, i);
-//
-//    process.estimateParameters(Runtime.getRuntime().availableProcessors());
-//
-//    out.println("generated point set spans " + DateUtils.convertTimeUnits(T.fmax(), TimeUnit.MILLISECONDS, TimeUnit.HOURS) + " hours");
-//
-//    out.println("mean(dT)=" + dT.mean());
-//    out.println("process mean=" + process.mean());
-//
-//    out.println("variance(dT)=" + dT.variance());
-//    out.println("process variance=" + process.variance());
-//
-//    Vector ac = dT.autocor(50);
-//    out.println("ac=" + ac);
-//    // new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
-//    // new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
-//    //
-//    // AbstractSelfExcitingProcess estimatedProcess =
-//    // ProcessEstimator.estimateSelfExcitingProcess(Type.ExtendedApproximatePowerlaw,
-//    // Runtime.getRuntime().availableProcessors(),
-//    // T);
-//    // out.println("estimated " + process);
-//    //
-//    // // while(true)
-//    // // {
-//    // // Thread.sleep(1000);
-//    // // }
+    out.println("Λmean=" + Ansi.ansi().fgBrightRed() + Λmean + Ansi.ansi().fgDefault() + " Λvar=" + Ansi.ansi().fgBrightRed() + Λvar + Ansi.ansi().fgDefault());
+
+    int n = 10;
+    out.println("in-sample forecasting starting at n=" + n);
+    process.T = process.T.slice(0, n);
+    out.println(Ansi.ansi().fgBrightGreen() + process.T.toString() + Ansi.ansi().fgDefault());
+
+    // ExponentialDistribution expDist = new ExponentialDistribution(1);
+    //
+    // int n = 1;
+    // Vector N = new Vector(n);
+    // Vector Λ = new Vector(n);
+    // Vector T = new Vector(n);
+    // Vector dT = new Vector(n);
+    // int i = 0;
+    // out.println("generating " + n + " samples of " + process);
+    // for (; i < n; i++)
+    // {
+    // double ε = expDist.sample();
+    // out.println("ε=" + ε);
+    // double dt = process.invΛ(ε);
+    //
+    // out.println("invΛ(ε=" + ε + ")=" + dt);
+    // process.dT = process.dT().append(dt);
+    // process.T = process.T.append(process.T.fmax() + dt);
+    // process.refreshCompensator();
+    //
+    // out.println("T=" + process.T);
+    // out.println("dT=" + process.dT);
+    // Vector compensated = process.Λ();
+    // out.println("compensated=" + compensated);
+    // double t = 0;
+    // N.set(i, i);
+    // Λ.set(i, ε);
+    // T.set(i, t += dt);
+    // dT.set(i, dt);
+    // }
+    // N = N.slice(0, i);
+    // Λ = Λ.slice(0, i);
+    // T = T.slice(0, i);
+    // dT = dT.slice(0, i);
+    //
+    // process.estimateParameters(Runtime.getRuntime().availableProcessors());
+    //
+    // out.println("generated point set spans " +
+    // DateUtils.convertTimeUnits(T.fmax(), TimeUnit.MILLISECONDS, TimeUnit.HOURS) +
+    // " hours");
+    //
+    // out.println("mean(dT)=" + dT.mean());
+    // out.println("process mean=" + process.mean());
+    //
+    // out.println("variance(dT)=" + dT.variance());
+    // out.println("process variance=" + process.variance());
+    //
+    // Vector ac = dT.autocor(50);
+    // out.println("ac=" + ac);
+    // // new SwingWrapper<>(Plotter.plot(ac, "autoocorrelation")).displayChart();
+    // // new SwingWrapper<>(Plotter.plot(T, N)).displayChart();
+    // //
+    // // AbstractSelfExcitingProcess estimatedProcess =
+    // //
+    // ProcessEstimator.estimateSelfExcitingProcess(Type.ExtendedApproximatePowerlaw,
+    // // Runtime.getRuntime().availableProcessors(),
+    // // T);
+    // // out.println("estimated " + process);
+    // //
+    // // // while(true)
+    // // // {
+    // // // Thread.sleep(1000);
+    // // // }
   }
 
   public static void
