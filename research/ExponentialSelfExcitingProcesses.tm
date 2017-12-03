@@ -74,8 +74,7 @@
 
   be the Heaviside step function and <math|<around*|{|T<rsub|i>:T<rsub|i>\<less\>T<rsub|i+1>|}>\<in\>\<bbb-R\>>
   be the time of occurance of the <math|i>-th event of a process. The
-  counting-function <math|N<rsub|t>> of a self-exciting process is a
-  uni-variate (linear) self-exciting counting process
+  counting-function <math|N<rsub|t>> of a simple point process is\ 
 
   <\equation>
     N<rsub|t>=<big|sum><rsub|i:T<rsub|i>\<less\>t>\<theta\><around*|(|t-T<rsub|i>|)>
@@ -86,20 +85,20 @@
   \;
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>\<nu\><around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>\<nu\><around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
   </equation>
 
   where <math|\<lambda\><rsub|0><around*|(|t|)>> is a deterministic function
   which will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
   <cite|hawkes-finance><cite|hawkes1971spectra><cite|shek2010modeling><cite|chavez2012high>
-  and <math|\<nu\>:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a
-  kernel function which expresses the positive influence of past events
+  and <math|f:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a kernel
+  function which expresses the positive influence of past events
   <math|T<rsub|i>> on the current value of the intensity process. The
   self-exciting process of order <math|P> is a defined by the
   sum-of-exponentials kernel
 
   <\equation>
-    \<nu\><around*|(|t|)>=<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    f<around*|(|t|)>=<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j> t><label|kernel>
   </equation>
 
@@ -110,7 +109,7 @@
     e<rsup|-\<beta\><rsub|j><around*|(|t-s|)>>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|t>>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|t>>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
-    >B<rsub|j><around*|(|N<rsub|t>|)>>>>>>
+    >B<rsub|j><around*|(|<wide|N|\<breve\>><rsub|t>|)>>>>>>
   </equation>
 
   where <math|B<rsub|j><around*|(|i|)>> is given recursively by
@@ -145,7 +144,7 @@
     <tabular|<tformat|<table|<row|<cell|\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>><around*|(|\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
     >B<rsub|j><around*|(|N<rsub|t>|)>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
-    <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<nu\><around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>\<Delta\>t<rsub|i>>|)>A<rsub|j><around*|(|i-1|)>>>>>><label|comp>
+    <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<nu\><around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>A<rsub|j><around*|(|i-1|)>>>>>><label|comp>
   </equation>
 
   where <math|\<Lambda\><rsub|0><around*|(|i|)>=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s=\<lambda\><rsub|0>\<Delta\>t<rsub|i>>

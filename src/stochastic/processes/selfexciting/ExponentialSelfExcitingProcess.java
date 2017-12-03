@@ -189,16 +189,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         out.println("dt=" + dt);
       }
       p = Λphase(dt, y, A);
-      if (trace)
-      {
-        out.println("Λphase=" + p);
-      }
 
       double pd = ΛphaseTimeDifferential(dt);
-      if (trace)
-      {
-        out.println("ΛphaseTimeDiff=" + pd);
-      }
 
       double ratio = p / pd;
       if (trace)
@@ -225,14 +217,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     for (; tk < n; tk++)
     {
-      double t = T.get(tk);
-      double dt = tk == 0 ? 0 : (T.get(tk) - T.get(tk - 1));
-      // out.println("tk=" + tk + " dt=" + dt);
+      final double t = T.get(tk);
       for (int j = 0; j < order(); j++)
       {
-        double beta = β(j);
-        double a = tk == 0 ? 0 : A[tk - 1][j];
-        A[tk][j] = 1 + exp(-beta * dt) * a;
+        A[tk][j] = tk == 0 ? 0 : 1 + exp(-β(j) * (t - T.get(tk - 1))) * A[tk - 1][j];
+      }
+      if (trace)
+      {
+        out.println("A[" + tk + "] " + Arrays.toString(A[tk]));
       }
     }
     tk--;
@@ -455,6 +447,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static final int LJUNG_BOX_ORDER = 10;
+
+  public void
+         estimateParameters(int numStarts)
+  {
+    estimateParameters(numStarts, (IntConsumer) null);
+  }
 
   public void
          estimateParameters(int numStarts,
@@ -834,8 +832,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   Vector dT;
 
-  private Vector
-          dT()
+  Vector dT()
   {
     if (dT != null)
     {
@@ -971,7 +968,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   /**
-   * n-th compensated point, expensive O(n^2) runtime version
+   * n-th compensated point, expensive non-recursive O(n^2) runtime version
    * 
    * @param i
    *          >= 1 and <= n
@@ -982,13 +979,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
             Λ(int i)
   {
     final double Ti = T.get(i);
-    return sum(k -> {
-      double Tk = T.get(k);
-      return sum(j -> {
-        double dt = Ti - Tk;
-        return (α(j) / β(j)) * (1 - (exp(-β(j) * dt)));
-      }, 0, order() - 1);
-    }, 0, i - 1) / Z();
+    return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
   public Vector
