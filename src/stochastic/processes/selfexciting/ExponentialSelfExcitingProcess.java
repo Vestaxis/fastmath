@@ -49,6 +49,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
+import fastmath.DoubleColMatrix;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
@@ -132,18 +133,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public double
          Λphase(double t,
-                double y,
-                double A[][])
+                double y)
   {
-    int tk = A.length - 1;
-    return sum(j -> γ(j) * A[tk][j] * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
+    int tk = A.getRowCount() - 1;
+    return sum(j -> γ(j) * A.get(tk, j) * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
   }
 
   public double
          ΛphaseTimeDifferential(double t)
   {
-    int tk = A.length - 1;
-    return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
+    int tk = A.getRowCount() - 1;
+    return sum(j -> γ(j) * A.get(tk, j) * β(j) * exp(t * β(j)), 0, order() - 1);
   }
 
   /**
@@ -188,7 +188,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         out.println("******" + i + "*******");
         out.println("dt=" + dt);
       }
-      p = Λphase(dt, y, A);
+      p = Λphase(dt, y);
 
       double pd = ΛphaseTimeDifferential(dt);
 
@@ -211,7 +211,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          recalculateA()
   {
     int n = T.size();
-    A = new double[n][order()];
+    A = new DoubleColMatrix(n, order()).setName("A");
 
     int tk = 0;
 
@@ -220,11 +220,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       final double t = T.get(tk);
       for (int j = 0; j < order(); j++)
       {
-        A[tk][j] = tk == 0 ? 0 : 1 + exp(-β(j) * (t - T.get(tk - 1))) * A[tk - 1][j];
+        A.set(tk, j, tk == 0 ? 0 : 1 + exp(-β(j) * (t - T.get(tk - 1))) * A.get(tk - 1, j));
       }
       if (trace)
       {
-        out.println("A[" + tk + "] " + Arrays.toString(A[tk]));
+        out.println("A[" + tk + "] " + A.row(tk));
       }
     }
     tk--;
@@ -1027,7 +1027,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public static String[] statisticNames =
   { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
-  private double A[][];
+  private DoubleColMatrix A;
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}

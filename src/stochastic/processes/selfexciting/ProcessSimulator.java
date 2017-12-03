@@ -62,7 +62,9 @@ public class ProcessSimulator
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
     out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1,process.T.size() ).toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.T.diff().toString() + Ansi.ansi().fgDefault());
     out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.Λ().cumulativeSum().toString() + Ansi.ansi().fgDefault());
     process.trace = true;
     process.recalculateA();
     
