@@ -52,7 +52,7 @@ public class ProcessSimulator
     process.estimateParameters(25);
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
 
-    process.refreshCompensator();
+    process.recalculateA();
 
     double Λmean = process.Λ().mean();
     double Λvar = process.Λ().variance();
@@ -61,8 +61,12 @@ public class ProcessSimulator
     int n = 10;
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
-    out.println(Ansi.ansi().fgBrightGreen() + process.T.toString() + Ansi.ansi().fgDefault());
-
+    out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1,process.T.size() ).toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
+    process.trace = true;
+    process.recalculateA();
+    
+    
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //
     // int n = 1;

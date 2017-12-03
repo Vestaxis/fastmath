@@ -208,7 +208,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public int
-         refreshCompensator()
+         recalculateA()
   {
     int n = T.size();
     A = new double[n][order()];
@@ -827,7 +827,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       double dt = durations.get(tk);
       compensator.set(tk, evolveΛ(dtprev, dt, T.get(tk), tk, A));
     }
-    return compensator;
+    return compensator.setName("dΛ");
   }
 
   Vector dT;
@@ -962,7 +962,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         integratedCompensator.set(i, Λ(i));
       }
-      return integratedCompensator.diff();
+      return integratedCompensator.diff().setName("dΛ");
     }
 
   }

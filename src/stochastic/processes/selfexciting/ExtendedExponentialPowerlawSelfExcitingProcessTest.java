@@ -125,7 +125,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = new Vector(2);
     process.T.set(0, 0);
     process.T.set(1, 19);
-    process.refreshCompensator();
+    process.recalculateA();
     process.trace = true;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double y = expDist.sample();
