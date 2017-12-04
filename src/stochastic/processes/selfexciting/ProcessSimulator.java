@@ -40,35 +40,39 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
-    process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
+    process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 25).round().unique();
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
     {
       process.T.set(i, (int) (process.T.get(i) - t0));
     }
     // process.T = process.T.subtract(process.T.get(0));
+    process.trace = true;
+    process.assignParameters(new double[]
+    { 0.01769781390398227, 0.0312646384777602, 4.452647566422421 });
+    out.println("assigned " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault());
+    // process.estimateParameters(50);
+    // out.println("estimated " + Ansi.ansi().fgBrightYellow() + process +
+    // Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
+
+    double ll = process.logLik();
+    out.println( "LL=" + ll );
     process.trace = false;
 
-    process.estimateParameters(25);
-    out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
-
-    process.recalculateA();
-
-    double Λmean = process.Λ().mean();
-    double Λvar = process.Λ().variance();
+    double Λmean = process.dΛ().mean();
+    double Λvar = process.dΛ().variance();
     out.println("Λmean=" + Ansi.ansi().fgBrightRed() + Λmean + Ansi.ansi().fgDefault() + " Λvar=" + Ansi.ansi().fgBrightRed() + Λvar + Ansi.ansi().fgDefault());
 
-    int n = 10;
+    int n = 20;
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
-    out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1,process.T.size() ).toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1, process.T.size()).toString() + Ansi.ansi().fgDefault());
     out.println(Ansi.ansi().fgBrightGreen() + process.T.diff().toString() + Ansi.ansi().fgDefault());
-    out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
-    out.println(Ansi.ansi().fgBrightGreen() + process.Λ().cumulativeSum().toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.λvector().toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.dΛ().toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.dΛ().cumulativeSum().setName("Λ").toString() + Ansi.ansi().fgDefault());
     process.trace = true;
-    process.recalculateA();
-    
-    
+
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //
     // int n = 1;
@@ -139,7 +143,7 @@ public class ProcessSimulator
                                          Vector data,
                                          AbstractSelfExcitingProcess process)
   {
-    Vector compensator = process.Λ().setName("comp");
+    Vector compensator = process.dΛ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
     out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath()
                 + " E[data.dt]="
@@ -204,8 +208,12 @@ public class ProcessSimulator
   {
 
     DoubleColMatrix matrix = MatFile.loadMatrix(filename, symbol);
-    Vector data = matrix.col(0).setName("data");
-
+    Vector data = matrix.col(0).setName("T");
+    for (int i = 0; i < data.size(); i++)
+    {
+      data.set(i, (int) data.get(i));
+    }
+    data = data.unique();
     return data;
   }
 

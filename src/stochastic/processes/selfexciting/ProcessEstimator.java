@@ -158,7 +158,7 @@ public class ProcessEstimator
                                          AbstractSelfExcitingProcess process,
                                          File modelFile)
   {
-    Vector compensator = process.Λ().setName("comp");
+    Vector compensator = process.dΛ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
     out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath() + " and parameters to " + modelFile);
 

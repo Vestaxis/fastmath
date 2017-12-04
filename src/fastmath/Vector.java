@@ -1625,4 +1625,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     throw new UnsupportedOperationException("TODO");
   }
 
+  public Vector
+         round()
+  {
+    for ( int i = 0; i < size; i++ )
+    {
+      set(i, (int)get(i));
+    }
+      
+    return this;
+  }
+
 }

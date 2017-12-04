@@ -57,6 +57,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import gnu.arb.Real;
+import junit.framework.TestCase;
 import util.AutoArrayList;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
@@ -135,15 +136,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Λphase(double t,
                 double y)
   {
-    int tk = A.getRowCount() - 1;
-    return sum(j -> γ(j) * A.get(tk, j) * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
+    int tk = T.size() - 1;
+    return sum(j -> γ(j) * A(tk, j) * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
   }
 
   public double
          ΛphaseTimeDifferential(double t)
   {
-    int tk = A.getRowCount() - 1;
-    return sum(j -> γ(j) * A.get(tk, j) * β(j) * exp(t * β(j)), 0, order() - 1);
+    int tk = T.size() - 1;
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(t * β(j)), 0, order() - 1);
   }
 
   /**
@@ -205,30 +206,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     }
     return dt;
-  }
-
-  public int
-         recalculateA()
-  {
-    int n = T.size();
-    A = new DoubleColMatrix(n, order()).setName("A");
-
-    int tk = 0;
-
-    for (; tk < n; tk++)
-    {
-      final double t = T.get(tk);
-      for (int j = 0; j < order(); j++)
-      {
-        A.set(tk, j, tk == 0 ? 0 : 1 + exp(-β(j) * (t - T.get(tk - 1))) * A.get(tk - 1, j));
-      }
-      if (trace)
-      {
-        out.println("A[" + tk + "] " + A.row(tk));
-      }
-    }
-    tk--;
-    return tk;
   }
 
   /*
@@ -413,7 +390,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getΛmomentMeasure()
   {
-    Vector dT = Λ();
+    Vector dT = dΛ();
     Vector moments = dT.normalizedMoments(2);
     Vector normalizedSampleMoments = (moments.copy().subtract(1)).abs();
     return normalizedSampleMoments.sum();
@@ -443,7 +420,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getLjungBoxMeasure()
   {
-    return pow(Λ().getLjungBoxStatistic(LJUNG_BOX_ORDER) - (LJUNG_BOX_ORDER - 2), 2);
+    return pow(dΛ().getLjungBoxStatistic(LJUNG_BOX_ORDER) - (LJUNG_BOX_ORDER - 2), 2);
   }
 
   public static final int LJUNG_BOX_ORDER = 10;
@@ -473,7 +450,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     SolutionValidator validator = point -> {
       ExponentialSelfExcitingProcess process = newProcess(point.getPoint());
-      return process.Λ().mean() > 0;
+      return process.dΛ().mean() > 0;
     };
 
     Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * 2 + 1);
@@ -516,13 +493,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   protected final double
             evolveλ(double dt,
                     double t,
-                    double[] S)
+                    double[] B)
   {
     double λ = λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
-      S[j] = exp(-β(j) * dt) * (1 + S[j]);
-      λ += α(j) * S[j];
+      B[j] = exp(-β(j) * dt) * (1 + B[j]);
+      λ += α(j) * B[j];
     }
     return λ / Z();
   }
@@ -532,16 +509,23 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                     double dt,
                     double t,
                     int tk,
-                    double[][] A)
+                    double[][] Aarray)
   {
     double Λ = dt * λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
       double alpha = α(j);
       double beta = β(j);
-      double a = tk == 0 ? 0 : A[tk - 1][j];
-      A[tk][j] = 1 + exp(-beta * prevdt) * a;
-      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A[tk][j];
+      double a = tk == 0 ? 0 : Aarray[tk - 1][j];
+      Aarray[tk][j] = 1 + exp(-beta * prevdt) * a;
+      double val = Aarray[tk][j];
+      double valsum = A(tk, j);
+      if (trace && j == order() - 2)
+      {
+        out.println(format("tk=%d j=%d val=%f valsum=%f", tk, j, val, valsum));
+      }
+
+      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * val;
     }
     return Λ / Z();
   }
@@ -567,7 +551,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getΛKolmogorovSmirnovStatistic()
   {
-    Vector sortedCompensator = new Vector(Λ().doubleStream().sorted()).reverse();
+    Vector sortedCompensator = new Vector(dΛ().doubleStream().sorted()).reverse();
     double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toDoubleArray());
     return 1 - ksStatistic;
   }
@@ -815,17 +799,18 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   protected Vector
-            recursiveΛ(final int n)
+            recursiveΛ()
   {
     Vector durations = dT();
+    final int n = T.size();
 
-    double A[][] = new double[n][order()];
+    double Aarray[][] = new double[n][order()];
     Vector compensator = new Vector(n);
-    for (int tk = 0; tk < n; tk++)
+    for (int tk = 0; tk < n - 1; tk++)
     {
       double dtprev = tk == 0 ? 0 : durations.get(tk - 1);
       double dt = durations.get(tk);
-      compensator.set(tk, evolveΛ(dtprev, dt, T.get(tk), tk, A));
+      compensator.set(tk, evolveΛ(dtprev, dt, T.get(tk), tk, Aarray));
     }
     return compensator.setName("dΛ");
   }
@@ -946,17 +931,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return ξ
    */
   public Vector
-         Λ()
+         dΛ()
   {
-
-    final int n = T.size() - 1;
 
     if (recursive)
     {
-      return recursiveΛ(n);
+      return recursiveΛ();
     }
     else
     {
+      final int n = T.size() - 1;
+
       Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
@@ -1009,7 +994,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     }
 
-    return λ;
+    return λ.setName("λ");
   }
 
   /**
@@ -1027,7 +1012,21 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public static String[] statisticNames =
   { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
-  private DoubleColMatrix A;
+  /**
+   * 
+   * @param j
+   *          component
+   * @param tk
+   *          time index
+   * @return
+   */
+  public double
+         A(int tk,
+           int j)
+  {
+    final double Ti = T.get(tk - 1);
+    return sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk - 1);
+  }
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
@@ -1038,7 +1037,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     ExponentialSelfExcitingProcess process = newProcess(point);
     double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
 
-    Vector compensated = process.Λ();
+    Vector compensated = process.dΛ();
 
     // out.println(compensated.autocor(30));
 

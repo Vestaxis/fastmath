@@ -125,14 +125,13 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = new Vector(2);
     process.T.set(0, 0);
     process.T.set(1, 19);
-    process.recalculateA();
     process.trace = true;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double y = expDist.sample();
     out.println( "y=" + y );
     double nextdt = process.invΛ( y);
 
-    Vector compensated = process.Λ();
+    Vector compensated = process.dΛ();
     out.println( "compensated=" + compensated );
     
     out.println("Λphase(y=" + y + ")=" + nextdt);
@@ -140,7 +139,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = process.T.append(process.T.fmax() + nextdt );
     
     out.println( "T=" + process.T );
-    compensated = process.Λ();
+    compensated = process.dΛ();
     out.println( "compensated=" + compensated );
     
   }
@@ -152,7 +151,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();
 
     process.assignParameters(new double[]
-    { 1, 0, 3, 1.78 });
+    { 0, 3, 1.78 });
     return process;
   }
 

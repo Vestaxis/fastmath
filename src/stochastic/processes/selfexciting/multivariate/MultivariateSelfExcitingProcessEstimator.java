@@ -165,7 +165,7 @@ public class MultivariateSelfExcitingProcessEstimator
                                          Vector data,
                                          MultivariateExponentialSelfExcitingProcess process) throws IOException
   {
-    Vector compensator = process.Λ().setName("comp");
+    Vector compensator = process.dΛ().setName("comp");
     DoubleMatrix intensity = process.conditionalλ().setName("intensity");
     out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath()
                 + " E[data.dt]="
