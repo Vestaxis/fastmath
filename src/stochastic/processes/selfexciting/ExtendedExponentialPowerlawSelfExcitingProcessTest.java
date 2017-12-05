@@ -122,26 +122,31 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
          testΛPhase() throws InterruptedException
   {
     ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-    process.T = new Vector(2);
+    process.T = new Vector(3);
     process.T.set(0, 0);
     process.T.set(1, 19);
+    process.T.set(2, 27);
+    
     process.trace = true;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double y = expDist.sample();
-    out.println( "y=" + y );
-    double nextdt = process.invΛ( y);
+    out.println("T=" + process.T);
+    out.println("y=" + y);
+    out.println("dΛ=" + process.Λ() );
+    int n = process.T.size() - 1;
 
     Vector compensated = process.Λ();
-    out.println( "compensated=" + compensated );
-    
+    double nextdt = process.invΛ(y, n-1);
+
+
     out.println("Λphase(y=" + y + ")=" + nextdt);
-    process.dT = process.dT.append( nextdt );
-    process.T = process.T.append(process.T.fmax() + nextdt );
-    
-    out.println( "T=" + process.T );
+    process.dT = process.dT.append(nextdt);
+    process.T = process.T.append(process.T.fmax() + nextdt);
+
+    out.println("T=" + process.T);
     compensated = process.Λ();
-    out.println( "compensated=" + compensated );
-    
+    out.println("compensated=" + compensated);
+
   }
 
   public static ExtendedApproximatePowerlawSelfExcitingProcess

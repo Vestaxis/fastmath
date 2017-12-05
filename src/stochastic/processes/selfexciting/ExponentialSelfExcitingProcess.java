@@ -13,7 +13,6 @@ import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
@@ -131,21 +130,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> -γ(k) * β(k) * exp(-t * β(k)), 0, order() - 1);
   }
 
-  public double
-         Λphase(double t,
-                double y,
-                double A[][])
-  {
-    int tk = A.length - 1;
-    return sum(j -> γ(j) * A[tk][j] * (exp(t * β(j)) - 1), 0, order() - 1) - y * βproduct();
-  }
-
-  public double
-         ΛphaseTimeDifferential(double t)
-  {
-    int tk = A.length - 1;
-    return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
-  }
 
   /**
    * 
@@ -177,7 +161,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return inverse of the compensator for a given value of y
    */
   public double
-         invΛ(double y)
+         invΛ(double y,
+              int tk)
   {
     double dt = 0;
 
@@ -186,12 +171,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       double p = 0;
       if (trace)
       {
-        out.println("******" + i + "*******");
-        out.println("dt=" + dt);
+        out.println("dt[" + i + "]=" + dt);
       }
-      p = Λphase(dt, y, A);
+      p = Λphase(dt, y, tk);
 
-      double pd = ΛphaseTimeDifferential(dt);
+      double pd = ΛphaseTimeDifferential(dt, tk);
 
       double ratio = p / pd;
       if (trace)
@@ -205,7 +189,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       dt = dt - ratio;
 
     }
-    return dt;
+    return -dt;
   }
 
   /*
@@ -505,12 +489,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   protected final double
-            evolveΛ(double prevdt,
-                    double dt,
-                    double t,
-                    int tk,
-                    double[][] A)
+            evolveAandΛ(double prevdt,
+                        double dt,
+                        int tk,
+                        double[][] A)
   {
+    double t = T.get(tk);
     double Λ = dt * λ0.value(t);
     for (int j = 0; j < order(); j++)
     {
@@ -523,8 +507,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         double val = A(tk, j);
 
-        out.println("recursiveVal=" + recursiveVal + " val=" + val + " tk=" + tk );
-        //TestCase.assertEquals(val, recursiveVal,  1E-13 );
+        //out.println("recursiveVal=" + recursiveVal + " val=" + val + " tk=" + tk);
+         TestCase.assertEquals(val, recursiveVal, 1E-13 );
       }
 
       Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A[tk][j];
@@ -673,7 +657,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-        double Λ = evolveΛ(prevdt, dt, t, tk, A);
+        double Λ = evolveAandΛ(prevdt, dt, tk, A);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -809,13 +793,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Vector durations = dT();
 
-    double A[][] = new double[n][order()];
+    A = new double[n][order()];
     Vector compensator = new Vector(n);
     for (int tk = 0; tk < n; tk++)
     {
       double dtprev = tk == 0 ? 0 : durations.get(tk - 1);
       double dt = durations.get(tk);
-      compensator.set(tk, evolveΛ(dtprev, dt, T.get(tk), tk, A));
+      compensator.set(tk, evolveAandΛ(dtprev, dt, tk, A));
     }
     return compensator.setName("dΛ");
   }
@@ -972,6 +956,48 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
+
+  public double
+         Λphase(double dt,
+                double y,
+                int tk)
+  {
+    assert A != null;
+    assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length );
+    return sum(j -> γ(j) * A[tk][j] * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+  }
+
+  public double
+         ΛphaseNormalized(double t,
+                          double y,
+                          int tk)
+  {
+    return Λphase(t, y, tk) / ΛphaseTimeDifferential(t, tk);
+  }
+
+  public double
+         ΛphaseTimeDifferential(double t,
+                                int tk)
+  {
+    return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
+  }
+  
+  /**
+   * n-th compensated point, expensive non-recursive O(n^2) runtime version
+   * 
+   * @param i
+   *          >= 1 and <= n
+   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
+   *         i-1)
+   */
+  protected double
+            Λ(int i,
+              double dt)
+  {
+    final double Ti = T.get(i-1) + dt;
+    return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
+  }
+
   public Vector
          λvector()
   {
@@ -1017,7 +1043,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public static String[] statisticNames =
   { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
-  private double A[][];
+  double A[][];
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
@@ -1051,13 +1077,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          A(int tk,
            int j)
   {
-    if ( tk < 0 )
+    if (tk < 0)
     {
       return 0;
     }
     double Ti = T.get(tk);
     return 1 + sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk - 1);
-    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
+    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last
+    // term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
   }
 
   /**

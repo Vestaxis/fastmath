@@ -7,15 +7,18 @@ import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
 import org.fusesource.jansi.Ansi;
+import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import util.Plotter;
 import util.TerseThreadFactory;
 
 public class ProcessSimulator
@@ -49,7 +52,7 @@ public class ProcessSimulator
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    process.estimateParameters(25);
+    // process.estimateParameters(25);
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
 
     process.trace = false;
@@ -69,6 +72,13 @@ public class ProcessSimulator
     out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1, process.T.size()).toString() + Ansi.ansi().fgDefault());
     out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
     process.trace = true;
+
+    double nextdt = process.invΛ(0.8, n - 2);
+    double test = process.Λ(n - 2, nextdt);
+
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(t, 0.8, n - 2), -25, 25, t -> t)).displayChart();
+    out.println("nextdt=" + nextdt + " A=" + Arrays.toString(process.A[n - 2]));
+    out.println("Λ(" + (n-2) + "," + nextdt + ")=" + test);
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //
