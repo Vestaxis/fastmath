@@ -661,6 +661,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public double
          get(int i)
   {
+    assert i >= 0 : "index=" + i + " is negative";
     assert i < size() : "Index out of bounds, " + i + " >= " + size();
     assert buffer != null : "buffer is null";
     int offset = getOffset(i);

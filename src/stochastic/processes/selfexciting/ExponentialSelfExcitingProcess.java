@@ -56,6 +56,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import gnu.arb.Real;
+import junit.framework.TestCase;
 import util.AutoArrayList;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
@@ -206,7 +207,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     return dt;
   }
-
 
   /*
    * @param u unit uniformly distributed random variable
@@ -517,8 +517,21 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       double alpha = α(j);
       double beta = β(j);
       double a = tk == 0 ? 0 : A[tk - 1][j];
-      A[tk][j] = 1 + exp(-beta * prevdt) * a;
+      double recursiveVal = 1 + exp(-beta * prevdt) * a;
+      A[tk][j] = recursiveVal;
+      if (trace)
+      {
+        double val = A(tk, j);
+
+        out.println("recursiveVal=" + recursiveVal + " val=" + val + " tk=" + tk );
+        //TestCase.assertEquals(val, recursiveVal,  1E-13 );
+      }
+
       Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A[tk][j];
+    }
+    if (trace)
+    {
+      out.println("A[" + tk + "]=" + Arrays.toString(A[tk]));
     }
     return Λ / Z();
   }
@@ -1038,8 +1051,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          A(int tk,
            int j)
   {
+    if ( tk < 0 )
+    {
+      return 0;
+    }
     double Ti = T.get(tk);
     return 1 + sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk - 1);
+    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
   }
 
   /**
