@@ -148,7 +148,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          evaluateParameterStatistics(double[] point);
 
   public abstract Vector
-         dΛ();
+         Λ();
 
   public abstract double
          mean();

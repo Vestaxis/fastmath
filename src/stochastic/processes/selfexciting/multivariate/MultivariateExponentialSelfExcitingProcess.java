@@ -180,7 +180,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
     SolutionValidator validator = point -> {
       MultivariateExponentialSelfExcitingProcess process = newProcess(point.getPoint());
-      return process.dΛ().mean() > 0;
+      return process.Λ().mean() > 0;
     };
 
     Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim * 2 + 1);
@@ -227,7 +227,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     throw new UnsupportedOperationException("TODO");
   }
 
-  public Vector dΛ()
+  public Vector Λ()
   {
     throw new UnsupportedOperationException("TODO");
   }

@@ -23,7 +23,7 @@ public interface SelfExcitingProcess
   double λ(double t);
 
   public Vector
-         dΛ();
+         Λ();
 
   public Vector
          λvector();

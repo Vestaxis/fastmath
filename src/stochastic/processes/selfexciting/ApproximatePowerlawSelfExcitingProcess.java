@@ -62,7 +62,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   }
 
 
-  public double τ = 1;
+  public double τ;
 
   public double ε = 0;
 

@@ -80,10 +80,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     public boolean
            tryAdvance(DoubleConsumer action)
     {
-      if (n >= size)
-      {
-        return false;
-      }
+      if (n >= size) { return false; }
       action.accept(get(n++));
       return true;
     }
@@ -92,10 +89,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     public boolean
            tryAdvance(Consumer<? super Double> action)
     {
-      if (n >= size)
-      {
-        return false;
-      }
+      if (n >= size) { return false; }
       action.accept(get(n++));
       return true;
     }
@@ -470,13 +464,12 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public Vector
          diff()
   {
-    if (size == 0)
+    if ( size == 0 )
     {
       return new Vector();
     }
     Vector fd = copy().slice(1, size());
     fd.subtract(slice(0, size() - 1));
-    fd.setName("d" + fd.getName());
     return fd;
   }
 
@@ -542,17 +535,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     {
       Vector v = (Vector) obj;
 
-      if (size != v.size())
-      {
-        return false;
-      }
+      if (size != v.size()) { return false; }
 
       for (int i = 0; i < size; i++)
       {
-        if (get(i) != v.get(i))
-        {
-          return false;
-        }
+        if (get(i) != v.get(i)) { return false; }
       }
 
       return true;
@@ -571,17 +558,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
          equals(Vector v,
                 double bounds)
   {
-    if (size != v.size())
-    {
-      return false;
-    }
+    if (size != v.size()) { return false; }
 
     for (int i = 0; i < size; i++)
     {
-      if (Math.abs(get(i) - v.get(i)) > bounds)
-      {
-        return false;
-      }
+      if (Math.abs(get(i) - v.get(i)) > bounds) { return false; }
     }
 
     return true;
@@ -643,10 +624,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
       if ((cond == Condition.EQUAL && x == val) || (cond == Condition.GT && x > val)
           || (cond == Condition.LT && x < val)
           || (cond == Condition.GTE && x >= val)
-          || (cond == Condition.LTE && x <= val))
-      {
-        return i;
-      }
+          || (cond == Condition.LTE && x <= val)) { return i; }
     }
 
     return -1;
@@ -1623,17 +1601,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
          toArray(T[] arg0)
   {
     throw new UnsupportedOperationException("TODO");
-  }
-
-  public Vector
-         round()
-  {
-    for ( int i = 0; i < size; i++ )
-    {
-      set(i, (int)get(i));
-    }
-      
-    return this;
   }
 
 }
