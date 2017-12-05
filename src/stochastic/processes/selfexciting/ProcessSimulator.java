@@ -43,6 +43,7 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
+    
     process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
@@ -52,7 +53,7 @@ public class ProcessSimulator
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    // process.estimateParameters(25);
+   // process.estimateParameters(25);
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
 
     process.trace = false;
@@ -71,14 +72,20 @@ public class ProcessSimulator
 
     out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1, process.T.size()).toString() + Ansi.ansi().fgDefault());
     out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
-    process.trace = true;
+    process.trace = false;
 
-    double nextdt = process.invΛ(0.8, n - 2);
-    double test = process.Λ(n - 2, nextdt);
+    double y = 0.9;
+    double nextdt = process.invΛ(y, n - 2);
+    double wtf = process.Λphase(nextdt, y, n - 2);
+    out.println( "wtf=" + wtf + " βproduct=" + process.βproduct() + " βproduct=" + process.βproductReal() );
+    process.T = process.T.append(process.T.fmax() + nextdt);
+    
 
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(t, 0.8, n - 2), -25, 25, t -> t)).displayChart();
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(-t, y, n - 2), -25, 100, t -> t)).displayChart();
     out.println("nextdt=" + nextdt + " A=" + Arrays.toString(process.A[n - 2]));
-    out.println("Λ(" + (n-2) + "," + nextdt + ")=" + test);
+    out.println( "T=" + process.T );
+    process.dT = null;
+    out.println( "comp " + process.Λ() );
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //
