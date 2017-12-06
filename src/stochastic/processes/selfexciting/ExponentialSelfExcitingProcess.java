@@ -67,15 +67,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          getαβString()
   {
     StringBuilder sb = new StringBuilder();
-    sb.append("{");
-
+    sb.append("{Z=" + ZReal());
     for (int i = 0; i < order(); i++)
     {
-      if (i > 0)
-      {
-        sb.append(",");
-      }
-      sb.append(format("alpha[%d]=%f,beta[%d]=%f", i + 1, α(i), i + 1, β(i)));
+      sb.append(format(", α[%d]=%s, β[%d]=%s", i, αReal(i), i, βReal(i)));
     }
     sb.append("}");
     return sb.toString();

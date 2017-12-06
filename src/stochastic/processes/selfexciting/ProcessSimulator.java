@@ -55,7 +55,7 @@ public class ProcessSimulator
 
     // process.estimateParameters(25);
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
-
+    out.println( process.getαβString() );
     process.trace = false;
     double Λmean = process.Λ().mean();
     process.trace = false;
