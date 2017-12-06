@@ -1,9 +1,14 @@
 package stochastic.processes.selfexciting;
 
+import static fastmath.Functions.realSum;
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
+
+import java.util.function.IntToDoubleFunction;
+
+import org.arblib.Real;
 
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
@@ -61,7 +66,6 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
 
   }
 
-
   public double τ;
 
   public double ε = 0;
@@ -70,7 +74,16 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public double
          α(int i)
   {
-    return pow( τ * pow(m, i), -(1 + ε));
+    return pow(τ * pow(m, i), -(1 + ε));
+  }
+
+  public Real
+         αReal(int i)
+  {
+    //Real copy = new Real(α(i));
+    Real hmm = new Real(τ).mult(new Real(m).pow(i)).pow(Real.ONE.add(new Real(ε)).negate());
+    return hmm;
+    //return new Real(α(i));
   }
 
   @Override
@@ -80,9 +93,17 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     return τ * pow(m, -i);
   }
 
+  public Real
+         βReal(int i)
+  {
+    Real copy = new Real(β(i));
+    Real hmm = new Real( τ ).divide(new Real(m).pow(new Real(i)));
+    double wack = copy.fpValue() - hmm.fpValue();
+    return copy;
+  }
+
   final public int M = 15;
 
-  
   /**
    * choose m such that m^M=1 minute, in milliseconds
    */

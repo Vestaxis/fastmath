@@ -41,6 +41,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
+import org.arblib.Real;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
@@ -51,7 +52,6 @@ import fastmath.DoubleColMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
-import gnu.arb.Real;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingProcess;
 import stochastic.processes.pointprocesses.finance.NasdaqTradingStrategy;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;

@@ -271,9 +271,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>gnu</groupId>
-			<artifactId>arb</artifactId>
-			<version>0.1</version>
+			<groupId>org</groupId>
+			<artifactId>arblib</artifactId>
+			<version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fusesource.jansi</groupId>
@@ -338,46 +338,50 @@
 		<repository>
 			<url>https://github.com/eugener/oxbow/raw/master/maven/repository</url>
 			<id>oxbowrepo</id>
-				<snapshots> 
-					<enabled>true</enabled>
-				</snapshots>			
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
-			<repository>
-				<id>amelentev</id>
-				<url>http://amelentev.github.io/mvnrepo/</url>
-			</repository>
-			<repository>
-				<id>somegitrepo</id>
-				<url>https://github.com/neilpanchal/j-text-utils/raw/master/repo</url>
-			</repository>
-			<repository>
-				<id>central</id>
-				<name>Maven Repository Switchboard</name>
-				<url>http://repo1.maven.org/maven2</url>
-				<snapshots>
-					<enabled>false</enabled>
-				</snapshots>
-			</repository>
-			<repository>
-				<id>mvnrepository</id>
-				<name>mvnrepository</name>
-				<url>http://www.mvnrepository.com</url>
-			</repository>
-			<repository>
-				<id>devmapfish</id>
-				<url>http://dev.mapfish.org/maven/repository/</url>
-			</repository>
-			<repository>
-				<id>oracleReleases</id>
-				<name>Oracle Released Java Packages</name>
-				<url>http://download.oracle.com/maven</url>
-				<layout>default</layout>
-			</repository>
-			<repository>
-				<id>freehep-maven</id>
-				<name>Maven FreeHEP</name>
-				<url>http://java.freehep.org/maven2</url>
-			</repository>
+		<repository>
+			<id>amelentev</id>
+			<url>http://amelentev.github.io/mvnrepo/</url>
+		</repository>
+		<repository>
+			<id>somegitrepo</id>
+			<url>https://github.com/neilpanchal/j-text-utils/raw/master/repo</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>mvnrepository</id>
+			<name>mvnrepository</name>
+			<url>http://www.mvnrepository.com</url>
+		</repository>
+		<repository>
+			<id>devmapfish</id>
+			<url>http://dev.mapfish.org/maven/repository/</url>
+		</repository>
+		<repository>
+			<id>oracleReleases</id>
+			<name>Oracle Released Java Packages</name>
+			<url>http://download.oracle.com/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>freehep-maven</id>
+			<name>Maven FreeHEP</name>
+			<url>http://java.freehep.org/maven2</url>
+		</repository>
+		<repository>
+			<id>crows-mvn-repo</id>
+			<url>https://raw.github.com/crowlogic/arb/mvn-repo/</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>

@@ -7,7 +7,7 @@ import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import gnu.arb.Real;
+import org.arblib.Real;
 
 public class Functions
 {
@@ -254,6 +254,19 @@ public class Functions
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).sum();
   }
 
+  public static Real
+         realSum(IntFunction<Real> elements,
+             int lowerIndex,
+             int upperIndex)
+  {
+    Real s = Real.ZERO;
+    for (int i = lowerIndex; i <= upperIndex; i++)
+    {
+      s = s.add(elements.apply(i));
+    }
+    return s;
+  }
+
   public static DoubleStream
          grid(double left,
               double right,
@@ -297,7 +310,7 @@ public class Functions
     Real Π = Real.ONE;
     for (int i = lowerIndex; i <= upperIndex; i++)
     {
-      Π = Π.multiply(elements.apply(i));
+      Π = Π.mult(elements.apply(i));
     }
     return Π;
   }

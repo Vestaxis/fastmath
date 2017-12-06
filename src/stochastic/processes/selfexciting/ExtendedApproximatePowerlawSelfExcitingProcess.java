@@ -5,13 +5,12 @@ import static java.lang.Math.pow;
 import java.io.Serializable;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.arblib.Real;
 
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximatePowerlawSelfExcitingProcess implements MultivariateFunction, Serializable
 {
-
- 
 
   @Override
   public Type
@@ -106,6 +105,12 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return b;
   }
 
+  public Real
+         αSReal()
+  {
+    return new Real( b );
+  }
+
   @Override
   public double
          β(int i)
@@ -118,9 +123,5 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   {
     return 1 / η;
   }
-
- 
-
- 
 
 }

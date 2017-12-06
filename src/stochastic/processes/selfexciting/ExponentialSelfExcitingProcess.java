@@ -1,6 +1,7 @@
 package stochastic.processes.selfexciting;
 
 import static fastmath.Functions.product;
+import static fastmath.Functions.realSum;
 import static fastmath.Functions.seq;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
@@ -47,6 +48,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+import org.arblib.Real;
 
 import fastmath.Pair;
 import fastmath.Vector;
@@ -54,15 +56,12 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
-import gnu.arb.Real;
 import junit.framework.TestCase;
 import util.AutoArrayList;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
 {
   private static final int MAX_ITERS = 1000;
-
-  final public static double tolerance = 1E-16;
 
   public String
          getαβString()
@@ -191,6 +190,38 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return -dt;
   }
 
+  private Real tolerance = new Real("1E-30");
+
+  /**
+   * 
+   * @param y
+   *          exponentially distributed random variable
+   * 
+   * @return inverse of the compensator for a given value of y
+   */
+  public Real
+         invΛReal(double y,
+                  int tk)
+  {
+    Real dt = Real.ZERO;
+
+    for (int i = 0; i < 100; i++)
+    {
+      Real δ = ΛphaseNormalizedReal(dt, y, tk);
+
+      if (trace)
+      {
+        out.println("Λphase/ΛPhaseTimeDiff=" + δ);
+      }
+      if (δ.abs().lessThan(tolerance))
+      {
+        break;
+      }
+      dt = dt.subtract(δ);
+    }
+    return dt.negate();
+  }
+
   /*
    * @param u unit uniformly distributed random variable
    * 
@@ -222,7 +253,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         out.format("invF[%d] u=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, u, t, dt, newt, relativeDifference);
       }
       t = newt;
-      if (relativeDifference < tolerance)
+      if (relativeDifference < 1E-14)
       {
         if (trace)
         {
@@ -268,7 +299,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       double relativeDifference = abs(abs(dt) - abs(prevdt));
       out.format("invH[%d] y=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, y, t, dt, newt, relativeDifference);
       t = newt;
-      if (relativeDifference < tolerance)
+      if (relativeDifference < 1E-14)
       {
         out.println("Converged in " + i + " iterations");
         break;
@@ -312,11 +343,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     return γs.getOrCreate(k);
   }
-  
+
   public Real
          γproduct(int k)
   {
-    IntFunction<Real> a = j -> new Real(j == k ? α(j) : β(j));
+    IntFunction<Real> a = j -> j == k ? αReal(j) : βReal(j);
 
     Real product = product(a, 0, order() - 1);
 
@@ -899,10 +930,28 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * 
    * @param j
    *          index in [0,order()-1]
+   * @return the j-th α parameter
+   */
+  public abstract Real
+         αReal(int j);
+
+  /**
+   * 
+   * @param j
+   *          index in [0,order()-1]
    * @return the j-th β parameter
    */
   public abstract double
          β(int j);
+
+  /**
+   * 
+   * @param j
+   *          index in [0,order()-1]
+   * @return the j-th β parameter
+   */
+  public abstract Real
+         βReal(int j);
 
   /**
    * intensity function
@@ -980,9 +1029,26 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    // return sum(j -> γ(j) * A[tk][j] * (exp(dt * β(j)) - 1), 0, order() - 1) + y *
-    // βproduct() * Z();
-    return sum(j -> γ(j) * A[tk][j] * (exp(dt * β(j))) - γ(j) * A[tk][j], 0, order() - 1) + y * βproduct() * Z();
+    return sum(j -> γ(j) * A[tk][j] * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+  }
+
+  public Real
+         ΛphaseReal(Real dt,
+                    double y,
+                    int tk)
+  {
+    assert A != null;
+    assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
+    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().subtract(Real.ONE)))), 0, order() - 1).add(βproductReal().multiply(y)
+                                                                                                                                                .multiply(Z()));
+  }
+
+  public Real
+         ΛphaseNormalizedReal(Real t,
+                              double y,
+                              int tk)
+  {
+    return ΛphaseReal(t, y, tk).divide(ΛphaseTimeDifferentialReal(t, tk));
   }
 
   public double
@@ -1000,11 +1066,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
   }
 
-  public double
-         ΛphaseTimeDifferentialReal(double t,
-                                int tk)
+  public Real
+         ΛphaseTimeDifferentialReal(Real t,
+                                    int tk)
   {
-    return sum(j -> γReal(j).fpValue() * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
+    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult(βReal(j)).mult(t.mult(βReal(j)).exp())), 0, order() - 1);
   }
 
   /**
@@ -1069,6 +1135,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   double A[][];
+
+  Real Areal[][];
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}

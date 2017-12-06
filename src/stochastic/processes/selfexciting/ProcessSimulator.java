@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
+import org.arblib.Real;
 import org.fusesource.jansi.Ansi;
 import org.knowm.xchart.SwingWrapper;
 
@@ -43,7 +44,7 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
-    
+
     process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
@@ -53,7 +54,7 @@ public class ProcessSimulator
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-   // process.estimateParameters(25);
+    // process.estimateParameters(25);
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
 
     process.trace = false;
@@ -76,16 +77,22 @@ public class ProcessSimulator
 
     double y = 0.9;
     double nextdt = process.invΛ(y, n - 2);
-    double wtf = process.Λphase(nextdt, y, n - 2);
-    out.println( "wtf=" + wtf + " βproduct=" + process.βproduct() + " βproduct=" + process.βproductReal() );
-    process.T = process.T.append(process.T.fmax() + nextdt);
-    
+    process.trace = true;
+    Real nextdtReal = process.invΛReal(y, n - 2);
+    process.trace = false;
+    double shouldbe0 = process.Λphase(nextdt, y, n - 2);
+    Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
+    out.println("shouldbe0=" + shouldbe0 + " shouldbe0Real=" + shouldbe0Real + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
+    double shouldbey = process.Λ(n - 2, nextdtReal.fpValue());
+    out.println("shouldbey=" + shouldbey + " should be y=" + y);
+    process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
 
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(-t, y, n - 2), -25, 100, t -> t)).displayChart();
-    out.println("nextdt=" + nextdt + " A=" + Arrays.toString(process.A[n - 2]));
-    out.println( "T=" + process.T );
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(-t, y, n - 2), -25, 40, t -> t)).displayChart();
+    out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
+
+    out.println("T=" + process.T);
     process.dT = null;
-    out.println( "comp " + process.Λ() );
+    out.println("comp " + process.Λ());
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //

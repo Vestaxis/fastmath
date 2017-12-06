@@ -4,9 +4,8 @@
 
 <\body>
   <doc-data|<doc-title|A Sequence of Cauchy Sequences Which Is Conjectured to
-  Converge to the Imaginary Parts of the Zeros of the Riemann Zeta Function
-  and Proof That the Nontrivial Riemann Zeros are
-  Simple>|<doc-author|<author-data|<author-name|Stephen Crowley
+  Converge to the Imaginary Parts of the Zeros of the Riemann Zeta
+  Function>|<doc-author|<author-data|<author-name|Stephen Crowley
   \<less\>stephencrowley214@gmail.com\<gtr\>>|<\author-affiliation>
     <date|>
   </author-affiliation>>>>
