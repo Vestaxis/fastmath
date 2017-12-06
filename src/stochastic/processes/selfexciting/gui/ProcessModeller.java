@@ -1,10 +1,8 @@
 package stochastic.processes.selfexciting.gui;
 
-import static java.awt.EventQueue.invokeAndWait;
 import static java.awt.EventQueue.invokeLater;
 import static java.lang.System.err;
 import static java.lang.System.out;
-import static java.util.stream.IntStream.range;
 import static java.util.stream.IntStream.rangeClosed;
 
 import java.awt.BorderLayout;
@@ -23,7 +21,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -34,18 +31,14 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
-import org.arblib.Real;
-import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XChartPanel;
 import org.knowm.xchart.XYChart;
-import org.oxbow.swingbits.dialog.task.TaskDialog;
 import org.oxbow.swingbits.dialog.task.TaskDialogs;
 
 import fastmath.DoubleColMatrix;
@@ -60,7 +53,6 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.Plotter;
-import util.ProgressWindow;
 
 public class ProcessModeller
 {

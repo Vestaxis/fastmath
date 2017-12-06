@@ -7,7 +7,6 @@ import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
 import org.arblib.Real;

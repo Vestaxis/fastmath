@@ -1045,8 +1045,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().sub(Real.ONE)))), 0, order() - 1).add(βproductReal().multiply(y)
-                                                                                                                                           .multiply(Z()));
+    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().sub(Real.ONE)))), 0, order() - 1).add(βproductReal().mult(y)
+                                                                                                                                           .mult(ZReal()));
   }
 
   public Real

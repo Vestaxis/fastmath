@@ -1,13 +1,11 @@
 package stochastic.processes.selfexciting.gui;
 
-import static java.awt.EventQueue.invokeLater;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.System.out;
 
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;

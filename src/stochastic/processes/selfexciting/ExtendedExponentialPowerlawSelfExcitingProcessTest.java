@@ -1,27 +1,16 @@
 package stochastic.processes.selfexciting;
 
 import static fastmath.Functions.grid;
-import static fastmath.Functions.sign;
-import static fastmath.Functions.sum;
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
 import static java.lang.System.out;
 import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.apache.commons.math3.optim.univariate.UnivariateOptimizer;
-import org.knowm.xchart.SwingWrapper;
 
 import fastmath.Vector;
-import jdk.net.NetworkPermission;
 import junit.framework.TestCase;
-import util.Plotter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
