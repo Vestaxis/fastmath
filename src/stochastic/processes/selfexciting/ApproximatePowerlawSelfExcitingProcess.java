@@ -80,10 +80,10 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public Real
          αReal(int i)
   {
-    //Real copy = new Real(α(i));
-    Real hmm = new Real(τ).mult(new Real(m).pow(i)).pow(Real.ONE.add(new Real(ε)).negate());
+    // Real copy = new Real(α(i));
+    Real hmm = new Real(τ).mult(new Real(m).pow(i)).pow(Real.ONE.add(new Real(ε)).neg());
     return hmm;
-    //return new Real(α(i));
+    // return new Real(α(i));
   }
 
   @Override
@@ -97,7 +97,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
          βReal(int i)
   {
     Real copy = new Real(β(i));
-    Real hmm = new Real( τ ).divide(new Real(m).pow(new Real(i)));
+    Real hmm = new Real(τ).div(new Real(m).pow(new Real(i)));
     double wack = copy.fpValue() - hmm.fpValue();
     return copy;
   }
@@ -132,7 +132,14 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public double
          Z()
   {
-    return sum(j -> α(j) / β(j), 0, order() - 1) / ρ;
+    return sum(j -> α(j) / β(j), 0, order() - 1);
+  }
+
+  @Override
+  public Real
+         ZReal()
+  {
+    return realSum(j -> αReal(j).div(βReal(j)), 0, order() - 1);
   }
 
   @Override

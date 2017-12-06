@@ -55,7 +55,7 @@ public class ModelFitter
     final String symbol = args.length > 1 ? args[1] : "SPY";
 
     TradingFiltration filtration = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
-    ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, filtration, Type.ConstrainedApproximatePowerlaw);
+    ArrayList<AbstractSelfExcitingProcess> processes = NasdaqTradingStrategy.getCalibratedProcesses(matFile, filtration, Type.ExtendedApproximatePowerlaw);
 
     CalibratedNasdaqStrategyViewer.launchModelViewer(processes);
 

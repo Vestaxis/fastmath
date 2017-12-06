@@ -87,7 +87,7 @@ public class ProcessSimulator
     out.println("shouldbey=" + shouldbey + " should be y=" + y);
     process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
 
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.ΛphaseNormalized(-t, y, n - 2), -25, 40, t -> t)).displayChart();
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 40, t -> t)).displayChart();
     out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
 
     out.println("T=" + process.T);

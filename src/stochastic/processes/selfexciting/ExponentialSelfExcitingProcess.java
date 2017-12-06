@@ -85,14 +85,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          minh()
   {
-    return getβVector().fmin() * ρ;
+    return getβVector().fmin();
   }
 
   @Override
   public double
          maxh()
   {
-    return getβVector().fmax() * ρ;
+    return getβVector().fmax();
   }
 
   /**
@@ -207,19 +207,19 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     for (int i = 0; i < 100; i++)
     {
-      Real δ = ΛphaseNormalizedReal(dt, y, tk);
+      Real δ = ΛphaseδReal(dt, y, tk);
 
       if (trace)
       {
-        out.println("Λphase/ΛPhaseTimeDiff=" + δ);
+        out.println("Λphase/ΛPhaseTimeDiff=" + δ + " hmm " + δ.getRelativeAccuracyBits());
       }
-      if (δ.abs().lessThan(tolerance))
+      if (δ.getRelativeAccuracyBits() < 0)
       {
         break;
       }
-      dt = dt.subtract(δ);
+      dt = dt.sub(δ);
     }
-    return dt.negate();
+    return dt.neg();
   }
 
   /*
@@ -391,7 +391,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public Real
          βproductReal()
   {
-    return product((IntFunction<Real>) k -> new Real(β(k)), 0, order() - 1);
+    return product((IntFunction<Real>) k -> βReal(k), 0, order() - 1);
   }
 
   final static ExponentialDistribution expDist = new ExponentialDistribution(1);
@@ -623,26 +623,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     throw new UnsupportedOperationException("TODO: implement simulation then generate sample autocorrelation from simulated samples since the combinatorial complexixity of the analytic expression would require about 17 years to evaluate on even a really fast machine.");
   }
 
-  /**
-   * TODO: is the critical case when branchingRate == 1 correct?
-   */
   @Override
   public double
          getStationaryλ()
   {
-    double branchingRate = ρ;
-    if (branchingRate > 1)
-    {
-      return Double.POSITIVE_INFINITY;
-    }
-    else if (branchingRate == 1)
-    {
-      return 1 / mean();
-    }
-    return κ / (1 - branchingRate);
+    return 1 / mean();
   }
-
-  public double ρ = 1;
 
   /**
    * integrated kernel function
@@ -917,6 +903,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public abstract double
          Z();
 
+  public abstract Real
+         ZReal();
+
   /**
    * 
    * @param j
@@ -1022,6 +1011,23 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
+  /**
+   * n-th compensated point, expensive non-recursive O(n^2) runtime version
+   * 
+   * @param i
+   *          >= 1 and <= n
+   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
+   *         i-1)
+   */
+  protected Real
+            ΛReal(int i)
+  {
+    final Real Ti = new Real(T.get(i));
+    return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mult(Real.ONE.sub(βReal(j).neg().mult(Ti.sub(T.get(k))).exp()))), 0, order() - 1),
+                   0,
+                   i - 1).div(ZReal());
+  }
+
   public double
          Λphase(double dt,
                 double y,
@@ -1039,22 +1045,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().subtract(Real.ONE)))), 0, order() - 1).add(βproductReal().multiply(y)
-                                                                                                                                                .multiply(Z()));
+    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().sub(Real.ONE)))), 0, order() - 1).add(βproductReal().multiply(y)
+                                                                                                                                           .multiply(Z()));
   }
 
   public Real
-         ΛphaseNormalizedReal(Real t,
-                              double y,
-                              int tk)
+         ΛphaseδReal(Real t,
+                     double y,
+                     int tk)
   {
-    return ΛphaseReal(t, y, tk).divide(ΛphaseTimeDifferentialReal(t, tk));
+    return ΛphaseReal(t, y, tk).div(ΛphaseTimeDifferentialReal(t, tk));
   }
 
   public double
-         ΛphaseNormalized(double t,
-                          double y,
-                          int tk)
+         Λphaseδ(double t,
+                 double y,
+                 int tk)
   {
     return Λphase(t, y, tk) / ΛphaseTimeDifferential(t, tk);
   }

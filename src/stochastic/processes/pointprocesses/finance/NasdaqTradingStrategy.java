@@ -29,7 +29,7 @@ public class NasdaqTradingStrategy
 
     TradingFiltration data = new TradingFiltration(MatFile.loadMatrix(matFile, symbol));
 
-    ArrayList<AbstractSelfExcitingProcess> processes = getCalibratedProcesses(matFile, data, Type.ConstrainedApproximatePowerlaw);
+    ArrayList<AbstractSelfExcitingProcess> processes = getCalibratedProcesses(matFile, data, Type.ExtendedApproximatePowerlaw);
 
     CalibratedNasdaqStrategyViewer.launchModelViewer(processes).frame.setTitle(CalibratedNasdaqStrategyViewer.class.getSimpleName() + ": " + matFile);
 
