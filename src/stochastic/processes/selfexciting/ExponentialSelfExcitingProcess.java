@@ -539,8 +539,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   protected final double
             evolveAandΛ(double prevdt,
                         double dt,
-                        int tk,
-                        double[][] A)
+                        int tk)
   {
     double t = T.get(tk);
     double Λ = dt * λ0.value(t);
@@ -683,7 +682,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     if (recursive)
     {
-      double A[][] = new double[n][order()];
+      A = new double[n][order()];
+      Areal = new Real[n][order()];
+
       double S[] = new double[order()];
       for (int tk = 1; tk < n; tk++)
       {
@@ -691,7 +692,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-        double Λ = evolveAandΛ(prevdt, dt, tk, A);
+        double Λ = evolveAandΛ(prevdt, dt, tk);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -828,12 +829,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Vector durations = dT();
 
     A = new double[n][order()];
+    Areal = new Real[n][order()];
     Vector compensator = new Vector(n);
     for (int tk = 0; tk < n; tk++)
     {
       double dtprev = tk == 0 ? 0 : durations.get(tk - 1);
       double dt = durations.get(tk);
-      compensator.set(tk, evolveAandΛ(dtprev, dt, tk, A));
+      compensator.set(tk, evolveAandΛ(dtprev, dt, tk));
     }
     return compensator.setName("dΛ");
   }
@@ -1182,6 +1184,20 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     double Ti = T.get(tk);
     return 1 + sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk - 1);
+    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last
+    // term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
+  }
+
+  public Real
+         AReal(int tk,
+               int j)
+  {
+    if (tk < 0)
+    {
+      return Real.ZERO;
+    }
+    Real Ti = new Real(T.get(tk));
+    return Real.ONE.add(realSum(k -> βReal(j).neg().mult(Ti.sub(T.get(k))).exp(), 0, tk - 1));
     // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last
     // term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
   }
