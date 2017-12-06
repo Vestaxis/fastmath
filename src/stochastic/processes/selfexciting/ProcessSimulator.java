@@ -43,7 +43,8 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
-
+    process.ε = 0.05;
+    
     process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
@@ -67,6 +68,7 @@ public class ProcessSimulator
     process.T = process.T.slice(0, n);
 
     process.trace = true;
+    process.recursive = false;
     process.Λ();
     process.trace = false;
 
@@ -92,6 +94,7 @@ public class ProcessSimulator
     out.println("T=" + process.T);
     process.dT = null;
     out.println("comp " + process.Λ());
+    out.println("∫comp " + process.iΛ());
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //

@@ -70,7 +70,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     sb.append("{Z=" + ZReal());
     for (int i = 0; i < order(); i++)
     {
-      sb.append(format(", α[%d]=%s, β[%d]=%s", i, αReal(i), i, βReal(i)));
+      sb.append(format(", alpha[%d]=%s, beta[%d]=%s", i + 1, αReal(i), i + 1, βReal(i)));
     }
     sb.append("}");
     return sb.toString();
@@ -705,7 +705,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       for (int i = 1; i < n; i++)
       {
         double thist = T.get(i);
-        ll += log(λ(thist)) - Λ(i);
+        ll += log(λ(thist)) - iΛ(i);
       }
 
     }
@@ -960,17 +960,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum.doubleValue();
   }
 
-  /**
-   * The random variable defined by 1-exp(-ξ(i)-ξ(i-1)) indicates a better fit the
-   * more uniformly distributed it is.
-   * 
-   * 
-   * @see UniformRealDistribution on [0,1]
-   * 
-   * @param times
-   * 
-   * @return ξ
-   */
   public Vector
          Λ()
   {
@@ -983,18 +972,35 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     else
     {
+      // return Λ(n);
       Vector integratedCompensator = new Vector(n + 1);
       for (int i = 0; i < n + 1; i++)
       {
-        integratedCompensator.set(i, Λ(i));
+        integratedCompensator.set(i, iΛ(i));
       }
       return integratedCompensator.diff().setName("dΛ");
     }
 
   }
 
+  public Vector
+         iΛ()
+  {
+
+    final int n = T.size()-1;
+
+    // return Λ(n);
+    Vector integratedCompensator = new Vector(n);
+    for (int i = 0; i < n; i++)
+    {
+      integratedCompensator.set(i, iΛ(i+1));
+    }
+    return integratedCompensator.setName("iΛ");
+
+  }
+
   /**
-   * n-th compensated point, expensive non-recursive O(n^2) runtime version
+   * n-th integrated compensator, expensive non-recursive O(n^2) runtime version
    * 
    * @param i
    *          >= 1 and <= n
@@ -1002,10 +1008,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *         i-1)
    */
   protected double
+            iΛ(int i)
+  {
+    return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
+  }
+
+  protected double
             Λ(int i)
   {
-    final double Ti = T.get(i);
-    return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
+    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(i - 1)))) * A(j, i - 1)), 0, order() - 1) / Z();
   }
 
   /**
