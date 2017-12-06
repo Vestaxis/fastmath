@@ -99,6 +99,13 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return i < M ? super.α(i) : αS();
   }
 
+  @Override
+  public Real
+         αReal(int i)
+  {
+    return i < M ? super.αReal(i) : αSReal();
+  }
+
   public double
          αS()
   {
@@ -108,7 +115,7 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
   public Real
          αSReal()
   {
-    return new Real( b );
+    return new Real(b);
   }
 
   @Override
@@ -118,10 +125,23 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return i < M ? super.β(i) : βS();
   }
 
+  @Override
+  public Real
+         βReal(int i)
+  {
+    return i < M ? super.βReal(i) : βSReal();
+  }
+
   public double
          βS()
   {
     return 1 / η;
+  }
+
+  public Real
+         βSReal()
+  {
+    return Real.ONE.div(new Real(η));
   }
 
 }
