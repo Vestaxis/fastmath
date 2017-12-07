@@ -444,17 +444,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public static final int LJUNG_BOX_ORDER = 10;
 
-  public void
+  public ParallelMultistartMultivariateOptimizer
          estimateParameters(int numStarts)
   {
-    estimateParameters(numStarts, (IntConsumer) null);
+    return estimateParameters(numStarts, (IntConsumer) null);
   }
 
-  public void
+  public ParallelMultistartMultivariateOptimizer
          estimateParameters(int numStarts,
                             JProgressBar progressMonitor)
   {
-    estimateParameters(numStarts, j -> progressMonitor.setValue(j));
+    return estimateParameters(numStarts, j -> progressMonitor.setValue(j));
   }
 
   public final ParallelMultistartMultivariateOptimizer
@@ -530,9 +530,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double Λ = dt * κ;
     for (int j = 0; j < order(); j++)
     {
-      double alpha = α(j);
-      double beta = β(j);
-      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A(tk, j);
+      double α = α(j);
+      double β = β(j);
+      Λ += (α / β) * (1 - exp(-β * dt)) * A(tk, j);
     }
     if (trace)
     {
@@ -762,8 +762,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Vector durations = dT();
 
-    A = new double[n][order()];
-    Areal = new Real[n][order()];
     Vector compensator = new Vector(n);
     for (int tk = 0; tk < n; tk++)
     {
@@ -1084,7 +1082,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public static String[] statisticNames =
-  { "∏β", "minβ", "maxβ", "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
+  { "Log-Lik", "KS(Λ)", "mean(Λ)", "var(Λ)", "MM(Λ)", "LB(Λ)", "MMLB(Λ)" };
 
   double A[][];
 
@@ -1104,10 +1102,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     // out.println(compensated.autocor(30));
 
     Object[] statisticsVector = new Object[]
-    { process.βproduct(),
-      process.minh(),
-      process.maxh(),
-      process.logLik(),
+    { process.logLik(),
       ksStatistic,
       compensated.mean(),
       compensated.variance(),

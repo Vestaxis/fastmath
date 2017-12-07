@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
+import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +15,10 @@ import java.util.Arrays;
 import java.util.function.IntConsumer;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
 
+import dnl.utils.text.table.TextTable;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
@@ -232,7 +235,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public String
          getParamString()
   {
-    return "{" + asList(getParameterFields()).stream().map(param -> param.getName() + "=" + Double.toString(getFieldValue(param))).collect(joining(",")) + ",Z=" + Z() + "}";
+    return "{" + asList(getParameterFields()).stream().map(param -> param.getName() + "=" + Double.toString(getFieldValue(param))).collect(joining(","))
+           + ",Z="
+           + Z()
+           + "}";
   }
 
   public double
@@ -438,6 +444,46 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     {
       throw new RuntimeException(e.getMessage(), e);
     }
+  }
+
+  public Object[][]
+         evaluateStatisticsForEachLocalOptima(PointValuePair[] optima,
+                                              String[] columnHeaders)
+  {
+    Object[][] data = new Object[optima.length][columnHeaders.length];
+
+    for (int i = 0; i < optima.length; i++)
+    {
+      Object[] row = evaluateParameterStatistics(optima[i].getPoint());
+
+      for (int j = 0; j < columnHeaders.length; j++)
+      {
+        data[i][j] = row[j];
+      }
+    }
+    return data;
+  }
+
+  public TextTable
+         printResults(ParallelMultistartMultivariateOptimizer multiopt)
+  {
+
+    BoundedParameter[] params = getBoundedParameters();
+
+    println("parameter estimates for " + getClass().getSimpleName() + "[" + stream(params).map(param -> param.getName()).collect(joining(",")) + "]");
+
+    PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
+
+    String[] columnHeaders = getColumnHeaders();
+
+    Object[][] data = evaluateStatisticsForEachLocalOptima(optima, columnHeaders);
+
+    TextTable tt = new TextTable(columnHeaders, data);
+
+    tt.setAddRowNumbering(true);
+    tt.printTable();
+
+    return tt;
   }
 
   // public abstract double

@@ -45,24 +45,26 @@ public class ProcessSimulator
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
     process.ε = 0.05;
-    
+
     process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
     {
       process.T.set(i, (int) (process.T.get(i) - t0));
     }
+    process.T = process.T.slice(1, process.T.size());
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    process.estimateParameters(25);
+    process.printResults( process.estimateParameters(25) );
+    
     process.Λ();
-    for ( int tk = 0; tk < 10; tk++ )      
+    for (int tk = 0; tk < 10; tk++)
     {
       out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
     }
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
-    out.println( process.getαβString() );
+    out.println(process.getαβString());
     process.trace = false;
     double Λmean = process.Λ().mean();
     process.trace = false;
@@ -72,13 +74,14 @@ public class ProcessSimulator
     int n = 10;
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
+    out.println("T=" + process.T);
 
     process.trace = true;
     process.recursive = false;
     process.Λ();
     process.trace = false;
 
-    out.println(Ansi.ansi().fgBrightGreen() + process.T.slice(1, process.T.size()).toString() + Ansi.ansi().fgDefault());
+    out.println(Ansi.ansi().fgBrightGreen() + process.T.toString() + Ansi.ansi().fgDefault());
     out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
     process.trace = false;
 
@@ -97,7 +100,6 @@ public class ProcessSimulator
     new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 40, t -> t)).displayChart();
     out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
 
-    out.println("T=" + process.T);
     process.dT = null;
     out.println("comp " + process.Λ());
     out.println("∫comp " + process.iΛ());

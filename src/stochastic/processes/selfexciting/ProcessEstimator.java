@@ -223,51 +223,12 @@ public class ProcessEstimator
 
     process.T = data;
     ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), null );
-    printResults(optimizer);
+    process.printResults(optimizer);
 
     return process;
 
   }
 
-  public TextTable
-         printResults(ParallelMultistartMultivariateOptimizer multiopt)
-  {
-
-    BoundedParameter[] params = process.getBoundedParameters();
-
-    println("estimated parameters for " + process.getClass().getSimpleName() + "[" + stream(params).map(param -> param.getName()).collect(joining(",")) + "]");
-
-    PointValuePair[] optima = multiopt.getOptima().toArray(new PointValuePair[0]);
-
-    String[] columnHeaders = process.getColumnHeaders();
-
-    Object[][] data = evaluateStatisticsForEachLocalOptima(optima, columnHeaders);
-
-    TextTable tt = new TextTable(columnHeaders, data);
-
-    tt.setAddRowNumbering(true);
-    tt.printTable();
-
-    return tt;
-  }
-
-  public Object[][]
-         evaluateStatisticsForEachLocalOptima(PointValuePair[] optima,
-                                              String[] columnHeaders)
-  {
-    Object[][] data = new Object[optima.length][columnHeaders.length];
-
-    for (int i = 0; i < optima.length; i++)
-    {
-      Object[] row = process.evaluateParameterStatistics(optima[i].getPoint());
-
-      for (int j = 0; j < columnHeaders.length; j++)
-      {
-        data[i][j] = row[j];
-      }
-    }
-    return data;
-  }
 
   public static Vector
          loadTimes(String filename,
