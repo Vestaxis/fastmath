@@ -115,18 +115,17 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T.set(0, 0);
     process.T.set(1, 19);
     process.T.set(2, 27);
-    
+
     process.trace = true;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
     double y = expDist.sample();
     out.println("T=" + process.T);
     out.println("y=" + y);
-    out.println("dΛ=" + process.Λ() );
+    out.println("dΛ=" + process.Λ());
     int n = process.T.size() - 1;
 
     Vector compensated = process.Λ();
-    double nextdt = process.invΛ(y, n-1);
-
+    double nextdt = process.invΛ(y, n - 1);
 
     out.println("Λphase(y=" + y + ")=" + nextdt);
     process.dT = process.dT.append(nextdt);
@@ -138,8 +137,27 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
   }
 
-  public static ExtendedApproximatePowerlawSelfExcitingProcess
+  public void
+         testA()
+  {
+    ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+    process.T = new Vector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+    process.T.set(2, 27);
+    for (int j = 0; j < process.order(); j++)
+    {
+      for (int i = 0; i < process.T.size(); i++)
+      {
+        double a = process.Asum(i, j);
+        double b = process.A(i, j);
+        assertEquals(a, b, 1E-14 );
+      }
+    }
 
+  }
+
+  public static ExtendedApproximatePowerlawSelfExcitingProcess
          constructProcess()
   {
     final ExtendedApproximatePowerlawSelfExcitingProcess process = new ExtendedApproximatePowerlawSelfExcitingProcess();

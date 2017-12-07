@@ -7,6 +7,7 @@ import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
 import org.arblib.Real;
@@ -54,7 +55,12 @@ public class ProcessSimulator
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    // process.estimateParameters(25);
+    process.estimateParameters(25);
+    process.Λ();
+    for ( int tk = 0; tk < 10; tk++ )      
+    {
+      out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
+    }
     out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
     out.println( process.getαβString() );
     process.trace = false;

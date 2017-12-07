@@ -354,9 +354,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     IntToDoubleFunction a = j -> j == k ? α(j) : β(j);
 
-    Double product = product(a, 0, order() - 1);
-
-    return product;
+    return product(a, 0, order() - 1);
   };
 
   private AutoArrayList<Real> γs = new AutoArrayList<>(order(), this::γproduct);
@@ -400,12 +398,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public boolean trace = false;
 
   public boolean verbose = false;
-
-  /**
-   * background rate is just a fixed-constant per time-interval, for now
-   * 
-   */
-  private UnivariateFunction λ0 = t -> κ;
 
   /**
    * functions which takes its minimum when the mean and the variance of the
@@ -522,7 +514,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                     double t,
                     double[] S)
   {
-    double λ = λ0.value(t);
+    double λ = κ;
     for (int j = 0; j < order(); j++)
     {
       S[j] = exp(-β(j) * dt) * (1 + S[j]);
@@ -532,28 +524,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   protected final double
-            evolveAandΛ(double prevdt,
-                        double dt,
+            evolveAandΛ(double dt,
                         int tk)
   {
-    double t = T.get(tk);
-    double Λ = dt * λ0.value(t);
+    double Λ = dt * κ;
     for (int j = 0; j < order(); j++)
     {
       double alpha = α(j);
       double beta = β(j);
-      double a = tk == 0 ? 0 : A[tk - 1][j];
-      double recursiveVal = 1 + exp(-beta * prevdt) * a;
-      A[tk][j] = recursiveVal;
-      if (trace)
-      {
-        double val = A(tk, j);
-
-        // out.println("recursiveVal=" + recursiveVal + " val=" + val + " tk=" + tk);
-        TestCase.assertEquals(val, recursiveVal, 1E-13);
-      }
-
-      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A[tk][j];
+      Λ += (alpha / beta) * (1 - exp(-beta * dt)) * A(tk, j);
     }
     if (trace)
     {
@@ -687,7 +666,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-        double Λ = evolveAandΛ(prevdt, dt, tk);
+        double Λ = evolveAandΛ(dt, tk - 1);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -778,46 +757,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public abstract int
          order();
 
-  /**
-   * @return predicted time of next point of the process given the list-history
-   *         {@link #T}
-   */
-  public double
-         predict()
-  {
-    throw new UnsupportedOperationException("TODO");
-    // final double v = product(k -> β(k), 0, order() - 1);
-    // final double w = sum(k -> β(k), 0, order() - 1);
-    // double maxT = T.fmax();
-    // int N = T.size();
-    //
-    // out.println("v=" + v);
-    // out.println("w=" + w);
-    //
-    // UnivariateFunction η = t -> exp((t + maxT) * w);
-    // BivariateFunction τ = (t,
-    // ε) -> ((t - maxT) * λ0.value(t) - ε) * v * η.value(t);
-    // IntFunction<Double> Φ = m -> product(k -> k == m ? α(k) : β(k), 0, order() -
-    // 1);
-    // QuadvariateFunction σ = (m,
-    // k,
-    // t,
-    // s) -> β(m) * (s + T.get(k)) + sumExcluding(j -> β(j) * (t + s), 0, order() -
-    // 1, m);
-    // BivariateFunction φ = (t,
-    // ε) -> τ.value(t, ε) + sum(j -> Φ.apply(j) * sum(k -> σ.value(j, k, t, t) -
-    // σ.value(j, k, t, maxT), 0, N - 1), 0, order() - 1);
-    //
-    // ExponentialDistribution expDist = new ExponentialDistribution(1);
-    // double ε = expDist.sample();
-    //
-    // // plot( t-> φ.value(t,ε), T.fmax(), T.fmax() + 20 );
-    // return 0;
-
-    // throw new UnsupportedOperationException("TODO: for each exponentially
-    // distributed ε find the critical point t which maximizes the score φ(t,ε) ");
-  }
-
   protected Vector
             recursiveΛ(final int n)
   {
@@ -828,9 +767,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Vector compensator = new Vector(n);
     for (int tk = 0; tk < n; tk++)
     {
-      double dtprev = tk == 0 ? 0 : durations.get(tk - 1);
       double dt = durations.get(tk);
-      compensator.set(tk, evolveAandΛ(dtprev, dt, tk));
+      compensator.set(tk, evolveAandΛ(dt, tk));
     }
     return compensator.setName("dΛ");
   }
@@ -875,7 +813,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     double tn = T.getRightmostValue();
 
-    return (tn * λ0.value(tn) + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
+    return (tn * κ + sum(i -> sum(j -> (α(j) / β(j)) * (1 - exp(-β(j) * (tn - T.get(i)))), 0, order() - 1), 0, T.size() - 1)) / Z();
   }
 
   @Override
@@ -950,7 +888,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          λ(double t)
   {
     DoubleAdder sum = new DoubleAdder();
-    sum.add(λ0.value(t));
+    sum.add(κ);
     double s;
     for (int i = 0; i < T.size() && (s = T.get(i)) <= t; i++)
     {
@@ -987,13 +925,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          iΛ()
   {
 
-    final int n = T.size()-1;
+    final int n = T.size() - 1;
 
     // return Λ(n);
     Vector integratedCompensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      integratedCompensator.set(i, iΛ(i+1));
+      integratedCompensator.set(i, iΛ(i + 1));
     }
     return integratedCompensator.setName("iΛ");
 
@@ -1016,7 +954,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   protected double
             Λ(int i)
   {
-    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(i - 1)))) * A(j, i - 1)), 0, order() - 1) / Z();
+    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(i - 1)))) * Asum(j, i - 1)), 0, order() - 1) / Z();
   }
 
   /**
@@ -1181,8 +1119,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public double
-         A(int tk,
-           int j)
+         Asum(int tk,
+              int j)
   {
     if (tk < 0)
     {
@@ -1190,8 +1128,23 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     double Ti = T.get(tk);
     return 1 + sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk - 1);
-    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last
-    // term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
+  }
+
+  public double
+         A(int tk,
+           int j)
+  {
+    if (A == null)
+    {
+      A = new double[T.size()][order()];
+    }
+    double val = A[tk][j];
+    if (val == 0)
+    {
+      val = tk == 0 ? 1 : (1 + (exp(-β(j) * (T.get(tk) - T.get(tk - 1))) * A(tk - 1, j)));
+      A[tk][j] = val;
+    }
+    return val;
   }
 
   public Real
