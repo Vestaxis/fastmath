@@ -159,7 +159,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     double dt = 0;
 
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 1000; i++)
     {
       double p = 0;
       if (trace)
@@ -175,7 +175,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         out.println("Λphase/ΛPhaseTimeDiff=" + ratio);
       }
-      if (abs(ratio) < 1E-16)
+      if (abs(ratio) < 1E-15)
       {
         break;
       }
@@ -979,7 +979,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return sum(j -> γ(j) * A[tk][j] * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+    return sum(j -> γ(j) * A(tk, j) * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
   }
 
   public Real
@@ -1152,7 +1152,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Real val = AReal[tk][j];
     if (val == null)
     {
-      val = tk == 0 ? Real.ONE : Real.ONE.add(βReal(j).neg().mult(T.get(tk) - T.get(tk - 1)).mult(AReal(tk - 1, j)).exp());
+      val = tk == 0 ? Real.ONE : Real.ONE.add(βReal(j).neg().mult(T.get(tk) - T.get(tk - 1)).exp().mult(AReal(tk - 1, j)));
       AReal[tk][j] = val;
     }
     return val;

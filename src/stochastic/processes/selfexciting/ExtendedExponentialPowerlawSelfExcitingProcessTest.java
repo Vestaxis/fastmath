@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.arblib.Real;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
@@ -116,9 +117,9 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T.set(1, 19);
     process.T.set(2, 27);
 
-    process.trace = true;
+    process.trace = false;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
-    double y = expDist.sample();
+    double y = 1.1;
     out.println("T=" + process.T);
     out.println("y=" + y);
     out.println("dΛ=" + process.Λ());
@@ -126,8 +127,15 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
     Vector compensated = process.Λ();
     double nextdt = process.invΛ(y, n - 1);
+    double phase = process.Λphase(22, 0.9, 2);
+    Real nextdtReal = process.invΛReal(y, n - 1);
+    Real phaseReal = process.ΛphaseReal(new Real( 22 ), 0.9, 2);
+    out.println( "phase=" + phase );
+    out.println( "phaseReal=" + phaseReal );
+    
+    out.println("invΛ(y=" + y + ")=" + nextdt);
+    out.println("invΛReal(y=" + y + ")=" + nextdtReal);
 
-    out.println("Λphase(y=" + y + ")=" + nextdt);
     process.dT = process.dT.append(nextdt);
     process.T = process.T.append(process.T.fmax() + nextdt);
 
@@ -151,7 +159,9 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
       {
         double a = process.Asum(i, j);
         double b = process.A(i, j);
-        assertEquals(a, b, 1E-14 );
+        Real c = process.AReal(i, j);
+        out.println( "a=" + a + " b=" + b + " c=" + c );
+        assertEquals(a, b, 1E-14);
       }
     }
 
