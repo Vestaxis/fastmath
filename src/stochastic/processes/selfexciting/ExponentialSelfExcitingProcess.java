@@ -657,7 +657,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     if (recursive)
     {
       A = new double[n][order()];
-      Areal = new Real[n][order()];
+      AReal = new Real[n][order()];
 
       double S[] = new double[order()];
       for (int tk = 1; tk < n; tk++)
@@ -989,8 +989,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult((dt.mult(βReal(j)).exp().sub(Real.ONE)))), 0, order() - 1).add(βproductReal().mult(y)
-                                                                                                                                           .mult(ZReal()));
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(dt.mult(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mult(y).mult(ZReal()));
   }
 
   public Real
@@ -1020,7 +1019,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          ΛphaseTimeDifferentialReal(Real t,
                                     int tk)
   {
-    return realSum(j -> γReal(j).mult(new Real(A[tk][j]).mult(βReal(j)).mult(t.mult(βReal(j)).exp())), 0, order() - 1);
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
   }
 
   /**
@@ -1086,7 +1085,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   double A[][];
 
-  Real Areal[][];
+  Real AReal[][];
 
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
@@ -1146,14 +1145,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          AReal(int tk,
                int j)
   {
-    if (tk < 0)
+    if (AReal == null)
     {
-      return Real.ZERO;
+      AReal = new Real[T.size()][order()];
     }
-    Real Ti = new Real(T.get(tk));
-    return Real.ONE.add(realSum(k -> βReal(j).neg().mult(Ti.sub(T.get(k))).exp(), 0, tk - 1));
-    // also equal to sum(k -> exp(-β(j) * (Ti - T.get(k))), 0, tk) since the last
-    // term in the sum is exp(-β(j)*(T[tk]-T[tk]))=exp(-β(j)*0)=exp(0)=1
+    Real val = AReal[tk][j];
+    if (val == null)
+    {
+      val = tk == 0 ? Real.ONE : Real.ONE.add(βReal(j).neg().mult(T.get(tk) - T.get(tk - 1)).mult(AReal(tk - 1, j)).exp());
+      AReal[tk][j] = val;
+    }
+    return val;
   }
 
   /**
