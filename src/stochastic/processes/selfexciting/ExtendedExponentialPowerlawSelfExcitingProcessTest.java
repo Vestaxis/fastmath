@@ -132,7 +132,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     Real phaseReal = process.ΛphaseReal(new Real(22), 0.9, 2);
     out.println("phase=" + phase);
     out.println("phaseReal=" + phaseReal);
-    assertEquals(phase, phaseReal.fpValue(), 1E-15 );
+    assertEquals(phase, phaseReal.fpValue(), 1E-15);
 
     out.println("invΛ(y=" + y + ")=" + nextdt);
     out.println("invΛReal(y=" + y + ")=" + nextdtReal);
@@ -143,6 +143,24 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println("T=" + process.T);
     compensated = process.Λ();
     out.println("compensated=" + compensated);
+
+  }
+
+  public void
+         testTotalΛ() throws InterruptedException
+  {
+    ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+    process.T = new Vector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+    process.T.set(2, 27);
+
+    process.trace = false;
+    ExponentialDistribution expDist = new ExponentialDistribution(1);
+
+    double a = process.Λ().sum();
+    double b = process.totalΛ();
+    assertEquals(a, b);
 
   }
 
