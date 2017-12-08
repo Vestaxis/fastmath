@@ -159,7 +159,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     double dt = 0;
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0;; i++)
     {
       double p = 0;
       if (trace)
@@ -175,7 +175,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         out.println("Λphase/ΛPhaseTimeDiff=" + ratio);
       }
-      if (abs(ratio) < 1E-15)
+      if (abs(ratio) < 1E-12)
       {
         break;
       }
@@ -200,13 +200,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Real dt = Real.ZERO;
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0;; i++)
     {
       Real δ = ΛphaseδReal(dt, y, tk);
 
       if (trace)
       {
-        out.println("Λphase/ΛPhaseTimeDiff=" + δ + " hmm " + δ.getRelativeAccuracyBits());
+        out.println("dt[" + i + "]=" + dt + " δ=" + δ + " bits=" + δ.getRelativeAccuracyBits());
       }
       if (δ.getRelativeAccuracyBits() < 0)
       {
@@ -507,20 +507,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
 
     return multiopt;
-  }
-
-  protected final double
-            evolveλ(double dt,
-                    double t,
-                    double[] S)
-  {
-    double λ = κ;
-    for (int j = 0; j < order(); j++)
-    {
-      S[j] = exp(-β(j) * dt) * (1 + S[j]);
-      λ += α(j) * S[j];
-    }
-    return λ / Z();
   }
 
   protected final double
@@ -981,6 +967,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(j -> γ(j) * A(tk, j) * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
   }
 
+  public double
+         ΛphaseTimeDifferential(double dt,
+                                int tk)
+  {
+    return sum(j -> γ(j) * A(tk, j) * exp(dt * β(j)), 0, order() - 1);
+  }
+
   public Real
          ΛphaseReal(Real dt,
                     double y,
@@ -1007,18 +1000,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return Λphase(t, y, tk) / ΛphaseTimeDifferential(t, tk);
   }
 
-  public double
-         ΛphaseTimeDifferential(double t,
-                                int tk)
-  {
-    return sum(j -> γ(j) * A[tk][j] * β(j) * exp(t * β(j)), 0, order() - 1);
-  }
-
   public Real
          ΛphaseTimeDifferentialReal(Real t,
                                     int tk)
   {
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
   }
 
   /**
@@ -1086,6 +1072,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   Real AReal[][];
 
+  private double[][] B;
+
   /**
    * @return an array whose elements correspond to this{@link #statisticNames}
    */
@@ -1138,6 +1126,33 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       A[tk][j] = val;
     }
     return val;
+  }
+
+  /**
+   * 
+   * @param tk
+   * @param j
+   * @return this{@link #A(int, int)}(tk,j)-1
+   */
+  public double
+         B(int tk,
+           int j)
+  {
+    return A(tk, j) - 1;
+  }
+
+  protected final double
+            evolveλ(double dt,
+                    double t,
+                    double[] S)
+  {
+    double λ = κ;
+    for (int j = 0; j < order(); j++)
+    {
+      S[j] = exp(-β(j) * dt) * (1 + S[j]);
+      λ += α(j) * S[j];
+    }
+    return λ / Z();
   }
 
   public Real

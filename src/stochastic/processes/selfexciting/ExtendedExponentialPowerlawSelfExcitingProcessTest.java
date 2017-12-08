@@ -119,27 +119,37 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
     process.trace = false;
     ExponentialDistribution expDist = new ExponentialDistribution(1);
-    double y = 1.1;
+    double y = 0.75;
     out.println("T=" + process.T);
     out.println("y=" + y);
     out.println("dΛ=" + process.Λ());
     int n = process.T.size() - 1;
 
     Vector compensated = process.Λ();
-    double nextdt = process.invΛ(y, n - 1);
-    double phase = process.Λphase(22, 0.9, 2);
-    Real nextdtReal = process.invΛReal(y, n - 1);
-    Real phaseReal = process.ΛphaseReal(new Real(22), 0.9, 2);
+    process.trace = true;
+    double nextdt = process.invΛ(y, n - 2);
+    process.trace = false;
+    double phase = process.Λphase(22, y, 2);
+    process.trace = true;
+    Real nextdtReal = process.invΛReal(y, n -2 );
+    process.trace = false;
+
+    Real phaseReal = process.ΛphaseReal(new Real(22), y, 2);
+    process.trace = false;
+
     out.println("phase=" + phase);
     out.println("phaseReal=" + phaseReal);
     assertEquals(phase, phaseReal.fpValue(), 1E-15);
+    double phaseDiff = process.ΛphaseTimeDifferential(22, 2);
+    Real phaseDiffReal = process.ΛphaseTimeDifferentialReal(new Real(22), 2);
+    assertEquals(phaseDiff, phaseDiffReal.fpValue(), 1E-15);
 
     out.println("invΛ(y=" + y + ")=" + nextdt);
     out.println("invΛReal(y=" + y + ")=" + nextdtReal);
 
-    process.dT = process.dT.append(nextdt);
-    process.T = process.T.append(process.T.fmax() + nextdt);
-
+    process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
+    process.dT = null;
+    
     out.println("T=" + process.T);
     compensated = process.Λ();
     out.println("compensated=" + compensated);
@@ -156,10 +166,9 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T.set(2, 24);
     process.T.set(3, 27);
 
-
     double a = process.Λ().sum();
     double b = process.totalΛ();
-    assertEquals(a, b, 1E-15 );
+    assertEquals(a, b, 1E-15);
 
   }
 
@@ -178,8 +187,10 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
         double a = process.Asum(i, j);
         double b = process.A(i, j);
         Real c = process.AReal(i, j);
-        out.println("a=" + a + " b=" + b + " c=" + c);
+        double d = process.B(i, j);
+        out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
         assertEquals(a, b, 1E-14);
+        assertEquals(a, 1 + d, 1E-14);
       }
     }
 
