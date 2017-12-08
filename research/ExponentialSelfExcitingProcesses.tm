@@ -28,8 +28,8 @@
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-3>>
 
-    <with|par-left|1tab|1.2.<space|2spc>The Integrated Hazard Function and
-    its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.2.<space|2spc>The Hazard Function, Cumulative
+    Hazard Function, and its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-4>>
 
     <with|par-left|2tab|1.2.1.<space|2spc>The case when P=1
@@ -139,7 +139,7 @@
 
   where <math|E<around*|(|*\<cdummy\>|)>> is the Lebesgue integral over the
   positive real numbers. For consecutive events, the dual-predictable
-  projection, aka the compensator, is expressed\ 
+  projection, also known as the compensator, is expressed by
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>><around*|(|\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
@@ -148,11 +148,10 @@
     <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>><label|comp>
   </equation>
 
-  where <math|\<Lambda\><rsub|0><around*|(|i|)>=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s=\<lambda\><rsub|0>\<Delta\>t<rsub|i>>
-  if <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>> and
+  where
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|A<rsub|j><around*|(|i|)>>|<cell|=1+B<rsub|j><around*|(|i|)>>>|<row|<cell|>|<cell|=<big|sum><rsub|t<rsub|k>\<leqslant\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|t<rsub|k>\<less\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|k=0><rsup|i-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+e<rsup|-\<beta\><rsub|j>\<Delta\>t<rsub|i>>A<rsub|j><around*|(|i-1|)>>>>>><label|A>
+    <tabular|<tformat|<table|<row|<cell|A<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|t<rsub|k>\<leqslant\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|t<rsub|k>\<less\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|k=0><rsup|i-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+e<rsup|-\<beta\><rsub|j>\<Delta\>t<rsub|i>>A<rsub|j><around*|(|i-1|)>>>|<row|<cell|>|<cell|=1+B<rsub|j><around*|(|i|)>>>>>><label|A>
   </equation>
 
   with <math|A<rsub|j><around*|(|-1|)>=0> and
@@ -165,12 +164,12 @@
     <around*|(|e<rsup|-\<beta\><rsub|j> t<rsub|i>>-e<rsup|-\<beta\><rsub|j>t<rsub|i-1>>|)>>>>>>
   </equation>
 
-  \ If <math|\<lambda\><rsub|0><around*|(|t|)>> does not vary with time, that
-  is, <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>> then
+  \ If <math|\<lambda\><rsub|0><around*|(|t|)>> is a constant function,
+  <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>> then
   (<reference|comp>) simplifies to
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>|<cell|=\<Lambda\><rsub|0><around*|(|i|)>+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=\<Lambda\><rsub|0><around*|(|i|)>+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>-t<rsub|k>><rsup|t<rsub|i>-t<rsub|k>>f<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=\<Lambda\><rsub|0><around*|(|i|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>>
+    <tabular|<tformat|<table|<row|<cell|\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>-t<rsub|k>><rsup|t<rsub|i>-t<rsub|k>>f<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>>
   </equation>
 
   <subsubsection|Maximum Likelihood Estimation>
@@ -186,40 +185,36 @@
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|ln
-    \<cal-L\><around*|(|<around*|{|t<rsub|i>|}><rsub|i=1\<ldots\>n>|)>>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=T+<big|sum><rsub|i=1><rsup|n><around*|(|ln\<lambda\><around*|(|t<rsub|i>|)>-\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>|)>>>|<row|<cell|>|<cell|=T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|
-    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=1><rsup|i-1>\<alpha\><rsub|j>
+    \<cal-L\><around*|(|<around*|{|t<rsub|i>|}><rsub|i=1\<ldots\>n>|)>>|<cell|=T-<big|int><rsub|0><rsup|T<rsub|>>\<lambda\><around*|(|t|)>\<mathd\>t+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=T+<big|sum><rsub|i=1><rsup|n><around*|(|ln\<lambda\><around*|(|t<rsub|i>|)>-\<Lambda\><rsub|i>|)>>>|<row|<cell|>|<cell|=T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|
+    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|i-1>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|
     \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>>>|<row|<cell|>|<cell|=T-<big|int><rsub|0><rsup|<rsub|T>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s-<big|sum><rsub|i=1><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>>>|<row|<cell|>|<cell|=T-<big|int><rsub|0><rsup|<rsub|T>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s-<big|sum><rsub|i=0><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     B<rsub|j><around*|(|i|)>|)>>>>>>
   </equation>
 
   where <math|T=t<rsub|n>> and <math|B<rsub|j><around*|(|i|)>>
-  <cite|ogata1981lewis> is defined by (<reference|Bj>) If the baseline
+  <cite|ogata1981lewis> is defined by (<reference|Bj>). If the baseline
   intensity \ is constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>>
   then the log-likelihood can be written
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|ln
-    \<cal-L\><around*|(|<around*|{|t<rsub|1>,\<ldots\>,t<rsub|n>|}><rsub|>|)>>|<cell|=T-\<lambda\><rsub|0>T-<big|sum><rsub|i=1><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|T-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>>>>>><with|mode|text|><label|hawkesll>
+    \<cal-L\><around*|(|<around*|{|t<rsub|0>,\<ldots\>,t<rsub|n>|}><rsub|>|)>>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|i=1><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>>>><with|mode|text|><label|hawkesll>
   </equation>
-
-  Note that it was necessary to shift each <math|t<rsub|i>> by
-  <math|t<rsub|1>> so that <math|t<rsub|1>=0> and <math|T=t<rsub|n>>. Also
-  note that <math|T> is just an additive constant which does not vary with
-  the parameters so for the purposes of estimation can be removed from the
-  equation. \ 
 
   <subsection|The Hazard Function, Cumulative Hazard Function, and its
   Inverse>
 
   The hazard function is a conditional density that gives the probability of
-  an event occuring within 1 unit of time given that an event has not yet
-  occurred prior to time t
+  an event occuring within 1 unit of time after time t given that an event
+  has not yet occurred prior to time t
 
   <\equation>
-    h<around*|(|t|)>=<frac|\<nu\><around*|(|t|)>|s<around*|(|t|)>>
+    h<around*|(|t|)>=<frac|f<around*|(|t|)>|s<around*|(|t|)>>
   </equation>
 
   where <math|s<around*|(|t|)>> is the survivor function defined by
@@ -233,48 +228,21 @@
   \;
 
   <\equation>
-    F<around*|(|t|)>=<big|int><rsub|0><rsup|t>\<nu\><around*|(|s|)>\<mathd\>s=<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
+    F<around*|(|t|)>=<big|int><rsub|0><rsup|t>f<around*|(|s|)>\<mathd\>s=<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
     t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>
   </equation>
 
   \ Let
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|i
-    h<around*|(|t|)>>|<cell|=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=-ln<around*|(|1-F<around*|(|t|)>|)>>>|<row|<cell|>|<cell|=-ln<around*|(|1-<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
+    <tabular|<tformat|<table|<row|<cell|H<around*|(|t|)>>|<cell|=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=-ln<around*|(|1-F<around*|(|t|)>|)>>>|<row|<cell|>|<cell|=-ln<around*|(|1-<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
     t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>|)>>>>>>
   </equation>
 
   be the integrated, or cumulative, hazard function and define
 
   <\equation>
-    \<varphi\><around*|(|t,r|)>=<around*|(|<big|sum><rsub|k=1><rsup|P><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)><big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>|)>
-  </equation>
-
-  then the root of <math|\<varphi\><around*|(|t,r|)>> for a given value of
-  <math|r> is such that
-
-  <\equation>
-    i h<rsup|-1><around*|(|r|)>=<around*|{|t:i
-    h<around*|(|t|)>=r|}>=<around*|{|t:\<varphi\><around*|(|t,r|)>=0|}>
-  </equation>
-
-  is a solution to
-
-  <\equation>
-    i h<around*|(|i h<rsup|-1><around*|(|r|)>|)>=r
-  </equation>
-
-  The derivative of <math|\<varphi\><around*|(|t,r|)>> is
-
-  <\equation>
-    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>=-<around*|(|<big|sum><rsub|k=1><rsup|P>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t><big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>|)>
-  </equation>
-
-  so that the Newton iteration is expressed
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|t-<frac|\<varphi\><around*|(|t,r|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>>=t+<frac|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)>|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t>>>>>>>
+    \<varphi\><around*|(|t,r|)>=<around*|(|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)>|)>
   </equation>
 
   where
@@ -283,7 +251,36 @@
     \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
   </equation>
 
-  is the amplitude of <math|j>-th joint decay rate.
+  then the root of <math|\<varphi\><around*|(|t,r|)>> in <math|t> for a
+  specific value of <math|r> is such that
+
+  <\equation>
+    H<rsup|-1><around*|(|r|)>=<around*|{|t:H<around*|(|t|)>=r|}>=<around*|{|t:\<varphi\><around*|(|t,r|)>=0|}>
+  </equation>
+
+  is the inverse of <math|H<around*|(|t|)>> so that
+
+  <\equation>
+    H<around*|(|H<rsup|-1><around*|(|r|)>|)>=r
+  </equation>
+
+  The derivative of <math|\<varphi\><around*|(|t,r|)>> is given by
+
+  <\equation>
+    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>=-<around*|(|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t>|)>
+  </equation>
+
+  therefore the Newton iteration function is expressed by
+
+  <\equation>
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,r|)>=t-<frac|\<varphi\><around*|(|t,r|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>>=t+<frac|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)>|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t>>>>>>>
+  </equation>
+
+  whose unique real-valued fixed-point in <math|t>,
+  <math|N<rsub|\<varphi\>><around*|(|t,r|)>=t> is the inverse of
+  <math|H<around*|(|r|)>>.
+
+  \;
 
   <subsubsection|The case when P=1>
 
@@ -353,43 +350,6 @@
     a<rsub|n-1>>>>>>
   </equation>
 
-  It would be nice to have expressions like this involving the Lambert W
-  function for <math|P\<gtr\>1> but neither Maple nor Mathematica were able
-  to find any solutions in terms of \Pknown\Q functions for <math|P\<gtr\>1>.
-  It is noted that Equation (<reference|P1pred>) has the form
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|<big|int><rsub|0><rsup|\<infty\>><around*|(|p+q
-    W<around*|(|r e<rsup|-s x+t>|)>+u x|)>e<rsup|-x>\<mathd\>x<label|lambertW6>>>>>>
-  </equation>
-
-  which is a function of 6 variables, <math|<around*|{|p,q,r,s,t,u|}>>, for
-  which it would be a very nice thing to have a closed form expression, in
-  order to avoid a recourse to numerical or Monte Carlo integration. It seems
-  that such an expression is very likely to exist because if we drop the
-  variable <math|s> from Equation (<reference|lambertW6>) we get a
-  closed-form expression of the form
-
-  <with|font-base-size|10|<\equation>
-    <with|font-base-size|10|<big|int><rsub|0><rsup|\<infty\>><around*|(|p+q
-    W<around*|(|r e<rsup|- x+t>|)>+u x|)>e<rsup|-x>\<mathd\>x=q W<around*|(|r
-    e<rsup|t>|)>+<frac|q |W<around*|(|r e<rsup|t>|)>>-q+u+p-<frac|q|r
-    e<rsup|t>>><with|font-base-size|10|>
-  </equation>>
-
-  We can break this problem down into a more manageable one by calculating
-  some more integrals to see if we can find a pattern. Let us begin with the
-  integral
-
-  <\equation>
-    <big|int><rsub|0><rsup|\<infty\>>W<around*|(|e<rsup|-s
-    x>|)>e<rsup|-x>\<mathd\>x=W<around*|(|1|)>\<noplus\>+<around*|(|-<frac|1|s>|)><rsup|-<frac|1|s>>
-    <around*|(|\<Gamma\><around*|(|<frac|1|s>|)>-s
-    \<Gamma\><around*|(|1+<frac|1|s>,-<frac|W<around*|(|1|)>|s>|)>|)>
-  </equation>
-
-  whose closed-form expression was found by Vladimir Reshetnikov.\ 
-
   <subsubsection|The Case of Any Order <math|P=n>>
 
   Let <math|S=t<rsub|n>> where <math|n> is the number of points that have
@@ -398,7 +358,7 @@
   <\equation>
     <with|font-base-size|10|\<varphi\><around*|(|P,\<#3B5\>,x,\<alpha\>,\<beta\>,S|)><rsub|>=<with|font-base-size|9|<tabular|<tformat|<table|<row|<cell|<with|font-base-size|10|<with|font-base-size|9|<around*|(|<big|prod><rsub|k=1><rsup|P>\<beta\><rsub|k>|)>><around*|(|\<lambda\><rsub|0>
     x-<around*|(|\<varepsilon\>+\<lambda\><rsub|0>S|)>|)>e<rsup|<big|sum><rsub|k=1><rsup|P>\<beta\><rsub|k><around*|(|x+
-    S|)>>>+>>|<row|<cell|<with|font-base-size|8|<big|sum><rsub|m=1><rsup|P><around*|(|<big|prod><rsub|k=1><rsup|<with|font-base-size|7|>P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|k>>|<cell|m=k>>|<row|<cell|\<beta\><rsub|k>>|<cell|m\<neq\>k>>>>>|)>><with|font-base-size|10|<big|sum><rsub|k=0><rsup|n>e<rsup|<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j><around*|(|x+<choice|<tformat|<table|<row|<cell|S>|<cell|j\<neq\>m>>|<row|<cell|t<rsub|k>>|<cell|j=m>>>>>|)>>-e<rsup|<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j><around*|(|S+<with|font-base-size|9|<choice|<tformat|<table|<row|<cell|x>|<cell|j\<neq\>m>>|<row|<cell|
+    S|)>>>+>>|<row|<cell|<with|font-base-size|8|<big|sum><rsub|m=1><rsup|P>\<gamma\><around*|(|m|)>><with|font-base-size|10|<big|sum><rsub|k=0><rsup|n>e<rsup|<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j><around*|(|x+<choice|<tformat|<table|<row|<cell|S>|<cell|j\<neq\>m>>|<row|<cell|t<rsub|k>>|<cell|j=m>>>>>|)>>-e<rsup|<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j><around*|(|S+<with|font-base-size|9|<choice|<tformat|<table|<row|<cell|x>|<cell|j\<neq\>m>>|<row|<cell|
     t<rsub|k>>|<cell|j=m>>>>>>|)>>>>>|<row|<cell|=\<tau\><around*|(|x,\<varepsilon\>|)>+<big|sum><rsub|j=1><rsup|P>\<phi\><rsub|j>
     <big|sum><rsub|k=0><rsup|N<rsub|T>><around*|(|\<sigma\><rsub|j,k><around*|(|x,x|)>-\<sigma\><rsub|j,k><around*|(|x,S|)>|)>>>>>><label|prediction>>>
   </equation>
@@ -417,22 +377,21 @@
     x<around*|(|\<varepsilon\>|)>=<around*|{|x:\<varphi\><around*|(|P,\<#3B5\>,x,\<alpha\>,\<beta\>,S|)><rsub|>=0|}>
   </equation>
 
-  The expected value <math|E<rsub|\<varepsilon\>><around*|[|x<around*|(|\<varepsilon\>|)>|]>>
+  The expected value <math|<wide|x|\<bar\>>=E<rsub|\<varepsilon\>><around*|[|x<around*|(|\<varepsilon\>|)>|]>>
   of the solution over all possible values of <math|\<varepsilon\>> is equal
   to\ 
 
   <\equation>
-    x<around*|(|*\<varepsilon\>|)>=<big|int><rsub|0><rsup|\<infty\>>e<rsup|-\<varepsilon\>>x<around*|(|\<varepsilon\>|)>\<mathd\>\<varepsilon\>
+    <wide|x|\<bar\>>=<big|int><rsub|0><rsup|\<infty\>>e<rsup|-\<varepsilon\>>x<around*|(|\<varepsilon\>|)>\<mathd\>\<varepsilon\>
   </equation>
 
   where <math|x<around*|(|\<varepsilon\>|)>=x<around*|(|\<varepsilon\>;P,x,\<#3B1\>,\<#3B2\>,S|)>>
   is shortened notation to indicate that <math|x> is a univariate function of
-  <math|\<varepsilon\>> only and the variables <math|\<lambda\><rsub|0>,>
-  <math|\<alpha\>>, <math|\<beta\>> and P are constants. Note that the
-  product of piece-wise functions can be written as\ 
+  <math|\<varepsilon\>> only and <math|P,x,\<#3B1\>,\<#3B2\>,S> are
+  constants. Note that <math|\<gamma\><around*|(|k|)>> can be written as\ 
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|<big|prod><rsub|k=1><rsup|<with|font-base-size|7|>P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|k>>|<cell|m=k>>|<row|<cell|\<beta\><rsub|k>>|<cell|m\<neq\>k>>>>>>|<cell|=\<alpha\><rsub|m><around*|(|<big|prod><rsub|k=1><rsup|m-1>\<beta\><rsub|k>|)><around*|(|<big|prod><rsub|k=m+1><rsup|P>\<beta\><rsub|k>|)>>>|<row|<cell|>|<cell|=\<alpha\><rsub|m><below|<big|prod><rsub|k=1><rsup|P>|k\<neq\>m>\<beta\><rsub|k>>>>>>
+    <tabular|<tformat|<table|<row|<cell|\<gamma\><around*|(|m|)>>|<cell|=\<alpha\><rsub|m><around*|(|<big|prod><rsub|k=1><rsup|m-1>\<beta\><rsub|k>|)><around*|(|<big|prod><rsub|k=m+1><rsup|P>\<beta\><rsub|k>|)>>>|<row|<cell|>|<cell|=\<alpha\><rsub|m><below|<big|prod><rsub|k=1><rsup|P>|k\<neq\>m>\<beta\><rsub|k>>>>>>
   </equation>
 
   where
@@ -462,8 +421,6 @@
   <\equation>
     <wide|v|\<bar\>><rsub|m>=<below|<big|sum><rsub|k=1><rsup|P>|k\<neq\>m>\<beta\><rsub|k>
   </equation>
-
-  \;
 
   so that (<reference|prediction>) can be rewritten as
 
@@ -611,11 +568,12 @@
   <math|\<frak-F\><rsub|s>> is the filtration up to time <math|s> and the
   parameters of <math|\<lambda\><rsup|m>> are fixed. As is the case for the
   uni-variate Hawkes process, the idea is to average over all possible
-  realizations of <math|\<varepsilon\>> (of which there are an uncountable
-  infinity) weighted according to an exponential unit distribution. Another
-  idea for more accurate prediction is to model the deviation of the
-  generalized residuals from a true exponential distribution and then include
-  the predicted error when calculating this expectation.\ 
+  realizations of <math|\<varepsilon\>> (of which there are uncountably
+  infinite) weighted by a standard exponential distribution to calculate the
+  expected value of the next point of the process. Another idea for more
+  accurate prediction is to model the deviation of the generalized residuals
+  from a true exponential distribution and then include the predicted error
+  when calculating this expectation.\ 
 
   Let the most recent arrival time of the pooled and <math|m>-th processes
   respectively be given by
@@ -631,20 +589,15 @@
   and\ 
 
   <\equation>
-    <wide|N|\<breve\>><rsup|n><rsub|T<rsub|m>><rsup|>=<big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsup|n>><choice|<tformat|<table|<row|<cell|1>|<cell|t<rsup|n><rsub|k>\<less\>T<rsub|m>>>|<row|<cell|0>|<cell|>>>>>
+    <wide|N|\<breve\>><rsup|n><rsub|T<rsub|m>><rsup|>=#<around*|(|t<rsup|n><rsub|k>\<less\>T<rsub|m>|)>
   </equation>
 
-  count the number of points occurring in the <math|n>-th dimension before
-  the most recent point of the <math|m>-th dimension and
-
-  <\equation>
-    <wide|N|\<breve\>><around*|(|t<rsub|j><rsup|m>\<less\>t<rsub|k><rsup|n>|)>
-  </equation>
-
-  then the next arrival time for a given value of the exponential random
-  variable <math|\<varepsilon\>> of the <math|m>-th dimension of a
-  multivariate Hawkes process having the standard exponential kernel is found
-  by solving for the real root of\ 
+  count the number of points occurring in the <math|n>-th dimension strictly
+  <strong|before> the most recent point of the <math|m>-th dimension then the
+  next arrival time for a given value of the exponential random variable
+  <math|\<varepsilon\>> of the <math|m>-th dimension of a multivariate Hawkes
+  process having the standard exponential kernel is found by solving for the
+  real root of\ 
 
   <\equation>
     <with|font-base-size|9|\<varphi\><rsub|m><around*|(|x<around*|(|\<varepsilon\>|)>;\<cal-F\><rsub|T>|)>=>\<tau\><rsub|m><around*|(|x,\<varepsilon\>|)>+<big|sum><rsub|l=1><rsup|P><big|sum><rsub|i=1><rsup|M>\<phi\><rsub|m,i,l>
@@ -696,14 +649,6 @@
     \<sigma\><rsub|m,i,l,k><around*|(|x,a|)>=e<rsup|<big|sum><rsub|j=1><rsup|P><big|sum><rsub|n=1><rsup|M>\<beta\><rsub|m,n,j><choice|<tformat|<table|<row|<cell|a+t<rsup|n><rsub|k>>|<cell|n=i
     and j=l>>|<row|<cell|x+T<rsub|n>>|<cell|n\<neq\>i orj\<neq\>l>>>>>>
   </equation>
-
-  For comparison, the uni-variate case is Equation (<reference|uc>) where
-
-  <\equation>
-    \<sigma\><rsub|m,k><around*|(|x,a|)>=e<rsup|<around*|(|a+t<rsub|k>|)>\<beta\><rsub|m><rsub|>+<around*|(|x+T|)><below|<big|sum><rsub|j=1><rsup|P>|j\<neq\>m>\<beta\><rsub|j>>=e<rsup|<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j><choice|<tformat|<table|<row|<cell|a+t<rsub|k><rsub|>>|<cell|j=m>>|<row|<cell|x+T>|<cell|j\<neq\>m>>>>>>
-  </equation>
-
-  \;
 
   <\bibliography|bib|tm-plain|references.bib>
     <\bib-list|9>
@@ -772,13 +717,13 @@
   <\collection>
     <associate|A|<tuple|10|3>>
     <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|53|8>>
+    <associate|Etn1|<tuple|50|8>>
     <associate|Hawkes1|<tuple|26|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|31|5>>
+    <associate|P1pred|<tuple|31|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|70|10>>
+    <associate|auto-11|<tuple|65|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -792,7 +737,7 @@
     <associate|bib-chavez2012high|<tuple|3|10>>
     <associate|bib-hawkes-finance|<tuple|9|10>>
     <associate|bib-hawkes1971spectra|<tuple|4|10>>
-    <associate|bib-ocvshjb|<tuple|1|10>>
+    <associate|bib-ocvshjb|<tuple|1|9>>
     <associate|bib-ogata1981lewis|<tuple|5|10>>
     <associate|bib-ozaki1979maximum|<tuple|6|10>>
     <associate|bib-shek2010modeling|<tuple|8|10>>
@@ -801,14 +746,13 @@
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|15|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|lambertW6|<tuple|34|6>>
-    <associate|mc|<tuple|62|9>>
-    <associate|mp|<tuple|57|9>>
+    <associate|mc|<tuple|58|9>>
+    <associate|mp|<tuple|54|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|37|6>>
-    <associate|uc|<tuple|47|7>>
+    <associate|prediction|<tuple|34|6>>
+    <associate|uc|<tuple|44|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|55|8>>
+    <associate|up|<tuple|52|8>>
   </collection>
 </references>
 
