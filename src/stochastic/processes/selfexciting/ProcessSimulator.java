@@ -44,9 +44,9 @@ public class ProcessSimulator
   {
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
-    process.ε = 0.05;
+    // process.ε = 0.05;
 
-    process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000);
+    process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000).setName("T");
     final double t0 = process.T.get(0);
     for (int i = 0; i < process.T.size(); i++)
     {
@@ -74,17 +74,15 @@ public class ProcessSimulator
     int n = 10;
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
-    out.println("T=" + process.T);
+    out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
     process.dT = null;
-    out.println("dT=" + process.dT());
+    out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
 
     process.trace = true;
     process.recursive = true;
     process.Λ();
     process.trace = false;
 
-    out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
-    out.println(ansi().fgBrightGreen() + process.Λ().toString() + ansi().fgDefault());
     process.trace = false;
 
     double y = 0.9;

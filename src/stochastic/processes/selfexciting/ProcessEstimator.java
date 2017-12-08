@@ -2,7 +2,6 @@ package stochastic.processes.selfexciting;
 
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.IntStream.range;
 import static org.fusesource.jansi.Ansi.ansi;
@@ -13,10 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.math3.optim.PointValuePair;
 import org.fusesource.jansi.Ansi.Color;
 
-import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
