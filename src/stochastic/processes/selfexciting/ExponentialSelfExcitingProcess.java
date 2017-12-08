@@ -651,7 +651,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          logLik()
   {
     double tn = T.getRightmostValue();
-    double ll = tn - T.getLeftmostValue();
+    double ll = tn - T.getLeftmostValue() - totalΛ();
     final int n = T.size();
 
     if (recursive)
@@ -666,7 +666,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-        double Λ = evolveAandΛ(dt, tk - 1);
+        // double Λ = evolveAandΛ(dt, tk - 1);
 
         // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
@@ -675,7 +675,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
           ll += log(λ);
         }
 
-        ll -= Λ;
+        // ll -= Λ;
 
       }
     }
@@ -684,7 +684,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       for (int i = 1; i < n; i++)
       {
         double thist = T.get(i);
-        ll += log(λ(thist)) - iΛ(i);
+        ll += log(λ(thist));
       }
 
     }
