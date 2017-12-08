@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
+import static org.fusesource.jansi.Ansi.ansi;
 import static util.Console.println;
 
 import java.io.File;
@@ -11,7 +12,6 @@ import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
 import org.arblib.Real;
-import org.fusesource.jansi.Ansi;
 import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;
@@ -63,18 +63,19 @@ public class ProcessSimulator
     {
       out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
     }
-    out.println("estimated " + Ansi.ansi().fgBrightYellow() + process + Ansi.ansi().fgDefault() + " from " + process.T.size() + " points");
+    out.println("estimated " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     out.println(process.getαβString());
     process.trace = false;
     double Λmean = process.Λ().mean();
     process.trace = false;
     double Λvar = process.Λ().variance();
-    out.println("Λmean=" + Ansi.ansi().fgBrightRed() + Λmean + Ansi.ansi().fgDefault() + " Λvar=" + Ansi.ansi().fgBrightRed() + Λvar + Ansi.ansi().fgDefault());
+    out.println("Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
 
     int n = 10;
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
     out.println("T=" + process.T);
+    process.dT = null;
     out.println("dT=" + process.dT());
 
     process.trace = true;
@@ -82,8 +83,8 @@ public class ProcessSimulator
     process.Λ();
     process.trace = false;
 
-    out.println(Ansi.ansi().fgBrightGreen() + process.T.toString() + Ansi.ansi().fgDefault());
-    out.println(Ansi.ansi().fgBrightGreen() + process.Λ().toString() + Ansi.ansi().fgDefault());
+    out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
+    out.println(ansi().fgBrightGreen() + process.Λ().toString() + ansi().fgDefault());
     process.trace = false;
 
     double y = 0.9;
@@ -94,7 +95,7 @@ public class ProcessSimulator
     double shouldbe0 = process.Λphase(nextdt, y, n - 2);
     Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
     out.println("shouldbe0=" + shouldbe0 + " shouldbe0Real=" + shouldbe0Real + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
-    double shouldbey = process.Λ(n - 2, nextdtReal.fpValue());
+    double shouldbey = process.Λ(n - 1, nextdtReal.fpValue());
     out.println("shouldbey=" + shouldbey + " should be y=" + y);
     process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
 

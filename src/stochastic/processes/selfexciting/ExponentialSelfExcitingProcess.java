@@ -914,7 +914,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     else
     {
-            Vector compensator = new Vector(n);
+      Vector compensator = new Vector(n);
       for (int i = 0; i < n; i++)
       {
         compensator.set(i, Λ(i));
