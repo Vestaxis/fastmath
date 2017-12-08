@@ -125,33 +125,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   /**
-   * 
-   * @param y
-   *          unit exponentially distributed random variable
-   * 
-   * @return
-   */
-  // public double
-  // Λphase(double dtnext,
-  // double y)
-  // {
-  // double S[] = new double[order()];
-  // int n = T.size();
-  // int tk = refreshCompensator(n);
-  // out.println("tk=" + tk + " n=" + n);
-  // // out.println("A=" +
-  // //
-  // Arrays.stream(A).map(Arrays::toString).collect(joining(System.lineSeparator())));
-  // return Λphase(dtnext, y, tk, A);
-  // }
-  //
-
-  /**
+   * TODO: see about using some fancier numerical root finding algo... convergence is very slow past a certain point
    * 
    * @param y
    *          exponentially distributed random variable
    * 
-   * @return inverse of the compensator for a given value of y
+   * @return the value of T[n+1] that will cause the compensator to be equal to
+   *         Λ(T[n],T[N+1])=y
    */
   public double
          invΛ(double y,
@@ -652,9 +632,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-        // double Λ = evolveAandΛ(dt, tk - 1);
 
-        // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
 
         if (λ > 0)
         {
