@@ -150,17 +150,16 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
          testTotalΛ() throws InterruptedException
   {
     ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-    process.T = new Vector(3);
+    process.T = new Vector(4);
     process.T.set(0, 0);
     process.T.set(1, 19);
-    process.T.set(2, 27);
+    process.T.set(2, 24);
+    process.T.set(3, 27);
 
-    process.trace = false;
-    ExponentialDistribution expDist = new ExponentialDistribution(1);
 
     double a = process.Λ().sum();
     double b = process.totalΛ();
-    assertEquals(a, b);
+    assertEquals(a, b, 1E-15 );
 
   }
 
