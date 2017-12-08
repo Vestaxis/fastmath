@@ -211,6 +211,8 @@ public class Plotter
     styler.setAntiAlias(true);
     styler.setPlotGridLinesStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
     styler.setPlotGridLinesColor(Color.DARK_GRAY);
+    styler.setSeriesColors(new Color[]
+    { Color.YELLOW, Color.RED, Color.GREEN, Color.ORANGE, Color.BLUE });
     styler.setSeriesLines(new BasicStroke[]
     { new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER),
       new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, new float[]

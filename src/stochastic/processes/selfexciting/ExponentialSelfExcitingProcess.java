@@ -771,6 +771,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return compensator.setName("dΛ");
   }
 
+  protected double
+            Λ(int i)
+  {
+    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i + 1) - T.get(i))))) * A(i, j), 0, order() - 1) / Z();
+  }
+
   Vector dT;
 
   Vector dT()
@@ -908,13 +914,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
     else
     {
-      // return Λ(n);
-      Vector integratedCompensator = new Vector(n + 1);
-      for (int i = 0; i < n + 1; i++)
+            Vector compensator = new Vector(n);
+      for (int i = 0; i < n; i++)
       {
-        integratedCompensator.set(i, iΛ(i));
+        compensator.set(i, Λ(i));
       }
-      return integratedCompensator.diff().setName("dΛ");
+      return compensator.setName("dΛ");
     }
 
   }
@@ -949,12 +954,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
-  protected double
-            Λ(int i)
-  {
-    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(i - 1)))) * Asum(j, i - 1)), 0, order() - 1) / Z();
-  }
-
   /**
    * n-th compensated point, expensive non-recursive O(n^2) runtime version
    * 
@@ -963,8 +962,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
    *         i-1)
    */
-  protected Real
-            ΛReal(int i)
+  public Real
+         ΛReal(int i)
   {
     final Real Ti = new Real(T.get(i));
     return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mult(Real.ONE.sub(βReal(j).neg().mult(Ti.sub(T.get(k))).exp()))), 0, order() - 1),

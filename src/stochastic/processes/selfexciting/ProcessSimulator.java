@@ -56,8 +56,8 @@ public class ProcessSimulator
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
-    process.printResults( process.estimateParameters(25) );
-    
+    // process.printResults( process.estimateParameters(25) );
+
     process.Λ();
     for (int tk = 0; tk < 10; tk++)
     {
@@ -75,9 +75,10 @@ public class ProcessSimulator
     out.println("in-sample forecasting starting at n=" + n);
     process.T = process.T.slice(0, n);
     out.println("T=" + process.T);
+    out.println("dT=" + process.dT());
 
     process.trace = true;
-    process.recursive = false;
+    process.recursive = true;
     process.Λ();
     process.trace = false;
 
@@ -97,11 +98,14 @@ public class ProcessSimulator
     out.println("shouldbey=" + shouldbey + " should be y=" + y);
     process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
 
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 40, t -> t)).displayChart();
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 60, t -> t)).displayChart();
     out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
 
     process.dT = null;
-    out.println("comp " + process.Λ());
+    out.println("comp (rec) " + process.Λ());
+    process.recursive = false;
+    out.println("comp (full) " + process.Λ());
+
     out.println("∫comp " + process.iΛ());
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
