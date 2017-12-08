@@ -103,9 +103,9 @@ public class ProcessSimulator
     out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
 
     process.dT = null;
-    out.println("comp (rec) " + process.Λ());
+    out.println("comp (rec) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
     process.recursive = false;
-    out.println("comp (full) " + process.Λ());
+    out.println("comp (full) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
 
     out.println("∫comp " + process.iΛ());
 
