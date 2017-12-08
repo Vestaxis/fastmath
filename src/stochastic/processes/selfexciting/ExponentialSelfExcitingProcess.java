@@ -188,7 +188,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         out.println("dt[" + i + "]=" + dt + " δ=" + δ + " bits=" + δ.getRelativeAccuracyBits());
       }
-      if (δ.getRelativeAccuracyBits() < 0)
+      if (δ.getRelativeAccuracyBits() <= 0)
       {
         break;
       }
