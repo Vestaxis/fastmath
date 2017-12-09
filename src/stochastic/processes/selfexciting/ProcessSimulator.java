@@ -88,17 +88,17 @@ public class ProcessSimulator
     double y = 0.9;
     double nextdt = process.invΛ(y, n - 2);
     process.trace = true;
-    Real nextdtReal = process.invΛReal(y, n - 2);
+   // Real nextdtReal = process.invΛReal(y, n - 2);
     process.trace = false;
     double shouldbe0 = process.Λphase(nextdt, y, n - 2);
-    Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
-    out.println("shouldbe0=" + shouldbe0 + " shouldbe0Real=" + shouldbe0Real + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
-    double shouldbey = process.Λ(n - 1, nextdtReal.fpValue());
+   // Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
+    out.println("shouldbe0=" + shouldbe0 + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
+    double shouldbey = process.Λ(n - 1, nextdt );
     out.println("shouldbey=" + shouldbey + " should be y=" + y);
-    process.T = process.T.append(process.T.fmax() + nextdtReal.fpValue());
+    process.T = process.T.append(process.T.fmax() + nextdt);
 
     new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 60, t -> t)).displayChart();
-    out.println("nextdt=" + nextdt + " nextdtreal=" + nextdtReal);
+    out.println("nextdt=" + nextdt );
 
     process.dT = null;
     out.println("comp (rec) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());

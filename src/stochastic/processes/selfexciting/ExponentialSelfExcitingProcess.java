@@ -125,7 +125,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   /**
-   * TODO: see about using some fancier numerical root finding algo... convergence is very slow past a certain point
+   * TODO: see about using some fancier numerical root finding algo... convergence
+   * is very slow past a certain point
    * 
    * @param y
    *          exponentially distributed random variable
@@ -141,25 +142,17 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     for (int i = 0;; i++)
     {
-      double p = 0;
+
+      double δ = Λphaseδ(dt, y, tk);
       if (trace)
       {
-        out.println("dt[" + i + "]=" + dt);
+        out.println("dt[" + i + "]=" + dt + " δ=" + δ);
       }
-      p = Λphase(dt, y, tk);
-
-      double pd = ΛphaseTimeDifferential(dt, tk);
-
-      double ratio = p / pd;
-      if (trace)
-      {
-        out.println("Λphase/ΛPhaseTimeDiff=" + ratio);
-      }
-      if (abs(ratio) < 1E-12)
+      if (abs(δ) < 1E-12)
       {
         break;
       }
-      dt = dt - ratio;
+      dt = dt - δ;
 
     }
     return -dt;
@@ -632,7 +625,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
         double dt = t - T.get(tk - 1);
         double λ = evolveλ(dt, t, S);
-
 
         if (λ > 0)
         {

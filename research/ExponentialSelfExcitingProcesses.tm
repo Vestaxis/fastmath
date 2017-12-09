@@ -77,19 +77,24 @@
   counting-function <math|N<rsub|t>> of a simple point process is\ 
 
   <\equation>
-    N<rsub|t>=<big|sum><rsub|i:T<rsub|i>\<less\>t>\<theta\><around*|(|t-T<rsub|i>|)>
+    N<rsub|t>=<big|sum><rsub|T<rsub|i>\<less\>t>\<theta\><around*|(|t-T<rsub|i>|)>
   </equation>
 
-  whose conditional intensity (event rate) is given by\ 
+  whose conditional intensity (event rate), also known in some contexts as
+  the hazard function, is given by\ 
 
   \;
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<around*|(|t+\<Delta\>t|)>\<gtr\>N<around*|(|t|)><mid|\|>\<cal-F\><rsub|t>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
   </equation>
 
-  where <math|\<lambda\><rsub|0><around*|(|t|)>> is a deterministic function
-  which will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
+  where <math|\<cal-F\><rsub|t>=<around*|{|t<rsub|0>,\<ldots\>,t<rsub|N<around*|(|t|)>>|}>>
+  is the filtration which is an increasing sequence of
+  <math|\<sigma\>>-algebras represented by the ordered sequence of the unique
+  occurance times of events of the process and
+  <math|\<lambda\><rsub|0><around*|(|t|)>> is a deterministic function which
+  will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
   <cite|hawkes-finance><cite|hawkes1971spectra><cite|shek2010modeling><cite|chavez2012high>
   and <math|f:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a kernel
   function which expresses the positive influence of past events
@@ -102,7 +107,7 @@
     e<rsup|-\<beta\><rsub|j> t><label|kernel>
   </equation>
 
-  The intensity is then written as
+  The \ conditional intensity can then be expressed as
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
@@ -206,46 +211,7 @@
     B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>>>><with|mode|text|><label|hawkesll>
   </equation>
 
-  <subsection|The Hazard Function, Cumulative Hazard Function, and its
-  Inverse>
-
-  The hazard function is a conditional density that gives the probability of
-  an event occuring within 1 unit of time after time t given that an event
-  has not yet occurred prior to time t
-
-  <\equation>
-    h<around*|(|t|)>=<frac|f<around*|(|t|)>|s<around*|(|t|)>>
-  </equation>
-
-  where <math|s<around*|(|t|)>> is the survivor function defined by
-
-  <\equation>
-    s<around*|(|t|)>=1-F<around*|(|t|)>
-  </equation>
-
-  and <math|F<around*|(|t|)>> is the integrated kernel function
-
-  \;
-
-  <\equation>
-    F<around*|(|t|)>=<big|int><rsub|0><rsup|t>f<around*|(|s|)>\<mathd\>s=<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
-    t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>
-  </equation>
-
-  \ Let
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|H<around*|(|t|)>>|<cell|=<big|int><rsub|0><rsup|t>h<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=-ln<around*|(|1-F<around*|(|t|)>|)>>>|<row|<cell|>|<cell|=-ln<around*|(|1-<frac|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j>
-    t>|)>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>|)>>>>>>
-  </equation>
-
-  be the integrated, or cumulative, hazard function and define
-
-  <\equation>
-    \<varphi\><around*|(|t,r|)>=<around*|(|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)>|)>
-  </equation>
-
-  where
+  <subsection|The \ Inverse Compensator>
 
   <\equation>
     \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
@@ -717,13 +683,13 @@
   <\collection>
     <associate|A|<tuple|10|3>>
     <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|50|8>>
-    <associate|Hawkes1|<tuple|26|5>>
+    <associate|Etn1|<tuple|45|8>>
+    <associate|Hawkes1|<tuple|21|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|31|6>>
+    <associate|P1pred|<tuple|26|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|65|9>>
+    <associate|auto-11|<tuple|60|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -746,13 +712,13 @@
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|15|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|58|9>>
-    <associate|mp|<tuple|54|9>>
+    <associate|mc|<tuple|53|9>>
+    <associate|mp|<tuple|49|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|34|6>>
-    <associate|uc|<tuple|44|7>>
+    <associate|prediction|<tuple|29|6>>
+    <associate|uc|<tuple|39|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|52|8>>
+    <associate|up|<tuple|47|8>>
   </collection>
 </references>
 
