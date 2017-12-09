@@ -213,38 +213,78 @@
 
   <subsection|The \ Inverse Compensator>
 
+  Define the inverse compensator\ 
+
+  <\equation>
+    <tabular*|<tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>|<cell|=<around*|{|T<rsub|n+1>:\<Lambda\><around*|(|T<rsub|n>,T<rsub|n+1><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y|}>>>|<row|<cell|>|<cell|=T<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=0|}>>>>>>
+  </equation>
+
+  where
+
+  <\equation>
+    <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>>
+  </equation>
+
+  and
+
   <\equation>
     \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
   </equation>
 
-  then the root of <math|\<varphi\><around*|(|t,r|)>> in <math|t> for a
-  specific value of <math|r> is such that
+  then the root of <math|\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>
+  or <math|\<varphi\><around*|(|t,y|)>> to be more concise, in <math|t> for a
+  specific value of the exponentially distributed random variable <math|y> is
+  such that
 
   <\equation>
-    H<rsup|-1><around*|(|r|)>=<around*|{|t:H<around*|(|t|)>=r|}>=<around*|{|t:\<varphi\><around*|(|t,r|)>=0|}>
+    T<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y|)>=0|}>
   </equation>
 
-  is the inverse of <math|H<around*|(|t|)>> so that
+  is the inverse of <math|\<Lambda\><around*|(|T<rsub|n>,T<rsub|n+1><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y>
+  in <math|T<rsub|n+1>> so that
 
   <\equation>
-    H<around*|(|H<rsup|-1><around*|(|r|)>|)>=r
+    \<Lambda\><around*|(|T<rsub|n>,\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y
   </equation>
 
-  The derivative of <math|\<varphi\><around*|(|t,r|)>> is given by
+  The derivative of <math|\<varphi\><around*|(|t,y|)>> is given by
 
   <\equation>
-    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>=-<around*|(|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t>|)>
+    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>=
   </equation>
 
   therefore the Newton iteration function is expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,r|)>=t-<frac|\<varphi\><around*|(|t,r|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,r|)>>=t+<frac|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)><around*|(|e<rsup|r-\<beta\><rsub|k>t>-1|)>|<big|sum><rsub|k=1><rsup|P>\<gamma\><around*|(|k|)>\<beta\><rsub|k>e<rsup|r-\<beta\><rsub|k>t>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>=t-<frac|\<varphi\><around*|(|t,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>>>>>>>
   </equation>
 
   whose unique real-valued fixed-point in <math|t>,
-  <math|N<rsub|\<varphi\>><around*|(|t,r|)>=t> is the inverse of
-  <math|H<around*|(|r|)>>.
+  <math|N<rsub|\<varphi\>><around*|(|t,y|)>=t> for a given value of y is the
+  inverse <math|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>.
+  The <math|m>-th raw, or un-cenetered, moment of the next point of the
+  process is given by
+
+  <\equation>
+    <tabular*|<tformat|<table|<row|<cell|<wide|T<rsup|m><rsub|n+1>|\<bar\>>=E<rsub|y<rsup|m>><around*|[|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|]>>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y>>>>>
+  </equation>
+
+  where the probability density of <math|y> is <math|e<rsup|-y>>. The
+  <math|m>-th central moment about the mean is given by...
+
+  <\equation>
+    <tabular|<tformat|<table|<row|<cell|E<rsub|<around*|(|y-<wide|T<rsub|n+1>|\<bar\>><rsub|>|)><rsup|m>><around*|[|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|]>>|<cell|=<big|int><rsub|0><rsup|\<infty\>>
+    <around*|(|y-<wide|T<rsub|n+1>|\<bar\>><rsub|>|)><rsup|m>e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y>>>>>
+  </equation>
+
+  and when the moment is not specified in the expression for the expectated
+  value of the next point <math|<wide|T<rsup|m><rsub|n+1>|\<bar\>>> it is
+  taken to be equal to 1 so that
+
+  <\equation>
+    <wide|T<rsup|><rsub|n+1>|\<bar\>>=<wide|T<rsup|1><rsub|n+1>|\<bar\>>
+  </equation>
 
   \;
 
@@ -683,42 +723,42 @@
   <\collection>
     <associate|A|<tuple|10|3>>
     <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|45|8>>
-    <associate|Hawkes1|<tuple|21|5>>
+    <associate|Etn1|<tuple|50|7>>
+    <associate|Hawkes1|<tuple|26|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|26|6>>
+    <associate|P1pred|<tuple|31|5>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|60|9>>
+    <associate|auto-11|<tuple|65|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
     <associate|auto-5|<tuple|1.2.1|5>>
     <associate|auto-6|<tuple|1.3|5>>
-    <associate|auto-7|<tuple|1.3.1|6>>
-    <associate|auto-8|<tuple|1.4|8>>
-    <associate|auto-9|<tuple|1.5|8>>
-    <associate|bib-Mti|<tuple|7|10>>
-    <associate|bib-RandomIntegralEquations|<tuple|2|10>>
-    <associate|bib-chavez2012high|<tuple|3|10>>
-    <associate|bib-hawkes-finance|<tuple|9|10>>
-    <associate|bib-hawkes1971spectra|<tuple|4|10>>
+    <associate|auto-7|<tuple|1.3.1|5>>
+    <associate|auto-8|<tuple|1.4|7>>
+    <associate|auto-9|<tuple|1.5|7>>
+    <associate|bib-Mti|<tuple|7|9>>
+    <associate|bib-RandomIntegralEquations|<tuple|2|9>>
+    <associate|bib-chavez2012high|<tuple|3|9>>
+    <associate|bib-hawkes-finance|<tuple|9|9>>
+    <associate|bib-hawkes1971spectra|<tuple|4|9>>
     <associate|bib-ocvshjb|<tuple|1|9>>
-    <associate|bib-ogata1981lewis|<tuple|5|10>>
-    <associate|bib-ozaki1979maximum|<tuple|6|10>>
-    <associate|bib-shek2010modeling|<tuple|8|10>>
+    <associate|bib-ogata1981lewis|<tuple|5|9>>
+    <associate|bib-ozaki1979maximum|<tuple|6|9>>
+    <associate|bib-shek2010modeling|<tuple|8|9>>
     <associate|comp|<tuple|9|3>>
     <associate|footnote-1|<tuple|1|1>>
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|15|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|53|9>>
-    <associate|mp|<tuple|49|9>>
+    <associate|mc|<tuple|58|8>>
+    <associate|mp|<tuple|54|8>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|29|6>>
-    <associate|uc|<tuple|39|7>>
-    <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|47|8>>
+    <associate|prediction|<tuple|34|5>>
+    <associate|uc|<tuple|44|6>>
+    <associate|univarPred|<tuple|1.4|7>>
+    <associate|up|<tuple|52|7>>
   </collection>
 </references>
 
@@ -757,8 +797,7 @@
       Estimation <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3>>
 
-      <with|par-left|<quote|1tab>|1.2.<space|2spc>The Hazard Function,
-      Cumulative Hazard Function, and its Inverse
+      <with|par-left|<quote|1tab>|1.2.<space|2spc>The \ Inverse Compensator
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-4>>
 
