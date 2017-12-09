@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.commons.math3.optim.PointValuePair;
-import org.arblib.Real;
 import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;

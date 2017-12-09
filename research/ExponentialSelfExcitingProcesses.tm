@@ -147,8 +147,8 @@
   projection, also known as the compensator, is expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>><around*|(|\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
-    >B<rsub|j><around*|(|N<rsub|t>|)>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
+    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
+    >B<rsub|j><around*|(|N<rsub|t>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
     <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>><label|comp>
   </equation>
@@ -156,12 +156,12 @@
   where
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|A<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|t<rsub|k>\<leqslant\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|t<rsub|k>\<less\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|k=0><rsup|i-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+e<rsup|-\<beta\><rsub|j>\<Delta\>t<rsub|i>>A<rsub|j><around*|(|i-1|)>>>|<row|<cell|>|<cell|=1+B<rsub|j><around*|(|i|)>>>>>><label|A>
+    <tabular|<tformat|<table|<row|<cell|A<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|t<rsub|k>\<leqslant\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|t<rsub|k>\<less\>t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+<big|sum><rsub|k=0><rsup|i-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=1+e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>A<rsub|j><around*|(|i-1|)>>>|<row|<cell|>|<cell|=1+B<rsub|j><around*|(|i|)>>>>>><label|A>
   </equation>
 
   with <math|A<rsub|j><around*|(|-1|)>=0> and
   <math|A<rsub|j><around*|(|0|)>=1> since the integral of
-  <math|f<around*|(|t|)>> over an interval is
+  <math|f<around*|(|t|)>> over an interval spanning consecutive points is
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t|)>\<mathd\>t>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
@@ -723,10 +723,10 @@
   <\collection>
     <associate|A|<tuple|10|3>>
     <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|50|7>>
+    <associate|Etn1|<tuple|50|8>>
     <associate|Hawkes1|<tuple|26|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|31|5>>
+    <associate|P1pred|<tuple|31|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
     <associate|auto-11|<tuple|65|9>>
@@ -735,30 +735,30 @@
     <associate|auto-4|<tuple|1.2|4>>
     <associate|auto-5|<tuple|1.2.1|5>>
     <associate|auto-6|<tuple|1.3|5>>
-    <associate|auto-7|<tuple|1.3.1|5>>
-    <associate|auto-8|<tuple|1.4|7>>
-    <associate|auto-9|<tuple|1.5|7>>
-    <associate|bib-Mti|<tuple|7|9>>
-    <associate|bib-RandomIntegralEquations|<tuple|2|9>>
-    <associate|bib-chavez2012high|<tuple|3|9>>
-    <associate|bib-hawkes-finance|<tuple|9|9>>
-    <associate|bib-hawkes1971spectra|<tuple|4|9>>
+    <associate|auto-7|<tuple|1.3.1|6>>
+    <associate|auto-8|<tuple|1.4|8>>
+    <associate|auto-9|<tuple|1.5|8>>
+    <associate|bib-Mti|<tuple|7|10>>
+    <associate|bib-RandomIntegralEquations|<tuple|2|10>>
+    <associate|bib-chavez2012high|<tuple|3|10>>
+    <associate|bib-hawkes-finance|<tuple|9|10>>
+    <associate|bib-hawkes1971spectra|<tuple|4|10>>
     <associate|bib-ocvshjb|<tuple|1|9>>
-    <associate|bib-ogata1981lewis|<tuple|5|9>>
-    <associate|bib-ozaki1979maximum|<tuple|6|9>>
-    <associate|bib-shek2010modeling|<tuple|8|9>>
+    <associate|bib-ogata1981lewis|<tuple|5|10>>
+    <associate|bib-ozaki1979maximum|<tuple|6|10>>
+    <associate|bib-shek2010modeling|<tuple|8|10>>
     <associate|comp|<tuple|9|3>>
     <associate|footnote-1|<tuple|1|1>>
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|15|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|58|8>>
-    <associate|mp|<tuple|54|8>>
+    <associate|mc|<tuple|58|9>>
+    <associate|mp|<tuple|54|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|34|5>>
-    <associate|uc|<tuple|44|6>>
-    <associate|univarPred|<tuple|1.4|7>>
-    <associate|up|<tuple|52|7>>
+    <associate|prediction|<tuple|34|6>>
+    <associate|uc|<tuple|44|7>>
+    <associate|univarPred|<tuple|1.4|8>>
+    <associate|up|<tuple|52|8>>
   </collection>
 </references>
 

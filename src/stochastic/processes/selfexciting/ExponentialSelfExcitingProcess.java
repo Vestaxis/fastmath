@@ -36,9 +36,7 @@ import java.util.function.Supplier;
 import javax.swing.JProgressBar;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
@@ -56,7 +54,6 @@ import fastmath.optim.ObjectiveFunctionSupplier;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
-import junit.framework.TestCase;
 import util.AutoArrayList;
 
 public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitingProcess implements MultivariateFunction, Cloneable, SelfExcitingProcess
@@ -733,6 +730,21 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i + 1) - T.get(i))))) * A(i, j), 0, order() - 1) / Z();
   }
 
+  /**
+   * n-th compensated point, expensive non-recursive O(n^2) runtime version
+   * 
+   * @param i
+   *          >= 1 and <= n
+   */
+  public Real
+         ΛReal(int i)
+  {
+    final Real Ti = new Real(T.get(i));
+    return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mult(Real.ONE.sub(βReal(j).neg().mult(Ti.sub(T.get(k))).exp()))), 0, order() - 1),
+                   0,
+                   i - 1).div(ZReal());
+  }
+
   Vector dT;
 
   Vector dT()
@@ -910,23 +922,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i) - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
-  /**
-   * n-th compensated point, expensive non-recursive O(n^2) runtime version
-   * 
-   * @param i
-   *          >= 1 and <= n
-   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
-   *         i-1)
-   */
-  public Real
-         ΛReal(int i)
-  {
-    final Real Ti = new Real(T.get(i));
-    return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mult(Real.ONE.sub(βReal(j).neg().mult(Ti.sub(T.get(k))).exp()))), 0, order() - 1),
-                   0,
-                   i - 1).div(ZReal());
-  }
-
   public double
          Φ(double dt,
            double y,
@@ -935,13 +930,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
     return sum(j -> γ(j) * A(tk, j) * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
-  }
-
-  public double
-         Φdt(double dt,
-             int tk)
-  {
-    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(dt * β(j)), 0, order() - 1);
   }
 
   public Real
@@ -954,12 +942,18 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(dt.mult(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mult(y).mult(ZReal()));
   }
 
-  public Real
-         ΦδReal(Real t,
-                double y,
-                int tk)
+  public double
+         Φdt(double dt,
+             int tk)
   {
-    return ΦReal(t, y, tk).div(ΦdtReal(t, tk));
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(dt * β(j)), 0, order() - 1);
+  }
+
+  public Real
+         ΦdtReal(Real t,
+                 int tk)
+  {
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
   }
 
   public double
@@ -971,10 +965,11 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public Real
-         ΦdtReal(Real t,
-                 int tk)
+         ΦδReal(Real t,
+                double y,
+                int tk)
   {
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
+    return ΦReal(t, y, tk).div(ΦdtReal(t, tk));
   }
 
   /**
