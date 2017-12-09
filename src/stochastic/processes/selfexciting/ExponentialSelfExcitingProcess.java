@@ -143,7 +143,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     for (int i = 0;; i++)
     {
 
-      double δ = Λphaseδ(dt, y, tk);
+      double δ = Φδ(dt, y, tk);
       if (trace)
       {
         out.println("dt[" + i + "]=" + dt + " δ=" + δ);
@@ -175,7 +175,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     for (int i = 0;; i++)
     {
-      Real δ = ΛphaseδReal(dt, y, tk);
+      Real δ = ΦδReal(dt, y, tk);
 
       if (trace)
       {
@@ -928,9 +928,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public double
-         Λphase(double dt,
-                double y,
-                int tk)
+         Φ(double dt,
+           double y,
+           int tk)
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
@@ -938,16 +938,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public double
-         ΛphaseTimeDifferential(double dt,
-                                int tk)
+         Φdt(double dt,
+             int tk)
   {
-    return sum(j -> γ(j) * A(tk, j) * exp(dt * β(j)), 0, order() - 1);
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(dt * β(j)), 0, order() - 1);
   }
 
   public Real
-         ΛphaseReal(Real dt,
-                    double y,
-                    int tk)
+         ΦReal(Real dt,
+               double y,
+               int tk)
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
@@ -955,26 +955,26 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public Real
-         ΛphaseδReal(Real t,
-                     double y,
-                     int tk)
+         ΦδReal(Real t,
+                double y,
+                int tk)
   {
-    return ΛphaseReal(t, y, tk).div(ΛphaseTimeDifferentialReal(t, tk));
+    return ΦReal(t, y, tk).div(ΦdtReal(t, tk));
   }
 
   public double
-         Λphaseδ(double t,
-                 double y,
-                 int tk)
+         Φδ(double t,
+            double y,
+            int tk)
   {
-    return Λphase(t, y, tk) / ΛphaseTimeDifferential(t, tk);
+    return Φ(t, y, tk) / Φdt(t, tk);
   }
 
   public Real
-         ΛphaseTimeDifferentialReal(Real t,
-                                    int tk)
+         ΦdtReal(Real t,
+                 int tk)
   {
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
   }
 
   /**

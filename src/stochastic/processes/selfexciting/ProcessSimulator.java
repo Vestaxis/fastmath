@@ -90,14 +90,14 @@ public class ProcessSimulator
     process.trace = true;
    // Real nextdtReal = process.invΛReal(y, n - 2);
     process.trace = false;
-    double shouldbe0 = process.Λphase(nextdt, y, n - 2);
+    double shouldbe0 = process.Φ(nextdt, y, n - 2);
    // Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
     out.println("shouldbe0=" + shouldbe0 + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
     double shouldbey = process.Λ(n - 1, nextdt );
     out.println("shouldbey=" + shouldbey + " should be y=" + y);
     process.T = process.T.append(process.T.fmax() + nextdt);
 
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Λphaseδ(-t, y, n - 2), -25, 60, t -> t)).displayChart();
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(-t, y, n - 2), -25, 60, t -> t)).displayChart();
     out.println("nextdt=" + nextdt );
 
     process.dT = null;
