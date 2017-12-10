@@ -222,8 +222,8 @@
   where
 
   <\equation>
-    <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>><big|sum><rsub|j=1><rsup|P>e<rsup|-\<beta\><rsub|j>
-    t>
+    <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>><big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    t>-1|)>\<gamma\><around*|(|k|)>
   </equation>
 
   and

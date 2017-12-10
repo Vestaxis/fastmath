@@ -929,7 +929,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return sum(j -> γ(j) * A(tk, j) * (exp(dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+    return sum(j -> γ(j) * A(tk, j) * (exp(-dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
   }
 
   public Real
@@ -939,14 +939,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(dt.mult(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mult(y).mult(ZReal()));
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(dt.neg().mult(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mult(y)
+                                                                                                                                         .mult(ZReal()));
   }
 
   public double
          Φdt(double dt,
              int tk)
   {
-    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(dt * β(j)), 0, order() - 1);
+    return sum(j -> -γ(j) * A(tk, j) * β(j) * exp(-dt * β(j)), 0, order() - 1);
   }
 
   public Real
