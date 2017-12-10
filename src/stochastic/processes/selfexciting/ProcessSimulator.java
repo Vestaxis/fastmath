@@ -18,6 +18,7 @@ import fastmath.DoubleColMatrix;
 import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
+import junit.framework.TestCase;
 import util.Plotter;
 import util.TerseThreadFactory;
 
@@ -57,11 +58,11 @@ public class ProcessSimulator
 
     // process.printResults( process.estimateParameters(25) );
 
-    process.Λ();
-    for (int tk = 0; tk < 10; tk++)
-    {
-      out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
-    }
+    //out.println( " Λ=" + process.Λ() );
+//    for (int tk = 0; tk < 10; tk++)
+//    {
+//      out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
+//    }
     out.println("estimated " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     out.println(process.getαβString());
     process.trace = false;
@@ -79,32 +80,38 @@ public class ProcessSimulator
 
     process.trace = true;
     process.recursive = true;
-    process.Λ();
+    out.println( " Λ=" + process.Λ() );
     process.trace = false;
 
     process.trace = false;
-
-    double y = 0.9;
-    double nextdt = process.invΛ(y, n - 2);
-    process.trace = true;
-   // Real nextdtReal = process.invΛReal(y, n - 2);
-    process.trace = false;
-    double shouldbe0 = process.Φ(nextdt, y, n - 2);
-   // Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
-    out.println("shouldbe0=" + shouldbe0 + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
-    double shouldbey = process.Λ(n - 1, nextdt );
-    out.println("shouldbey=" + shouldbey + " should be y=" + y);
-    process.T = process.T.append(process.T.fmax() + nextdt);
-
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(-t, y, n - 2), -25, 60, t -> t)).displayChart();
-    out.println("nextdt=" + nextdt );
-
-    process.dT = null;
-    out.println("comp (rec) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
-    process.recursive = false;
-    out.println("comp (full) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
-
-    out.println("∫comp " + process.iΛ());
+    
+    double hmm = process.Φδ(40, 1, 9);
+    out.println( "hmm " + hmm );
+    TestCase.assertEquals( 4.8963233710073894061, hmm, 1E-15 );
+    
+    
+//
+//    double y = 0.9;
+//    double nextdt = process.invΛ(y, n - 2);
+//    process.trace = true;
+//   // Real nextdtReal = process.invΛReal(y, n - 2);
+//    process.trace = false;
+//    double shouldbe0 = process.Φ(nextdt, y, n - 2);
+//   // Real shouldbe0Real = process.ΛphaseReal(nextdtReal, y, n - 2);
+//    out.println("shouldbe0=" + shouldbe0 + "\nβproduct=" + process.βproduct() + " βproductReal=" + process.βproductReal());
+//    double shouldbey = process.Λ(n - 1, nextdt );
+//    out.println("shouldbey=" + shouldbey + " should be y=" + y);
+//    process.T = process.T.append(process.T.fmax() + nextdt);
+//
+//    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, y, n - 2), -25, 60, t -> t)).displayChart();
+//    out.println("nextdt=" + nextdt );
+//
+//    process.dT = null;
+//    out.println("comp (rec) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
+//    process.recursive = false;
+//    out.println("comp (full) " + ansi().fgBrightMagenta() + process.Λ() + ansi().fgDefault());
+//
+//    out.println("∫comp " + process.iΛ());
 
     // ExponentialDistribution expDist = new ExponentialDistribution(1);
     //

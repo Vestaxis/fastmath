@@ -3,8 +3,8 @@
 <style|<tuple|amsart|american>>
 
 <\body>
-  <doc-data|<doc-title|Prediction and Simulation of Exponential Self-Exciting
-  Processes>|<doc-author|<author-data|<author-name|<date|>>>>|<doc-author|<author-data|<author-name|<space|5em>Stephen
+  <doc-data|<doc-title|Estimation, Simulation, and Prediction of Critical
+  Exponential Sum Self-Exciting Processes>|<doc-author|<author-data|<author-name|<date|>>>>|<doc-author|<author-data|<author-name|<space|5em>Stephen
   Crowley>|<\author-affiliation>
     \;
   </author-affiliation>>>><\footnote>
@@ -16,20 +16,21 @@
   \;
 
   <\table-of-contents|toc>
-    <vspace*|1fn><with|font-series|bold|math-font-series|bold|1.<space|2spc>Hawkes
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|1.<space|2spc>Self-Exciting
     Processes> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-1><vspace|0.5fn>
 
-    <with|par-left|1tab|1.1.<space|2spc>The Sum-of-Exponentials Self-Exciting
-    Process of Arbitrary Order <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.1.<space|2spc>The Self-Exciting Critical
+    Exponential Sum Process of Order <with|mode|math|P>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-2>>
 
     <with|par-left|2tab|1.1.1.<space|2spc>Maximum Likelihood Estimation
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-3>>
 
-    <with|par-left|1tab|1.2.<space|2spc>The Hazard Function, Cumulative
-    Hazard Function, and its Inverse <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|1tab|1.2.<space|2spc>The \ Inverse Compensator
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-4>>
 
     <with|par-left|2tab|1.2.1.<space|2spc>The case when P=1
@@ -61,10 +62,10 @@
     <no-break><pageref|auto-11><vspace|0.5fn>
   </table-of-contents>
 
-  <section|Hawkes Processes>
+  <section|Self-Exciting Processes>
 
-  <subsection|The Sum-of-Exponentials Self-Exciting Process of Arbitrary
-  Order>
+  <subsection|The Self-Exciting Critical Exponential Sum Process of Order
+  <math|P>>
 
   Let
 
@@ -73,23 +74,21 @@
   </equation>
 
   be the Heaviside step function and <math|<around*|{|T<rsub|i>:T<rsub|i>\<less\>T<rsub|i+1>|}>\<in\>\<bbb-R\>>
-  be the time of occurance of the <math|i>-th event of a process. The
-  counting-function <math|N<rsub|t>> of a simple point process is\ 
+  be the time of occurance of the <math|i>-th event of a simple point process
+  whose counting function is\ 
 
   <\equation>
     N<rsub|t>=<big|sum><rsub|T<rsub|i>\<less\>t>\<theta\><around*|(|t-T<rsub|i>|)>
   </equation>
 
-  whose conditional intensity (event rate), also known in some contexts as
-  the hazard function, is given by\ 
-
-  \;
+  and whose conditional intensity (event rate), also known in some contexts
+  as the hazard function, is given by\ 
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<around*|(|t+\<Delta\>t|)>\<gtr\>N<around*|(|t|)><mid|\|>\<cal-F\><rsub|t>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<rsub|t+\<Delta\>t>\<gtr\>N<rsub|t><mid|\|>\<cal-F\><rsub|t>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
   </equation>
 
-  where <math|\<cal-F\><rsub|t>=<around*|{|t<rsub|0>,\<ldots\>,t<rsub|N<around*|(|t|)>>|}>>
+  where <math|\<cal-F\><rsub|t>=<around*|{|T<rsub|0>,\<ldots\>,T<rsub|N<around*|(|t|)>>|}>>
   is the filtration which is an increasing sequence of
   <math|\<sigma\>>-algebras represented by the ordered sequence of the unique
   occurance times of events of the process and
@@ -97,24 +96,40 @@
   will be regarded as a constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>=E<around*|[|\<lambda\><rsub|0><around*|(|t|)>|]>>,
   <cite|hawkes-finance><cite|hawkes1971spectra><cite|shek2010modeling><cite|chavez2012high>
   and <math|f:\<bbb-R\><rsub|+>\<rightarrow\>\<bbb-R\><rsub|+>> is a kernel
-  function which expresses the positive influence of past events
-  <math|T<rsub|i>> on the current value of the intensity process. The
-  self-exciting process of order <math|P> is a defined by the
-  sum-of-exponentials kernel
+  impulse response function which expresses the positive influence of past
+  events <math|T<rsub|i>> on the current value of the intensity process. The
+  critical exponential sum self-exciting process of order <math|P> is then
+  defined by the kernel function
 
   <\equation>
-    f<around*|(|t|)>=<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    f<around*|(|t|)>=<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j> t><label|kernel>
   </equation>
 
-  The \ conditional intensity can then be expressed as
+  where <math|Z> is a normalization factor defined by
+
+  <\equation*>
+    Z=<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>
+  </equation*>
+
+  so that the branching rate
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    e<rsup|-\<beta\><rsub|j><around*|(|t-s|)>>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|t>>\<alpha\><rsub|j>
-    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|t>>
-    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
-    >B<rsub|j><around*|(|<wide|N|\<breve\>><rsub|t>|)>>>>>>
+    \<rho\>=<big|int><rsub|0><rsup|\<infty\>>f<around*|(|t|)>\<mathd\>t=<frac|
+    <big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j> e<rsup|-\<beta\><rsub|j>
+    t>|<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>=1
+  </equation>
+
+  which puts the process in a state of criticality; precisely poised on the
+  boundary between extinction and explosion. <cite|chp> The \ conditional
+  intensity can then be expressed as
+
+  <\equation>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    e<rsup|-\<beta\><rsub|j><around*|(|t-s|)>>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|N<rsub|t>><frac|1|Z>\<alpha\><rsub|j>
+    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|Z><big|sum><rsub|k=0><rsup|N<rsub|t>>
+    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j
+    >|Z>B<rsub|j><around*|(|<wide|N|\<breve\>><rsub|t>|)>>>>>>
   </equation>
 
   where <math|B<rsub|j><around*|(|i|)>> is given recursively by
@@ -128,29 +143,14 @@
 
   since <math| e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|i-1>|)>>=e<rsup|-\<beta\><rsub|j>0>=e<rsup|-0>=1>
   and <math|A<rsub|j><around*|(|i|)>> is defined in Equation (<reference|A>)
-  . A uni-variate self-exciting process is stationary if the branching ratio
-  <math|\<rho\>> is less than one.
+  . For consecutive events, the dual-predictable projection, also known as
+  the compensator, is expressed by
 
   <\equation>
-    \<rho\>=<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>\<less\>1
-  </equation>
-
-  If the process is stationary then the stationary unconditional intensity is
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\>=E<around*|[|\<lambda\><around*|(|t|)>|]>>|<cell|=<frac|\<lambda\><rsub|0>|1-E<around*|[|\<nu\><around*|(|t|)>|]>>>>|<row|<cell|>|<cell|=<frac|\<lambda\><rsub|0>|1-<big|int><rsub|0><rsup|\<infty\>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    e<rsup|-\<beta\><rsub|j> t>\<mathd\>t>>>|<row|<cell|>|<cell|=<frac|\<lambda\><rsub|0>|1-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>>>>|<row|<cell|>|<cell|=<frac|\<lambda\><rsub|0>|1-\<rho\>>\<forall\>\<rho\>\<less\>1>>>>>
-  </equation>
-
-  where <math|E<around*|(|*\<cdummy\>|)>> is the Lebesgue integral over the
-  positive real numbers. For consecutive events, the dual-predictable
-  projection, also known as the compensator, is expressed by
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j
-    >B<rsub|j><around*|(|N<rsub|t>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
-    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
-    <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>><label|comp>
+    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|1|Z>\<alpha\><rsub|j
+    >B<rsub|j><around*|(|N<rsub|t>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
+    e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
+    <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>><label|comp>
   </equation>
 
   where
@@ -164,8 +164,8 @@
   <math|f<around*|(|t|)>> over an interval spanning consecutive points is
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t|)>\<mathd\>t>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    e<rsup|-\<beta\><rsub|j> <around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>
+    <tabular|<tformat|<table|<row|<cell|<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t|)>\<mathd\>t>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    e<rsup|-\<beta\><rsub|j> <around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>
     <around*|(|e<rsup|-\<beta\><rsub|j> t<rsub|i>>-e<rsup|-\<beta\><rsub|j>t<rsub|i-1>>|)>>>>>>
   </equation>
 
@@ -174,7 +174,7 @@
   (<reference|comp>) simplifies to
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>-t<rsub|k>><rsup|t<rsub|i>-t<rsub|k>>f<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>>
+    <tabular|<tformat|<table|<row|<cell|\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<big|sum><rsub|k=0><rsup|i-1><frac|1|Z><big|int><rsub|t<rsub|i-1>-t<rsub|k>><rsup|t<rsub|i>-t<rsub|k>>f<around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t<rsub|i>-t<rsub|i-1>|)>+<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>>
   </equation>
 
   <subsubsection|Maximum Likelihood Estimation>
@@ -191,23 +191,23 @@
   <\equation>
     <tabular|<tformat|<table|<row|<cell|ln
     \<cal-L\><around*|(|<around*|{|t<rsub|i>|}><rsub|i=1\<ldots\>n>|)>>|<cell|=T-<big|int><rsub|0><rsup|T<rsub|>>\<lambda\><around*|(|t|)>\<mathd\>t+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=T+<big|sum><rsub|i=1><rsup|n><around*|(|ln\<lambda\><around*|(|t<rsub|i>|)>-\<Lambda\><rsub|i>|)>>>|<row|<cell|>|<cell|=T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln\<lambda\><around*|(|t<rsub|i>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|
-    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|i-1>\<alpha\><rsub|j>
+    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<frac|1|Z><big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|i-1>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<rsub|>T-\<Lambda\><around*|(|0,T|)>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|
-    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>>>|<row|<cell|>|<cell|=T-<big|int><rsub|0><rsup|<rsub|T>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s-<big|sum><rsub|i=0><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    \<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>>>|<row|<cell|>|<cell|=T-<big|int><rsub|0><rsup|<rsub|T>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s-<big|sum><rsub|i=0><rsup|n><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0><around*|(|t<rsub|i>|)>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     B<rsub|j><around*|(|i|)>|)>>>>>>
   </equation>
 
   where <math|T=t<rsub|n>> and <math|B<rsub|j><around*|(|i|)>>
   <cite|ogata1981lewis> is defined by (<reference|Bj>). If the baseline
-  intensity \ is constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>>
+  intensity is constant <math|\<lambda\><rsub|0><around*|(|t|)>=\<lambda\><rsub|0>>
   then the log-likelihood can be written
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|ln
-    \<cal-L\><around*|(|<around*|{|t<rsub|0>,\<ldots\>,t<rsub|n>|}><rsub|>|)>>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|i=1><rsup|n><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    \<cal-L\><around*|(|<around*|{|t<rsub|0>,\<ldots\>,t<rsub|n>|}><rsub|>|)>>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|i=1><rsup|n><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    B<rsub|j><around*|(|i|)>|)>-<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>>>><with|mode|text|><label|hawkesll>
   </equation>
 
@@ -222,20 +222,27 @@
   where
 
   <\equation>
-    <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>><big|sum><rsub|j=1><rsup|P>e<rsup|-\<beta\><rsub|j>
-    t>
+    <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>><big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    t>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
+    y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>
   </equation>
 
-  and
+  with derivative
+
+  <\equation>
+    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>=-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
+    e<rsup|-\<beta\><rsub|j> t>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>
+  </equation>
+
+  and where
 
   <\equation>
     \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
   </equation>
 
-  then the root of <math|\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>
-  or <math|\<varphi\><around*|(|t,y|)>> to be more concise, in <math|t> for a
-  specific value of the exponentially distributed random variable <math|y> is
-  such that
+  then the root of <math|\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>;
+  \ for a specific value of the exponentially distributed random variable
+  <math|y>; is such that
 
   <\equation>
     T<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y|)>=0|}>
@@ -248,16 +255,13 @@
     \<Lambda\><around*|(|T<rsub|n>,\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y
   </equation>
 
-  The derivative of <math|\<varphi\><around*|(|t,y|)>> is given by
+  Therefore the Newton iteration function is expressed by
 
   <\equation>
-    <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>=
-  </equation>
-
-  therefore the Newton iteration function is expressed by
-
-  <\equation>
-    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>=t-<frac|\<varphi\><around*|(|t,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>>>>>>>
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=t-<frac|\<varphi\><around*|(|t,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>>>>|<row|<cell|>|<cell|=t-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    t>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
+    y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
+    e<rsup|-\<beta\><rsub|j> t>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
   </equation>
 
   whose unique real-valued fixed-point in <math|t>,
@@ -658,7 +662,7 @@
   </equation>
 
   <\bibliography|bib|tm-plain|references.bib>
-    <\bib-list|9>
+    <\bib-list|10>
       <bibitem*|1><label|bib-ocvshjb>Martino Bardi<localize| and >Italo
       Capuzzo-Dolcetta. <newblock><with|font-shape|italic|Optimal Control and
       Viscosity Solutions of Hamilton-Jacobi-Bellman Equations (Systems &
@@ -671,38 +675,43 @@
       ><with|font-shape|italic|Mathematics in Science and Engineering>.
       <newblock>Academic Press, 1972.<newblock>
 
-      <bibitem*|3><label|bib-chavez2012high>V.<nbsp>Chavez-Demoulin<localize|
+      <bibitem*|3><label|bib-chp>Pierre Brémaud<localize| and >Laurent
+      Massoulié. <newblock>Hawkes branching point processes without
+      ancestors. <newblock><with|font-shape|italic|J. Appl. Probab.>,
+      38(1):122\U135, 03 2001.<newblock>
+
+      <bibitem*|4><label|bib-chavez2012high>V.<nbsp>Chavez-Demoulin<localize|
       and >JA McGill. <newblock>High-frequency financial data modeling using
       hawkes processes. <newblock><with|font-shape|italic|Journal of Banking
       & Finance>, 2012.<newblock>
 
-      <bibitem*|4><label|bib-hawkes1971spectra>A.G.<nbsp>Hawkes.
+      <bibitem*|5><label|bib-hawkes1971spectra>A.G.<nbsp>Hawkes.
       <newblock>Spectra of some self-exciting and mutually exciting point
       processes. <newblock><with|font-shape|italic|Biometrika>, 58(1):83\U90,
       1971.<newblock>
 
-      <bibitem*|5><label|bib-ogata1981lewis>Y.<nbsp>Ogata. <newblock>On
+      <bibitem*|6><label|bib-ogata1981lewis>Y.<nbsp>Ogata. <newblock>On
       lewis' simulation method for point processes.
       <newblock><with|font-shape|italic|Information Theory, IEEE Transactions
       on>, 27(1):23\U31, 1981.<newblock>
 
-      <bibitem*|6><label|bib-ozaki1979maximum>T.<nbsp>Ozaki.
+      <bibitem*|7><label|bib-ozaki1979maximum>T.<nbsp>Ozaki.
       <newblock>Maximum likelihood estimation of hawkes' self-exciting point
       processes. <newblock><with|font-shape|italic|Annals of the Institute of
       Statistical Mathematics>, 31(1):145\U155, 1979.<newblock>
 
-      <bibitem*|7><label|bib-Mti>M.M.<nbsp>Rao.
+      <bibitem*|8><label|bib-Mti>M.M.<nbsp>Rao.
       <newblock><with|font-shape|italic|Measure Theory and Integration>,
       <localize|volume> 265<localize| of ><with|font-shape|italic|Pure and
       Applied Mathematics>. <newblock>Marcel Dekker, 2nd, Revised and
       Expanded<localize| edition>, 2004.<newblock>
 
-      <bibitem*|8><label|bib-shek2010modeling>H.<nbsp>Shek.
+      <bibitem*|9><label|bib-shek2010modeling>H.<nbsp>Shek.
       <newblock>Modeling high frequency market order dynamics using
       self-excited point process. <newblock><with|font-shape|italic|Available
       at SSRN 1668160>, 2010.<newblock>
 
-      <bibitem*|9><label|bib-hawkes-finance>Ioane<nbsp>Muni Toke.
+      <bibitem*|10><label|bib-hawkes-finance>Ioane<nbsp>Muni Toke.
       <newblock>An introduction to hawkes processes with applications to
       finance. <newblock><with|font-shape|italic|???>,
       <slink|http://fiquant.mas.ecp.fr/ioane_files/HawkesCourseSlides.pdf>,
@@ -722,15 +731,15 @@
 
 <\references>
   <\collection>
-    <associate|A|<tuple|10|3>>
-    <associate|Bj|<tuple|6|2>>
-    <associate|Etn1|<tuple|50|8>>
-    <associate|Hawkes1|<tuple|26|5>>
+    <associate|A|<tuple|9|3>>
+    <associate|Bj|<tuple|7|2>>
+    <associate|Etn1|<tuple|49|8>>
+    <associate|Hawkes1|<tuple|25|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|31|6>>
+    <associate|P1pred|<tuple|30|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|65|9>>
+    <associate|auto-11|<tuple|64|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -739,27 +748,28 @@
     <associate|auto-7|<tuple|1.3.1|6>>
     <associate|auto-8|<tuple|1.4|8>>
     <associate|auto-9|<tuple|1.5|8>>
-    <associate|bib-Mti|<tuple|7|10>>
+    <associate|bib-Mti|<tuple|8|10>>
     <associate|bib-RandomIntegralEquations|<tuple|2|10>>
-    <associate|bib-chavez2012high|<tuple|3|10>>
-    <associate|bib-hawkes-finance|<tuple|9|10>>
-    <associate|bib-hawkes1971spectra|<tuple|4|10>>
+    <associate|bib-chavez2012high|<tuple|4|10>>
+    <associate|bib-chp|<tuple|3|10>>
+    <associate|bib-hawkes-finance|<tuple|10|10>>
+    <associate|bib-hawkes1971spectra|<tuple|5|10>>
     <associate|bib-ocvshjb|<tuple|1|9>>
-    <associate|bib-ogata1981lewis|<tuple|5|10>>
-    <associate|bib-ozaki1979maximum|<tuple|6|10>>
-    <associate|bib-shek2010modeling|<tuple|8|10>>
-    <associate|comp|<tuple|9|3>>
+    <associate|bib-ogata1981lewis|<tuple|6|10>>
+    <associate|bib-ozaki1979maximum|<tuple|7|10>>
+    <associate|bib-shek2010modeling|<tuple|9|10>>
+    <associate|comp|<tuple|8|3>>
     <associate|footnote-1|<tuple|1|1>>
     <associate|footnr-1|<tuple|1|1>>
-    <associate|hawkesll|<tuple|15|4>>
+    <associate|hawkesll|<tuple|14|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|58|9>>
-    <associate|mp|<tuple|54|9>>
+    <associate|mc|<tuple|57|9>>
+    <associate|mp|<tuple|53|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|34|6>>
-    <associate|uc|<tuple|44|7>>
+    <associate|prediction|<tuple|33|6>>
+    <associate|uc|<tuple|43|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|52|8>>
+    <associate|up|<tuple|51|8>>
   </collection>
 </references>
 
@@ -774,6 +784,8 @@
 
       chavez2012high
 
+      chp
+
       ozaki1979maximum
 
       ogata1981lewis
@@ -785,12 +797,12 @@
       ocvshjb
     </associate>
     <\associate|toc>
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1.<space|2spc>Hawkes
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1.<space|2spc>Self-Exciting
       Processes> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-1><vspace|0.5fn>
 
-      <with|par-left|<quote|1tab>|1.1.<space|2spc>The Sum-of-Exponentials
-      Self-Exciting Process of Arbitrary Order
+      <with|par-left|<quote|1tab>|1.1.<space|2spc>The Self-Exciting Critical
+      Exponential Sum Process of Order <with|mode|<quote|math>|P>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-2>>
 
