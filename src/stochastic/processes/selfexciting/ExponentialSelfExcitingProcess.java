@@ -122,8 +122,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   /**
-   * TODO: see about using some fancier numerical root finding algo... convergence
-   * is very slow past a certain point
    * 
    * @param y
    *          exponentially distributed random variable
@@ -136,23 +134,23 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
               int tk)
   {
     double dt = 0;
-
-    for (int i = 0;; i++)
+    double δ = 0;
+    for (int i = 0; δ >= 0; i++)
     {
 
-      double δ = Φδ(dt, y, tk);
+      δ = Φδ(dt, y, tk);
       if (trace)
       {
         out.println("dt[" + i + "]=" + dt + " δ=" + δ);
       }
-      if (abs(δ) < 1E-12)
+      if (abs(δ) < 1E-12 || !Double.isFinite(dt))
       {
         break;
       }
-      dt = dt - δ;
+      dt = dt + δ;
 
     }
-    return -dt;
+    return dt;
   }
 
   private Real tolerance = new Real("1E-30");
@@ -170,21 +168,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     Real dt = Real.ZERO;
 
-    for (int i = 0;; i++)
+    Real δ = Real.ZERO;
+    for (int i = 0; δ.greaterThanOrEqualTo(Real.ZERO); i++)
     {
-      Real δ = ΦδReal(dt, y, tk);
+      δ = ΦδReal(dt, y, tk);
 
       if (trace)
       {
         out.println("dt[" + i + "]=" + dt + " δ=" + δ + " bits=" + δ.getRelativeAccuracyBits());
       }
-      if (δ.getRelativeAccuracyBits() <= 0)
+      if (δ.getRelativeAccuracyBits() <= 0 || !δ.isFinite())
       {
         break;
       }
-      dt = dt.sub(δ);
+      dt = dt.add(δ);
     }
-    return dt.neg();
+    return dt;
   }
 
   /*
@@ -724,10 +723,25 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return compensator.setName("dΛ");
   }
 
-  protected double
-            Λ(int i)
+  public double
+         Λ(int i)
   {
     return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (T.get(i + 1) - T.get(i))))) * A(i, j), 0, order() - 1) / Z();
+  }
+
+  /**
+   * n-th compensated point, expensive non-recursive O(n^2) runtime version
+   * 
+   * @param i
+   *          >= 1 and <= n
+   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
+   *         i-1)
+   */
+  public double
+         Λ(int i,
+           double dt)
+  {
+    return sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * dt))) * A(i, j), 0, order() - 1) / Z();
   }
 
   /**
@@ -947,14 +961,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Φdt(double dt,
              int tk)
   {
-    return sum(j -> -γ(j) * A(tk, j) * β(j) * exp(-dt * β(j)), 0, order() - 1);
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-dt * β(j)), 0, order() - 1);
   }
 
   public Real
          ΦdtReal(Real t,
                  int tk)
   {
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.mult(βReal(j)).exp()), 0, order() - 1);
+    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.neg().mult(βReal(j)).exp()), 0, order() - 1);
   }
 
   public double
@@ -971,22 +985,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                 int tk)
   {
     return ΦReal(t, y, tk).div(ΦdtReal(t, tk));
-  }
-
-  /**
-   * n-th compensated point, expensive non-recursive O(n^2) runtime version
-   * 
-   * @param i
-   *          >= 1 and <= n
-   * @return sum(k -> iψ(T.get(i + 1) - T.get(k)) - iψ(T.get(i) - T.get(k)), 0,
-   *         i-1)
-   */
-  protected double
-            Λ(int i,
-              double dt)
-  {
-    final double Ti = T.get(i - 1) + dt;
-    return sum(k -> sum(j -> (α(j) / β(j)) * (1 - (exp(-β(j) * (Ti - T.get(k))))), 0, order() - 1), 0, i - 1) / Z();
   }
 
   public Vector

@@ -2,6 +2,7 @@ package stochastic.processes.selfexciting;
 
 import static fastmath.Functions.grid;
 import static java.lang.System.out;
+import static org.fusesource.jansi.Ansi.ansi;
 import static util.Console.println;
 
 import java.io.File;
@@ -9,9 +10,12 @@ import java.io.IOException;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.arblib.Real;
+import org.knowm.xchart.SwingWrapper;
 
 import fastmath.Vector;
+import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
+import util.Plotter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
@@ -19,6 +23,65 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 {
 
   private double phasedt;
+
+  public void
+         testInvLambda()
+  {
+    ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
+    // process.ε = 0.05;
+
+    process.T = new Vector(new double[]
+    { 65, 67, 86, 140, 141, 149, 151, 163, 201, 205 }).setName("T");
+
+    // process.T = process.T.subtract(process.T.get(0));
+    process.trace = false;
+
+    // process.printResults( process.estimateParameters(25) );
+
+    // out.println( " Λ=" + process.Λ() );
+    // for (int tk = 0; tk < 10; tk++)
+    // {
+    // out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
+    // }
+    out.println("estimated " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
+    out.println(process.getαβString());
+    process.trace = false;
+    double Λmean = process.Λ().mean();
+    process.trace = false;
+    double Λvar = process.Λ().variance();
+    out.println("Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
+
+    int n = 10;
+    out.println("in-sample forecasting starting at n=" + n);
+    process.T = process.T.slice(0, n);
+    out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
+    process.dT = null;
+    out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
+
+    process.trace = true;
+    process.recursive = true;
+    out.println(" Λ=" + process.Λ());
+    process.trace = false;
+
+    process.trace = false;
+
+    double hmm = process.Φδ(40, 1, n - 1);
+    out.println("hmm " + hmm);
+    TestCase.assertEquals(-4.8963233710073894061, hmm, 1E-15);
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, 1, n - 1), -25, 60, t -> t)).displayChart();
+
+    process.trace = true;
+    for (double y = 0; y < 9; y += 0.25)
+    {
+      double dt = process.invΛ(y, n - 1);
+      Real dtReal = process.invΛReal(y, n - 1);
+
+      double q = process.Λ(n - 1, dt);
+
+      out.println("y=" + y + " dt=" + dt + " dtReal=" + dtReal + " q=" + q);
+      assertEquals(q, y, 1E-14);
+    }
+  }
 
   public void
          testHphase()
@@ -131,7 +194,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = false;
     double phase = process.Φ(22, y, 2);
     process.trace = true;
-      Real nextdtReal = process.invΛReal(y, n -2 );
+    Real nextdtReal = process.invΛReal(y, n - 2);
     process.trace = false;
 
     Real phaseReal = process.ΦReal(new Real(22), y, 2);
@@ -145,11 +208,11 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     assertEquals(phaseDiff, phaseDiffReal.fpValue(), 1E-15);
 
     out.println("invΛ(y=" + y + ")=" + nextdt);
-   // out.println("invΛReal(y=" + y + ")=" + nextdtReal);
+    // out.println("invΛReal(y=" + y + ")=" + nextdtReal);
 
-    process.T = process.T.append(process.T.fmax() + nextdt );
+    process.T = process.T.append(process.T.fmax() + nextdt);
     process.dT = null;
-    
+
     out.println("T=" + process.T);
     compensated = process.Λ();
     out.println("compensated=" + compensated);
@@ -188,7 +251,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
         double b = process.A(i, j);
         Real c = process.AReal(i, j);
         double d = process.B(i, j);
-        //out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
+        // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
         assertEquals(a, b, 1E-14);
         assertEquals(a, 1 + d, 1E-14);
       }
