@@ -310,7 +310,7 @@ public class Functions
     Real Π = Real.ONE;
     for (int i = lowerIndex; i <= upperIndex; i++)
     {
-      Π = Π.mult(elements.apply(i));
+      Π = Π.mul(elements.apply(i));
     }
     return Π;
   }

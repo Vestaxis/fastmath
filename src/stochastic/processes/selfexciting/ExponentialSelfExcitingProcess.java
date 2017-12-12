@@ -754,7 +754,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          ΛReal(int i)
   {
     final Real Ti = new Real(T.get(i));
-    return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mult(Real.ONE.sub(βReal(j).neg().mult(Ti.sub(T.get(k))).exp()))), 0, order() - 1),
+    return realSum(k -> realSum(j -> αReal(j).div(βReal(j).mul(Real.ONE.sub(βReal(j).neg().mul(Ti.sub(T.get(k))).exp()))), 0, order() - 1),
                    0,
                    i - 1).div(ZReal());
   }
@@ -953,8 +953,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(dt.neg().mult(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mult(y)
-                                                                                                                                         .mult(ZReal()));
+    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(dt.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y)
+                                                                                                                                         .mul(ZReal()));
   }
 
   public double
@@ -968,7 +968,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          ΦdtReal(Real t,
                  int tk)
   {
-    return realSum(j -> γReal(j).mult(AReal(tk, j)).mult(βReal(j)).mult(t.neg().mult(βReal(j)).exp()), 0, order() - 1);
+    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j)).mul(t.neg().mul(βReal(j)).exp()), 0, order() - 1);
   }
 
   public double
@@ -1130,7 +1130,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Real val = AReal[tk][j];
     if (val == null)
     {
-      val = tk == 0 ? Real.ONE : Real.ONE.add(βReal(j).neg().mult(T.get(tk) - T.get(tk - 1)).exp().mult(AReal(tk - 1, j)));
+      val = tk == 0 ? Real.ONE : Real.ONE.add(βReal(j).neg().mul(T.get(tk) - T.get(tk - 1)).exp().mul(AReal(tk - 1, j)));
       AReal[tk][j] = val;
     }
     return val;

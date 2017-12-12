@@ -79,7 +79,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
          αReal(int i)
   {
     // Real copy = new Real(α(i));
-    Real hmm = new Real(τ).mult(new Real(m).pow(i)).pow(Real.ONE.add(new Real(ε)).neg());
+    Real hmm = new Real(τ).mul(new Real(m).pow(i)).pow(Real.ONE.add(new Real(ε)).neg());
     return hmm;
     // return new Real(α(i));
   }
