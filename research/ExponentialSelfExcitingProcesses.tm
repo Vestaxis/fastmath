@@ -112,7 +112,7 @@
     Z=<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>>
   </equation*>
 
-  so that the branching rate
+  so that the branching rate is equal to 1
 
   <\equation>
     \<rho\>=<big|int><rsub|0><rsup|\<infty\>>f<around*|(|t|)>\<mathd\>t=<frac|
@@ -121,8 +121,8 @@
   </equation>
 
   which puts the process in a state of criticality; precisely poised on the
-  boundary between extinction and explosion. <cite|chp> The \ conditional
-  intensity can then be expressed as
+  boundary between stationarity and non-stationarity. <cite|chp> The
+  \ conditional intensity can then be expressed as
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
@@ -147,8 +147,8 @@
   the compensator, is expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|1|Z>\<alpha\><rsub|j
-    >B<rsub|j><around*|(|N<rsub|t>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
+    <tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|i>>|<cell|=\<Lambda\><around*|(|t<rsub|i-1>,t<rsub|i>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><around*|(|t|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j
+    >|Z>B<rsub|j><around*|(|N<rsub|t>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j><big|sum><rsub|k=0><rsup|i-1>
     <big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><big|int><rsub|t<rsub|i-1>><rsup|t<rsub|i>>f<around*|(|t-t<rsub|k>|)>\<mathd\>t>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<big|sum><rsub|k=0><rsup|i-1><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i-1>-t<rsub|k>|)>>-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|t<rsub|i-1><rsup|>><rsup|t<rsub|i>>\<lambda\><rsub|0><around*|(|s|)>\<mathd\>s+<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|i-1>|)>>|)>A<rsub|j><around*|(|i|)>>>>>><label|comp>
   </equation>
@@ -208,7 +208,7 @@
     \<cal-L\><around*|(|<around*|{|t<rsub|0>,\<ldots\>,t<rsub|n>|}><rsub|>|)>>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n>ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|i=1><rsup|n><frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     B<rsub|j><around*|(|i|)>|)>-<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>|<row|<cell|>|<cell|=<around*|(|1-\<lambda\><rsub|0>|)>t<rsub|n>+<big|sum><rsub|i=1><rsup|n><around*|(|ln<around*|(|\<lambda\><rsub|0>+<frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
-    B<rsub|j><around*|(|i|)>|)>-<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>>>><with|mode|text|><label|hawkesll>
+    B<rsub|j><around*|(|i|)>|)>-<frac|1|Z><big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|\<beta\><rsub|j>><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|i>|)>>|)>|)>>>>>><with|mode|text|><label|hawkesll>
   </equation>
 
   <subsection|The \ Inverse Compensator>
@@ -216,7 +216,7 @@
   Define the inverse compensator\ 
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>|<cell|=<around*|{|T<rsub|n+1>:\<Lambda\><around*|(|T<rsub|n>,T<rsub|n+1><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y|}>>>|<row|<cell|>|<cell|=T<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=0|}>>>>>>
+    <tabular*|<tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>|<cell|=<around*|{|t<rsub|n+1>:\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y|}>>>|<row|<cell|>|<cell|=t<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=0|}>>>>>>
   </equation>
 
   where
@@ -227,68 +227,62 @@
     y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>
   </equation>
 
-  with derivative
+  and
+
+  <\equation>
+    \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
+  </equation>
+
+  with the time-derivative
 
   <\equation>
     <frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>=-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
     e<rsup|-\<beta\><rsub|j> t>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>
   </equation>
 
-  and where
-
-  <\equation>
-    \<gamma\><around*|(|k|)>=<big|prod><rsub|j=1><rsup|P><choice|<tformat|<table|<row|<cell|\<alpha\><rsub|j>>|<cell|j=k>>|<row|<cell|\<beta\><rsub|j>>|<cell|j\<neq\>k>>>>>
-  </equation>
-
-  then the root of <math|\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>;
+  then the root of <math|\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>>;
   \ for a specific value of the exponentially distributed random variable
   <math|y>; is such that
 
   <\equation>
-    T<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y|)>=0|}>
+    t<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y|)>=0|}>
   </equation>
 
-  is the inverse of <math|\<Lambda\><around*|(|T<rsub|n>,T<rsub|n+1><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y>
-  in <math|T<rsub|n+1>> so that
+  is the inverse of <math|\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y>
+  in <math|t<rsub|n+1>> so that
 
   <\equation>
-    \<Lambda\><around*|(|T<rsub|n>,\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>=y
+    \<Lambda\><around*|(|t<rsub|n>,\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y
   </equation>
 
-  Therefore the Newton iteration function is expressed by
+  Therefore this slightly modified Newton iteration function expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=t-<frac|\<varphi\><around*|(|t,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t,y|)>>>>|<row|<cell|>|<cell|=t-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
-    t>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=<around*|(|t<rsub|n>+t|)>-<frac|\<varphi\><around*|(|t-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=<around*|(|t<rsub|n>+t|)>-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    <around*|(|t-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
     y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
-    e<rsup|-\<beta\><rsub|j> t>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
+    e<rsup|-\<beta\><rsub|j> <around*|(|t-t<rsub|n>|)>>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
   </equation>
 
-  whose unique real-valued fixed-point in <math|t>,
-  <math|N<rsub|\<varphi\>><around*|(|t,y|)>=t> for a given value of y is the
-  inverse <math|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>.
-  The <math|m>-th raw, or un-cenetered, moment of the next point of the
+  has a unique real-valued fixed-point \ <math|t<rsub|n+1>=N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>
+  where <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the
+  exact time of the process <math|t<rsub|n+1>> such that
+  <math|<tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|n+1>>|<cell|=\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1>|)>=y>>>>>>.
+  The <math|m>-th raw, or un-centered, moment of the next point of the
   process is given by
 
   <\equation>
-    <tabular*|<tformat|<table|<row|<cell|<wide|T<rsup|m><rsub|n+1>|\<bar\>>=E<rsub|y<rsup|m>><around*|[|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|]>>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|T<rsub|n+1>|)>>|<cell|=E<rsub|y<rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
     e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y>>>>>
   </equation>
 
-  where the probability density of <math|y> is <math|e<rsup|-y>>. The
-  <math|m>-th central moment about the mean is given by...
+  where the probability density <math|f<rsub|y>> of <math|y> is
+  <math|f<rsub|y>=e<rsup|-y>>. The expected time <math|T<rsub|n+1>> of the
+  next point of the process <math|>is then equal to the value of the integral
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|E<rsub|<around*|(|y-<wide|T<rsub|n+1>|\<bar\>><rsub|>|)><rsup|m>><around*|[|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|]>>|<cell|=<big|int><rsub|0><rsup|\<infty\>>
-    <around*|(|y-<wide|T<rsub|n+1>|\<bar\>><rsub|>|)><rsup|m>e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y>>>>>
-  </equation>
-
-  and when the moment is not specified in the expression for the expectated
-  value of the next point <math|<wide|T<rsup|m><rsub|n+1>|\<bar\>>> it is
-  taken to be equal to 1 so that
-
-  <\equation>
-    <wide|T<rsup|><rsub|n+1>|\<bar\>>=<wide|T<rsup|1><rsub|n+1>|\<bar\>>
+    E<rsub|y><around*|(|T<rsub|n+1><rsup|>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
+    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y
   </equation>
 
   \;
@@ -733,13 +727,13 @@
   <\collection>
     <associate|A|<tuple|9|3>>
     <associate|Bj|<tuple|7|2>>
-    <associate|Etn1|<tuple|49|8>>
-    <associate|Hawkes1|<tuple|25|5>>
+    <associate|Etn1|<tuple|48|8>>
+    <associate|Hawkes1|<tuple|24|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|30|6>>
+    <associate|P1pred|<tuple|29|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|64|9>>
+    <associate|auto-11|<tuple|63|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -763,13 +757,13 @@
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|14|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|57|9>>
-    <associate|mp|<tuple|53|9>>
+    <associate|mc|<tuple|56|9>>
+    <associate|mp|<tuple|52|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|33|6>>
-    <associate|uc|<tuple|43|7>>
+    <associate|prediction|<tuple|32|6>>
+    <associate|uc|<tuple|42|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|51|8>>
+    <associate|up|<tuple|50|8>>
   </collection>
 </references>
 
