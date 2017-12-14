@@ -258,7 +258,7 @@
   Therefore this slightly modified Newton iteration function expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=<around*|(|t<rsub|n>+t|)>-<frac|\<varphi\><around*|(|t-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=<around*|(|t<rsub|n>+t|)>-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=t-<frac|\<varphi\><around*|(|t-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=t-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
     <around*|(|t-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
     y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
     e<rsup|-\<beta\><rsub|j> <around*|(|t-t<rsub|n>|)>>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
