@@ -73,12 +73,12 @@
     \<theta\><around*|(|t|)>=<choice|<tformat|<table|<row|<cell|0>|<cell|t\<leqslant\>0>>|<row|<cell|1>|<cell|t\<gtr\>0>>>>>
   </equation>
 
-  be the Heaviside step function and <math|<around*|{|T<rsub|i>:T<rsub|i>\<less\>T<rsub|i+1>|}>\<in\>\<bbb-R\>>
+  be the Heaviside step function and <math|<around*|{|t<rsub|i>:t<rsub|i>\<less\>t<rsub|i+1>|}>\<in\>\<bbb-R\>>
   be the time of occurance of the <math|i>-th event of a simple point process
   whose counting function is\ 
 
   <\equation>
-    N<rsub|t>=<big|sum><rsub|T<rsub|i>\<less\>t>\<theta\><around*|(|t-T<rsub|i>|)>
+    N<rsub|t>=<big|sum><rsub|t<rsub|i>\<less\>t>\<theta\><around*|(|t-t<rsub|i>|)>
   </equation>
 
   and whose conditional intensity (event rate), also known in some contexts
@@ -88,7 +88,7 @@
     <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<rsub|t+\<Delta\>t>\<gtr\>N<rsub|t><mid|\|>\<cal-F\><rsub|t>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
   </equation>
 
-  where <math|\<cal-F\><rsub|t>=<around*|{|T<rsub|0>,\<ldots\>,T<rsub|N<around*|(|t|)>>|}>>
+  where <math|\<cal-F\><rsub|n>=<around*|{|t<rsub|0>,\<ldots\>,<rsub|t<rsub|n>>|}>>
   is the filtration which is an increasing sequence of
   <math|\<sigma\>>-algebras represented by the ordered sequence of the unique
   occurance times of events of the process and
@@ -266,14 +266,23 @@
 
   has a unique real-valued fixed-point \ <math|t<rsub|n+1>=N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>
   where <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the
-  exact time of the process <math|t<rsub|n+1>> such that
+  exact time of the next point of the process <math|t<rsub|n+1>> such that
   <math|<tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|n+1>>|<cell|=\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1>|)>=y>>>>>>.
-  The <math|m>-th raw, or un-centered, moment of the next point of the
-  process is given by
+  The <math|m>-th moment about zero of the <math|<around*|(|n+1|)>>-th point
+  of the process, <math|>conditional upon the points
+  <math|<around*|{|t<rsub|n>|}>=<around*|{|t<rsub|i>:i=0,1,2,\<ldots\>,n|}>>
+  and parameters <math|\<theta\>=<around*|{|\<alpha\><rsub|1\<ldots\>P>,\<beta\><rsub|1\<ldots\>P>|}>>
+  in the filtration
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|T<rsub|n+1>|)>>|<cell|=E<rsub|y<rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
-    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y>>>>>
+    \<cal-F\><rsub|n>=<around*|{|t<rsub|n>|}>\<cup\>\<theta\>
+  </equation>
+
+  is expressed by
+
+  <\equation>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
   </equation>
 
   where the probability density <math|f<rsub|y>> of <math|y> is
@@ -284,6 +293,10 @@
     E<rsub|y><around*|(|T<rsub|n+1><rsup|>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
     e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y
   </equation>
+
+  and the standard deviation of the expected time <math|t<rsub|n+1>> is ...
+
+  \;
 
   \;
 
@@ -727,13 +740,13 @@
   <\collection>
     <associate|A|<tuple|9|3>>
     <associate|Bj|<tuple|7|2>>
-    <associate|Etn1|<tuple|48|8>>
-    <associate|Hawkes1|<tuple|24|5>>
+    <associate|Etn1|<tuple|49|8>>
+    <associate|Hawkes1|<tuple|25|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|29|6>>
+    <associate|P1pred|<tuple|30|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|63|9>>
+    <associate|auto-11|<tuple|64|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -757,13 +770,13 @@
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|14|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|56|9>>
-    <associate|mp|<tuple|52|9>>
+    <associate|mc|<tuple|57|9>>
+    <associate|mp|<tuple|53|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|32|6>>
-    <associate|uc|<tuple|42|7>>
+    <associate|prediction|<tuple|33|6>>
+    <associate|uc|<tuple|43|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|50|8>>
+    <associate|up|<tuple|51|8>>
   </collection>
 </references>
 

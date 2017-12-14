@@ -133,21 +133,22 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          invΛ(double y,
               int tk)
   {
-    double dt = 0;
+    double lastTime = T.fmax();     
+    double dt = lastTime; 
+
     double δ = 0;
     for (int i = 0; δ >= 0; i++)
     {
-
       δ = Φδ(dt, y, tk);
       if (trace)
       {
-        out.println("dt[" + i + "]=" + dt + " δ=" + δ);
+        out.println("δ=Φδ(next[" + i + "]=" + dt + " δ=" + δ);
       }
       if (abs(δ) < 1E-12 || !Double.isFinite(dt))
       {
         break;
       }
-      dt = dt + δ;
+      dt = (lastTime + dt ) + δ;
 
     }
     return dt;
@@ -943,7 +944,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return sum(j -> γ(j) * A(tk, j) * (exp(-dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+    return sum(j -> γ(j) * A(tk, j) * (exp(-(dt - T.get(tk)) * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
   }
 
   public Real
@@ -953,15 +954,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   {
     assert A != null;
     assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(dt.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y)
-                                                                                                                                         .mul(ZReal()));
+    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(dt.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y).mul(ZReal()));
   }
 
   public double
          Φdt(double dt,
              int tk)
   {
-    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-dt * β(j)), 0, order() - 1);
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-(dt - T.get(tk)) * β(j)), 0, order() - 1);
   }
 
   public Real
