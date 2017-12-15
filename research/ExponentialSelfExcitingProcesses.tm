@@ -255,18 +255,20 @@
     \<Lambda\><around*|(|t<rsub|n>,\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y
   </equation>
 
-  Therefore this slightly modified Newton iteration function expressed by
+  Therefore this slightly modified Newton iteration function is an
+  automorphism of the real line expressed by
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t,y|)>>|<cell|=t-<frac|\<varphi\><around*|(|t-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=t-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
-    <around*|(|t-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
+    <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>|<cell|=t<rsub|n>-<frac|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=t<rsub|n>-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    <around*|(|t<rsub|n+1>-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
     y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
-    e<rsup|-\<beta\><rsub|j> <around*|(|t-t<rsub|n>|)>>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
+    e<rsup|-\<beta\><rsub|j> <around*|(|t<rsub|n+1>-t<rsub|n>|)>>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
   </equation>
 
-  has a unique real-valued fixed-point \ <math|t<rsub|n+1>=N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>
-  where <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the
-  exact time of the next point of the process <math|t<rsub|n+1>> such that
+  which has a unique real-valued fixed-point at the poin
+  \ <math|t<rsub|n+1>=N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>> where
+  <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the exact
+  time of the next point of the process <math|t<rsub|n+1>> such that
   <math|<tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|n+1>>|<cell|=\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1>|)>=y>>>>>>.
   The <math|m>-th moment about zero of the <math|<around*|(|n+1|)>>-th point
   of the process, <math|>conditional upon the points
@@ -281,12 +283,12 @@
   is expressed by
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
-    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|m><rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
   </equation>
 
   where the probability density <math|f<rsub|y>> of <math|y> is
-  <math|f<rsub|y>=e<rsup|-y>>. The expected time <math|T<rsub|n+1>> of the
+  <math|f<rsub|y>=e<rsup|-y>>. The expected time <math|t<rsub|n+1>> of the
   next point of the process <math|>is then equal to the value of the integral
 
   <\equation>

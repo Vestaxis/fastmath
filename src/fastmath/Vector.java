@@ -1399,6 +1399,10 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return get(0);
   }
 
+  /**
+   * 
+   * @return this{@link #get(int)}(this{@link #resizeBuffer(int, int)}-1)
+   */
   public double
          getRightmostValue()
   {

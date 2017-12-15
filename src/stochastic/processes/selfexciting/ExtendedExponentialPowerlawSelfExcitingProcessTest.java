@@ -73,8 +73,8 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = true;
     for (double y = 0; y < 9; y += 0.25)
     {
-      double dt = process.invΛ(y, n - 1);
-      Real dtReal = process.invΛReal(y, n - 1);
+      double dt = process.invΛ(y);
+      Real dtReal = process.invΛReal(y);
 
       double q = process.Λ(n - 1, dt);
 
@@ -83,6 +83,11 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     }
   }
 
+//  public void testNΦ()
+//  {
+//    
+//  }
+  
   public void
          testHphase()
   {
@@ -190,21 +195,21 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
     Vector compensated = process.Λ();
     process.trace = true;
-    double nextdt = process.invΛ(y, n - 2);
+    double nextdt = process.invΛ(y);
     process.trace = false;
     double phase = process.Φ(22, y, 2);
     process.trace = true;
-    Real nextdtReal = process.invΛReal(y, n - 2);
+    Real nextdtReal = process.invΛReal(y);
     process.trace = false;
 
-    Real phaseReal = process.ΦReal(new Real(22), y, 2);
+    Real phaseReal = process.ΦReal(new Real(22), y);
     process.trace = false;
 
     out.println("phase=" + phase);
     out.println("phaseδReal=" + phaseReal);
     assertEquals(phase, phaseReal.fpValue(), 1E-15);
     double phaseDiff = process.Φdt(22, 2);
-    Real phaseDiffReal = process.ΦdtReal(new Real(22), 2);
+    Real phaseDiffReal = process.ΦdtReal(new Real(22));
     assertEquals(phaseDiff, phaseDiffReal.fpValue(), 1E-15);
 
     out.println("invΛ(y=" + y + ")=" + nextdt);

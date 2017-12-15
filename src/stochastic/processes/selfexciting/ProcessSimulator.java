@@ -92,7 +92,7 @@ public class ProcessSimulator
 
     for (double y = 0; y < 1; y += 0.05)
     {
-      double dt = process.invΛ(y, n - 1);
+      double dt = process.invΛ(y);
       double q = process.Λ(n - 1, dt);
       out.println("y=" + y + " dt=" + dt + " q=" + q);
     }

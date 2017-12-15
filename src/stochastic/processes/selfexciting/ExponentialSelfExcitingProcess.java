@@ -130,28 +130,29 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    *         Λ(T[n],T[N+1])=y
    */
   public double
-         invΛ(double y,
-              int tk)
+         invΛ(double y)
   {
-    double lastTime = T.fmax();     
-    double dt = lastTime; 
+    double lastTime = T.getRightmostValue();
+    double nextTime = lastTime;
 
     double δ = 0;
     for (int i = 0; δ >= 0; i++)
     {
-      δ = Φδ(dt, y, tk);
+      nextTime = NΦ(lastTime, y);
+      δ = nextTime - lastTime;
+      lastTime = nextTime;
+
       if (trace)
       {
-        out.println("δ=Φδ(next[" + i + "]=" + dt + " δ=" + δ);
+        out.format("nextTime=%f δ=%f lastTime=%f\n", nextTime, δ, lastTime);
       }
-      if (abs(δ) < 1E-12 || !Double.isFinite(dt))
+
+      if (abs(δ) < 1E-12 || !Double.isFinite(nextTime))
       {
         break;
       }
-      dt = (lastTime + dt ) + δ;
-
     }
-    return dt;
+    return nextTime;
   }
 
   private Real tolerance = new Real("1E-30");
@@ -164,15 +165,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
    * @return inverse of the compensator for a given value of y
    */
   public Real
-         invΛReal(double y,
-                  int tk)
+         invΛReal(double y)
   {
     Real dt = Real.ZERO;
 
     Real δ = Real.ZERO;
     for (int i = 0; δ.greaterThanOrEqualTo(Real.ZERO); i++)
     {
-      δ = ΦδReal(dt, y, tk);
+      δ = ΦδReal(dt, y);
 
       if (trace)
       {
@@ -938,6 +938,15 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public double
+         NΦ(double y,
+            double nextTime)
+  {
+    double lastTime = T.getRightmostValue();
+    int n = T.size() - 1;
+    return nextTime - Φδ(nextTime - lastTime, y, n);
+  }
+
+  public double
          Φ(double dt,
            double y,
            int tk)
@@ -949,11 +958,10 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public Real
          ΦReal(Real dt,
-               double y,
-               int tk)
+               double y)
   {
     assert A != null;
-    assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
+    int tk = T.size() - 1;
     return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(dt.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y).mul(ZReal()));
   }
 
@@ -965,9 +973,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   public Real
-         ΦdtReal(Real t,
-                 int tk)
+         ΦdtReal(Real t)
   {
+    int tk = T.size() - 1;
     return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j)).mul(t.neg().mul(βReal(j)).exp()), 0, order() - 1);
   }
 
@@ -981,10 +989,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public Real
          ΦδReal(Real t,
-                double y,
-                int tk)
+                double y)
   {
-    return ΦReal(t, y, tk).div(ΦdtReal(t, tk));
+    return ΦReal(t, y).div(ΦdtReal(t));
   }
 
   public Vector
