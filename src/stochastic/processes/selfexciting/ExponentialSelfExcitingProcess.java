@@ -187,6 +187,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return dt;
   }
 
+  
   /*
    * @param u unit uniformly distributed random variable
    * 

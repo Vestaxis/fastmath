@@ -65,29 +65,27 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
     process.trace = false;
 
-    double hmm = process.Φδ(process.T.fmax() + 40, 1, n - 1);
-    out.println("hmm " + hmm);
-    TestCase.assertEquals(-4.8963233710073894061, hmm, 1E-15);
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, 1, n - 1), -25, 60, t -> t)).displayChart();
-
     process.trace = true;
-    for (double y = 0; y < 9; y += 0.25)
+    for (double y = 0.1; y < 9; y += 0.25)
     {
-      double dt = process.invΛ(y);
-      Real dtReal = process.invΛReal(y);
+      double dt = process.invΛReal(y).fpValue();
+      
+      //Real dtReal = process.invΛReal(y);
+       
 
-      double q = process.Λ(n - 1, dt);
+      double q = process.Λ(n-1 , dt);
 
-      out.println("y=" + y + " dt=" + dt + " dtReal=" + dtReal + " q=" + q);
+      out.println("y=" + y + " dt=" + dt + " q=" + q);
+      out.flush();
       assertEquals(q, y, 1E-14);
     }
   }
 
-//  public void testNΦ()
-//  {
-//    
-//  }
-  
+  // public void testNΦ()
+  // {
+  //
+  // }
+
   public void
          testHphase()
   {
@@ -177,7 +175,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   }
 
   public void
-         testΛPhase() throws InterruptedException
+         testinvΛ() throws InterruptedException
   {
     ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
     process.T = new Vector(3);
@@ -197,23 +195,12 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = true;
     double nextdt = process.invΛ(y);
     process.trace = false;
-    double phase = process.Φ(22, y, 2);
     process.trace = true;
     Real nextdtReal = process.invΛReal(y);
     process.trace = false;
 
-    Real phaseReal = process.ΦReal(new Real(22), y);
-    process.trace = false;
-
-    out.println("phase=" + phase);
-    out.println("phaseδReal=" + phaseReal);
-    assertEquals(phase, phaseReal.fpValue(), 1E-15);
-    double phaseDiff = process.Φdt(22, 2);
-    Real phaseDiffReal = process.ΦdtReal(new Real(22));
-    assertEquals(phaseDiff, phaseDiffReal.fpValue(), 1E-15);
-
     out.println("invΛ(y=" + y + ")=" + nextdt);
-    // out.println("invΛReal(y=" + y + ")=" + nextdtReal);
+    out.println("invΛReal(y=" + y + ")=" + nextdtReal);
 
     process.T = process.T.append(process.T.fmax() + nextdt);
     process.dT = null;
