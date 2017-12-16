@@ -85,10 +85,10 @@ public class ProcessSimulator
 
     process.trace = false;
 
-    double hmm = process.Φδ(40, 1, n - 1);
+    double hmm = process.Φδ(20, 1);
     out.println("hmm " + hmm);
     TestCase.assertEquals(-4.8963233710073894061, hmm, 1E-15);
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, 1, n - 1), -25, 60, t -> t)).displayChart();
+    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, 1), -25, 60, t -> t)).displayChart();
 
     for (double y = 0; y < 1; y += 0.05)
     {

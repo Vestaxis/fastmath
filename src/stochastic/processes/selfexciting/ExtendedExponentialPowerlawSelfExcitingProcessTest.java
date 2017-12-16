@@ -66,8 +66,9 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = false;
 
     process.trace = true;
-    for (double y = 0.1; y < 9; y += 0.25)
+    for (double y = 2; y < 9; y += 0.1)
     {
+      double adt = process.invΛ(y);
       double dt = process.invΛReal(y).fpValue();
       
       //Real dtReal = process.invΛReal(y);
@@ -75,9 +76,9 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
       double q = process.Λ(n-1 , dt);
 
-      out.println("y=" + y + " dt=" + dt + " q=" + q);
+      out.println("y=" + y + " adt=" + adt + " dt=" + dt + " q=" + q);
       out.flush();
-      assertEquals(q, y, 1E-14);
+      assertEquals(y, q, 1E-14);
     }
   }
 

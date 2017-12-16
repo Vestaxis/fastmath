@@ -132,27 +132,27 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          invΛ(double y)
   {
+    double dt = 0;
+
+    double δ = 0;
     double lastTime = T.getRightmostValue();
     double nextTime = lastTime;
 
-    double δ = 0;
     for (int i = 0; δ >= 0; i++)
     {
-      nextTime = NΦ(lastTime, y);
-      δ = nextTime - lastTime;
-      lastTime = nextTime;
+      δ = Φδ(dt = (nextTime - lastTime), y);
 
       if (trace)
       {
-        out.format("nextTime=%f δ=%f lastTime=%f\n", nextTime, δ, lastTime);
+        out.println("double dt[" + i + "]=" + dt + " δ=" + δ);
       }
-
-      if (abs(δ) < 1E-12 || !Double.isFinite(nextTime))
+      if (abs(δ) < 1E-10 || !Double.isFinite(δ))
       {
         break;
       }
+      nextTime = nextTime + δ;
     }
-    return nextTime;
+    return dt;
   }
 
   private Real tolerance = new Real("1E-30");
@@ -187,7 +187,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return dt;
   }
 
-  
   /*
    * @param u unit uniformly distributed random variable
    * 
@@ -943,49 +942,56 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
             double nextTime)
   {
     double lastTime = T.getRightmostValue();
-    int n = T.size() - 1;
-    return nextTime - Φδ(nextTime - lastTime, y, n);
+    return nextTime - Φδ(nextTime - lastTime, y);
   }
 
+  /**
+   * potential function
+   * 
+   * @param dt
+   * @param y
+   * @return
+   */
   public double
          Φ(double dt,
-           double y,
-           int tk)
+           double y)
   {
-    assert A != null;
-    assert tk < A.length : format("tk=%d >= A.length=%d", tk, A.length);
-    return sum(j -> γ(j) * A(tk, j) * (exp(-(dt - T.get(tk)) * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
+    return ΦReal(new Real(dt), y).fpValue();
+    // assert A != null;
+    // int tk = T.size() - 1;
+    // return sum(j -> γ(j) * A(tk, j) * (exp(-dt * β(j)) - 1), 0, order() - 1) + y
+    // * βproduct() * Z();
   }
 
   public Real
-         ΦReal(Real dt,
+         ΦReal(Real nextTime,
                double y)
   {
     assert A != null;
     int tk = T.size() - 1;
-    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(dt.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y).mul(ZReal()));
+    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(nextTime.neg().mul(βReal(j)).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y)
+                                                                                                                                            .mul(ZReal()));
   }
 
   public double
-         Φdt(double dt,
-             int tk)
+         Φdt(double dt)
   {
-    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-(dt - T.get(tk)) * β(j)), 0, order() - 1);
+    int tk = T.size() - 1;
+    return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-(dt) * β(j)), 0, order() - 1);
   }
 
   public Real
-         ΦdtReal(Real t)
+         ΦdtReal(Real dt)
   {
     int tk = T.size() - 1;
-    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j)).mul(t.neg().mul(βReal(j)).exp()), 0, order() - 1);
+    return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j)).mul(dt.neg().mul(βReal(j)).exp()), 0, order() - 1);
   }
 
   public double
          Φδ(double t,
-            double y,
-            int tk)
+            double y)
   {
-    return Φ(t, y, tk) / Φdt(t, tk);
+    return Φ(t, y) / Φdt(t);
   }
 
   public Real
