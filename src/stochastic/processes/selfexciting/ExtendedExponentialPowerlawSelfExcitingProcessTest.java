@@ -66,7 +66,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = false;
 
     process.trace = true;
-    for (double y = 2; y < 9; y += 0.1)
+    for (double y = 0.01; y < 4.71; y += 0.2)
     {
       double adt = process.invΛ(y);
       double dt = process.invΛReal(y).fpValue();
