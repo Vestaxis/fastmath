@@ -64,7 +64,7 @@ public class ProcessSimulator
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 5000; i++)
     {
       double y = expDist.sample();
       process.trace = true;
