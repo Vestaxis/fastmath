@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting;
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.random;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
@@ -58,36 +59,51 @@ public class ProcessSimulator
     { 1 });
     process.dT = new Vector(new double[] {});
 
+    int rejects = 0;
     int seed = 2;
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1000; i++)
     {
       double y = expDist.sample();
       process.trace = true;
       double dt = process.invΛ(y);
+      if ( dt > 6669 ) 
+      {
+        rejects++;
+        out.println( ansi().fgBrightRed() + "rejecting dt=" + dt + " for y=" + y + "# " + rejects + ansi().fgDefault()  );
+        continue;
+      }
+      process.trace = false;
       Real dtReal = process.invΛReal(y);
+      if ( dtReal.fpValue() > 6669)
+      {
+        out.println( "clamping " + dtReal );
+        dtReal = new Real(dt);
+      }
       process.trace = false;
 
       double dtRealFpValue = dtReal.fpValue();
       double q = process.Λ(n - 1, dtRealFpValue);
       double nextTime = process.T.getRightmostValue() + dt;
-      String msg = "y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
+      String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
       TestCase.assertEquals("y != q : " + msg, y, q, 1E-11);
-      process.T = process.T.copyAndAppend(ceil(nextTime)); // round up all remainders since the source data has this property as well.
+      process.T = process.T.copyAndAppend((nextTime)); // round up all remainders since the source data has this property as well.
       // TODO: compare results with and without fractional part.
       process.dT = process.dT.copyAndAppend(dt);
       n++;
       process.A = null; // TODO: expand A here as well
       process.AReal = null; // TODO: expand A here as well
 
-      out.println("T=" + process.T.toIntVector());
+     // out.println("T=" + process.T.toIntVector());
       out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10), process.T.size() - 1));
       out.println("Λmean=" + process.Λ().mean() + " Λvar=" + process.Λ().variance());
     }
 
+    MatFile.write("simulated.mat", process.T.setName("T").createMiMatrix());
+    
     //
     // double y = 0.9;
     // double nextdt = process.invΛ(y, n - 2);
