@@ -62,7 +62,7 @@ public class KernelPanel extends JPanel
     add(impulseResponseChartPanel);
     add(inverseIntegratedImpulseResponseChartPanel);
     add(inverseIntegratedImpulseResponseChartPanel);
-    add( HphasePanel = plot("t (ms)", "Hphase(H,t)", process == null ? t -> 0 : t -> process.Hphase(H, t), 0, 3) );
+    add( HphasePanel = plot("t (ms)", "Hphase(H,t)", process == null ? t -> 0 : t -> process.Φδ(H, t), 0, 3) );
     JSlider Hslider = new JSlider(SwingConstants.VERTICAL, 0, 1000, 500);
     Hslider.addChangeListener(event -> {
       H = Hslider.getValue() / 1000;

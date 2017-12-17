@@ -1,10 +1,6 @@
 package stochastic.processes.selfexciting;
 
-import static java.lang.Math.ceil;
-import static java.lang.Math.log;
 import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.random;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -13,15 +9,11 @@ import static util.Console.println;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.apache.commons.math3.random.RandomGeneratorFactory;
 import org.arblib.Real;
-import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
@@ -29,7 +21,6 @@ import fastmath.Vector;
 import fastmath.matfile.MatFile;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
-import util.Plotter;
 import util.TerseThreadFactory;
 
 public class ProcessSimulator
@@ -76,20 +67,21 @@ public class ProcessSimulator
         continue;
       }
       process.trace = false;
-      Real dtReal = process.invΛReal(y);
-      if ( dtReal.fpValue() > 6669)
-      {
-        out.println( "clamping " + dtReal );
-        dtReal = new Real(dt);
-      }
+      //Real dtReal = process.invΛReal(y);
+//      if ( dtReal.fpValue() > 6669)
+//      {
+//        out.println( "clamping " + dtReal );
+//        dtReal = new Real(dt);
+//      }
       process.trace = false;
 
-      double dtRealFpValue = dtReal.fpValue();
-      double q = process.Λ(n - 1, dtRealFpValue);
+      //double dtRealFpValue = dtReal.fpValue();
+      double q = process.Λ(n - 1, dt);
       double nextTime = process.T.getRightmostValue() + dt;
-      String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
+      String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " nextTime=" + nextTime;
+      //String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
-      TestCase.assertEquals("y != q : " + msg, y, q, 1E-11);
+      TestCase.assertEquals("y != q : " + msg, y, q, 1E-10);
       n++;
       process.appendTime( nextTime );
       

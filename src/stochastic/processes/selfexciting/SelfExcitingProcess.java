@@ -15,6 +15,10 @@ public interface SelfExcitingProcess
    */
   double getStationaryλ();
 
+  public double
+         Φδ(double t,
+            double y);
+
   /**
    * 
    * @param t
@@ -27,17 +31,5 @@ public interface SelfExcitingProcess
 
   public Vector
          λvector();
-
-  /*
-   * maximum hazard rate
-   */
-  public double
-         maxh();
-
-  /**
-   * minimum hazard rate
-   */
-  public double
-         minh();
 
 }

@@ -10,12 +10,9 @@ import java.io.IOException;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.arblib.Real;
-import org.knowm.xchart.SwingWrapper;
 
 import fastmath.Vector;
-import fastmath.matfile.MatFile;
 import junit.framework.TestCase;
-import util.Plotter;
 
 @SuppressWarnings(
 { "deprecation", "unused", "unchecked" })
@@ -87,21 +84,6 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   // {
   //
   // }
-
-  public void
-         testHphase()
-  {
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-
-    double phase = process.Hphase(0.7, 0.2);
-    assertEquals(32.22004331952762, phase, 1E-13);
-    out.println("Hphase(0.7, 0.2)=" + phase);
-    double otherPhase = phase;
-    phase = process.Hphase(0.7, 9.3);
-    assertEquals(phase, otherPhase);
-    out.println("βproduct=" + process.βproduct());
-
-  }
 
   final public static double tolerance = 1E-12;
 

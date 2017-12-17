@@ -347,17 +347,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return haz;
   }
 
-  public double
-         minh()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  public double
-         maxh()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
 
   /**
    * integrated hazard function

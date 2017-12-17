@@ -108,7 +108,10 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
               int j,
               int k)
   {
-    if (j != k) { return 0; }
+    if (j != k)
+    {
+      return 0;
+    }
     return i < M ? pow(1 / (τ0.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
 
   }
@@ -119,7 +122,10 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
               int j,
               int k)
   {
-    if (j != k) { return 0; }
+    if (j != k)
+    {
+      return 0;
+    }
     return i < M ? 1 / (τ0.get(j) * pow(m, i)) : βS(j);
 
   }
@@ -148,7 +154,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
          getType()
   {
     return null;
-    //return Type.MultivariateExtendedApproximatePowerlaw;
+    // return Type.MultivariateExtendedApproximatePowerlaw;
   }
 
   @Override
@@ -226,6 +232,14 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   public double
          Fphase(double U,
                 double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         Φδ(double t,
+            double y)
   {
     throw new UnsupportedOperationException("TODO");
   }
