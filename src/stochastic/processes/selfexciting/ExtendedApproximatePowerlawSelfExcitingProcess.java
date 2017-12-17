@@ -144,4 +144,5 @@ public class ExtendedApproximatePowerlawSelfExcitingProcess extends ApproximateP
     return Real.ONE.div(new Real(η));
   }
 
+ 
 }

@@ -138,7 +138,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double lastTime = T.getRightmostValue();
     double nextTime = lastTime;
 
-    for (int i = 0; δ >= 0; i++)
+    for (int i = 0; i <= 1000; i++)
     {
       δ = Φδ(dt = (nextTime - lastTime), y);
 
@@ -146,7 +146,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         out.println("double dt[" + i + "]=" + dt + " δ=" + δ);
       }
-      if (abs(δ) < 1E-11 || !Double.isFinite(δ))
+      if (abs(δ) < 1E-10 || !Double.isFinite(δ))
       {
         break;
       }
@@ -155,7 +155,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return dt;
   }
 
-  private Real tolerance = new Real("1E-15");
+  private Real tolerance = new Real("1E-14");
 
   /**
    * 
@@ -170,7 +170,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     Real dt = Real.ZERO;
 
     Real δ = Real.ZERO;
-    for (int i = 0; δ.greaterThanOrEqualTo(Real.ZERO); i++)
+    for (int i = 0; i <= 1000; i++)
     {
       δ = ΦδReal(dt.fpValue(), y);
 
@@ -224,49 +224,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
         {
           out.println("Converged in " + i + " iterations");
         }
-        break;
-      }
-    }
-    return t;
-  }
-
-  /**
-   * @param y
-   *          unit exponentially distributed random variable
-   * 
-   * @see this{@link #Hphase(double, double)} and
-   *      this{@link #HphaseTimeDifferential(double, double)}
-   * 
-   * @return {t:Hphase(y,t)=0}
-   */
-  @Override
-  public double
-         invH(double y)
-  {
-    if (true)
-    {
-      throw new UnsupportedOperationException("TODO: investigate numerical problems with this method");
-    }
-    double t = 0;
-    double prevdt = 0;
-    double dt = 0;
-    for (int i = 0; i < MAX_ITERS; i++)
-    {
-      double phase = Hphase(y, t);
-      double phasedt = HphaseTimeDifferential(y, t);
-      prevdt = dt;
-      dt = phase / phasedt;
-      if (!Double.isFinite(dt))
-      {
-        return Double.POSITIVE_INFINITY;
-      }
-      double newt = t - dt;
-      double relativeDifference = abs(abs(dt) - abs(prevdt));
-      out.format("invH[%d] y=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, y, t, dt, newt, relativeDifference);
-      t = newt;
-      if (relativeDifference < 1E-14)
-      {
-        out.println("Converged in " + i + " iterations");
         break;
       }
     }
@@ -1158,6 +1115,29 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          getHalfDuration(int i)
   {
     return log(2) / (β(i) / Z());
+  }
+
+  public void
+         appendTime(double nextTime)
+  {
+    double dt = nextTime - T.getRightmostValue();
+    T = T.copyAndAppend(nextTime);
+    dT = dT.copyAndAppend(dt);
+    Real[][] newAReal = new Real[T.size()][order()];
+    double[][] newA = new double[T.size()][order()];
+
+    for (int i = 0; i < AReal.length; i++)
+    {
+      Real[] aMatrix = newAReal[i];
+      double[] bMatrix = newA[i];
+      int aLength = aMatrix.length;
+      newAReal[i] = new Real[aLength];
+      newA[i] = new double[aLength];
+      System.arraycopy(aMatrix, 0, newAReal[i], 0, aLength);
+      System.arraycopy(bMatrix, 0, newA[i], 0, aLength);
+    }
+    A = newA;
+    AReal = newAReal;
   }
 
 }

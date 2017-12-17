@@ -64,7 +64,7 @@ public class ProcessSimulator
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 5000; i++)
+    for (int i = 0; i < 2000; i++)
     {
       double y = expDist.sample();
       process.trace = true;
@@ -90,13 +90,9 @@ public class ProcessSimulator
       String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
       TestCase.assertEquals("y != q : " + msg, y, q, 1E-11);
-      process.T = process.T.copyAndAppend((nextTime)); // round up all remainders since the source data has this property as well.
-      // TODO: compare results with and without fractional part.
-      process.dT = process.dT.copyAndAppend(dt);
       n++;
-      process.A = null; // TODO: expand A here as well
-      process.AReal = null; // TODO: expand A here as well
-
+      process.appendTime( nextTime );
+      
      // out.println("T=" + process.T.toIntVector());
       out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10), process.T.size() - 1));
       out.println("Λmean=" + process.Λ().mean() + " Λvar=" + process.Λ().variance());

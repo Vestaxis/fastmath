@@ -94,7 +94,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public Real
          βReal(int i)
   {
-    return (i == 0 && τ == 1 ) ? Real.ONE : new Real(τ).div(new Real(m).pow(new Real(i)));
+    return (i == 0 && τ == 1) ? Real.ONE : new Real(τ).div(new Real(m).pow(new Real(i)));
   }
 
   final public int M = 15;
