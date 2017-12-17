@@ -431,6 +431,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return new DoubleMatrix.Sub(buffer, 1, size, getOffset(0), size, getIncrement(), false);
   }
 
+  public Vector reassign(Vector x)
+  {
+    this.buffer = x.buffer;
+    this.size = x.size;
+    this.name = x.name;
+    this.incrementalCapacityExpansionFactor = x.incrementalCapacityExpansionFactor;
+    return this;
+  }
+  
   public Vector
          assign(Vector x)
   {
@@ -1534,11 +1543,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   }
 
   public Vector
-         append(double d)
+         copyAndAppend(double d)
   {
     int len = size();
     Vector newVec = extend(1);
-    newVec.set(len, d);
+    newVec.set(len, d);    
     return newVec;
   }
 

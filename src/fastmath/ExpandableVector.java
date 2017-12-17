@@ -105,7 +105,7 @@ public class ExpandableVector extends Vector
    * @return this with this{@link #size()} being 1 greater than it was prior
    * 
    */
-  public Vector append( double x )
+  public Vector copyAndAppend( double x )
   {
     set( size, x );
     return this;

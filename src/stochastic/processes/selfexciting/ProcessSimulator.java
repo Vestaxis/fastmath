@@ -1,5 +1,8 @@
 package stochastic.processes.selfexciting;
 
+import static java.lang.Math.ceil;
+import static java.lang.Math.log;
+import static java.lang.Math.random;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -45,56 +48,30 @@ public class ProcessSimulator
 
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
     // process.ε = 0.05;
+    process.T = new Vector(new double[]
+    { 1 });
+    process.dT = new Vector(new double[] {});
 
-    process.T = MatFile.loadMatrix("test0.mat", "times").asVector().copy().slice(0, 1000).setName("T");
-    final double t0 = process.T.get(0);
-    for (int i = 0; i < process.T.size(); i++)
-    {
-      process.T.set(i, (int) (process.T.get(i) - t0));
-    }
-    process.T = process.T.slice(1, process.T.size());
-    // process.T = process.T.subtract(process.T.get(0));
-    process.trace = false;
-
-    // process.printResults( process.estimateParameters(25) );
-
-    // out.println( " Λ=" + process.Λ() );
-    // for (int tk = 0; tk < 10; tk++)
-    // {
-    // out.println("A[" + tk + "]=" + Arrays.toString(process.A[tk]));
-    // }
-    out.println("estimated " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
-    out.println(process.getαβString());
-    process.trace = false;
-    double Λmean = process.Λ().mean();
-    process.trace = false;
-    double Λvar = process.Λ().variance();
-    out.println("Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
-
-    int n = 10;
-    out.println("in-sample forecasting starting at n=" + n);
-    process.T = process.T.slice(0, n);
-    out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
-    process.dT = null;
-    out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
-
+    out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     process.trace = true;
-    process.recursive = true;
-    out.println(" Λ=" + process.Λ());
-    process.trace = false;
-
-    process.trace = false;
-
-    double hmm = process.Φδ(20, 1);
-    out.println("hmm " + hmm);
-    TestCase.assertEquals(-4.8963233710073894061, hmm, 1E-15);
-    new SwingWrapper<>(Plotter.chart("x", "y", t -> process.Φδ(t, 1), -25, 60, t -> t)).displayChart();
-
-    for (double y = 0; y < 1; y += 0.05)
+    int n = process.T.size();
+    for (int i = 0; i < 20; i++)
     {
+      double y = -log(1 - random());
       double dt = process.invΛ(y);
       double q = process.Λ(n - 1, dt);
-      out.println("y=" + y + " dt=" + dt + " q=" + q);
+      double nextTime = process.T.getRightmostValue() + dt;
+      out.println("y=" + y + " dt=" + dt + " q=" + q + " nextTime=" + nextTime);
+      TestCase.assertEquals("y=" + y + " dt=" + dt + " q=" + q + " nextTime=" + nextTime, y, q, 1E-12);
+      process.T = process.T.copyAndAppend(nextTime); // round up all remainders since the source data has this property as well.
+                                                     // TODO: compare results with and without fractional part.
+      process.dT = process.dT.copyAndAppend(dt);
+      n++;
+      process.A = null; // TODO: expand A here as well
+      process.AReal = null; // TODO: expand A here as well
+
+      out.println("T=" + process.T);
+      out.println("Λ=" + process.Λ());
     }
 
     //

@@ -63,18 +63,19 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println(" Λ=" + process.Λ());
     process.trace = false;
 
-    process.trace = false;
+    
 
     process.trace = true;
-    for (double y = 0.01; y < 4.71; y += 0.2)
+    for (double y = 0.01; y <= 4.71; y += y < 4.6 ? 0.1 : 0.01)
     {
       double adt = process.invΛ(y);
+      process.trace = false;
       double dt = process.invΛReal(y).fpValue();
-      
-      //Real dtReal = process.invΛReal(y);
-       
+      process.trace = true;
+      assertEquals(adt, dt, 1E-10);
+      // Real dtReal = process.invΛReal(y);
 
-      double q = process.Λ(n-1 , dt);
+      double q = process.Λ(n - 1, dt);
 
       out.println("y=" + y + " adt=" + adt + " dt=" + dt + " q=" + q);
       out.flush();
@@ -203,7 +204,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println("invΛ(y=" + y + ")=" + nextdt);
     out.println("invΛReal(y=" + y + ")=" + nextdtReal);
 
-    process.T = process.T.append(process.T.fmax() + nextdt);
+    process.T = process.T.copyAndAppend(process.T.fmax() + nextdt);
     process.dT = null;
 
     out.println("T=" + process.T);
