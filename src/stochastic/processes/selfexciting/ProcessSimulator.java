@@ -2,6 +2,7 @@ package stochastic.processes.selfexciting;
 
 import static java.lang.Math.ceil;
 import static java.lang.Math.log;
+import static java.lang.Math.max;
 import static java.lang.Math.random;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
@@ -12,8 +13,13 @@ import static util.Console.println;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
+import org.arblib.Real;
 import org.knowm.xchart.SwingWrapper;
 
 import dnl.utils.text.table.TextTable;
@@ -52,30 +58,34 @@ public class ProcessSimulator
     { 1 });
     process.dT = new Vector(new double[] {});
 
+    int seed = 2;
+    ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 100; i++)
     {
-      double y = -log(1 - random());
+      double y = expDist.sample();
       process.trace = true;
       double dt = process.invΛ(y);
+      Real dtReal = process.invΛReal(y);
       process.trace = false;
 
-      double q = process.Λ(n - 1, dt);
+      double dtRealFpValue = dtReal.fpValue();
+      double q = process.Λ(n - 1, dtRealFpValue);
       double nextTime = process.T.getRightmostValue() + dt;
-      out.println("y=" + y + " dt=" + dt + " q=" + q + " nextTime=" + nextTime);
-      TestCase.assertEquals("y=" + y + " dt=" + dt + " q=" + q + " nextTime=" + nextTime, y, q, 1E-12);
-      process.T = process.T.copyAndAppend(nextTime); // round up all remainders since the source data has this property as well.
-                                                     // TODO: compare results with and without fractional part.
+      String msg = "y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
+      out.println(msg);
+      TestCase.assertEquals("y != q : " + msg, y, q, 1E-11);
+      process.T = process.T.copyAndAppend(ceil(nextTime)); // round up all remainders since the source data has this property as well.
+      // TODO: compare results with and without fractional part.
       process.dT = process.dT.copyAndAppend(dt);
       n++;
       process.A = null; // TODO: expand A here as well
       process.AReal = null; // TODO: expand A here as well
 
-      out.println("T=" + process.T);
-      out.println("Λ=" + process.Λ());
-      out.println("Λmean=" + process.Λ().mean());
-      out.println("Λvar=" + process.Λ().variance());
+      out.println("T=" + process.T.toIntVector());
+      out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10), process.T.size() - 1));
+      out.println("Λmean=" + process.Λ().mean() + " Λvar=" + process.Λ().variance());
     }
 
     //

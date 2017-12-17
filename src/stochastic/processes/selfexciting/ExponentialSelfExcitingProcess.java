@@ -155,7 +155,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return dt;
   }
 
-  private Real tolerance = new Real("1E-30");
+  private Real tolerance = new Real("1E-15");
 
   /**
    * 
@@ -178,7 +178,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       {
         out.println("dt[" + i + "]=" + dt + " δ=" + δ + " bits=" + δ.getRelativeAccuracyBits());
       }
-      if (δ.getRelativeAccuracyBits() <= 0 || !δ.isFinite())
+      if (δ.getRelativeAccuracyBits() <= 0 || !δ.isFinite() || δ.lessThanOrEquals(tolerance))
       {
         break;
       }

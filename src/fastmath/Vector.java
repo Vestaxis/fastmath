@@ -431,7 +431,8 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     return new DoubleMatrix.Sub(buffer, 1, size, getOffset(0), size, getIncrement(), false);
   }
 
-  public Vector reassign(Vector x)
+  public Vector
+         reassign(Vector x)
   {
     this.buffer = x.buffer;
     this.size = x.size;
@@ -439,7 +440,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     this.incrementalCapacityExpansionFactor = x.incrementalCapacityExpansionFactor;
     return this;
   }
-  
+
   public Vector
          assign(Vector x)
   {
@@ -1547,7 +1548,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   {
     int len = size();
     Vector newVec = extend(1);
-    newVec.set(len, d);    
+    newVec.set(len, d);
     return newVec;
   }
 
@@ -1636,6 +1637,17 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
          toArray(T[] arg0)
   {
     throw new UnsupportedOperationException("TODO");
+  }
+
+  public IntVector
+         toIntVector()
+  {
+    IntVector iv = new IntVector(size());
+    for (int i = 0; i < size(); i++)
+    {
+      iv.set(i, (int) Math.round(get(i)));
+    }
+    return iv;
   }
 
 }
