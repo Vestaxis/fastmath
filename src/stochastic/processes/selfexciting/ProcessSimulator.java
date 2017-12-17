@@ -53,12 +53,14 @@ public class ProcessSimulator
     process.dT = new Vector(new double[] {});
 
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
-    process.trace = true;
     int n = process.T.size();
     for (int i = 0; i < 20; i++)
     {
       double y = -log(1 - random());
+      process.trace = true;
       double dt = process.invΛ(y);
+      process.trace = false;
+
       double q = process.Λ(n - 1, dt);
       double nextTime = process.T.getRightmostValue() + dt;
       out.println("y=" + y + " dt=" + dt + " q=" + q + " nextTime=" + nextTime);
@@ -72,6 +74,8 @@ public class ProcessSimulator
 
       out.println("T=" + process.T);
       out.println("Λ=" + process.Λ());
+      out.println("Λmean=" + process.Λ().mean());
+      out.println("Λvar=" + process.Λ().variance());
     }
 
     //
