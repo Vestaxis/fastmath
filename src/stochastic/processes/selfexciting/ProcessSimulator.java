@@ -1,5 +1,7 @@
 package stochastic.processes.selfexciting;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.ceil;
 import static java.lang.Math.max;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
@@ -55,43 +57,49 @@ public class ProcessSimulator
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 2000; i++)
+    for (int i = 0; i < 10000; i++)
     {
       double y = expDist.sample();
       process.trace = true;
       double dt = process.invΛ(y);
-      if ( dt > 6669 ) 
+      if (dt > 10000)
       {
         rejects++;
-        out.println( ansi().fgBrightRed() + "rejecting dt=" + dt + " for y=" + y + "# " + rejects + ansi().fgDefault()  );
+        out.println(ansi().fgBrightRed() + "rejecting dt=" + dt + " for y=" + y + "#" + rejects + ansi().fgDefault());
         continue;
       }
       process.trace = false;
-      //Real dtReal = process.invΛReal(y);
-//      if ( dtReal.fpValue() > 6669)
-//      {
-//        out.println( "clamping " + dtReal );
-//        dtReal = new Real(dt);
-//      }
+      // Real dtReal = process.invΛReal(y);
+      // if ( dtReal.fpValue() > 6669)
+      // {
+      // out.println( "clamping " + dtReal );
+      // dtReal = new Real(dt);
+      // }
       process.trace = false;
 
-      //double dtRealFpValue = dtReal.fpValue();
+      // double dtRealFpValue = dtReal.fpValue();
       double q = process.Λ(n - 1, dt);
-      double nextTime = process.T.getRightmostValue() + dt;
+      double nextTime = (process.T.getRightmostValue() + dt);
       String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " nextTime=" + nextTime;
-      //String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal=" + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
+      // String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal="
+      // + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
+      if (abs(y - q) > 1E-10)
+      {
+        out.println(ansi().fgBrightRed() + " rejecting dt=" + dt + " for y=" + y + " q=" + q + "# " + rejects + ansi().fgDefault());
+        continue;
+      }
       TestCase.assertEquals("y != q : " + msg, y, q, 1E-10);
       n++;
-      process.appendTime( nextTime );
-      
-     // out.println("T=" + process.T.toIntVector());
+      process.appendTime(nextTime);
+
+      // out.println("T=" + process.T.toIntVector());
       out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10), process.T.size() - 1));
       out.println("Λmean=" + process.Λ().mean() + " Λvar=" + process.Λ().variance());
     }
 
     MatFile.write("simulated.mat", process.T.setName("T").createMiMatrix());
-    
+
     //
     // double y = 0.9;
     // double nextdt = process.invΛ(y, n - 2);
