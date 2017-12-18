@@ -303,10 +303,12 @@
 
   <\equation>
     <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<table|<row|<cell|>|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><rsup|>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m><rsup|>
-    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>|<row|<cell|>|<cell|=m!<around*|(|<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-1-<big|sum><rsub|k=0><rsup|n-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|k>|)>>|)><around*|(|1-e<rsup|-\<beta\><rsub|j>t>|)>|)>+<around*|(|m+1|)>!Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>>>>
+    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>|<row|<cell|>|<cell|=m!<around*|(|<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-1-B<rsub|j><around*|(|n|)>|)><around*|(|1-e<rsup|-\<beta\><rsub|j>t>|)>|)>+<around*|(|m+1|)>!Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>>>>
   </equation>
 
-  \;
+  where <math|<tabular|<tformat|<table|<row|<cell|B<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|k=0><rsup|i-1>
+  e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>>>>> is defined
+  in Equation (<reference|Bj>).
 
   \;
 
