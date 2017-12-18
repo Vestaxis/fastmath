@@ -1,4 +1,4 @@
-<TeXmacs|1.99.5>
+<TeXmacs|1.99.6>
 
 <style|<tuple|amsart|american>>
 
@@ -85,7 +85,7 @@
   as the hazard function, is given by\ 
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<rsub|t+\<Delta\>t>\<gtr\>N<rsub|t><mid|\|>\<cal-F\><rsub|t>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=lim<rsub|\<Delta\>t\<rightarrow\>0><frac|P<around*|(|N<rsub|t+\<Delta\>t>\<gtr\>N<rsub|t><mid|\|>\<cal-F\><rsub|n>|)>|\<Delta\>t>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|-\<infty\>><rsup|t>f<around*|(|t-s|)>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|T<rsub|k>\<less\>t>f<around*|(|t-T<rsub|k>|)>>>>>><label|HawkesIntensity>
   </equation>
 
   where <math|\<cal-F\><rsub|n>=<around*|{|t<rsub|0>,\<ldots\>,<rsub|t<rsub|n>>|}>>
@@ -261,18 +261,18 @@
   <\equation>
     <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>|<cell|=t<rsub|n>-<frac|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=t<rsub|n>-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
     <around*|(|t<rsub|n+1>-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
-    y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
+    y<big|prod><rsub|j=1><rsup|P>\<beta\>j|-<big|sum><rsub|j=1><rsup|P>\<beta\><rsub|j>
     e<rsup|-\<beta\><rsub|j> <around*|(|t<rsub|n+1>-t<rsub|n>|)>>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>>>>>>>
   </equation>
 
-  which has a unique real-valued fixed-point at the poin
+  which has a unique real-valued fixed-point at the point
   \ <math|t<rsub|n+1>=N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>> where
   <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the exact
   time of the next point of the process <math|t<rsub|n+1>> such that
   <math|<tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|n+1>>|<cell|=\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1>|)>=y>>>>>>.
-  The <math|m>-th moment about zero of the <math|<around*|(|n+1|)>>-th point
-  of the process, <math|>conditional upon the points
-  <math|<around*|{|t<rsub|n>|}>=<around*|{|t<rsub|i>:i=0,1,2,\<ldots\>,n|}>>
+  The <math|m>-th moment about zero of the duration until the
+  <math|<around*|(|n+1|)>>-th point of the process occurs, <math|>conditional
+  upon the points <math|<around*|{|t<rsub|n>|}>=<around*|{|t<rsub|i>:i=0,1,2,\<ldots\>,n|}>>
   and parameters <math|\<theta\>=<around*|{|\<alpha\><rsub|1\<ldots\>P>,\<beta\><rsub|1\<ldots\>P>|}>>
   in the filtration
 
@@ -283,20 +283,28 @@
   is expressed by
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|m><rsup|>><around*|(|\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
-    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|m><rsup|>><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
   </equation>
 
   where the probability density <math|f<rsub|y>> of <math|y> is
   <math|f<rsub|y>=e<rsup|-y>>. The expected time <math|t<rsub|n+1>> of the
-  next point of the process <math|>is then equal to the value of the integral
+  next point of the process <math|>is then equal to\ 
 
   <\equation>
-    E<rsub|y><around*|(|T<rsub|n+1><rsup|>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
-    e<rsup|-y>\<Lambda\><rsub|T<rsub|n+1>><rsup|<rsup|-1>><around*|(|T<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y
+    t<rsub|n>+E<rsub|y><around*|(|t<rsub|n+1><rsup|>-t<rsub|n>|)>=t<rsub|n>+<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
+    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y
   </equation>
 
-  and the standard deviation of the expected time <math|t<rsub|n+1>> is ...
+  and the standard deviation of the duration until the next time
+  <math|t<rsub|n+1>> occurs is <math|<sqrt|E<rsub|y<rsup|2>><around*|(|t<rsub|n+1><rsup|>-t<rsub|n>|)>>>
+  where the m-th moment of the next duration <math|t<rsub|n+1>-t<rsub|n>> is
+  given by
+
+  <\equation>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<table|<row|<cell|>|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><rsup|>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m><rsup|>
+    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>|<row|<cell|>|<cell|=m!<around*|(|<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-1-<big|sum><rsub|k=0><rsup|n-1>e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n>-t<rsub|k>|)>>|)><around*|(|1-e<rsup|-\<beta\><rsub|j>t>|)>|)>+<around*|(|m+1|)>!Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>>>>
+  </equation>
 
   \;
 
@@ -402,7 +410,8 @@
   to\ 
 
   <\equation>
-    <wide|x|\<bar\>>=<big|int><rsub|0><rsup|\<infty\>>e<rsup|-\<varepsilon\>>x<around*|(|\<varepsilon\>|)>\<mathd\>\<varepsilon\>
+    <wide|x|\<bar\>>=<big|int><rsub|0><rsup|\<infty\>>\<#3B5\>
+    e<rsup|-\<varepsilon\>>x<around*|(|\<varepsilon\>|)>\<mathd\>\<varepsilon\>
   </equation>
 
   where <math|x<around*|(|\<varepsilon\>|)>=x<around*|(|\<varepsilon\>;P,x,\<#3B1\>,\<#3B2\>,S|)>>
@@ -742,13 +751,13 @@
   <\collection>
     <associate|A|<tuple|9|3>>
     <associate|Bj|<tuple|7|2>>
-    <associate|Etn1|<tuple|49|8>>
-    <associate|Hawkes1|<tuple|25|5>>
+    <associate|Etn1|<tuple|50|8>>
+    <associate|Hawkes1|<tuple|26|5>>
     <associate|HawkesIntensity|<tuple|3|1>>
-    <associate|P1pred|<tuple|30|6>>
+    <associate|P1pred|<tuple|31|6>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|1.5.1|8>>
-    <associate|auto-11|<tuple|64|9>>
+    <associate|auto-11|<tuple|65|9>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -772,13 +781,13 @@
     <associate|footnr-1|<tuple|1|1>>
     <associate|hawkesll|<tuple|14|4>>
     <associate|kernel|<tuple|4|2>>
-    <associate|mc|<tuple|57|9>>
-    <associate|mp|<tuple|53|9>>
+    <associate|mc|<tuple|58|9>>
+    <associate|mp|<tuple|54|9>>
     <associate|multivarPred|<tuple|1.5.1|8>>
-    <associate|prediction|<tuple|33|6>>
-    <associate|uc|<tuple|43|7>>
+    <associate|prediction|<tuple|34|6>>
+    <associate|uc|<tuple|44|7>>
     <associate|univarPred|<tuple|1.4|8>>
-    <associate|up|<tuple|51|8>>
+    <associate|up|<tuple|52|8>>
   </collection>
 </references>
 
