@@ -21,6 +21,17 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
   private double phasedt;
 
+  public void testInvLambdaExpectation()
+  {
+    ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
+    // process.ε = 0.05;
+
+    process.T = new Vector(new double[]
+    { 65, 67, 86, 140, 141, 149, 151, 163, 201, 205 }).setName("T");
+
+    
+  }
+  
   public void
          testInvLambda()
   {
@@ -29,7 +40,8 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
     process.T = new Vector(new double[]
     { 65, 67, 86, 140, 141, 149, 151, 163, 201, 205 }).setName("T");
-
+    int n = process.T.size();
+    
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
@@ -48,9 +60,6 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     double Λvar = process.Λ().variance();
     out.println("Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
 
-    int n = 10;
-    out.println("in-sample forecasting starting at n=" + n);
-    process.T = process.T.slice(0, n);
     out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
     process.dT = null;
     out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
@@ -65,11 +74,11 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.trace = true;
     for (double y = 0.01; y <= 4.71; y += y < 4.6 ? 0.1 : 0.01)
     {
-      double adt = process.invΛ(y);
       process.trace = false;
+      double adt = process.invΛ(y);
       double dt = process.invΛReal(y).fpValue();
       process.trace = true;
-      assertEquals(adt, dt, 1E-10);
+      assertEquals(adt, dt, 1E-8);
       // Real dtReal = process.invΛReal(y);
 
       double q = process.Λ(n - 1, dt);

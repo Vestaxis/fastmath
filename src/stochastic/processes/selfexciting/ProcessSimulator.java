@@ -61,6 +61,7 @@ public class ProcessSimulator
     {
       double y = expDist.sample();
       process.trace = true;
+      // TODO: average over Λ and compare against the invariant projection
       double dt = process.invΛ(y);
       if (dt > 10000)
       {
