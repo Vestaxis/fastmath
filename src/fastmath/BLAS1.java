@@ -28,8 +28,6 @@ public class BLAS1
     return dsyev(jobz, uplo, A.getRowCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount(), W.getBuffer(), work.getBuffer(), lwork);
   }
 
-  public native static int dgelss(int m, int n, int nrhs, ByteBuffer A, int offA, int ldA, ByteBuffer B, int offB, int ldB, ByteBuffer S, int offS,
-      double rcond, ByteBuffer rank, ByteBuffer work, int lwork);
 
   public static native int dpotrf(boolean colMajor, boolean upper, int n, ByteBuffer A, int offA, int ldA);
 
@@ -49,9 +47,6 @@ public class BLAS1
   public native static void zcopy(int N, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY);
 
   public static native void dgemm(boolean colMajor, boolean TransA, boolean TransB, int M, int N, int K, double alpha, ByteBuffer A, int offA,
-      int lda, ByteBuffer B, int offB, int ldb, double beta, ByteBuffer C, int offC, int ldc);
-
-  public static native void cblas_dgemm(boolean colMajor, boolean TransA, boolean TransB, int M, int N, int K, double alpha, ByteBuffer A, int offA,
       int lda, ByteBuffer B, int offB, int ldb, double beta, ByteBuffer C, int offC, int ldc);
 
   public native static int dgeev(char jobvl, char jobvr, int n, ByteBuffer A, int offA, int ldA, ByteBuffer WR, ByteBuffer WI, ByteBuffer VL,
@@ -183,23 +178,7 @@ public class BLAS1
     assert C.isDense() : "C is not dense";
     // DoubleColMatrix V = new DoubleColMatrix( C.numRows(), C.numCols() );
 
-    cblas_dgemm(true,
-                A.isTranspose(),
-                B.isTranspose(),
-                A.getRowCount(),
-                B.getColCount(),
-                A.getColCount(),
-                alpha,
-                A.getBuffer(),
-                A.getOffset(0, 0),
-                A.leadingDimension(),
-                B.getBuffer(),
-                B.getOffset(0, 0),
-                B.leadingDimension(),
-                beta,
-                C.getBuffer(),
-                C.getOffset(0, 0),
-                C.leadingDimension());
+    throw new UnsupportedOperationException("TODO" );
 
     // for (int i = 0; i < C.numRows; i++)
     // {
@@ -273,28 +252,7 @@ public class BLAS1
     // On entry, the M-by-N matrix A. On exit, the first min(m,n) rows of
     // A are overwritten with its right singular vectors, stored rowwise.
 
-    return dgelss(A.getRowCount(),
-                  A.getColCount(),
-                  B.getColCount(),
-                  A.getBuffer(),
-                  A.getOffset(0, 0),
-                  A.getRowCount(),
-                  B.getBuffer(),
-                  B.getOffset(0, 0),
-                  B.getRowCount(),
-                  S.getBuffer(),
-                  S.getOffset(0),
-                  -1.0, // TODO:
-                  // compute
-                  // rcond,
-                  // this
-                  // defaults
-                  // to
-                  // machine
-                  // precision
-                  rank.getBuffer(),
-                  work.getBuffer(),
-                  workSize);
+    throw new UnsupportedOperationException( "TODO" );
   }
 
 }
