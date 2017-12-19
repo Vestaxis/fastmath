@@ -28,7 +28,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     η = new Vector(dim).setName("η");
     b = new Vector(dim).setName("b");
     ε = new Vector(dim).setName("ε");
-    τ0 = new Vector(dim).setName("τ0");
+    τ = new Vector(dim).setName("τ");
   }
 
   public Vector κ;
@@ -39,7 +39,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
   public Vector ε;
 
-  public Vector τ0;
+  public Vector τ;
 
   @Override
   public final double
@@ -112,7 +112,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     {
       return 0;
     }
-    return i < M ? pow(1 / (τ0.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
+    return i < M ? pow(1 / (τ.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
 
   }
 
@@ -126,7 +126,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     {
       return 0;
     }
-    return i < M ? 1 / (τ0.get(j) * pow(m, i)) : βS(j);
+    return i < M ? 1 / (τ.get(j) * pow(m, i)) : βS(j);
 
   }
 
@@ -139,7 +139,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   public double
          βS(int j)
   {
-    return 1 / τ0.get(j);
+    return 1 / τ.get(j);
   }
 
   @Override

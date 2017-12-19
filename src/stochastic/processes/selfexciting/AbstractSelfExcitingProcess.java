@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.function.IntConsumer;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
@@ -116,7 +117,9 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
       }
       if (field == null)
       {
-        throw new RuntimeException(nsfe.getMessage(), nsfe);
+        NoSuchElementException ne = new NoSuchElementException(nsfe.getMessage());
+        ne.initCause(nsfe);
+        throw ne;
       }
       field.setAccessible(true);
       return field;
@@ -346,7 +349,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     }
     return haz;
   }
-
 
   /**
    * integrated hazard function

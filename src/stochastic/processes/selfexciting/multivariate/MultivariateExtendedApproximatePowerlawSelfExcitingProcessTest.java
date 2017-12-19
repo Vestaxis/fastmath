@@ -24,11 +24,5 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
     // out.println( "paramCount=" + paramCount );
   }
 
-  public void testIntensity()
-  {
-    final ExtendedApproximatePowerlawSelfExcitingProcess univariateProcess = new ExtendedApproximatePowerlawSelfExcitingProcess();
-    univariateProcess.assignParameters(new double[]
-    { 0.011620978583337516, 2.9838692714648087, 0.04747333153072916, 0.34711839565630465, 1.8505814321703276 });
-
-  }
+  
 }
