@@ -48,6 +48,7 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.arblib.Real;
 
+import fastmath.Functions;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.optim.ObjectiveFunctionSupplier;
@@ -289,6 +290,9 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return 1 / (γ(k));
   }
 
+  /**
+   * @return {@link Functions#product(IntFunction, int, int)}(this{@link #β(int)},0,this{@link #order()}-1)
+   */
   public double
          βproduct()
   {
@@ -306,8 +310,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   final static KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
-
-  protected boolean recursive = true;
 
   public boolean trace = false;
 
@@ -424,8 +426,8 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   }
 
   protected final double
-            evolveAandΛ(double dt,
-                        int tk)
+            Λ(double dt,
+              int tk)
   {
     double Λ = dt * κ;
     for (int j = 0; j < order(); j++)
@@ -554,38 +556,28 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double ll = tn - T.getLeftmostValue() - totalΛ();
     final int n = T.size();
 
-    if (recursive)
+    A = new double[n][order()];
+    AReal = new Real[n][order()];
+
+    double S[] = new double[order()];
+    for (int tk = 1; tk < n; tk++)
     {
-      A = new double[n][order()];
-      AReal = new Real[n][order()];
+      double t = T.get(tk);
+      double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
+      double dt = t - T.get(tk - 1);
+      double λ = evolveλ(dt, t, S);
 
-      double S[] = new double[order()];
-      for (int tk = 1; tk < n; tk++)
+      if (λ > 0)
       {
-        double t = T.get(tk);
-        double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
-        double dt = t - T.get(tk - 1);
-        double λ = evolveλ(dt, t, S);
-
-        if (λ > 0)
-        {
-          ll += log(λ);
-        }
-
-        // ll -= Λ;
-
-      }
-    }
-    else
-    {
-      for (int i = 1; i < n; i++)
-      {
-        double thist = T.get(i);
-        ll += log(λ(thist));
+        ll += log(λ);
       }
 
+      // ll -= Λ;
+
     }
+
     if (Double.isNaN(ll))
+
     {
       if (verbose)
       {
@@ -600,6 +592,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   @Override
   public double
+
          logLikelihood(Vector t)
   {
     ExponentialSelfExcitingProcess spawn = copy();
@@ -653,20 +646,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
   public abstract int
          order();
-
-  protected Vector
-            recursiveΛ(final int n)
-  {
-    Vector durations = dT();
-
-    Vector compensator = new Vector(n);
-    for (int tk = 0; tk < n; tk++)
-    {
-      double dt = durations.get(tk);
-      compensator.set(tk, evolveAandΛ(dt, tk));
-    }
-    return compensator.setName("dΛ");
-  }
 
   public double
          Λ(int i)
@@ -835,19 +814,12 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
 
     final int n = T.size() - 1;
 
-    if (recursive)
+    Vector compensator = new Vector(n);
+    for (int i = 0; i < n; i++)
     {
-      return recursiveΛ(n);
+      compensator.set(i, Λ(i));
     }
-    else
-    {
-      Vector compensator = new Vector(n);
-      for (int i = 0; i < n; i++)
-      {
-        compensator.set(i, Λ(i));
-      }
-      return compensator.setName("dΛ");
-    }
+    return compensator.setName("Λ");
 
   }
 
@@ -958,25 +930,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     final int n = T.size();
     Vector λ = new Vector(n);
 
-    if (recursive)
+    double S[] = new double[order()];
+    for (int i = 1; i < n; i++)
     {
-      double S[] = new double[order()];
-      for (int i = 1; i < n; i++)
-      {
-        double t = T.get(i);
-        double prevdt = i == 1 ? κ : (T.get(i - 1) - T.get(i - 2));
-        double dt = t - T.get(i - 1);
-        λ.set(i, evolveλ(dt, T.get(i), S));
-      }
-    }
-    else
-    {
-      for (int i = 1; i < n; i++)
-      {
-        double thist = T.get(i);
-        λ.set(i - 1, λ(thist));
-      }
-
+      double t = T.get(i);
+      double prevdt = i == 1 ? κ : (T.get(i - 1) - T.get(i - 2));
+      double dt = t - T.get(i - 1);
+      λ.set(i, evolveλ(dt, T.get(i), S));
     }
 
     return λ;

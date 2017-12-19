@@ -65,7 +65,6 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
 
     process.trace = true;
-    process.recursive = true;
     out.println(" Λ=" + process.Λ());
     process.trace = false;
 

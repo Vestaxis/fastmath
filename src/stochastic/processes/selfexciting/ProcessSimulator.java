@@ -55,7 +55,7 @@ public class ProcessSimulator
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points with seed=" + seed);
     int n = process.T.size();
     double nextTime = 0;
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 40000; i++)
     {
       double y = expDist.sample();
       process.trace = false;
@@ -82,7 +82,7 @@ public class ProcessSimulator
       double marginalΛ = process.invΛ(1);
       // out.println("marginalΛ=" + marginalΛ);
 
-      TestCase.assertEquals("y != q", y, q, 1E-10);
+      TestCase.assertEquals("y != q", y, q, 1E-9);
       n++;
       process.appendTime(nextTime);
       double Edt = nextTime / n;
