@@ -1,9 +1,6 @@
 package stochastic.processes.selfexciting;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.ceil;
-import static java.lang.Math.exp;
-import static java.lang.Math.max;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
@@ -13,12 +10,9 @@ import static util.Console.println;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.random.JDKRandomGenerator;
-import org.arblib.Real;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleColMatrix;
@@ -56,14 +50,15 @@ public class ProcessSimulator
     process.dT = new Vector(new double[] {});
 
     int rejects = 0;
-    int seed = 2;
+    int seed = args.length > 0 ? Integer.valueOf(args[0]) : 2;
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
-    out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
+    out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points with seed=" + seed);
     int n = process.T.size();
-    for (int i = 0; i < 100; i++)
+    double nextTime = 0;
+    for (int i = 0; i < 10000; i++)
     {
       double y = expDist.sample();
-      process.trace = true;
+      process.trace = false;
       // TODO: average over Λ and compare against the invariant projection
       double dt = process.invΛ(y);
       if (dt > 10000)
@@ -83,8 +78,34 @@ public class ProcessSimulator
 
       // double dtRealFpValue = dtReal.fpValue();
       double q = process.Λ(n - 1, dt);
-      double nextTime = (process.T.getRightmostValue() + dt);
-      String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " nextTime=" + nextTime;
+      nextTime = (process.T.getRightmostValue() + dt);
+      double marginalΛ = process.invΛ(1);
+      // out.println("marginalΛ=" + marginalΛ);
+
+      TestCase.assertEquals("y != q", y, q, 1E-10);
+      n++;
+      process.appendTime(nextTime);
+      double Edt = nextTime / n;
+      // out.println("T=" + process.T.toIntVector());
+      // out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10),
+      // process.T.size() - 1));
+      String msg = "i=" + i
+                   + " y="
+                   + y
+                   + " = q = "
+                   + q
+                   + " dt="
+                   + dt
+                   + " marginal="
+                   + marginalΛ
+                   + " Λmean="
+                   + process.Λ().mean()
+                   + " Λvar="
+                   + process.Λ().variance()
+                   + " nextTime="
+                   + nextTime
+                   + " Edt="
+                   + Edt;
       // String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal="
       // + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
@@ -93,32 +114,11 @@ public class ProcessSimulator
         out.println(ansi().fgBrightRed() + " rejecting dt=" + dt + " for y=" + y + " q=" + q + "# " + rejects + ansi().fgDefault());
         continue;
       }
-      TestCase.assertEquals("y != q : " + msg, y, q, 1E-10);
-      n++;
-      process.appendTime(nextTime);
 
-      // out.println("T=" + process.T.toIntVector());
-      out.println("Λ=" + process.Λ().slice(max(0, process.T.size() - 10), process.T.size() - 1));
-      out.println("Λmean=" + process.Λ().mean() + " Λvar=" + process.Λ().variance());
     }
 
     MatFile.write("simulated.mat", process.T.setName("T").createMiMatrix());
 
-    RombergIntegrator integrator = new RombergIntegrator();
-    double integral = integrator.integrate(Integer.MAX_VALUE, new UnivariateFunction()
-    {      
-      @Override
-      public double
-             value(double x)
-      {
-        double val = process.invΛ(x)*exp(-x);
-        //out.println( "f(x=" + x + ")=" + val );
-        return val;
-      }
-    }, 0, 3.7 );
-    out.println( "∫invΛ(y)e^(-y)dy(0,3.5)=" + integral );
-    out.println( "invΛ(1)=" + process.invΛ(2) );
-    
     //
     // double y = 0.9;
     // double nextdt = process.invΛ(y, n - 2);
