@@ -47,7 +47,7 @@
     <no-break><pageref|auto-7><vspace|0.5fn>
   </table-of-contents>
 
-  <section|Self-Exciting Processes>
+  <section|Self-Exciting Point Processes>
 
   <subsection|The Self-Exciting Critical Exponential Sum Process of Order
   <math|P>>
@@ -106,15 +106,18 @@
   </equation>
 
   which puts the process in a state of criticality; precisely poised on the
-  boundary between stationarity and non-stationarity. <cite|chp> The
-  \ conditional intensity can then be expressed as
+  boundary between stationarity and non-stationarity. The term self-exciting
+  comes from the fact that the process models processes for which feedback is
+  a major component of its dynamics. <cite|chp> The \ conditional intensity
+  (event rate), conditional upon the filtration <math|\<cal-F\><rsub|n>> can
+  then be expressed as
 
   <\equation>
-    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
+    <tabular|<tformat|<table|<row|<cell|\<lambda\><around*|(|t<mid|\|>\<cal-F\><rsub|N<rsub|t>>|)>>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|int><rsub|0><rsup|t><frac|1|Z><big|sum><rsub|j=1><rsup|P>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j><around*|(|t-s|)>>\<mathd\>N<rsub|s>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><big|sum><rsub|k=0><rsup|N<rsub|t>><frac|1|Z>\<alpha\><rsub|j>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j>|Z><big|sum><rsub|k=0><rsup|N<rsub|t>>
     e<rsup|-\<beta\><rsub|j><around*|(|t-t<rsub|k>|)>>>>|<row|<cell|>|<cell|=\<lambda\><rsub|0><around*|(|t|)>+<big|sum><rsub|j=1><rsup|P><frac|\<alpha\><rsub|j
-    >|Z>B<rsub|j><around*|(|<wide|N|\<breve\>><rsub|t>|)>>>>>>
+    >|Z>B<rsub|j><around*|(|N<rsub|t>|)>>>>>>
   </equation>
 
   where <math|B<rsub|j><around*|(|i|)>> is given recursively by
@@ -261,7 +264,7 @@
   in the filtration
 
   <\equation>
-    \<cal-F\><rsub|n>=<around*|{|t<rsub|n>|}>\<cup\>\<theta\>
+    \<cal-F\><rsub|n>=<around*|{|t<rsub|0>,\<ldots\>,t<rsub|n>|}>\<cup\>\<theta\>
   </equation>
 
   is expressed by
@@ -299,6 +302,8 @@
     <tabular*|<tformat|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsup|><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>>|<cell|=<around*|{|t<rsub|n<rsub|+1>>:E<rsup|-1><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>=0|}>>>|<row|<cell|>|<cell|=<around*|{|t<rsub|n+1>:\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,1|)>=0|}>>>>>>
   </equation>
 
+  \;
+
   <subsection|Iterated Expectations and the Infinite Horizon Discounted
   Control Problem>
 
@@ -330,9 +335,9 @@
 
   denote the random dynamical evolution operator where <math|y<rsub|n>> is a
   sequence of independent and identically distributed standard exponential
-  random variables with distribution function <math|e<rsup|-y>>.\ 
-
-  The steady-state characterization of <with|font-shape|italic|T> which is
+  random variables with distribution function <math|e<rsup|-y>>. Random
+  variables are just measurable functions defined on a probability space. The
+  steady-state characterization of <with|font-shape|italic|T> which is
   relevant for the infinite-horizon problem in which <math|T<rsub|n>> goes to
   <math|lim<rsub|n\<rightarrow\>\<infty\>>T<rsub|n>> can be found by
   iterating the dynamical evolution operator with <math|y=1>
@@ -350,7 +355,7 @@
     T<rsub|n><around*|(|1|)>:<around*|{|t<rsub|n>|}><long-arrow|\<rubber-rightarrow\>|E<rsup|><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><mid|\|>\<cal-F\><rsub|n>|)>><around*|{|t<rsub|n+1>|}>
   </equation>
 
-  <subsubsection|Prediction><label|multivarPred>
+  <section|Multivariate Processes>
 
   The next event arrival time of the <math|m>-th dimension of a multivariate
   self-exciting process having the usual exponential kernel can be predicted
@@ -515,7 +520,7 @@
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
     <associate|auto-5|<tuple|1.3|5>>
-    <associate|auto-6|<tuple|1.3.1|6>>
+    <associate|auto-6|<tuple|2|6>>
     <associate|auto-7|<tuple|40|7>>
     <associate|bib-chavez2012high|<tuple|3|7>>
     <associate|bib-chp|<tuple|2|7>>

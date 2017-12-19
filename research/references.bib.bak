@@ -4228,4 +4228,30 @@ We model the arrival of mid-price changes in the E-mini S&P futures contract as 
   publisher = {Princeton University Press},
 }
 
+@Article{raadstrom1953iteration,
+  author    = {R{\aa}dstr{\"o}m, Hans},
+  title     = {On the iteration of analytic functions},
+  journal   = {Mathematica Scandinavica},
+  year      = {1953},
+  pages     = {85--92},
+  publisher = {JSTOR},
+}
+
+@Article{Johansson2017arb,
+  author  = {F. Johansson},
+  title   = {Arb: efficient arbitrary-precision midpoint-radius interval arithmetic},
+  journal = {IEEE Transactions on Computers},
+  year    = {2017},
+  volume  = {66},
+  issue   = {8},
+  pages   = {1281--1292},
+  doi     = {10.1109/TC.2017.2690633},
+}
+
+@WWW{zt,
+  author = {Andrew Odlyzko},
+  title  = {Tables of zeros of the Riemann zeta function},
+  url    = {http://www.dtc.umn.edu/~odlyzko/zeta_tables/index.html},
+}
+
 @Comment{jabref-meta: databaseType:biblatex;}
