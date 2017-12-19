@@ -2,6 +2,7 @@ package stochastic.processes.selfexciting;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
+import static java.lang.Math.exp;
 import static java.lang.Math.max;
 import static java.lang.System.out;
 import static java.util.Arrays.stream;
@@ -12,6 +13,8 @@ import static util.Console.println;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.integration.RombergIntegrator;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.random.JDKRandomGenerator;
@@ -57,7 +60,7 @@ public class ProcessSimulator
     ExponentialDistribution expDist = new ExponentialDistribution(new JDKRandomGenerator(seed), 1);
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     int n = process.T.size();
-    for (int i = 0; i < 10000; i++)
+    for (int i = 0; i < 100; i++)
     {
       double y = expDist.sample();
       process.trace = true;
@@ -101,6 +104,21 @@ public class ProcessSimulator
 
     MatFile.write("simulated.mat", process.T.setName("T").createMiMatrix());
 
+    RombergIntegrator integrator = new RombergIntegrator();
+    double integral = integrator.integrate(Integer.MAX_VALUE, new UnivariateFunction()
+    {      
+      @Override
+      public double
+             value(double x)
+      {
+        double val = process.invΛ(x)*exp(-x);
+        //out.println( "f(x=" + x + ")=" + val );
+        return val;
+      }
+    }, 0, 3.7 );
+    out.println( "∫invΛ(y)e^(-y)dy(0,3.5)=" + integral );
+    out.println( "invΛ(1)=" + process.invΛ(2) );
+    
     //
     // double y = 0.9;
     // double nextdt = process.invΛ(y, n - 2);

@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|1.99.5>
 
 <style|<tuple|amsart|american>>
 
@@ -223,8 +223,7 @@
 
   <\equation>
     <tabular*|<tformat|<table|<row|<cell|\<varphi\><around*|(|t,y|)>>|<cell|=>>>>><big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
-    t>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+Z
-    y<big|prod><rsub|j=1><rsup|P>\<beta\><around*|(|k|)>
+    t>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+yZy<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>
   </equation>
 
   and
@@ -270,9 +269,9 @@
   <math|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>=0> which is the exact
   time of the next point of the process <math|t<rsub|n+1>> such that
   <math|<tabular|<tformat|<table|<row|<cell|\<#39B\><rsub|n+1>>|<cell|=\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1>|)>=y>>>>>>.
-  The <math|m>-th moment about zero of the duration until the
-  <math|<around*|(|n+1|)>>-th point of the process occurs, <math|>conditional
-  upon the points <math|<around*|{|t<rsub|n>|}>=<around*|{|t<rsub|i>:i=0,1,2,\<ldots\>,n|}>>
+  The expected duration until the <math|<around*|(|n+1|)>>-th point of the
+  process occurs, <math|>conditional upon the points
+  <math|<around*|{|t<rsub|n>|}>=<around*|{|t<rsub|i>:i=0,1,2,\<ldots\>,n|}>>
   and parameters <math|\<theta\>=<around*|{|\<alpha\><rsub|1\<ldots\>P>,\<beta\><rsub|1\<ldots\>P>|}>>
   in the filtration
 
@@ -283,32 +282,39 @@
   is expressed by
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|m><rsup|>><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m>
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsub|y<rsup|>><around*|(|t<rsub|n+1>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=E<rsub|y<rsup|><rsup|>><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>|)>>>|<row|<cell|>|<cell|=<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
     e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>>>>
   </equation>
 
   where the probability density <math|f<rsub|y>> of <math|y> is
-  <math|f<rsub|y>=e<rsup|-y>>. The expected time <math|t<rsub|n+1>> of the
-  next point of the process <math|>is then equal to\ 
+  <math|f<rsub|y>=e<rsup|-y>>. The expected inverse value of the marginal
+  distribution of the duration <math|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>>
+  until the next point <math|t<rsub|n+1>> of the process when <math|y> is not
+  known ahead-of-time and is therefore marginalized, or integrated out, can
+  then shown to be equal to\ 
 
   <\equation>
-    t<rsub|n>+E<rsub|y><around*|(|t<rsub|n+1><rsup|>-t<rsub|n>|)>=t<rsub|n>+<big|int><rsub|0><rsup|\<infty\>>y<rsup|>
-    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>\<mathd\>y
+    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<cwith|1|5|2|2|cell-halign|l>|<table|<row|<cell|E<rsup|-1><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>>|<cell|=<big|int><rsub|0><rsup|\<infty\>><rsup|>
+    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>|<row|<cell|>|<cell|=\<varphi\><around*|(|t<rsub|n+1><rsup|>-t<rsub|n>,1|)>>>|<row|<cell|>|<cell|=<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-1-B<rsub|j><around*|(|n|)>|)><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n+1>-t<rsub|n>|)>>|)>+
+    Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>|<row|<cell|>|<cell|=<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-A<rsub|j><around*|(|n|)>|)><around*|(|1-e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|n+1>-t<rsub|n>|)>>|)>+
+    Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>|<row|<cell|>|<cell|=<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
+    <around*|(|t<rsub|n+1>-t<rsub|n>|)>>-1|)>\<gamma\><around*|(|j|)>A<rsub|j><around*|(|i|)>+
+    Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>>>>
   </equation>
 
-  and the standard deviation of the duration until the next time
-  <math|t<rsub|n+1>> occurs is <math|<sqrt|E<rsub|y<rsup|2>><around*|(|t<rsub|n+1><rsup|>-t<rsub|n>|)>>>
-  where the m-th moment of the next duration <math|t<rsub|n+1>-t<rsub|n>> is
-  given by
-
-  <\equation>
-    <tabular*|<tformat|<cwith|1|-1|2|2|cell-halign|l>|<table|<row|<cell|>|<cell|E<rsub|y<rsup|m>><around*|(|t<rsub|n+1><rsup|>-t<rsub|n><mid|\|>\<cal-F\><rsub|n>|)>=<big|int><rsub|0><rsup|\<infty\>>y<rsup|m><rsup|>
-    e<rsup|-y>\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)>\<mathd\>y>>|<row|<cell|>|<cell|=m!<around*|(|<big|sum><rsub|j=1><rsup|P>\<gamma\><around*|(|j|)><around*|(|-1-B<rsub|j><around*|(|n|)>|)><around*|(|1-e<rsup|-\<beta\><rsub|j>t>|)>|)>+<around*|(|m+1|)>!Z<big|prod><rsub|j=1><rsup|P>\<beta\><rsub|j>>>>>>
-  </equation>
-
-  where <math|<tabular|<tformat|<table|<row|<cell|B<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|k=0><rsup|i-1>
+  where the subscript <math|y> indicates that the expectation is taken with
+  respect to the marginal distribution of the inverse compensator with
+  respect to the standard/unit exponentially distributed random variable
+  <math|y> and <math|<tabular|<tformat|<table|<row|<cell|B<rsub|j><around*|(|i|)>>|<cell|=<big|sum><rsub|k=0><rsup|i-1>
   e<rsup|-\<beta\><rsub|j><around*|(|t<rsub|i>-t<rsub|k>|)>>>>>>>> is defined
-  in Equation (<reference|Bj>).
+  in Equation (<reference|Bj>) so that the expected value when <math|y> is
+  not known is given by the root of the inverse expectation functional
+
+  <\equation>
+    <tabular*|<tformat|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsup|><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>>|<cell|=<around*|{|t<rsub|n<rsub|+1>>:E<rsup|-1><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>=0|}>>>|<row|<cell|>|<cell|=<around*|{|t<rsub|n+1>:\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,1|)>=0|}>>>>>>
+  </equation>
+
+  \;
 
   \;
 
