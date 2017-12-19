@@ -299,6 +299,8 @@
     <tabular*|<tformat|<cwith|1|2|2|2|cell-halign|l>|<table|<row|<cell|E<rsup|><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>>|<cell|=<around*|{|t<rsub|n<rsub|+1>>:E<rsup|-1><rsub|y><around*|(|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>|)>=0|}>>>|<row|<cell|>|<cell|=<around*|{|t<rsub|n+1>:\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,1|)>=0|}>>>>>>
   </equation>
 
+  \;
+
   <subsection|Iterated Expectations and the Infinite Horizon Discounted
   Control Problem>
 
