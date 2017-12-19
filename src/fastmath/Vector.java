@@ -182,15 +182,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
                int offy,
                int incy);
 
-  public static native void
-         swap(int n,
-              ByteBuffer x,
-              int xOff,
-              int incx,
-              ByteBuffer y,
-              int yOff,
-              int incy);
-
   private String name;
 
   protected int size;
@@ -970,8 +961,11 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @return this
    */
-  public native Vector
-         multiply(Vector x);
+  public Vector
+         multiply(Vector x)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
 
   /*
    * Element-wise pow
@@ -1226,14 +1220,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     int len = size();
     assert len == x.size() : "Dimensions must agree";
 
-    // the unit of offset is a byte and the unit of increment is a double
-    int thisOffset = getOffset(0);
-    int thisIncrement = getIncrement();
-    int xOffset = x.getOffset(0);
-    int xIncrement = x.getIncrement();
-    swap(len, getBuffer(), thisOffset, thisIncrement, x.getBuffer(), xOffset, xIncrement);
-
-    return this;
+    throw new UnsupportedOperationException("TODO");
   }
 
   /**
