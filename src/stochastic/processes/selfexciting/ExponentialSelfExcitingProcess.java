@@ -74,26 +74,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sb.toString();
   }
 
-  /**
-   *
-   * @param y
-   *          exponentially distributed random variable
-   *
-   */
-  public double
-         Hphase(double y,
-                double t)
-  {
-    return sum(k -> exp(y - γ(k) * (t * β(k) - 1)), 0, order() - 1);
-  }
-
-  public double
-         HphaseTimeDifferential(double y,
-                                double t)
-  {
-    return sum(k -> -β(k) * γ(k) * exp(y - t * β(k)), 0, order() - 1);
-  }
-
   public double
          Fphase(double u,
                 double t)
@@ -173,49 +153,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
       dt = dt.add(δ);
     }
     return dt;
-  }
-
-  /*
-   * @param u unit uniformly distributed random variable
-   * 
-   * @see this{@link #Fphase(double, double)} and this{@link
-   * #FphaseTimeDifferential(double, double)}
-   * 
-   * @return {t:Fphase(y,t)=0}
-   */
-  public double
-         invF(double u)
-  {
-    double t = 0;
-    double prevdt = 0;
-    double dt = 0;
-    for (int i = 0; i < MAX_ITERS; i++)
-    {
-      double phase = Fphase(u, t);
-      double phasedt = FphaseTimeDifferential(u, t);
-      prevdt = dt;
-      dt = phase / phasedt;
-      if (!Double.isFinite(dt))
-      {
-        return Double.POSITIVE_INFINITY;
-      }
-      double newt = t - dt;
-      double relativeDifference = abs(abs(dt) - abs(prevdt));
-      if (trace)
-      {
-        out.format("invF[%d] u=%f t=%f dt=%+30.30f newt=%f relativeDifference=%f\n", i, u, t, dt, newt, relativeDifference);
-      }
-      t = newt;
-      if (relativeDifference < 1E-14)
-      {
-        if (trace)
-        {
-          out.println("Converged in " + i + " iterations");
-        }
-        break;
-      }
-    }
-    return t;
   }
 
   public Vector

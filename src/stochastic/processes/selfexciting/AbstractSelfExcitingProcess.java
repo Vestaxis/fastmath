@@ -1,6 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import static java.lang.Math.log;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -292,96 +291,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
    */
   public abstract double
          F(double t);
-
-  public abstract double
-         Fphase(double U,
-                double t);
-
-  /**
-   * inverse integrated kernel function
-   * 
-   * @param y
-   * @return the value {t:F(t)=u}
-   */
-  public double
-         invF(double y)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  /**
-   * the survivor/reliability function is the complementary cumulative
-   * distribution function, it gives the probability of an event NOT happening
-   * before t
-   * 
-   * @param t
-   * @return 1-this{@link #F(double)}
-   */
-  public double
-         s(double t)
-  {
-    return 1 - F(t);
-  }
-
-  public abstract double
-         Hphase(double H,
-                double t);
-
-  /**
-   * the hazard function at time t is an instantaneous rate that an event will
-   * occur at time t, the probability that an event will occur in a small interval
-   * of length dt around time t is h(t)*dt. If h(t)<=1 then h(t) is also an
-   * instantaneous probability. In the case of an
-   * {@link ExponentialSelfExcitingProcess} the limit of h(t) as t->∞ is equal to
-   * min({@link ExponentialSelfExcitingProcess#β(int)}) and the limit as t->-∞ is
-   * equal to max({@link ExponentialSelfExcitingProcess#β(int)})
-   * 
-   * @param t
-   * @return
-   */
-  public double
-         h(double t)
-  {
-    double haz = f(t) / s(t);
-    if (!Double.isFinite(haz))
-    {
-      return 0;
-    }
-    return haz;
-  }
-
-  /**
-   * integrated hazard function
-   * 
-   * @param t
-   * @return -log(this{@link #s(double)}
-   */
-  public double
-         H(double t)
-  {
-    double survival = s(t);
-    double ih = -log(survival);
-    if (!Double.isFinite(ih))
-    {
-      ih = 0;
-      // throw new IllegalArgumentException("integrated hazard function is not finite:
-      // " + ih + " params=" + getParamString());
-    }
-    return ih;
-  }
-
-  /**
-   * inverse integrated hazard
-   * 
-   * @param y
-   *          exponentially distributed random variable
-   * @return the value {t:H(t)=y}
-   */
-  public double
-         invH(double y)
-  {
-    throw new UnsupportedOperationException();
-  }
 
   /**
    * normalization factor which ensures the integral of this{@link #f(double)}

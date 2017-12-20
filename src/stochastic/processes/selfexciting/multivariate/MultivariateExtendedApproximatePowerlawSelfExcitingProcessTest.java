@@ -6,8 +6,6 @@ import static org.fusesource.jansi.Ansi.ansi;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
-import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
-import stochastic.processes.selfexciting.ExtendedExponentialPowerlawSelfExcitingProcessTest;
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {

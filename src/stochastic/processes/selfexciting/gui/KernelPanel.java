@@ -42,14 +42,12 @@ public class KernelPanel extends JPanel
     this.process = process;
     assert process != null;
 
-    integratedImpulseResponseChartPanel = plot("probability", ANTI_F, process == null ? t -> 0 : process::invF, 0, 1, chart -> {
-      chart.setYAxisTitle("t (ms)");
-    });
+
 
     impulseResponseChartPanel = plot("t (ms)", KERNEL, process == null ? t -> 0 : process::f, 0, f_MAXRANGE);
     impulseResponseChart = impulseResponseChartPanel.getChart();
 
-    plot(impulseResponseChart, HAZARD, process == null ? t -> 0 : process::h, 0, 100);
+    plot(impulseResponseChart, HAZARD, process == null ? t -> 0 : process::F, 0, 100);
 
     inverseIntegratedImpulseResponseChartPanel = plot("t (ms)", INT_KERNEL, process == null ? t -> 0 : process::F, 0, f_MAXRANGE, chart -> {
       XYStyler styler = chart.getStyler();
@@ -57,7 +55,6 @@ public class KernelPanel extends JPanel
       styler.setYAxisMax(1.0);
     });
     integratedImpulseResponseChart = inverseIntegratedImpulseResponseChartPanel.getChart();
-    plot(integratedImpulseResponseChart, INT_HAZARD, process == null ? t -> 0 : process::H, 0, f_MAXRANGE);
 
     add(impulseResponseChartPanel);
     add(inverseIntegratedImpulseResponseChartPanel);
@@ -83,7 +80,7 @@ public class KernelPanel extends JPanel
          refreshGraphs()
   {
     out.println("refresh graphs " + process.getParamString());
-    Pair<double[], double[]> invhSample = Plotter.sampleFunction(process::invH, SAMPLES, 0, 1, t -> t);
+  //  Pair<double[], double[]> invhSample = Plotter.sampleFunction(process::invH, SAMPLES, 0, 1, t -> t);
 //    inverseIntegratedHazardChart.updateXYSeries(ANTI_H, invhSample.left, invhSample.right, null);
 //    inverseIntegratedHazardChartPanel.revalidate();
 //    inverseIntegratedHazardChartPanel.repaint();
@@ -91,15 +88,15 @@ public class KernelPanel extends JPanel
     Pair<double[], double[]> νSample = Plotter.sampleFunction(process::f, SAMPLES, 0, f_MAXRANGE, t -> t);
     impulseResponseChart.updateXYSeries(KERNEL, νSample.left, νSample.right, null);
 
-    Pair<double[], double[]> hSample = Plotter.sampleFunction(process::h, SAMPLES, 0, f_MAXRANGE, t -> t);
-    impulseResponseChart.updateXYSeries(HAZARD, hSample.left, hSample.right, null);
+  //  Pair<double[], double[]> hSample = Plotter.sampleFunction(process::h, SAMPLES, 0, f_MAXRANGE, t -> t);
+   // impulseResponseChart.updateXYSeries(HAZARD, hSample.left, hSample.right, null);
     impulseResponseChartPanel.revalidate();
     impulseResponseChartPanel.repaint();
 
-    Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::H, SAMPLES, 0, f_MAXRANGE, t -> t);
+   // Pair<double[], double[]> ihSample = Plotter.sampleFunction(process::H, SAMPLES, 0, f_MAXRANGE, t -> t);
     Pair<double[], double[]> iνSample = Plotter.sampleFunction(process::F, SAMPLES, 0, f_MAXRANGE, t -> t);
 
-    integratedImpulseResponseChart.updateXYSeries(INT_HAZARD, ihSample.left, ihSample.right, null);
+ //   integratedImpulseResponseChart.updateXYSeries(INT_HAZARD, ihSample.left, ihSample.right, null);
     integratedImpulseResponseChart.updateXYSeries(INT_KERNEL, iνSample.left, iνSample.right, null);
 
     inverseIntegratedImpulseResponseChartPanel.revalidate();

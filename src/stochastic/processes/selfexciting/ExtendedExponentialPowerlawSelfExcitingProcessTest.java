@@ -1,6 +1,5 @@
 package stochastic.processes.selfexciting;
 
-import static fastmath.Functions.grid;
 import static java.lang.System.out;
 import static org.fusesource.jansi.Ansi.ansi;
 import static util.Console.println;
@@ -21,7 +20,8 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
 
   private double phasedt;
 
-  public void testInvLambdaExpectation()
+  public void
+         testInvLambdaExpectation()
   {
     ExtendedApproximatePowerlawSelfExcitingProcess process = ExtendedExponentialPowerlawSelfExcitingProcessTest.constructProcess();
     // process.ε = 0.05;
@@ -29,9 +29,8 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = new Vector(new double[]
     { 65, 67, 86, 140, 141, 149, 151, 163, 201, 205 }).setName("T");
 
-    
   }
-  
+
   public void
          testInvLambda()
   {
@@ -41,7 +40,7 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     process.T = new Vector(new double[]
     { 65, 67, 86, 140, 141, 149, 151, 163, 201, 205 }).setName("T");
     int n = process.T.size();
-    
+
     // process.T = process.T.subtract(process.T.get(0));
     process.trace = false;
 
@@ -68,8 +67,6 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
     out.println(" Λ=" + process.Λ());
     process.trace = false;
 
-    
-
     process.trace = true;
     for (double y = 0.01; y <= 4.71; y += y < 4.6 ? 0.1 : 0.01)
     {
@@ -94,25 +91,6 @@ public class ExtendedExponentialPowerlawSelfExcitingProcessTest extends TestCase
   // }
 
   final public static double tolerance = 1E-12;
-
-  public void
-         testFInverseConvergence()
-  {
-    final ExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
-    out.println("Fphase: constructed " + process);
-    out.println("params=" + process.getParamString());
-    out.println("αβ=" + process.getαβString());
-
-    grid(0, 1, 10).forEachOrdered(u -> {
-
-      double t = process.invF(u);
-      double shouldbeu = process.F(t);
-      out.format("u=%f shouldbeu=%f\n", u, shouldbeu);
-      assertEquals(u, shouldbeu, tolerance);
-      out.println();
-    });
-
-  }
 
   public void
          testNormalization()

@@ -153,17 +153,17 @@ public class ModelFitter
   {
 
     XChartPanel<XYChart> impulseResponseChartPanel = plot("t (ms)", "ν(t)", process::f, 0, 100);
-    plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
-    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::H, 0, 60000 * 3.5, chart -> {
-      chart.setYAxisTitle("t (ms)");
-    });
+    //plot(impulseResponseChartPanel.getChart(), "h(t)", process::h, 0, 100);
+//    XChartPanel<XYChart> inverseIntegratedHazardChartPanel = plot("h", "anti(∫h)", process::H, 0, 60000 * 3.5, chart -> {
+//      chart.setYAxisTitle("t (ms)");
+//    });
 
     XChartPanel<XYChart> integratedImpulseResponseChartPanel = plot("t (ms)", "∫ν(t)dt", process::F, 0, 100, chart -> {
       XYStyler styler = chart.getStyler();
       styler.setYAxisMin(0.0);
       styler.setYAxisMax(1.0);
     });
-    plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process::H, 0, 100);
+    //plot(integratedImpulseResponseChartPanel.getChart(), "∫h(t)", process::H, 0, 100);
 
     XYChart priceChart = getLogPriceChart(process);
 
@@ -175,7 +175,7 @@ public class ModelFitter
     JPanel kernelPanel = new JPanel(new GridLayout(1, 3));
     kernelPanel.add(impulseResponseChartPanel);
     kernelPanel.add(integratedImpulseResponseChartPanel);
-    kernelPanel.add(inverseIntegratedHazardChartPanel);
+    //kernelPanel.add(inverseIntegratedHazardChartPanel);
 
     bottomPanel.add(kernelPanel);
   }
