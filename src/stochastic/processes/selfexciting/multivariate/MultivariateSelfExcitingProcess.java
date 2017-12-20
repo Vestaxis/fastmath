@@ -27,7 +27,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
     super();
   }
 
-  public SimpleBounds getParameterBounds()
+  public SimpleBounds
+         getParameterBounds()
   {
     BoundedParameter[] bounds = getBoundedParameters();
     final int paramCount = bounds.length;
@@ -37,7 +38,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
   }
 
   @Override
-  public Object clone()
+  public Object
+         clone()
   {
     assert T != null : "T is null";
     assert K != null : "K is null";
@@ -54,22 +56,27 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
     }
     catch (Exception e)
     {
-      if (e instanceof RuntimeException) { throw (RuntimeException) e; }
+      if (e instanceof RuntimeException)
+      {
+        throw (RuntimeException) e;
+      }
       throw new RuntimeException(e.getMessage(), e);
     }
 
   }
 
   @Override
-  public Vector getParameters()
+  public Vector
+         getParameters()
   {
     Vector params = new Vector(getParamCount() * dim);
     for (int i = 0; i < getParamCount(); i++)
     {
       Vector fieldArray = getField(i);
-      if (fieldArray == null) { throw new IllegalArgumentException("Vector field '" + getParameterFields()[i].getName()
-                                                                   + "' not found in "
-                                                                   + getClass().getSimpleName()); }
+      if (fieldArray == null)
+      {
+        throw new IllegalArgumentException("Vector field '" + getParameterFields()[i].getName() + "' not found in " + getClass().getSimpleName());
+      }
       for (int j = 0; j < dim; j++)
       {
         int offset = getBoundedParameters()[i].getOrdinal() + (j * getParamCount());
@@ -83,18 +90,18 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    * Uses this{@link #getParameterFields()} to assign values from an array to the
    * specified Java fields, there should dim*this{@link #getParamCount()}
    * elements, arranged in order [α1,β1,ε1,α.,β.,ε.,αD,βD,εD] where
-   * D=this{@link #dim()} and for instance getBoundedParms() has 3 elements
-   * called [α,β,ε]
+   * D=this{@link #dim()} and for instance getBoundedParms() has 3 elements called
+   * [α,β,ε]
    * 
    * @param array
    *          of values ordered according to this{@link #getBoundedParameters()}
    */
   @Override
-  public void assignParameters(double[] point)
+  public void
+         assignParameters(double[] point)
   {
     BoundedParameter[] params = getBoundedParameters();
     assert point.length == params.length * dim : "need " + params.length * dim + " params, not " + point.length;
-    
 
     for (int i = 0; i < params.length; i++)
     {
@@ -115,7 +122,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    * @return a Vector of dimension this{@link #dim()}, one is constructed if it
    *         does not already exist
    */
-  public Vector getField(Field field)
+  public Vector
+         getField(Field field)
   {
     try
     {
@@ -141,7 +149,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    * @return the {@link Vector} corresponding to the i-th parameter as determined
    *         by this{@link #getParameterFields()}
    */
-  public Vector getField(int i)
+  public Vector
+         getField(int i)
   {
     return getField(getParameterFields()[i]);
   }
@@ -152,7 +161,9 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    * @param j
    * @return the n-th element of the {@link Vector} referenced by field
    */
-  public double getFieldValue(Field field, int j)
+  public double
+         getFieldValue(Field field,
+                       int j)
   {
     return getField(field).get(j);
   }

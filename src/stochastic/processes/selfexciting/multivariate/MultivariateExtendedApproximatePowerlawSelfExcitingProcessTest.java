@@ -59,18 +59,18 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
     out.println("estimated " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points");
     out.println(process.getαβString());
     process.trace = false;
-    double Λmean = process.Λ().mean();
-    process.trace = false;
-    double Λvar = process.Λ().variance();
-    out.println("Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
+    for (int k = 0; k < process.dim(); k++)
+    {
+      double Λmean = process.Λ(k).mean();
+      process.trace = false;
+      double Λvar = process.Λ(k).variance();
+      out.println("k=" + k + " Λmean=" + ansi().fgBrightRed() + Λmean + ansi().fgDefault() + " Λvar=" + ansi().fgBrightRed() + Λvar + ansi().fgDefault());
+    }
 
     out.println(ansi().fgBrightGreen() + process.T.toString() + ansi().fgDefault());
     process.dT = null;
     out.println(ansi().fgBrightGreen() + process.dT().toString() + ansi().fgDefault());
 
-    process.trace = true;
-    out.println(" Λ=" + process.Λ());
-    process.trace = false;
   }
 
 }

@@ -2,6 +2,7 @@
 package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Functions.eye;
+import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
@@ -238,9 +239,50 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
          totalΛ();
 
   public Vector
-         Λ()
+         Λ(int type)
   {
-    throw new UnsupportedOperationException("TODO");
+
+    final int n = T.size() - 1;
+
+    Vector compensator = new Vector(n);
+    for (int i = 0; i < n; i++)
+    {
+      compensator.set(i, Λ(type, i));
+    }
+    return compensator.setName("Λ");
+
+  }
+
+  /**
+   * 
+   * @param type
+   * @param tk
+   * @return ∫λ(t)dt where t ranges from T[tk] to T[tk+1]
+   */
+  public double
+         Λ(int type,
+           int tk)
+  {
+    return sum(j -> (α(j, type, type) / β(j, type, type)) * (1 - (exp(-β(j, type, type) * (T.get(tk + 1) - T.get(tk))))) * A(type, tk, j), 0, order() - 1)
+           / Z();
+  }
+
+  public double
+         A(int type,
+           int tk,
+           int j)
+  {
+    if (A == null)
+    {
+      A = new double[dim()][T.size()][order()];
+    }
+    double val = A[type][tk][j];
+    if (val == 0)
+    {
+      val = tk == 0 ? 1 : (1 + (exp(-β(j, type, type) * (T.get(tk) - T.get(tk - 1))) * A(type, tk - 1, j)));
+      A[type][tk][j] = val;
+    }
+    return val;
   }
 
   /**

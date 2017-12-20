@@ -230,7 +230,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     throw new UnsupportedOperationException("TODO");
   }
 
-
   @Override
   public double
          Φδ(double t,
@@ -259,6 +258,13 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
          dT()
   {
     return (dT != null) ? dT : (dT = T.diff());
+  }
+
+  @Override
+  public Vector
+         Λ()
+  {
+    throw new UnsupportedOperationException("TODO: return pooled compensator for the dim() number of independent compensators");
   }
 
 }

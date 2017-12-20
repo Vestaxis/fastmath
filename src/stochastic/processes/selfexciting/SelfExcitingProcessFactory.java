@@ -1,5 +1,7 @@
 package stochastic.processes.selfexciting;
 
+import stochastic.processes.selfexciting.multivariate.MultivariateExtendedApproximatePowerlawSelfExcitingProcess;
+
 public class SelfExcitingProcessFactory
 {
   public static enum Type
@@ -49,8 +51,8 @@ public class SelfExcitingProcessFactory
     default:
       switch (type)
       {
-      // case MultivariateExtendedApproximatePowerlaw:
-      // return new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(dim);
+      case MultivariateExtendedApproximatePowerlaw:
+        return new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(dim);
       default:
         throw new UnsupportedOperationException("TODO: " + type);
       }
