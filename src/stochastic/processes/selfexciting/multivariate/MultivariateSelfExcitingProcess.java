@@ -93,7 +93,8 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
   public void assignParameters(double[] point)
   {
     BoundedParameter[] params = getBoundedParameters();
-    assert point.length == params.length * dim;
+    assert point.length == params.length * dim : "need " + params.length * dim + " params, not " + point.length;
+    
 
     for (int i = 0; i < params.length; i++)
     {

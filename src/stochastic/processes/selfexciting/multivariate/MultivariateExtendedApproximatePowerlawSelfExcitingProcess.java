@@ -68,6 +68,8 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
    */
   public double m = exp(log(60000) / M);
 
+  public Vector dT;
+
   @Override
   public int
          order()
@@ -260,6 +262,18 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
 
     return (sum(i -> sum(j -> sum(k -> (α(i, j, k) / β(i, j, k)) * (1 - exp(-β(i, j, k) * (tn - T.get(i)))), 0, order() - 1), 0, dim() - 1), 0, T.size() - 1))
            / Z();
+  }
+
+  public String
+         getαβString()
+  {
+    return "TODO";
+  }
+
+  public Vector
+         dT()
+  {
+    return (dT != null) ? dT : (dT = T.diff());
   }
 
 }

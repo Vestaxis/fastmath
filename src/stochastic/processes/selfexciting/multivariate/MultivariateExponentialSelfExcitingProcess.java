@@ -833,7 +833,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     };
   }
 
-  private boolean trace = false;
+  boolean trace = false;
 
   public static String[] statisticNames =
   { "Log-Lik", "1-KS(Λ,exp)", "mean(Λ)", "var(Λ)", "MM(Λ)", "(LjungBox(Λ,10)-8)^2", "E[dt]" };
