@@ -106,7 +106,7 @@
 
     <\equation>
       \<Zeta\><around*|(|y<rsub|n>|)>=0 and \<zeta\><around*|(|<frac|1|2>+i
-      y<rsub|n>|)>\<forall\>n\<in\>\<bbb-Z\><rsup|+>
+      y<rsub|n>|)>=0\<forall\>n\<in\>\<bbb-Z\><rsup|+>
     </equation>
 
     where <math|><math|\<bbb-Z\><rsup|+>> denotes the positive integers.
@@ -577,7 +577,7 @@
     Let
 
     <\equation>
-      Y<rsup|-><rsub|n,m><around*|(|t|)>=<choice|<tformat|<table|<row|<cell|t>|<cell|m=0>>|<row|<cell|t+h<rsub|n,m>cos<around*|(|*\<pi\>
+      Y<rsup|+><rsub|n,m><around*|(|t|)>=<choice|<tformat|<table|<row|<cell|t>|<cell|m=0>>|<row|<cell|t+h<rsub|n,m>cos<around*|(|*\<pi\>
       n|)>tanh<around*|(|<frac|Z<around*|(|Y<rsub|n,m-1><around*|(|t|)>|)>|<around*|\||\<Omega\><around*|(|t|)>|\|><big|prod><rsub|k=1><rsup|n-1>tanh<around*|(|Y<rsub|n,m-1><around*|(|t|)>-y<rsub|k>|)>>|)>>|<cell|m\<geqslant\>1>>>>>
     </equation>
 
@@ -793,7 +793,7 @@
     <associate|bib-Johansson2017arb|<tuple|3|9>>
     <associate|bib-milnor2006dynamics|<tuple|4|9>>
     <associate|bib-raadstrom1953iteration|<tuple|6|9>>
-    <associate|bib-ramachandra1995lectures|<tuple|7|?>>
+    <associate|bib-ramachandra1995lectures|<tuple|7|9>>
     <associate|bib-z0t|<tuple|1|9>>
     <associate|bib-zt|<tuple|5|9>>
     <associate|cm|<tuple|22|7>>
