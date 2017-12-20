@@ -141,7 +141,7 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
   public Type
          getType()
   {
-    return Type.ApproximatePowerlaw;
+    return Type.ExtendedApproximatePowerlaw;
   }
 
 }

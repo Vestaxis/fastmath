@@ -540,15 +540,6 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     }
   }
 
-  /**
-   * 
-   * @param T
-   * @param deterministicIntensity
-   * @param lambda
-   * @param alpha
-   * @param bη
-   * @return Pair<logLik,E[Lambda]>
-   */
   public final double
          logLik()
   {

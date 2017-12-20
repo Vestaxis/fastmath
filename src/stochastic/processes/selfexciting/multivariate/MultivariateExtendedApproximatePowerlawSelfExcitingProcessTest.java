@@ -4,7 +4,6 @@ import static java.lang.Math.random;
 
 import fastmath.Vector;
 import junit.framework.TestCase;
-import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 
 public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
 {

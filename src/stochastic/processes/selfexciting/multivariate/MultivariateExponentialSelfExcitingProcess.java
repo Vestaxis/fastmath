@@ -37,6 +37,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
+import org.arblib.Real;
 
 import fastmath.AbstractMatrix;
 import fastmath.DoubleColMatrix;
@@ -75,45 +76,39 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
   private final ObjectiveFunctionSupplier objectiveFunctionSupplier = () -> new ObjectiveFunction(copy());
 
-  /**
-   * 
-   * @param T
-   * @param deterministicIntensity
-   * @param lambda
-   * @param alpha
-   * @param bη
-   * @return Pair<logLik,E[Lambda]>
-   */
+  private double[][][] A;
+
+  private Real[][][] AReal;
+
   public final double
          logLik()
   {
-    assert T != null : "T cannot be null";
     double tn = T.getRightmostValue();
-    double ll = tn - T.getLeftmostValue();
+    double ll = tn - T.getLeftmostValue() - totalΛ();
     final int n = T.size();
 
-    double A[] = new double[order()];
-    double S[] = new double[order()];
-    for (int i = 1; i < n; i++)
-    {
-      double t = T.get(i);
-      double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
-      double dt = t - T.get(i - 1);
-      double λ = evolveλ(dt, T.get(i), S);
-      double Λ = evolveΛ(prevdt, dt, T.get(i), A);
+    A = new double[n][order()][dim()];
+    AReal = new Real[n][order()][dim()];
 
-      // double Λ = sum(j -> ( α(j) / β(j) ) * (exp(-β(j) * (tn - t)) - 1), 0, M);
+    double S[][] = new double[order()][dim()];
+    for (int tk = 1; tk < n; tk++)
+    {
+      double t = T.get(tk);
+      double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
+      double dt = t - T.get(tk - 1);
+      double λ = evolveλ(dt, S);
 
       if (λ > 0)
       {
         ll += log(λ);
       }
 
-      ll -= Λ;
+      // ll -= Λ;
 
     }
 
     if (Double.isNaN(ll))
+
     {
       if (verbose)
       {
@@ -150,10 +145,10 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
         Vector mean = calculateMean();
         double ll = 0;
-        Double compMeans[] = new Double[getDim()];
+        Double compMeans[] = new Double[dim()];
 
-        Double compVars[] = new Double[getDim()];
-        for (int i = 0; i < getDim(); i++)
+        Double compVars[] = new Double[dim()];
+        for (int i = 0; i < dim(); i++)
         {
           final Vector intensity = calculateIntensity(timesSubPair, i);
 
@@ -235,6 +230,13 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     throw new UnsupportedOperationException("TODO");
   }
 
+  /**
+   * 
+   * @return Λ(0,t[n])
+   */
+  public abstract double
+         totalΛ();
+
   public Vector
          Λ()
   {
@@ -257,11 +259,11 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     {
       return cachedSubTimes;
     }
-    final ArrayList<Double>[] timesSub = new ArrayList[getDim()];
-    final Vector[] timeVectors = new Vector[getDim()];
-    TreeMap<Double, Integer>[] timeIndices = new TreeMap[getDim()];
+    final ArrayList<Double>[] timesSub = new ArrayList[dim()];
+    final Vector[] timeVectors = new Vector[dim()];
+    TreeMap<Double, Integer>[] timeIndices = new TreeMap[dim()];
 
-    for (int i = 0; i < getDim(); i++)
+    for (int i = 0; i < dim(); i++)
     {
       timesSub[i] = new ArrayList<Double>();
       timeIndices[i] = new TreeMap<Double, Integer>();
@@ -270,7 +272,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     {
       timesSub[types.get(i)].add(times.get(i));
     }
-    for (int i = 0; i < getDim(); i++)
+    for (int i = 0; i < dim(); i++)
     {
       ArrayList<Double> subTimes = timesSub[i];
       TreeMap<Double, Integer> subTimeIndices = timeIndices[i];
@@ -293,7 +295,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   {
     try
     {
-      return eye(getDim()).subtract(calculateBranchingMatrix()).ldivide(κ.asMatrix().trans().copy(false)).asVector();
+      return eye(dim()).subtract(calculateBranchingMatrix()).ldivide(κ.asMatrix().trans().copy(false)).asVector();
     }
     catch (SingularFactorException e)
     {
@@ -314,8 +316,9 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
    * @param m
    *          dimension in [0,dim-1]
    * @param n
+   *          TODO
+   * @param m
    *          dimension in [0,dim-1]
-   * 
    * @return the j-th α parameter corresponding to the k-th dimension
    */
   protected abstract double
@@ -327,9 +330,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
    * 
    * @param j
    *          index in [0,order()-1]
-   * @param m
-   *          dimension in [0,dim-1]
-   * @param n
+   * @param k
    *          dimension in [0,dim-1]
    * @return the j-th β parameter corresponding to the k-th dimension
    */
@@ -346,14 +347,14 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   public DoubleColMatrix
          calculateBranchingMatrix()
   {
-    DoubleColMatrix αβ = new DoubleColMatrix(getDim(), getDim());
+    DoubleColMatrix αβ = new DoubleColMatrix(dim(), dim());
     for (int j = 0; j < order(); j++)
     {
-      for (int m = 0; m < getDim(); m++)
+      for (int m = 0; m < dim(); m++)
       {
-        for (int n = 0; n < getDim(); n++)
+        for (int n = 0; n < dim(); n++)
         {
-          αβ.add(m, n, α(j, m, n) / β(j, m, n));
+          αβ.add(n, n, α(j, m, n) / β(j, m, n));
         }
       }
     }
@@ -378,7 +379,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       e.printStackTrace(err);
       return false;
     }
-    for (int i = 0; i < getDim(); i++)
+    for (int i = 0; i < dim(); i++)
     {
       double d = sqrt(pow(eig.getRealEigenvalues().get(i), 2) + pow(eig.getImaginaryEigenvalues().get(i), 2));
       if (d >= 1)
@@ -404,7 +405,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       double lambda = kappa;
       final double mtime = mtimes.get(i);
 
-      for (int n = 0; n < getDim(); n++)
+      for (int n = 0; n < dim(); n++)
       {
         final Vector ntimes = timesSub[n];
         final int Nn = ntimes.size();
@@ -429,7 +430,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
          calculateIntensity(Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair,
                             int m)
   {
-    double R[][][] = new double[order()][getDim()][getDim()];
+    double R[][][] = new double[order()][dim()][dim()];
     Vector[] timesSub = timesSubPair.left;
     TreeMap<Double, Integer>[] subTimeIndex = timesSubPair.right;
     final Vector mtimes = timesSub[m];
@@ -442,7 +443,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       double mtimeDiff = upperTime - lowerTime;
       double logsum = κ.get(m) * getDeterministicIntensity(m, upperTime, i);
 
-      for (int n = 0; n < getDim(); n++)
+      for (int n = 0; n < dim(); n++)
       {
         final Vector ntimes = timesSub[n];
         Entry<Double, Integer> floorEntry = getLowerEntry(subTimeIndex, lowerTime, n, m, i);
@@ -480,20 +481,9 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     return intensity;
   }
 
-  /**
-   * @see this{@link #calculateIntensity(Pair, int)}
-   * @param dt
-   * @param d
-   * @param s
-   * @return
-   */
-  protected double
+  protected abstract double
             evolveλ(double dt,
-                    double d,
-                    double[] s)
-  {
-    throw new UnsupportedOperationException("TODO: do as in calculateIntensity");
-  }
+                    double[][] S);
 
   protected double
             getDeterministicIntensity(int m,
@@ -558,7 +548,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       double upperTime = mtimes.get(i);
       double lowerTime = mtimes.get(i - 1);
       double sum = (upperTime - lowerTime) * kappa;
-      for (int n = 0; n < getDim(); n++)
+      for (int n = 0; n < dim(); n++)
       {
         final Vector ntimes = timesSub[n];
         final int Nn = ntimes.size();
@@ -621,7 +611,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     final Vector mtimes = timesSub[m];
     final int N = mtimes.size();
     Vector compensator = new Vector(N - 1);
-    double A[][][] = new double[order()][getDim()][getDim()];
+    double A[][][] = new double[order()][dim()][dim()];
 
     for (int i = 1; i < N; i++)
     {
@@ -630,7 +620,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       double lowerTimeBeforeLast = i > 2 ? mtimes.get(i - 2) : Double.NEGATIVE_INFINITY;
 
       double sum = getDeterministicCompensator(m, upperTime, lowerTime, i) * kappa;
-      for (int n = 0; n < getDim(); n++)
+      for (int n = 0; n < dim(); n++)
       {
         final Vector ntimes = timesSub[n];
         Entry<Double, Integer> lowerEntryBeforeLast = Double.isInfinite(lowerTimeBeforeLast) ? null
@@ -687,7 +677,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   private int predictionIntegrationLimit = 25;
 
   public int
-         getDim()
+         dim()
   {
     return dim;
   }
@@ -743,7 +733,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
       public double
              value(double t)
       {
-        final double A[][][] = new double[order()][getDim()][getDim()];
+        final double A[][][] = new double[order()][dim()][dim()];
         mtimes.set(N - 1, t);
         final int dummy = N - 1;
 
@@ -756,7 +746,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
           // assert upperTime >= lowerTime;
 
           sum = getDeterministicCompensator(m, upperTime, lowerTime, i) * kappa;
-          for (int n = 0; n < getDim(); n++)
+          for (int n = 0; n < dim(); n++)
           {
             final Vector ntimes = timesSub[n];
             Entry<Double, Integer> lowerEntryBeforeLast =
@@ -887,17 +877,15 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     assert filtration.types != null : "tradingProcess.types is null";
     assert filtration.markedPoints != null : "tradingProcess.markedPoints is null";
 
-     if (type ==
-     SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
-     {
-     MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new
-     MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
-     process.T = filtration.times;
-     process.K = filtration.types;
-     process.X = filtration.markedPoints;
-     return process;
-     }
-     else
+    if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
+    {
+      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+      process.T = filtration.times;
+      process.K = filtration.types;
+      process.X = filtration.markedPoints;
+      return process;
+    }
+    else
     {
       throw new UnsupportedOperationException("TODO: " + type);
     }

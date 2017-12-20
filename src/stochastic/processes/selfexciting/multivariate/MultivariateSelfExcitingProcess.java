@@ -83,7 +83,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    * Uses this{@link #getParameterFields()} to assign values from an array to the
    * specified Java fields, there should dim*this{@link #getParamCount()}
    * elements, arranged in order [α1,β1,ε1,α.,β.,ε.,αD,βD,εD] where
-   * D=this{@link #getDim()} and for instance getBoundedParms() has 3 elements
+   * D=this{@link #dim()} and for instance getBoundedParms() has 3 elements
    * called [α,β,ε]
    * 
    * @param array
@@ -111,7 +111,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
   /**
    * 
    * @param field
-   * @return a Vector of dimension this{@link #getDim()}, one is constructed if it
+   * @return a Vector of dimension this{@link #dim()}, one is constructed if it
    *         does not already exist
    */
   public Vector getField(Field field)
