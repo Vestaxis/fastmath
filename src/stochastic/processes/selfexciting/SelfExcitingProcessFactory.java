@@ -4,8 +4,7 @@ public class SelfExcitingProcessFactory
 {
   public static enum Type
   {
-    ApproximatePowerlaw, ExtendedApproximatePowerlaw;
-    // , MultivariateExtendedApproximatePowerlaw;
+    ApproximatePowerlaw, ExtendedApproximatePowerlaw, MultivariateExtendedApproximatePowerlaw;
 
     public String
            getFilenameExtension()
@@ -17,8 +16,8 @@ public class SelfExcitingProcessFactory
       case ExtendedApproximatePowerlaw:
         return "eapl";
 
-      // case MultivariateExtendedApproximatePowerlaw:
-      // return "meapl";
+      case MultivariateExtendedApproximatePowerlaw:
+        return "meapl";
       default:
         throw new UnsupportedOperationException("TODO: " + this);
       }

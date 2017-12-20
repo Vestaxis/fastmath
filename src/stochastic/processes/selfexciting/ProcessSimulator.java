@@ -109,7 +109,7 @@ public class ProcessSimulator
       // String msg = "i=" + i + " y=" + y + " = q = " + q + " dt=" + dt + " dtReal="
       // + dtReal + " dtRealFpValue=" + dtRealFpValue + " nextTime=" + nextTime;
       out.println(msg);
-      if (abs(y - q) > 1E-10)
+      if (abs(y - q) > 1E-8)
       {
         out.println(ansi().fgBrightRed() + " rejecting dt=" + dt + " for y=" + y + " q=" + q + "# " + rejects + ansi().fgDefault());
         continue;

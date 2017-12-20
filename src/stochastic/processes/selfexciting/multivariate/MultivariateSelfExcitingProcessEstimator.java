@@ -53,7 +53,7 @@ public class MultivariateSelfExcitingProcessEstimator
          main(String[] args) throws IOException,
                              CloneNotSupportedException
   {
-    Type type = null; // Type.MultivariateExtendedApproximatePowerlaw;
+    Type type = Type.MultivariateExtendedApproximatePowerlaw;
     String filename = args.length > 0 ? args[0] : "/home/stephen/git/fastmath/SPY.mat";
 
     int trajectoryCount = Runtime.getRuntime().availableProcessors() * 1;
@@ -108,6 +108,7 @@ public class MultivariateSelfExcitingProcessEstimator
                                             int trajectoryCount,
                                             String symbol) throws IOException
   {
+    assert type != null;
     return estimateSelfExcitingTradingProcesses(type, trajectoryCount, new TradingFiltration(MatFile.loadMatrix(filename, symbol)));
   }
 
@@ -130,6 +131,7 @@ public class MultivariateSelfExcitingProcessEstimator
                                               int trajectoryCount,
                                               TradingFiltration tradingProcess) throws IOException
   {
+    assert type != null;
     Vector times = tradingProcess.times;
     double Edt = times.diff().mean();
 

@@ -204,7 +204,7 @@
   Define the inverse compensator\ 
 
   <\equation>
-    <tabular*|<tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|T<rsub|n>>|)>>|<cell|=<around*|{|t<rsub|n+1>:\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y|}>>>|<row|<cell|>|<cell|=t<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=0|}>>>>>>
+    <tabular*|<tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<mid|\|>\<cal-F\><rsub|n>|)>>|<cell|=<around*|{|t<rsub|n+1>:\<Lambda\><around*|(|t<rsub|n>,t<rsub|n+1><mid|\|>\<cal-F\><rsub|n>|)>=y|}>>>|<row|<cell|>|<cell|=t<rsub|n>+<around*|{|t:\<varphi\><around*|(|t,y<mid|\|>\<cal-F\><rsub|n>|)>=0|}>>>>>>
   </equation>
 
   where
@@ -239,7 +239,7 @@
   in <math|t<rsub|n+1>> so that
 
   <\equation>
-    \<Lambda\><around*|(|t<rsub|n>,\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)><mid|\|>\<cal-F\><rsub|t<rsub|n>>|)>=y
+    \<Lambda\><around*|(|t<rsub|n>,\<Lambda\><rsub|t<rsub|n+1>><rsup|<rsup|-1>><around*|(|t<rsub|n>,y<rsub|><mid|\|>\<cal-F\><rsub|n>|)><mid|\|>\<cal-F\><rsub|n>|)>=y
   </equation>
 
   Therefore this slightly modified Newton iteration function is an

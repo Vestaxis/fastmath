@@ -34,6 +34,14 @@ import fastmath.Vector;
 public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOptimizer<PointValuePair>
 {
 
+  @Override
+  public PointValuePair
+         optimize(OptimizationData... optData)
+  {
+    this.optimData = optData;
+    return super.optimize(optData);
+  }
+
   private OptimizationData[] optimData;
   private IntConsumer progressNotifier;
 
@@ -41,8 +49,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
          optimize(IntConsumer progressNotifier,
                   OptimizationData... optData)
   {
+    assert optData != null;
     this.progressNotifier = progressNotifier;
     this.optimData = optData.clone();
+    assert optimData != null;
     return super.optimize(optData);
   }
 
@@ -98,6 +108,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   protected PointValuePair
             doOptimize()
   {
+    assert optimData != null;
+    
     // Remove all instances of "MaxEval" and "InitialGuess" from the
     // array that will be passed to the internal optimizer.
     // The former is to enforce smaller numbers of allowed evaluations
@@ -174,6 +186,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     // Multi-start loop.
     range(0, starts).parallel().forEach(i -> {
       OptimizationData[] instanceOptimData = optimData.clone();
+      assert instanceOptimData != null;
       BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
       // Decrease number of allowed evaluations.
       instanceOptimData[_maxEvalIndex] = new MaxEval(maxEval - totalEvaluations.get());
