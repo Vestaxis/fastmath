@@ -9,6 +9,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.out;
@@ -86,6 +87,61 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                                 double t)
   {
     return sum(k -> -γ(k) * β(k) * exp(-t * β(k)), 0, order() - 1);
+  }
+
+  public double
+         getMeanSquaredPredictionError()
+  {
+    int n = T.size() - 1;
+    return sum(tk -> pow((T.get(tk + 1) - T.get(tk)) - invΛ(tk, 1), 2), 0, n) / n;
+  }
+
+  /**
+   * 
+   * @return {@link Math#sqrt(double)}(this{@link #getMeanSquaredPredictionError()}
+   */
+  public double
+         getRootMeanSquarePredictionError()
+  {
+    return sqrt(getMeanSquaredPredictionError());
+  }
+
+  /**
+   * 
+   * @param tk
+   *          index of last (most recent) time to occur T[tk] in the point process
+   * @param y
+   *          exponentially distributed random variable
+   * 
+   * @return the value of T[n+1] that will cause the compensator to be equal to
+   *         Λ(T[n],T[N+1])=y
+   */
+  public double
+         invΛ(int tk,
+              double y)
+  {
+    double dt = 0;
+
+    double δ = 0;
+    double lastTime = T.get(tk);
+    double nextTime = lastTime;
+
+    for (int i = 0; i <= 1000; i++)
+    {
+      δ = Φδ(dt = (nextTime - lastTime), y, tk);
+
+      if (trace)
+      {
+        out.println("double dt[" + i + "]=" + dt + " δ=" + δ);
+      }
+      nextTime = nextTime + δ;
+      if (abs(δ) < 1E-10 || !Double.isFinite(δ))
+      {
+        break;
+      }
+
+    }
+    return dt;
   }
 
   /**
@@ -801,6 +857,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
            double y)
   {
     int tk = T.size() - 1;
+    return Φ(dt, y, tk);
+  }
+
+  public double
+         Φ(double dt,
+           double y,
+           int tk)
+  {
     return sum(j -> γ(j) * A(tk, j) * (exp(-dt * β(j)) - 1), 0, order() - 1) + y * βproduct() * Z();
   }
 
@@ -809,6 +873,14 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
                double y)
   {
     int tk = T.size() - 1;
+    return ΦReal(dt, y, tk);
+  }
+
+  public Real
+         ΦReal(double dt,
+               double y,
+               int tk)
+  {
     return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j).mul(-dt).exp().sub(Real.ONE)), 0, order() - 1).add(βproductReal().mul(y).mul(ZReal()));
   }
 
@@ -816,6 +888,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Φdt(double dt)
   {
     int tk = T.size() - 1;
+    return Φdt(dt, tk);
+  }
+
+  public double
+         Φdt(double dt,
+             int tk)
+  {
     return sum(j -> γ(j) * A(tk, j) * β(j) * exp(-(dt) * β(j)), 0, order() - 1);
   }
 
@@ -823,6 +902,13 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          ΦdtReal(double dt)
   {
     int tk = T.size() - 1;
+    return ΦdtReal(dt, tk);
+  }
+
+  public Real
+         ΦdtReal(double dt,
+                 int tk)
+  {
     return realSum(j -> γReal(j).mul(AReal(tk, j)).mul(βReal(j)).mul(βReal(j).mul(-dt).exp()), 0, order() - 1);
   }
 
@@ -836,7 +922,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
          Φδ(double t,
             double y)
   {
-    return Φ(t, y) / Φdt(t);
+    int tk = T.size() - 1;
+    return Φδ(t, y, tk);
+  }
+
+  public double
+         Φδ(double t,
+            double y,
+            int tk)
+  {
+    return Φ(t, y, tk) / Φdt(t, tk);
   }
 
   /**
