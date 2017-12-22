@@ -55,6 +55,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 
 public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
@@ -180,7 +181,14 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
     SolutionValidator validator = point -> {
       MultivariateExponentialSelfExcitingProcess process = newProcess(point.getPoint());
-      return process.Λ().mean() > 0;
+      for (int i = 0; i < process.dim(); i++)
+      {
+        if (process.Λ(i).mean() < 0)
+        {
+          return false;
+        }
+      }
+      return true;
     };
 
     Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim * 2 + 1);
@@ -215,7 +223,16 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   public double
          getΛmomentMeasure()
   {
-    throw new UnsupportedOperationException("TODO");
+    Vector dT = Λ();
+    Vector moments = dT().normalizedMoments(2);
+    Vector normalizedSampleMoments = (moments.copy().subtract(1)).abs();
+    return normalizedSampleMoments.sum();
+  }
+
+  public Vector
+          dT()
+  {
+    throw new UnsupportedOperationException( "TODO" );
   }
 
   @Override
@@ -228,7 +245,9 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   public MultivariateExponentialSelfExcitingProcess
          newProcess(double[] point)
   {
-    throw new UnsupportedOperationException("TODO");
+    MultivariateExponentialSelfExcitingProcess process = (MultivariateExponentialSelfExcitingProcess) this.clone();
+    process.assignParameters(point);
+    return process;
   }
 
   /**
@@ -237,6 +256,20 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
    */
   public abstract double
          totalΛ();
+
+  @Override
+  public Vector
+         Λ()
+  {
+    final int n = T.size() - 1;
+
+    Vector compensator = new Vector(n);
+    for (int i = 0; i < n; i++)
+    {
+      compensator.add(Λ(i));
+    }
+    return compensator;
+  }
 
   public Vector
          Λ(int type)
@@ -249,6 +282,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     {
       compensator.set(i, Λ(type, i));
     }
+
     return compensator.setName("Λ");
 
   }

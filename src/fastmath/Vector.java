@@ -364,8 +364,19 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
    * 
    * @throws FastMathException
    */
-  public native Vector
-         add(Vector x);
+  public Vector
+         add(Vector x)
+  {
+    for (int i = 0; i < size(); i++)
+    {
+      set(i, get(i) + x.get(i));
+    }
+    return this;
+    // assert x.size == size : "size mismatch";
+    // BLASLibrary.instance.daxpy_(x.size, 1, x.getPointer(), x.getIncrement(),
+    // getPointer(), getIncrement());
+    // return this;
+  }
 
   /**
    * Adds a vector to this vector

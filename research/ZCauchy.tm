@@ -16,6 +16,8 @@
     for the Riemann hypothesis.\ 
   </abstract>>
 
+  \;
+
   <section|Preliminary Outline>
 
   <subsection|Definitions>

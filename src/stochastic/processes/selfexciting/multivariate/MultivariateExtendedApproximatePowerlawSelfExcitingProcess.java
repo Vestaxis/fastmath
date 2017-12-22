@@ -260,12 +260,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     return (dT != null) ? dT : (dT = T.diff());
   }
 
-  @Override
-  public Vector
-         Λ()
-  {
-    throw new UnsupportedOperationException("TODO: return pooled compensator for the dim() number of independent compensators");
-  }
 
   @Override
   public Vector

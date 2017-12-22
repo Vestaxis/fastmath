@@ -13,11 +13,33 @@ public class BLAS1
     NativeUtils.loadNativeFastmathLibrary();
   }
 
-  public native static int dgetri(boolean colMajor, int n, ByteBuffer A, int offA, int ldA, ByteBuffer ipiv);
 
-  public native static int dsyev(char jobz, char uplo, int n, ByteBuffer A, int offA, int ldA, ByteBuffer W, ByteBuffer work, int lwork);
+  public native static int
+         dgetri(boolean colMajor,
+                int n,
+                ByteBuffer A,
+                int offA,
+                int ldA,
+                ByteBuffer ipiv);
 
-  public static int dsyev(char jobz, char uplo, AbstractMatrix A, Vector W, Vector work, int lwork)
+  public native static int
+         dsyev(char jobz,
+               char uplo,
+               int n,
+               ByteBuffer A,
+               int offA,
+               int ldA,
+               ByteBuffer W,
+               ByteBuffer work,
+               int lwork);
+
+  public static int
+         dsyev(char jobz,
+               char uplo,
+               AbstractMatrix A,
+               Vector W,
+               Vector work,
+               int lwork)
   {
     assert work.getOffset(0) == 0 : "work offset must be 0";
     assert A.isColMajor() : "A must be col major";
@@ -28,29 +50,101 @@ public class BLAS1
     return dsyev(jobz, uplo, A.getRowCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount(), W.getBuffer(), work.getBuffer(), lwork);
   }
 
+  public static native int
+         dpotrf(boolean colMajor,
+                boolean upper,
+                int n,
+                ByteBuffer A,
+                int offA,
+                int ldA);
 
-  public static native int dpotrf(boolean colMajor, boolean upper, int n, ByteBuffer A, int offA, int ldA);
+  public static native int
+         dgetrf(boolean colMajor,
+                int M,
+                int N,
+                ByteBuffer A,
+                int offA,
+                int lda,
+                ByteBuffer buffer);
 
-  public static native int dgetrf(boolean colMajor, int M, int N, ByteBuffer A, int offA, int lda, ByteBuffer buffer);
+  public native static double
+         dlassq(int N,
+                ByteBuffer X,
+                int offX,
+                int incX);
 
-  public native static double dlassq(int N, ByteBuffer X, int offX, int incX);
-
-  public static double dasum(int N, ByteBuffer X, int incX)
+  public static double
+         dasum(int N,
+               ByteBuffer X,
+               int incX)
   {
     throw new UnsupportedOperationException("TODO");
   }
 
-  public native static void dgeadd(int M, int N, double alpha, ByteBuffer A, int lda, double beta, ByteBuffer C, int ldc);
+  public native static void
+         dgeadd(int M,
+                int N,
+                double alpha,
+                ByteBuffer A,
+                int lda,
+                double beta,
+                ByteBuffer C,
+                int ldc);
 
-  public native static void dcopy(int N, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY);
+  public native static void
+         dcopy(int N,
+               ByteBuffer X,
+               int offX,
+               int incX,
+               ByteBuffer Y,
+               int offY,
+               int incY);
 
-  public native static void zcopy(int N, ByteBuffer X, int offX, int incX, ByteBuffer Y, int offY, int incY);
+  public native static void
+         zcopy(int N,
+               ByteBuffer X,
+               int offX,
+               int incX,
+               ByteBuffer Y,
+               int offY,
+               int incY);
 
-  public static native void dgemm(boolean colMajor, boolean TransA, boolean TransB, int M, int N, int K, double alpha, ByteBuffer A, int offA,
-      int lda, ByteBuffer B, int offB, int ldb, double beta, ByteBuffer C, int offC, int ldc);
+  public static native void
+         dgemm(boolean colMajor,
+               boolean TransA,
+               boolean TransB,
+               int M,
+               int N,
+               int K,
+               double alpha,
+               ByteBuffer A,
+               int offA,
+               int lda,
+               ByteBuffer B,
+               int offB,
+               int ldb,
+               double beta,
+               ByteBuffer C,
+               int offC,
+               int ldc);
 
-  public native static int dgeev(char jobvl, char jobvr, int n, ByteBuffer A, int offA, int ldA, ByteBuffer WR, ByteBuffer WI, ByteBuffer VL,
-      int offVL, int ldVL, ByteBuffer VR, int offVR, int ldVR, ByteBuffer work, int lwork);
+  public native static int
+         dgeev(char jobvl,
+               char jobvr,
+               int n,
+               ByteBuffer A,
+               int offA,
+               int ldA,
+               ByteBuffer WR,
+               ByteBuffer WI,
+               ByteBuffer VL,
+               int offVL,
+               int ldVL,
+               ByteBuffer VR,
+               int offVR,
+               int ldVR,
+               ByteBuffer work,
+               int lwork);
 
   /**
    * DGEEV computes for an N-by-N real nonsymmetric matrix A, the eigenvalues and,
@@ -104,13 +198,20 @@ public class BLAS1
    *         all the eigenvalues, and no eigenvectors have been computed; elements
    *         i+1:N of WR and WI contain eigenvalues which have converged.
    */
-  public static int dgeev(AbstractMatrix A, Vector wr, Vector wi, AbstractMatrix vl, AbstractMatrix vr, Vector work, int workSize)
-      throws FastMathException
+  public static int
+         dgeev(AbstractMatrix A,
+               Vector wr,
+               Vector wi,
+               AbstractMatrix vl,
+               AbstractMatrix vr,
+               Vector work,
+               int workSize) throws FastMathException
   {
     // TODO: how much of a performance hit is this?
-    if (wr.getOffset(0) != 0 || wi.getOffset(0) != 0
-        || wr.getIncrement() != 1
-        || wi.getIncrement() != 1) { throw new FastMathException("wr and wi cannot be subvectors"); }
+    if (wr.getOffset(0) != 0 || wi.getOffset(0) != 0 || wr.getIncrement() != 1 || wi.getIncrement() != 1)
+    {
+      throw new FastMathException("wr and wi cannot be subvectors");
+    }
 
     return dgeev(vl != null ? 'V' : 'N',
                  vr != null ? 'V' : 'N',
@@ -130,8 +231,23 @@ public class BLAS1
                  workSize);
   }
 
-  public native static int zgeev(char jobvl, char jobvr, int n, ByteBuffer A, int offA, int ldA, ByteBuffer W, ByteBuffer VL, int offVL, int ldVL,
-      ByteBuffer VR, int offVR, int ldVR, ByteBuffer work, int lwork, ByteBuffer rwork);
+  public native static int
+         zgeev(char jobvl,
+               char jobvr,
+               int n,
+               ByteBuffer A,
+               int offA,
+               int ldA,
+               ByteBuffer W,
+               ByteBuffer VL,
+               int offVL,
+               int ldVL,
+               ByteBuffer VR,
+               int offVR,
+               int ldVR,
+               ByteBuffer work,
+               int lwork,
+               ByteBuffer rwork);
 
   /**
    * Y = X
@@ -139,7 +255,9 @@ public class BLAS1
    * WARNING: X and Y cannot overlap unless they are both reversed ( not verified
    * yet )
    */
-  public static void dcopy(Vector X, Vector Y)
+  public static void
+         dcopy(Vector X,
+               Vector Y)
   {
     assert X.size() == Y.size() : format("Dimensions of X and Y must be the same: %d != %d", X.size(), Y.size());
 
@@ -148,11 +266,13 @@ public class BLAS1
     // X.getIncrement(), Y.getBuffer().asDoubleBuffer(), Y.getIncrement());
   }
 
-
   /**
    * return alpha*op( A )*op( B )
    */
-  public static DoubleColMatrix dgemm(DoubleMatrix A, double alpha, DoubleMatrix B)
+  public static DoubleColMatrix
+         dgemm(DoubleMatrix A,
+               double alpha,
+               DoubleMatrix B)
   {
     // assert A.isContiguous() : "A must be contiguous";
 
@@ -168,7 +288,12 @@ public class BLAS1
    * 
    * FIXME: this needs to support row major operations
    */
-  public static void dgemm(DoubleMatrix A, double alpha, DoubleMatrix B, DoubleMatrix C, double beta)
+  public static void
+         dgemm(DoubleMatrix A,
+               double alpha,
+               DoubleMatrix B,
+               DoubleMatrix C,
+               double beta)
   {
     assert A.getColCount() == B.getRowCount() : "A.cols=" + A.getColCount() + " != B.rows=" + B.getRowCount();
     assert A.getRowCount() == C.getRowCount() : "A.rows != C.rows";
@@ -178,7 +303,7 @@ public class BLAS1
     assert C.isDense() : "C is not dense";
     // DoubleColMatrix V = new DoubleColMatrix( C.numRows(), C.numCols() );
 
-    throw new UnsupportedOperationException("TODO" );
+    throw new UnsupportedOperationException("TODO");
 
     // for (int i = 0; i < C.numRows; i++)
     // {
@@ -191,13 +316,17 @@ public class BLAS1
     // TestCase.assertEquals( V, C );
   }
 
-
-  public static int dgetrf(AbstractMatrix A, IntVector ipiv)
+  public static int
+         dgetrf(AbstractMatrix A,
+                IntVector ipiv)
   {
     return dgetrf(A.isColMajor(), A.getRowCount(), A.getColCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount(), ipiv.getBuffer());
   }
 
-  public static void dgetrs(AbstractMatrix A, AbstractMatrix B, IntVector ipiv)
+  public static void
+         dgetrs(AbstractMatrix A,
+                AbstractMatrix B,
+                IntVector ipiv)
   {
     assert A.isSquare() : "A must be square";
     assert !A.isTranspose() : "A cannot be a transposed view";
@@ -215,7 +344,9 @@ public class BLAS1
                         B.getRowCount());
   }
 
-  public static int dpotrf(boolean upper, DoubleMatrix A)
+  public static int
+         dpotrf(boolean upper,
+                DoubleMatrix A)
   {
     return dpotrf(A.isColMajor(), upper, A.getRowCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount());
   }
@@ -243,7 +374,13 @@ public class BLAS1
    *         computing the SVD failed to converge; if INFO = i, i off-diagonal
    *         elements of an intermediate bidiagonal form did not converge to zero.
    */
-  public static int dgelss(DoubleMatrix A, DoubleMatrix B, Vector S, IntVector rank, Vector work, int workSize)
+  public static int
+         dgelss(DoubleMatrix A,
+                DoubleMatrix B,
+                Vector S,
+                IntVector rank,
+                Vector work,
+                int workSize)
   {
     assert B.getRowCount() >= Math.max(A.getRowCount(), A.getColCount()) : "B.rows < max(A.rows,A.cols)";
     assert S.size() == Math.min(A.getRowCount(), A.getColCount()) : "S.length < min(A.rows,A.cols)";
@@ -252,7 +389,7 @@ public class BLAS1
     // On entry, the M-by-N matrix A. On exit, the first min(m,n) rows of
     // A are overwritten with its right singular vectors, stored rowwise.
 
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
 }

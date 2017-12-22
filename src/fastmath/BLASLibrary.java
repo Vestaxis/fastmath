@@ -1,12 +1,17 @@
 package fastmath;
 
-import java.nio.DoubleBuffer;
-
 import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 
 public interface BLASLibrary extends Library
 {
-//  BLASLibrary instance = (BLASLibrary) Native.loadLibrary("blas", BLASLibrary.class);
+  BLASLibrary instance = (BLASLibrary) Native.loadLibrary("blas", BLASLibrary.class);
 
-  int daxpy(int n, double a, DoubleBuffer x, int incx, DoubleBuffer y, int incy);
+  void daxpy_(int n,
+              double a,
+              Pointer x,
+              int incx,
+              Pointer y,
+              int incy);
 }
