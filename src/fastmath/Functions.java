@@ -286,7 +286,7 @@ public class Functions
   }
 
   public static Stream<Real>
-         seq(IntFunction<Real> elements,
+         seqReal(IntFunction<Real> elements,
              int lowerIndex,
              int upperIndex)
   {

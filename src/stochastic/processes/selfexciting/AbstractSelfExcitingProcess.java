@@ -1,5 +1,7 @@
 package stochastic.processes.selfexciting;
 
+import static fastmath.Functions.seq;
+import static java.lang.Math.sqrt;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -17,6 +19,7 @@ import java.util.function.IntConsumer;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 
 import dnl.utils.text.table.TextTable;
 import fastmath.DoubleMatrix;
@@ -364,6 +367,48 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return data;
   }
 
+  final int forecastStartIndex = 6;
+
+  /**
+   * @see this{@link #forecastStartIndex}
+   * 
+   * @return
+   */
+  public Vector
+         getInnovationSequence()
+  {
+    int n = T.size() - 1;
+    return new Vector(seq(tk -> invΛ(tk, 1) - (T.get(tk + 1) - T.get(tk)), 0, n)).slice(forecastStartIndex, n);
+  }
+
+  public abstract double
+         invΛ(int tk,
+              double y);
+
+  public double
+         getMeanPredictionError()
+  {
+    int n = T.size() - 1;
+    return getInnovationSequence().mean();
+  }
+
+  /**
+   * 
+   * @return {@link Math#sqrt(double)}(this{@link #getMeanSquaredPredictionError()}
+   */
+  public double
+         getRootMeanSquaredPredictionError()
+  {
+    return sqrt(getMeanSquaredPredictionError());
+  }
+
+  public double
+         getMeanSquaredPredictionError()
+  {
+    int n = T.size() - 1;
+    return getInnovationSequence().pow(2).mean();
+  }
+
   public TextTable
          printResults(ParallelMultistartMultivariateOptimizer multiopt)
   {
@@ -386,8 +431,4 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return tt;
   }
 
-  // public abstract double
-  // Hphase(double h,
-  // double t);
-
-}
+};

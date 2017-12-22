@@ -157,12 +157,13 @@ public class ProcessEstimator
   {
     Vector compensator = process.Λ().setName("comp");
     Vector intensity = process.λvector().setName("intensity");
-    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath() + " and parameters to " + modelFile);
-
+    out.println("writing timestamp data, compensator, intensity, and innovation to " + testFile.getAbsolutePath() + " and parameters to " + modelFile);
+    Vector innovation = process.getInnovationSequence().setName("innov");
+    
     try
     {
       process.storeParameters(modelFile);
-      MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
+      MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix(), innovation.createMiMatrix() );
     }
     catch (IOException e)
     {
@@ -219,13 +220,17 @@ public class ProcessEstimator
     }
 
     process.T = data;
-    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), null );
+    ParallelMultistartMultivariateOptimizer optimizer = process.estimateParameters(getTrajectoryCount(), null);
     process.printResults(optimizer);
-
+    double averageError = process.getInnovationSequence().mean();
+    out.println("E(I)=" + process.getMeanPredictionError()
+                + " E(I^2)="
+                + process.getMeanSquaredPredictionError()
+                + " sqrt(E(I^2))="
+                + process.getRootMeanSquaredPredictionError());
     return process;
 
   }
-
 
   public static Vector
          loadTimes(String filename,

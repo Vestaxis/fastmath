@@ -267,4 +267,33 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
     throw new UnsupportedOperationException("TODO: return pooled compensator for the dim() number of independent compensators");
   }
 
+  @Override
+  public Vector
+         getInnovationSequence()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         getRootMeanSquaredPredictionError()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         getMeanSquaredPredictionError()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         invΛ(int tk,
+              double y)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
 }

@@ -22,7 +22,7 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import junit.framework.TestCase;
 import util.TerseThreadFactory;
 
-public class ProcessSimulator
+public class ProcessPredictor
 {
 
   static
@@ -32,7 +32,7 @@ public class ProcessSimulator
 
   private AbstractSelfExcitingProcess process;
 
-  public ProcessSimulator(SelfExcitingProcess process)
+  public ProcessPredictor(SelfExcitingProcess process)
   {
     this.process = (AbstractSelfExcitingProcess) process;
   }
@@ -55,7 +55,7 @@ public class ProcessSimulator
     out.println("simulating " + ansi().fgBrightYellow() + process + ansi().fgDefault() + " from " + process.T.size() + " points with seed=" + seed);
     int n = process.T.size();
     double nextTime = 0;
-    for (int i = 0; i < 80000; i++)
+    for (int i = 0; i < 40000; i++)
     {
       double y = expDist.sample();
       process.trace = false;

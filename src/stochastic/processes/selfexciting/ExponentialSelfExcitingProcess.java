@@ -3,6 +3,7 @@ package stochastic.processes.selfexciting;
 import static fastmath.Functions.product;
 import static fastmath.Functions.realSum;
 import static fastmath.Functions.seq;
+import static fastmath.Functions.seqReal;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.abs;
@@ -75,36 +76,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     return sb.toString();
   }
 
-  public double
-         Fphase(double u,
-                double t)
-  {
-    return sum(k -> γ(k) * (exp(-β(k) * t) + u - 1), 0, order() - 1);
-  }
 
-  public double
-         FphaseTimeDifferential(double u,
-                                double t)
-  {
-    return sum(k -> -γ(k) * β(k) * exp(-t * β(k)), 0, order() - 1);
-  }
-
-  public double
-         getMeanSquaredPredictionError()
-  {
-    int n = T.size() - 1;
-    return sum(tk -> pow((T.get(tk + 1) - T.get(tk)) - invΛ(tk, 1), 2), 0, n) / n;
-  }
-
-  /**
-   * 
-   * @return {@link Math#sqrt(double)}(this{@link #getMeanSquaredPredictionError()}
-   */
-  public double
-         getRootMeanSquarePredictionError()
-  {
-    return sqrt(getMeanSquaredPredictionError());
-  }
 
   /**
    * 
@@ -1102,21 +1074,16 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
     double dt = nextTime - T.getRightmostValue();
     T = T.copyAndAppend(nextTime);
     dT = dT.copyAndAppend(dt);
-    // Real[][] newAReal = new Real[T.size()][order()];
     double[][] newA = new double[T.size()][order()];
 
     for (int i = 0; i < A.length; i++)
     {
-      // Real[] aMatrix = newAReal[i];
       double[] bMatrix = newA[i];
       int aLength = bMatrix.length;
-      // newAReal[i] = new Real[aLength];
       newA[i] = new double[aLength];
-      // System.arraycopy(aMatrix, 0, newAReal[i], 0, aLength);
       System.arraycopy(bMatrix, 0, newA[i], 0, aLength);
     }
     A = newA;
-    // AReal = newAReal;
   }
 
 }
