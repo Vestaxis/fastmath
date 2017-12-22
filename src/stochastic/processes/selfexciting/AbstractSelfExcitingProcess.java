@@ -405,7 +405,6 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
   public double
          getMeanSquaredPredictionError()
   {
-    int n = T.size() - 1;
     return getInnovationSequence().pow(2).mean();
   }
 
