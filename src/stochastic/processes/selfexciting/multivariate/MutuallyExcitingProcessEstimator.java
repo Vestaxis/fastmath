@@ -85,7 +85,7 @@ public class MutuallyExcitingProcessEstimator
   }
 
   /**
-   * estimate the parameters of a Hawkes process model
+   * estimate the parameters of an autoexciting process model
    * 
    * @param type
    * @param filename
@@ -94,9 +94,9 @@ public class MutuallyExcitingProcessEstimator
    * @throws IOException
    */
   public static ArrayList<ExponentialMutuallyExcitingProcess>
-         estimateHawkesProcess(Type type,
-                               String filename,
-                               String symbol) throws IOException
+         estimateSelfExcitingProcess(Type type,
+                                     String filename,
+                                     String symbol) throws IOException
 
   {
     return estimateSelfExcitingTradingProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
@@ -169,12 +169,13 @@ public class MutuallyExcitingProcessEstimator
   {
     Vector compensator = process.Λ().setName("comp");
     DoubleMatrix intensity = process.conditionalλ().setName("intensity");
-    out.println("writing timestamp data, compensator and intensity to " + testFile.getAbsolutePath()
+    Vector innov = process.getInnovationSequence();
+    out.println("writing timestamp data, compensator, intensity, and innov to " + testFile.getAbsolutePath()
                 + " E[data.dt]="
                 + data.diff().mean()
                 + " 1/k="
                 + process.κ.pow(-1));
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix());
+    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix(), innov.createMiMatrix());
   }
 
   public void

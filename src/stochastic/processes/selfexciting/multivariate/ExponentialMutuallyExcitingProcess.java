@@ -16,6 +16,7 @@ import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.rangeClosed;
 import static java.util.stream.Stream.concat;
+import static org.apache.commons.lang.ArrayUtils.addAll;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -266,13 +267,16 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      compensator.add(Λ(i));
+      for (int type = 0; type < dim(); type++)
+      {
+        compensator.add(Λ(type, i));
+      }
     }
     return compensator;
   }
 
   public Vector
-         Λ(int type)
+         Λ(int index)
   {
 
     final int n = T.size() - 1;
@@ -280,7 +284,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      compensator.set(i, Λ(type, i));
+      compensator.set(i, Λ(index, i));
     }
 
     return compensator.setName("Λ");
@@ -317,6 +321,31 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
       A[type][tk][j] = val;
     }
     return val;
+  }
+
+  /**
+   * @return an array whose elements correspond to this{@link #statisticNames}
+   */
+  public Object[]
+         evaluateParameterStatistics(double[] point)
+  {
+    ExponentialMutuallyExcitingProcess process = newProcess(point);
+    double ksStatistic = process.getΛKolmogorovSmirnovStatistic();
+
+    Vector compensated = process.Λ();
+
+    // out.println(compensated.autocor(30));
+
+    Object[] statisticsVector = new Object[]
+    { process.logLik(),
+      ksStatistic,
+      compensated.mean(),
+      compensated.variance(),
+      process.getΛmomentMeasure(),
+      process.getLjungBoxMeasure(),
+      process.getΛmomentLjungBoxMeasure() };
+
+    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
   }
 
   /**
@@ -390,10 +419,11 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * @param j
    *          index in [0,order()-1]
    * @param m
-   *          dimension in [0,dim-1]
+   *          from type in [0,dim-1]
    * @param n
-   *          dimension in [0,dim-1]
-   * @return the j-th α parameter corresponding to the k-th dimension
+   *          to type in [0,dim-1]
+   * @return the j-th element of the Vector of parameters corresponding to the
+   *         k-th type
    */
   protected abstract double
             α(int j,

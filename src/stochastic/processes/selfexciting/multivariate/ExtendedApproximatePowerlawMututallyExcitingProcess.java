@@ -4,6 +4,7 @@ import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 import java.io.File;
@@ -84,12 +85,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     return ExtendedApproximatePowerlawSelfExcitingProcess.Parameter.values();
   }
 
-  @Override
-  public Object[]
-         evaluateParameterStatistics(double[] point)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
 
   @Override
   public double
@@ -105,17 +100,35 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     throw new UnsupportedOperationException("TODO");
   }
 
+  /**
+   * 
+   * @param j
+   *          index in [0,order()-1]
+   * @param m
+   *          from type in [0,dim-1]
+   * @param n
+   *          to type in [0,dim-1]
+   * @return the j-th element of the Vector of parameters corresponding to the k-th type
+   */
   @Override
   protected double
             α(int i,
               int j,
               int k)
   {
+    assert j < dim() : format("i=%d j=%d k=%d order=%d dim=%d\n", i, j, k, order(), dim() );
+    
     if (j != k)
     {
       return 0;
     }
-    return i < M ? pow(1 / (τ.get(j) * pow(m, i)), 1 + ε.get(j)) : αS(j);
+    if ( i == M )
+    {
+      return αS(j);
+    }
+    double τj = τ.get(j);
+    double εj = ε.get(j);
+    return pow(1 / (τj * pow(m, i)), 1 + εj);
   }
 
   @Override
