@@ -31,7 +31,7 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 import util.DateUtils;
 import util.TerseThreadFactory;
 
-public class MultivariateSelfExcitingProcessEstimator
+public class MutuallyExcitingProcessEstimator
 {
   @Units(time = TimeUnit.HOURS)
   public static final double W = 0.5; // half hour
@@ -41,10 +41,10 @@ public class MultivariateSelfExcitingProcessEstimator
     System.setProperty("java.util.concurrent.ForkJoinPool.common.threadFactory", TerseThreadFactory.class.getName());
   }
 
-  private MultivariateExponentialSelfExcitingProcess process;
+  private ExponentialMutuallyExcitingProcess process;
   private int trajectoryCount = Runtime.getRuntime().availableProcessors();
 
-  public MultivariateSelfExcitingProcessEstimator(MultivariateExponentialSelfExcitingProcess process)
+  public MutuallyExcitingProcessEstimator(ExponentialMutuallyExcitingProcess process)
   {
     this.process = process;
   }
@@ -64,11 +64,11 @@ public class MultivariateSelfExcitingProcessEstimator
     String symbol = "SPY";
 
     out.println("Estimating parameters for " + filename);
-    ArrayList<MultivariateExponentialSelfExcitingProcess> processes = estimateSelfExcitingTradingProcess(type, filename, trajectoryCount, symbol);
+    ArrayList<ExponentialMutuallyExcitingProcess> processes = estimateSelfExcitingTradingProcess(type, filename, trajectoryCount, symbol);
     for (int i = 0; i < processes.size(); i++)
     {
       File modelFile = new File(filename + "." + type.getFilenameExtension() + "." + i + ".model");
-      MultivariateExponentialSelfExcitingProcess process = processes.get(i);
+      ExponentialMutuallyExcitingProcess process = processes.get(i);
       double firstTimestampInInterval = DateUtils.convertTimeUnits(process.T.getLeftmostValue(), TimeUnit.MILLISECONDS, TimeUnit.HOURS);
       double lastTimestampInInterval = DateUtils.convertTimeUnits(process.T.getRightmostValue(), TimeUnit.MILLISECONDS, TimeUnit.HOURS);
 
@@ -93,7 +93,7 @@ public class MultivariateSelfExcitingProcessEstimator
    * @return
    * @throws IOException
    */
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+  public static ArrayList<ExponentialMutuallyExcitingProcess>
          estimateHawkesProcess(Type type,
                                String filename,
                                String symbol) throws IOException
@@ -102,7 +102,7 @@ public class MultivariateSelfExcitingProcessEstimator
     return estimateSelfExcitingTradingProcess(type, filename, Runtime.getRuntime().availableProcessors(), symbol);
   }
 
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+  public static ArrayList<ExponentialMutuallyExcitingProcess>
          estimateSelfExcitingTradingProcess(Type type,
                                             String filename,
                                             int trajectoryCount,
@@ -126,7 +126,7 @@ public class MultivariateSelfExcitingProcessEstimator
    * @return
    * @throws IOException
    */
-  public static ArrayList<MultivariateExponentialSelfExcitingProcess>
+  public static ArrayList<ExponentialMutuallyExcitingProcess>
          estimateSelfExcitingTradingProcesses(Type type,
                                               int trajectoryCount,
                                               TradingFiltration tradingProcess) throws IOException
@@ -137,7 +137,7 @@ public class MultivariateSelfExcitingProcessEstimator
 
     out.println("E[dt]=" + Edt);
 
-    ArrayList<MultivariateExponentialSelfExcitingProcess> processes = new ArrayList<>();
+    ArrayList<ExponentialMutuallyExcitingProcess> processes = new ArrayList<>();
     int n = (int) (NasdaqTradingProcess.tradingDuration / W);
     int indexes[] = NasdaqTradingStrategy.getIndices(times);
 
@@ -147,9 +147,9 @@ public class MultivariateSelfExcitingProcessEstimator
       IntVector typeSlice = tradingProcess.types.slice(i == 0 ? 0 : indexes[i - 1], indexes[i]);
       DoubleMatrix markedPointSlice = tradingProcess.markedPoints.sliceRows(i == 0 ? 0 : tradingProcess.tradeIndexes[i - 1], tradingProcess.tradeIndexes[i]);
 
-      MultivariateExponentialSelfExcitingProcess process = MultivariateExponentialSelfExcitingProcess.spawnNewProcess(type, tradingProcess);
+      ExponentialMutuallyExcitingProcess process = ExponentialMutuallyExcitingProcess.spawnNewProcess(type, tradingProcess);
 
-      MultivariateSelfExcitingProcessEstimator estimator = new MultivariateSelfExcitingProcessEstimator(process);
+      MutuallyExcitingProcessEstimator estimator = new MutuallyExcitingProcessEstimator(process);
       estimator.setTrajectoryCount(trajectoryCount);
       estimator.estimate(markedPointSlice, typeSlice);
       processes.add(process);
@@ -165,7 +165,7 @@ public class MultivariateSelfExcitingProcessEstimator
   public static void
          storeParameterEstimationResults(File testFile,
                                          Vector data,
-                                         MultivariateExponentialSelfExcitingProcess process) throws IOException
+                                         ExponentialMutuallyExcitingProcess process) throws IOException
   {
     Vector compensator = process.Λ().setName("comp");
     DoubleMatrix intensity = process.conditionalλ().setName("intensity");
@@ -197,7 +197,7 @@ public class MultivariateSelfExcitingProcessEstimator
     return trajectoryCount;
   }
 
-  public MultivariateSelfExcitingProcess
+  public MutuallyExcitingProcess
          estimate(DoubleMatrix markedPoints,
                   IntVector types) throws IOException
   {

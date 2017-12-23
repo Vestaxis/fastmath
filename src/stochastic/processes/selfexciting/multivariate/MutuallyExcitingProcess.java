@@ -11,7 +11,7 @@ import fastmath.Vector;
 import stochastic.processes.selfexciting.AbstractSelfExcitingProcess;
 import stochastic.processes.selfexciting.BoundedParameter;
 
-public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExcitingProcess
+public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProcess
 {
 
   protected int dim;
@@ -22,7 +22,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
    */
   public IntVector K;
 
-  public MultivariateSelfExcitingProcess()
+  public MutuallyExcitingProcess()
   {
     super();
   }
@@ -47,7 +47,7 @@ public abstract class MultivariateSelfExcitingProcess extends AbstractSelfExciti
 
     try
     {
-      MultivariateSelfExcitingProcess spawn = getClass().getDeclaredConstructor(int.class).newInstance(dim);
+      MutuallyExcitingProcess spawn = getClass().getDeclaredConstructor(int.class).newInstance(dim);
       spawn.assignParameters(getParameters().toDoubleArray());
       spawn.T = T;
       spawn.X = X;

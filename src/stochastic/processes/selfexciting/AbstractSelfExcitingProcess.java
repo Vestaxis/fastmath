@@ -25,7 +25,7 @@ import dnl.utils.text.table.TextTable;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
-import stochastic.processes.selfexciting.multivariate.MultivariateSelfExcitingProcess;
+import stochastic.processes.selfexciting.multivariate.MutuallyExcitingProcess;
 
 public abstract class AbstractSelfExcitingProcess implements MultivariateFunction, SelfExcitingProcess
 {
@@ -58,10 +58,10 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
       spawn.assignParameters(getParameters().toDoubleArray());
       spawn.T = T;
       spawn.X = X;
-      if (spawn instanceof MultivariateSelfExcitingProcess)
+      if (spawn instanceof MutuallyExcitingProcess)
       {
-        MultivariateSelfExcitingProcess multivariateSpawn = (MultivariateSelfExcitingProcess) spawn;
-        MultivariateSelfExcitingProcess multivariateThis = (MultivariateSelfExcitingProcess) this;
+        MutuallyExcitingProcess multivariateSpawn = (MutuallyExcitingProcess) spawn;
+        MutuallyExcitingProcess multivariateThis = (MutuallyExcitingProcess) this;
         multivariateSpawn.K = multivariateThis.K;
       }
       return spawn;

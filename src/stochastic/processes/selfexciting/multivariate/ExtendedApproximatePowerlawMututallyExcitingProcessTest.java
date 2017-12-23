@@ -7,13 +7,13 @@ import static org.fusesource.jansi.Ansi.ansi;
 import fastmath.Vector;
 import junit.framework.TestCase;
 
-public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest extends TestCase
+public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {
 
   public void
          testGetAndAssignParameters()
   {
-    MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = new ExtendedApproximatePowerlawMututallyExcitingProcess(2);
     int paramCount = process.getParamCount() * process.dim;
     Vector randomParams = new Vector(paramCount);
     for (int i = 0; i < randomParams.size(); i++)
@@ -26,10 +26,10 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
     // out.println( "paramCount=" + paramCount );
   }
 
-  public static MultivariateExtendedApproximatePowerlawSelfExcitingProcess
+  public static ExtendedApproximatePowerlawMututallyExcitingProcess
          constructProcess()
   {
-    final MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+    final ExtendedApproximatePowerlawMututallyExcitingProcess process = new ExtendedApproximatePowerlawMututallyExcitingProcess(2);
 
     process.assignParameters(new double[]
     { 1, 0, 3, 1.78, 1, 0.01, 2.99, 1.75 });
@@ -39,7 +39,7 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcessTest exte
   public void
          testInvLambda()
   {
-    MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = constructProcess();
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
     // process.ε = 0.05;
 
     process.T = new Vector(new double[]

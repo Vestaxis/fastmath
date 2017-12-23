@@ -58,7 +58,7 @@ import stochastic.processes.pointprocesses.finance.TradingFiltration;
 import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 
-public abstract class MultivariateExponentialSelfExcitingProcess extends MultivariateSelfExcitingProcess
+public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitingProcess
 {
 
   public abstract int
@@ -67,7 +67,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   // baseline intensity parameters
   Vector κ;
 
-  public MultivariateExponentialSelfExcitingProcess()
+  public ExponentialMutuallyExcitingProcess()
   {
 
   }
@@ -180,7 +180,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     SimpleBounds simpleBounds = getParameterBounds();
 
     SolutionValidator validator = point -> {
-      MultivariateExponentialSelfExcitingProcess process = newProcess(point.getPoint());
+      ExponentialMutuallyExcitingProcess process = newProcess(point.getPoint());
       for (int i = 0; i < process.dim(); i++)
       {
         if (process.Λ(i).mean() < 0)
@@ -199,8 +199,8 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
     PointValuePairComparator momentMatchingComparator = (a,
                                                          b) -> {
-      MultivariateExponentialSelfExcitingProcess processA = newProcess(a.getPoint());
-      MultivariateExponentialSelfExcitingProcess processB = newProcess(b.getPoint());
+      ExponentialMutuallyExcitingProcess processA = newProcess(a.getPoint());
+      ExponentialMutuallyExcitingProcess processB = newProcess(b.getPoint());
       double mma = processA.getΛmomentMeasure();
       double mmb = processB.getΛmomentMeasure();
       return Double.compare(mma, mmb);
@@ -230,9 +230,9 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
   }
 
   public Vector
-          dT()
+         dT()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
   }
 
   @Override
@@ -242,10 +242,10 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
     throw new UnsupportedOperationException("TODO");
   }
 
-  public MultivariateExponentialSelfExcitingProcess
+  public ExponentialMutuallyExcitingProcess
          newProcess(double[] point)
   {
-    MultivariateExponentialSelfExcitingProcess process = (MultivariateExponentialSelfExcitingProcess) this.clone();
+    ExponentialMutuallyExcitingProcess process = (ExponentialMutuallyExcitingProcess) this.clone();
     process.assignParameters(point);
     return process;
   }
@@ -392,8 +392,6 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
    * @param m
    *          dimension in [0,dim-1]
    * @param n
-   *          TODO
-   * @param m
    *          dimension in [0,dim-1]
    * @return the j-th α parameter corresponding to the k-th dimension
    */
@@ -945,7 +943,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
    * @param filtration
    * @return
    */
-  public static MultivariateExponentialSelfExcitingProcess
+  public static ExponentialMutuallyExcitingProcess
          spawnNewProcess(SelfExcitingProcessFactory.Type type,
                          TradingFiltration filtration)
   {
@@ -955,7 +953,7 @@ public abstract class MultivariateExponentialSelfExcitingProcess extends Multiva
 
     if (type == SelfExcitingProcessFactory.Type.MultivariateExtendedApproximatePowerlaw)
     {
-      MultivariateExtendedApproximatePowerlawSelfExcitingProcess process = new MultivariateExtendedApproximatePowerlawSelfExcitingProcess(2);
+      ExtendedApproximatePowerlawMututallyExcitingProcess process = new ExtendedApproximatePowerlawMututallyExcitingProcess(2);
       process.T = filtration.times;
       process.K = filtration.types;
       process.X = filtration.markedPoints;

@@ -3,7 +3,7 @@ package stochastic.processes.selfexciting.multivariate;
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 
-public abstract class DiagonalMultivariateExponentialSelfExcitingProcess extends MultivariateExponentialSelfExcitingProcess
+public abstract class DiagonalExponentialMututallyExcitingProcess extends ExponentialMutuallyExcitingProcess
 {
   @Override
   public double

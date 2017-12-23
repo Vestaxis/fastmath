@@ -19,10 +19,10 @@ import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
  * {@link ExtendedApproximatePowerlawSelfExcitingProcess} with null
  * cross-terms.. that is, the branching matrix is a diagonal vector
  */
-public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends DiagonalMultivariateExponentialSelfExcitingProcess
+public class ExtendedApproximatePowerlawMututallyExcitingProcess extends DiagonalExponentialMututallyExcitingProcess
 {
 
-  public MultivariateExtendedApproximatePowerlawSelfExcitingProcess(int dim)
+  public ExtendedApproximatePowerlawMututallyExcitingProcess(int dim)
   {
     this.dim = dim;
     κ = new Vector(dim).setName("κ");
@@ -259,7 +259,6 @@ public class MultivariateExtendedApproximatePowerlawSelfExcitingProcess extends 
   {
     return (dT != null) ? dT : (dT = T.diff());
   }
-
 
   @Override
   public Vector
