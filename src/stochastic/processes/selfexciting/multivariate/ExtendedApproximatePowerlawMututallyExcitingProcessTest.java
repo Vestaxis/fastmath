@@ -15,6 +15,23 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
 {
 
   public void
+         testLikelihood()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+    process.T = new Vector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+    process.T.set(2, 27);
+    process.K = new IntVector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 1);
+    process.T.set(2, 0);
+    double ll = process.logLik();
+    out.println("ll=" + ll);
+    assertTrue(Double.isFinite(ll));
+  }
+
+  public void
          testA()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
@@ -37,7 +54,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
           double b = process.A(type, tk, j);
           Real c = process.AReal(type, tk, j);
           double d = process.B(type, tk, j);
-          //out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
+          // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
           assertEquals(a, b, 1E-14);
           assertEquals(a, 1 + d, 1E-14);
         }
