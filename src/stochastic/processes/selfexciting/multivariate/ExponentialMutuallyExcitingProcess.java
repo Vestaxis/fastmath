@@ -136,7 +136,9 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
 
     SolutionValidator validator = point -> {
       ExponentialMutuallyExcitingProcess process = newProcess(point.getPoint());
-      return process.Λ().mean() > 0;
+      double mean = process.Λ().mean();
+      out.println( "process mean " + mean );
+      return mean > 0;
     };
 
     Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim() * 2 + 1);
