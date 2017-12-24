@@ -133,15 +133,6 @@ public class DoubleColMatrix extends DoubleMatrix
     return reuseBuffer ? new DoubleColMatrix(buffer, getBaseOffset(), numRows, numCols) : new DoubleColMatrix(this);
   }
 
-  /**
-   * Create a copy of this matrix
-   */
-  @Override
-  public DoubleColMatrix
-         copy(MatrixContainer container)
-  {
-    return container.getMatrix(numRows, numCols).assign(this);
-  }
 
   /**
    * Return offset in BYTES

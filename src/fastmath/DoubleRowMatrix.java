@@ -81,14 +81,6 @@ public class DoubleRowMatrix extends DoubleMatrix
     return new DoubleRowMatrix( this );
   }
 
-  /**
-   * Create a copy of this matrix
-   */
-  @Override
-  public DoubleColMatrix copy( MatrixContainer container )
-  {
-    return container.getMatrix( numRows, numCols ).assign( this );
-  }
 
   /**
    * 

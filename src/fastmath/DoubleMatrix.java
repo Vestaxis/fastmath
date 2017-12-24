@@ -45,7 +45,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
 
     @Override
-    public Vector asVector()
+    public Vector
+           asVector()
     {
       assert isDense() : "Underlying matrix storage must be contiguous";
 
@@ -53,18 +54,20 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
 
     @Override
-    public Vector.Sub col( int i )
+    public Vector.Sub
+           col(int i)
     {
-      int offset = getOffset( 0, i );
-      Vector.Sub colVector = new Vector.Sub( buffer, numRows, offset, getRowIncrement(), i );
-      if ( getName() != null )
+      int offset = getOffset(0, i);
+      Vector.Sub colVector = new Vector.Sub(buffer, numRows, offset, getRowIncrement(), i);
+      if (getName() != null)
       {
-        colVector.setName(getName() + "[" + i + "]" );
+        colVector.setName(getName() + "[" + i + "]");
       }
       return colVector;
     }
 
-    public DoubleMatrix copy()
+    public DoubleMatrix
+           copy()
     {
       return copy(false);
     }
@@ -74,7 +77,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
      * or column order it will return DenseDoubleMatrix or DoubleRowMatrix
      */
     @Override
-    public DoubleMatrix copy(boolean reuseBuffer)
+    public DoubleMatrix
+           copy(boolean reuseBuffer)
     {
       if (getColIncrement() == 1)
       {
@@ -87,26 +91,20 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
 
     /**
-     * Create a copy of this matrix
-     */
-    @Override
-    public DoubleColMatrix copy(MatrixContainer container)
-    {
-      return container.getMatrix(numRows, numCols).assign(this);
-    }
-
-    /**
      * @return Returns the columnIncrement.
      * @uml.property name="columnIncrement"
      */
     @Override
-    public int getColIncrement()
+    public int
+           getColIncrement()
     {
       return columnIncrement;
     }
 
     @Override
-    public int getOffset(int i, int j)
+    public int
+           getOffset(int i,
+                     int j)
     {
       return baseOffset + (i * rowIncrement * MiDouble.BYTES) + (j * columnIncrement * MiDouble.BYTES);
     }
@@ -116,19 +114,22 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
      * @uml.property name="rowIncrement"
      */
     @Override
-    public int getRowIncrement()
+    public int
+           getRowIncrement()
     {
       return rowIncrement;
     }
 
     @Override
-    public boolean isTranspose()
+    public boolean
+           isTranspose()
     {
       return isTranspose;
     }
 
     @Override
-    public int getMainIncrement()
+    public int
+           getMainIncrement()
     {
       throw new UnsupportedOperationException();
     }
@@ -146,7 +147,10 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return the value of the updated matrix entry
    */
-  public double add(int i, int j, double x)
+  public double
+         add(int i,
+             int j,
+             double x)
   {
     double updatedValue = get(i, j) + x;
     set(i, j, updatedValue);
@@ -228,8 +232,25 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * fortran dabs blas ddot, dnrm2
    */
-  public static native int cholDowndate(ByteBuffer r, int rOff, int ldr, int p, ByteBuffer x, int xOff, ByteBuffer z, int zOff, int ldz, int lz,
-      ByteBuffer y, int yOff, ByteBuffer rho, int rhoOff, ByteBuffer c, int cOff, ByteBuffer s, int sOff);
+  public static native int
+         cholDowndate(ByteBuffer r,
+                      int rOff,
+                      int ldr,
+                      int p,
+                      ByteBuffer x,
+                      int xOff,
+                      ByteBuffer z,
+                      int zOff,
+                      int ldz,
+                      int lz,
+                      ByteBuffer y,
+                      int yOff,
+                      ByteBuffer rho,
+                      int rhoOff,
+                      ByteBuffer c,
+                      int cOff,
+                      ByteBuffer s,
+                      int sOff);
 
   /**
    * dchud updates an augmented cholesky decomposition of the triangular part of
@@ -296,8 +317,25 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * extended blas drotg fortran dsqrt
    */
-  public static native void cholUpdate(ByteBuffer r, int rOff, int ldr, int p, ByteBuffer x, int xOff, ByteBuffer z, int zOff, int ldz, int lz,
-      ByteBuffer y, int yOff, ByteBuffer rho, int rhoOff, ByteBuffer c, int cOff, ByteBuffer s, int sOff);
+  public static native void
+         cholUpdate(ByteBuffer r,
+                    int rOff,
+                    int ldr,
+                    int p,
+                    ByteBuffer x,
+                    int xOff,
+                    ByteBuffer z,
+                    int zOff,
+                    int ldz,
+                    int lz,
+                    ByteBuffer y,
+                    int yOff,
+                    ByteBuffer rho,
+                    int rhoOff,
+                    ByteBuffer c,
+                    int cOff,
+                    ByteBuffer s,
+                    int sOff);
 
   /**
    * Purpose =======
@@ -353,8 +391,17 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * v(1:i-1) = 0 and v(i) = 1; v(i+1:m) is stored on exit in A(i+1:m,i), and tau
    * in TAU(i).
    */
-  private static native int dgeqp3(int m, int n, ByteBuffer A, int Aoff, int lda, ByteBuffer buffer, ByteBuffer tau, int tauOff, ByteBuffer work,
-      int lwork);
+  private static native int
+          dgeqp3(int m,
+                 int n,
+                 ByteBuffer A,
+                 int Aoff,
+                 int lda,
+                 ByteBuffer buffer,
+                 ByteBuffer tau,
+                 int tauOff,
+                 ByteBuffer work,
+                 int lwork);
 
   /**
    * DGETRS solves a system of linear equations A * X = B or A' * X = B with a
@@ -387,7 +434,17 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * return = 0: successful exit < 0: if INFO = -i, the i-th argument had an
    * illegal value
    */
-  public static native int dgetrs(char trans, int n, int nrhs, ByteBuffer a, int aOff, int lda, ByteBuffer ipiv, ByteBuffer b, int bOff, int ldb);
+  public static native int
+         dgetrs(char trans,
+                int n,
+                int nrhs,
+                ByteBuffer a,
+                int aOff,
+                int lda,
+                ByteBuffer ipiv,
+                ByteBuffer b,
+                int bOff,
+                int ldb);
 
   /**
    * DORGQR generates an M-by-N real matrix Q with orthonormal columns, which is
@@ -430,7 +487,16 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return 0: successful exit < 0: if INFO = -i, the i-th argument has an
    *         illegal value
    */
-  private static native int dorgqr(int m, int n, int k, ByteBuffer a, int aOff, int lda, ByteBuffer tau, ByteBuffer work, int lwork);
+  private static native int
+          dorgqr(int m,
+                 int n,
+                 int k,
+                 ByteBuffer a,
+                 int aOff,
+                 int lda,
+                 ByteBuffer tau,
+                 ByteBuffer work,
+                 int lwork);
 
   /**
    * DPOTRI computes the inverse of a real symmetric positive definite matrix A
@@ -457,7 +523,11 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    *         value > 0: if INFO = i, the (i,i) element of the factor U or L is
    *         zero, and the inverse could not be computed.
    */
-  private static native int dpotri(char uplo, int n, ByteBuffer A, int lda);
+  private static native int
+          dpotri(char uplo,
+                 int n,
+                 ByteBuffer A,
+                 int lda);
 
   /**
    * DSYTRF computes the factorization of a real symmetric matrix A using the
@@ -511,7 +581,15 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return
    */
-  private static native int dsytrf(char uplo, int n, ByteBuffer A, int aOff, int lda, IntBuffer ipiv, ByteBuffer work, int lwork);
+  private static native int
+          dsytrf(char uplo,
+                 int n,
+                 ByteBuffer A,
+                 int aOff,
+                 int lda,
+                 IntBuffer ipiv,
+                 ByteBuffer work,
+                 int lwork);
 
   /**
    * DSYTRI computes the inverse of a real symmetric indefinite matrix A using the
@@ -527,7 +605,15 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @param lwork
    * @return
    */
-  private static native int dsytri(char uplo, int n, ByteBuffer A, int aOff, int lda, IntVector ipiv, ByteBuffer work, int lwork);
+  private static native int
+          dsytri(char uplo,
+                 int n,
+                 ByteBuffer A,
+                 int aOff,
+                 int lda,
+                 IntVector ipiv,
+                 ByteBuffer work,
+                 int lwork);
 
   protected IntVector ipiv;
 
@@ -577,7 +663,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public DoubleMatrix add(AbstractMatrix x)
+  public DoubleMatrix
+         add(AbstractMatrix x)
   {
     for (Vector col : cols())
     {
@@ -594,7 +681,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @param size
    */
-  private void allocateWorkspace(int size)
+  private void
+          allocateWorkspace(int size)
   {
     if (workspace == null || workspace.size() < size)
     {
@@ -610,7 +698,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return this
    */
   @SuppressWarnings("unchecked")
-  public <T extends DoubleMatrix> T assign(double x)
+  public <T extends DoubleMatrix>
+         T
+         assign(double x)
   {
     cols().forEach(c -> c.assign(x));
     return (T) this;
@@ -624,11 +714,12 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return this
    */
   @SuppressWarnings("unchecked")
-  public <T extends DoubleMatrix> T assign(AbstractMatrix x)
+  public <T extends DoubleMatrix>
+         T
+         assign(AbstractMatrix x)
   {
-    assert numRows == x.numRows
-           && numCols == x.getColCount() : "Matrices must be of compatible dimension: "
-                                           + format("%dx%d != %dx%d", getRowCount(), getColCount(), x.getRowCount(), x.getColCount());
+    assert numRows == x.numRows && numCols == x.getColCount() : "Matrices must be of compatible dimension: "
+                                                                + format("%dx%d != %dx%d", getRowCount(), getColCount(), x.getRowCount(), x.getColCount());
 
     for (int i = 0; i < numCols; i++)
     {
@@ -645,7 +736,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix assignAboveDiag(double d)
+  public AbstractMatrix
+         assignAboveDiag(double d)
   {
     for (int i = 1; i < numCols; i++)
     {
@@ -662,7 +754,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix assignBelowDiag(double d)
+  public AbstractMatrix
+         assignBelowDiag(double d)
   {
     for (int i = 0; i < numCols - 1; i++)
     {
@@ -673,7 +766,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   }
 
   @Override
-  public Vector asVector()
+  public Vector
+         asVector()
   {
     // assert getRowIncrement() == MiDouble.BYTES || getColIncrement() ==
     // MiDouble.BYTES : String.format( "Cannot represent matrix as a vector
@@ -683,27 +777,24 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return vec;
   }
 
-  public abstract int getMainIncrement();
+  public abstract int
+         getMainIncrement();
 
   /**
    * Create a copy of this matrix
    */
   @Override
-  public abstract <M extends AbstractMatrix> M copy(boolean reuseBuffer);
-
-  /**
-   * @see this{@link #copy(boolean)}
-   * @param container
-   * @return
-   */
-  public abstract DoubleMatrix copy(MatrixContainer container);
+  public abstract <M extends AbstractMatrix>
+         M
+         copy(boolean reuseBuffer);
 
   /**
    * Copies the upper triangular part of this matrix to the lower triangle
    * 
    * @return this
    */
-  public AbstractMatrix copyUpToLow()
+  public AbstractMatrix
+         copyUpToLow()
   {
     assert isSquare() : "matrix is not square";
 
@@ -720,7 +811,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return
    */
-  public Vector diag()
+  public Vector
+         diag()
   {
     assert isSquare() : "Matrix must be square";
 
@@ -730,7 +822,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * @return this{@link #diag()}.{@link #sum()}
    */
-  public double trace()
+  public double
+         trace()
   {
     return diag().sum();
   }
@@ -741,7 +834,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix diffCols()
+  public AbstractMatrix
+         diffCols()
   {
     // FIXME: optimize diffCols
 
@@ -759,7 +853,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return a VIEW into this of (numRows-1)x(numCols)
    */
-  public AbstractMatrix diffColsTrim()
+  public AbstractMatrix
+         diffColsTrim()
   {
     for (Vector col : cols())
     {
@@ -774,7 +869,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return an EigenDecompositon with the right side set
    */
-  public EigenDecomposition eig() throws FastMathException
+  public EigenDecomposition
+         eig() throws FastMathException
   {
     return eig(false, true);
   }
@@ -791,12 +887,15 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return an EigenDecompositon
    */
-  public EigenDecomposition eig(boolean left, boolean right) throws FastMathException
+  public EigenDecomposition
+         eig(boolean left,
+             boolean right) throws FastMathException
   {
     return new EigenDecomposition(this, left, right);
   }
 
-  public DoubleMatrix elementWiseMultiply(DoubleMatrix m)
+  public DoubleMatrix
+         elementWiseMultiply(DoubleMatrix m)
   {
     assert numRows == m.numRows : "number of rows does not agree";
     assert numCols == m.getColCount() : "number of columns does not agree";
@@ -807,7 +906,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return this;
   }
 
-  public DoubleMatrix elementWiseDivide(DoubleMatrix m)
+  public DoubleMatrix
+         elementWiseDivide(DoubleMatrix m)
   {
     assert numRows == m.numRows : "number of rows does not agree";
     assert numCols == m.getColCount() : "number of columns does not agree";
@@ -822,31 +922,46 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * Equals within error bounds
    */
-  public boolean equals(AbstractMatrix m, double bounds)
+  public boolean
+         equals(AbstractMatrix m,
+                double bounds)
   {
-    if (numRows != m.getRowCount() || numCols != m.getColCount()) { return false; }
+    if (numRows != m.getRowCount() || numCols != m.getColCount())
+    {
+      return false;
+    }
 
     for (int i = 0; i < numRows; i++)
     {
-      if (!row(i).equals(m.row(i), bounds)) { return false; }
+      if (!row(i).equals(m.row(i), bounds))
+      {
+        return false;
+      }
     }
 
     return true;
   }
 
   @Override
-  public boolean equals(Object obj)
+  public boolean
+         equals(Object obj)
   {
     // TODO: optimize
     if (DoubleMatrix.class.isAssignableFrom(obj.getClass()))
     {
       AbstractMatrix m = (AbstractMatrix) obj;
 
-      if (numRows != m.getRowCount() || numCols != m.getColCount()) { return false; }
+      if (numRows != m.getRowCount() || numCols != m.getColCount())
+      {
+        return false;
+      }
 
       for (int i = 0; i < numRows; i++)
       {
-        if (!row(i).equals(m.row(i))) { return false; }
+        if (!row(i).equals(m.row(i)))
+        {
+          return false;
+        }
       }
 
       return true;
@@ -857,7 +972,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
   }
 
-  public DoubleMatrix exp()
+  public DoubleMatrix
+         exp()
   {
     for (Vector col : cols())
     {
@@ -867,7 +983,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return this;
   }
 
-  public DoubleMatrix log()
+  public DoubleMatrix
+         log()
   {
     for (Vector col : cols())
     {
@@ -878,16 +995,22 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   }
 
   @Override
-  public double get(int i, int j)
+  public double
+         get(int i,
+             int j)
   {
-    if (i >= numRows || j >= numCols || i < 0 || j < 0) { return Double.NaN; }
+    if (i >= numRows || j >= numCols || i < 0 || j < 0)
+    {
+      return Double.NaN;
+    }
     assert i < numRows : format("i=%d >= numRows=%d", i, numRows);
     assert j < numCols : format("j=%d >= numCols=%d", j, numCols);
     int offset = getOffset(i, j);
     return get1D(offset);
   }
 
-  public double get1D(int offset)
+  public double
+         get1D(int offset)
   {
     return buffer.getDouble(offset);
   }
@@ -897,7 +1020,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @see org.jfree.data.xy.XYDataset#getItemCount(int)
    */
-  public int getItemCount(int arg0)
+  public int
+         getItemCount(int arg0)
   {
     return getRowCount();
   }
@@ -905,7 +1029,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * Sets the elements on the diagonal to 1.0, everything else 0.0
    */
-  public AbstractMatrix identity()
+  public AbstractMatrix
+         identity()
   {
     assign(0.0);
 
@@ -922,7 +1047,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @see Vector.lag
    */
-  public AbstractMatrix lagCols(int k)
+  public AbstractMatrix
+         lagCols(int k)
   {
     for (Vector col : cols())
     {
@@ -956,7 +1082,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @throws IllegalValueError
    * @throws SingularFactorException
    */
-  public DoubleMatrix ldivide(DoubleMatrix B) throws SingularFactorException, IllegalValueError
+  public DoubleMatrix
+         ldivide(DoubleMatrix B) throws SingularFactorException,
+                                 IllegalValueError
   {
     // if ( isSquare() )
     // {
@@ -1005,7 +1133,10 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @throws IllegalValueError
    * @throws SingularFactorException
    */
-  public DoubleMatrix ldivide(DoubleMatrix B, VectorContainer container) throws SingularFactorException, IllegalValueError
+  public DoubleMatrix
+         ldivide(DoubleMatrix B,
+                 VectorContainer container) throws SingularFactorException,
+                                            IllegalValueError
   {
     // if ( isSquare() )
     // {
@@ -1035,7 +1166,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return
    */
-  public int leadingDimension()
+  public int
+         leadingDimension()
   {
     return isTranspose() ? getColCount() : getRowCount();
   }
@@ -1043,7 +1175,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * Returns a vector of the maximum value of each column
    */
-  public Vector max()
+  public Vector
+         max()
   {
     Vector m = new Vector(numCols);
 
@@ -1060,7 +1193,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return a new vector of size n containing the mean values of each column
    */
-  public Vector mean()
+  public Vector
+         mean()
   {
     Vector m = new Vector(numCols);
 
@@ -1075,7 +1209,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * Returns a vector of the minimum value of each column
    */
-  public Vector min()
+  public Vector
+         min()
   {
     Vector m = new Vector(numCols);
 
@@ -1095,7 +1230,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    *          mumber of contiguous lags for each vector in x
    * @return a matrix of lags (nobs x nvar*nlag)
    */
-  public AbstractMatrix mlag(int k)
+  public AbstractMatrix
+         mlag(int k)
   {
     assert k > 0 : "k must be > 0";
 
@@ -1113,7 +1249,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return y;
   }
 
-  public AbstractMatrix prod(double x)
+  public AbstractMatrix
+         prod(double x)
   {
     for (Vector col : cols())
     {
@@ -1131,7 +1268,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return this
    */
   @SuppressWarnings("unchecked")
-  public <X extends DoubleMatrix> X divide(double x)
+  public <X extends DoubleMatrix>
+         X
+         divide(double x)
   {
     asVector().multiply(1.0 / x);
     return (X) this;
@@ -1144,7 +1283,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public DoubleMatrix multiply(double x)
+  public DoubleMatrix
+         multiply(double x)
   {
     asVector().multiply(x);
     return this;
@@ -1158,7 +1298,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this so calls can be chained
    */
-  public DoubleMatrix multiply(Vector x)
+  public DoubleMatrix
+         multiply(Vector x)
   {
     assert numCols == x.size() : "vector length must be equal to number of columns";
 
@@ -1171,101 +1312,13 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   }
 
   /**
-   * Matrix Multiply with scaling
-   * 
-   * @param alpha
-   *          scaling factor applied to this matrix before multiplication
-   * @param B
-   *          right hand matrix
-   * 
-   * @return new matrix of dimenstion this.numRows by B.numCols
-   */
-  public DoubleMatrix prod(double alpha, DoubleMatrix B)
-  {
-    return BLAS1.dgemm(this, alpha, B);
-  }
-
-  /**
-   * Matrix Multiplication into existing matrix
-   * 
-   * C = beta*C + (alpha*this) * B
-   * 
-   * @param alpha
-   *          scaling parameter
-   * @param B
-   *          right side matrix
-   * @param C
-   *          destination matrix
-   * @param beta
-   *          destination matrix scaling parameter
-   * 
-   * @return C
-   */
-  public AbstractMatrix prod(double alpha, DoubleMatrix B, DoubleMatrix C, double beta)
-  {
-    BLAS1.dgemm(this, alpha, B, C, beta);
-
-    return C;
-  }
-
-  /**
-   * Matrix Multiply
-   * 
-   * @param B
-   *          right hand matrix
-   * 
-   * @return new matrix of dimenstion this.numRows by B.numCols
-   */
-  public DoubleColMatrix prod(DoubleMatrix B)
-  {
-    return BLAS1.dgemm(this, 1.0, B);
-  }
-
-  /**
-   * Matrix Multiplication into existing matrix
-   * 
-   * C = this * B
-   * 
-   * @param B
-   *          right side matrix
-   * @param C
-   *          destination matrix
-   * 
-   * @return C
-   */
-  public <A extends AbstractMatrix> A prod(DoubleMatrix B, DoubleMatrix C)
-  {
-    BLAS1.dgemm(this, 1.0, B, C, 0.0);
-
-    return (A) C;
-  }
-
-  /**
-   * Matrix Multiplication into existing matrix
-   * 
-   * C = this * B
-   * 
-   * @param B
-   *          right side matrix
-   * @param resultContainer
-   *          destination matrix
-   * 
-   * @return C
-   */
-  public DoubleColMatrix prod(DoubleMatrix B, MatrixContainer resultContainer)
-  {
-    final DoubleColMatrix result = resultContainer.getMatrix(numRows, B.numCols);
-    BLAS1.dgemm(this, 1.0, B, result, 0.0);
-    return result;
-  }
-
-  /**
    * computes a QR factorization with column pivoting !!!WARNING!!! Destroys this
    * matrix, returns R which is a view into this
    * 
    * @return r which is a view into this matrix
    */
-  public AbstractMatrix qr()
+  public AbstractMatrix
+         qr()
   {
     return qr(null);
   }
@@ -1280,7 +1333,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return r which is a view into this matrix
    */
-  public AbstractMatrix qr(DoubleMatrix q)
+  public AbstractMatrix
+         qr(DoubleMatrix q)
   {
     IntVector jpvt = new IntVector(getColCount());
 
@@ -1361,7 +1415,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @throws IllegalValueError
    * @throws SingularFactorException
    */
-  public AbstractMatrix mrdivide(DoubleMatrix B) throws SingularFactorException, IllegalValueError
+  public AbstractMatrix
+         mrdivide(DoubleMatrix B) throws SingularFactorException,
+                                  IllegalValueError
   {
     // if (B.isSquare())
     // {
@@ -1410,7 +1466,12 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @throws IndexOutOfBoundsException
    */
   @SuppressWarnings("unchecked")
-  public <X extends DoubleMatrix> X slice(int beginRow, int beginCol, int endRow, int endCol)
+  public <X extends DoubleMatrix>
+         X
+         slice(int beginRow,
+               int beginCol,
+               int endRow,
+               int endCol)
   {
     assert beginRow >= 0 && endRow <= numRows && !(endRow < beginRow) : format("beginRow=%d endRow=%d numRows=%d", beginRow, endRow, numRows);
     assert beginCol >= 0 && endCol <= numCols && !(endCol < beginCol) : format("beginCol=%d endCol=%d numCols=%d", beginCol, endCol, numCols);
@@ -1433,7 +1494,10 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @param end
    * @return
    */
-  public <X extends DoubleMatrix> X sliceCols(int start, int end)
+  public <X extends DoubleMatrix>
+         X
+         sliceCols(int start,
+                   int end)
   {
     return slice(0, start, numRows, end);
   }
@@ -1446,7 +1510,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @param end
    * @return
    */
-  public DoubleMatrix sliceRows(int start, int end)
+  public DoubleMatrix
+         sliceRows(int start,
+                   int end)
   {
     // TODO: unit test sliceRows
     return slice(start, 0, end, getColCount());
@@ -1459,7 +1525,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public DoubleMatrix subtract(AbstractMatrix x)
+  public DoubleMatrix
+         subtract(AbstractMatrix x)
   {
     for (Vector col : cols())
     {
@@ -1476,7 +1543,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix subtract(DoubleMatrix x, double alpha)
+  public AbstractMatrix
+         subtract(DoubleMatrix x,
+                  double alpha)
   {
     asVector().subtract(x.asVector(), alpha);
 
@@ -1492,7 +1561,9 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix subtractFromEachCol(Vector x, double alpha)
+  public AbstractMatrix
+         subtractFromEachCol(Vector x,
+                             double alpha)
   {
     assert x.size() == getRowCount() : "dimensions do not agree";
 
@@ -1511,7 +1582,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    *         column
    */
   @Override
-  public Vector sum()
+  public Vector
+         sum()
   {
     Vector m = new Vector(numCols);
 
@@ -1529,7 +1601,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return a new vector of size n containing the standard deviations of each
    *         column
    */
-  public Vector rowSum()
+  public Vector
+         rowSum()
   {
     Vector m = new Vector(numRows);
 
@@ -1547,7 +1620,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * @return a new vector of size n containing the standard deviations of each
    *         column
    */
-  public Vector sum(VectorContainer container)
+  public Vector
+         sum(VectorContainer container)
   {
     Vector m = container.getVector(numCols);
 
@@ -1564,7 +1638,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this so calls can be chained
    */
-  public AbstractMatrix tanh()
+  public AbstractMatrix
+         tanh()
   {
     asVector().tanh();
 
@@ -1574,7 +1649,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   /**
    * Convert to an array
    */
-  public double[][] toArray()
+  public double[][]
+         toArray()
   {
     double[][] x = new double[numRows][numCols];
 
@@ -1591,7 +1667,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   }
 
   @Override
-  public String toString()
+  public String
+         toString()
   {
     String[][] strings = new String[numRows][numCols];
     NumberFormat format = ThreadLocalNumberFormat.getFormat();
@@ -1649,7 +1726,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return sb.toString();
   }
 
-  private String getDimString()
+  private String
+          getDimString()
   {
     String dimString = "(" + getRowCount() + "," + getColCount() + ")";
     return dimString;
@@ -1659,7 +1737,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * Return a transposed view of this Matrix
    */
   @Override
-  public DoubleMatrix trans()
+  public DoubleMatrix
+         trans()
   {
     return new DoubleMatrix.Sub(buffer, numCols, numRows, getOffset(0, 0), getColIncrement(), getRowIncrement(), !isTranspose());
   }
@@ -1672,7 +1751,8 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix transInPlace()
+  public AbstractMatrix
+         transInPlace()
   {
     assert isSquare() : "matrix is not square";
 
@@ -1696,18 +1776,22 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * 
    * @return this
    */
-  public AbstractMatrix trimRows(int n1, int n2)
+  public AbstractMatrix
+         trimRows(int n1,
+                  int n2)
   {
     return sliceRows(n1, getRowCount() - n2);
   }
 
   @Override
-  public DoubleMatrix pow(double x)
+  public DoubleMatrix
+         pow(double x)
   {
     return (DoubleMatrix) super.pow(x);
   }
 
-  public DoubleMatrix reverseRows()
+  public DoubleMatrix
+         reverseRows()
   {
     for (Vector row : rows())
     {
@@ -1716,12 +1800,19 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     return this;
   }
 
-  public DoubleMatrix reverseCols()
+  public DoubleMatrix
+         reverseCols()
   {
     for (Vector col : cols())
     {
       col.assign(col.reverse().copy());
     }
     return this;
+  }
+
+  public DoubleColMatrix
+         prod(DoubleMatrix b)
+  {
+    throw new UnsupportedOperationException("TODO");
   }
 }

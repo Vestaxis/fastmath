@@ -49,15 +49,7 @@ public class DoubleSubMatrix extends DoubleMatrix
     }
   }
 
-  /**
-   * Create a copy of this matrix
-   */
-  @Override
-  public DoubleColMatrix copy( MatrixContainer container )
-  {
-    return container.getMatrix( numRows, numCols ).assign( this );
-  }
-
+ 
   @Override
   public int getColIncrement()
   {

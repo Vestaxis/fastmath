@@ -266,55 +266,6 @@ public class BLAS1
     // X.getIncrement(), Y.getBuffer().asDoubleBuffer(), Y.getIncrement());
   }
 
-  /**
-   * return alpha*op( A )*op( B )
-   */
-  public static DoubleColMatrix
-         dgemm(DoubleMatrix A,
-               double alpha,
-               DoubleMatrix B)
-  {
-    // assert A.isContiguous() : "A must be contiguous";
-
-    DoubleColMatrix C = new DoubleColMatrix(A.getRowCount(), B.getColCount());
-
-    dgemm(A, alpha, B, C, 0.0);
-
-    return C;
-  }
-
-  /**
-   * C = (alpha*A) * B + beta*C
-   * 
-   * FIXME: this needs to support row major operations
-   */
-  public static void
-         dgemm(DoubleMatrix A,
-               double alpha,
-               DoubleMatrix B,
-               DoubleMatrix C,
-               double beta)
-  {
-    assert A.getColCount() == B.getRowCount() : "A.cols=" + A.getColCount() + " != B.rows=" + B.getRowCount();
-    assert A.getRowCount() == C.getRowCount() : "A.rows != C.rows";
-    assert B.getColCount() == C.getColCount() : "B.cols != C.cols";
-    // assert A.isDense() : "A is not dense";
-    // assert B.isContiguous() : "B is not contiguous";
-    assert C.isDense() : "C is not dense";
-    // DoubleColMatrix V = new DoubleColMatrix( C.numRows(), C.numCols() );
-
-    throw new UnsupportedOperationException("TODO");
-
-    // for (int i = 0; i < C.numRows; i++)
-    // {
-    // for (int j = 0; j < C.numCols; j++)
-    // {
-    // V.set(i, j, alpha * A.row(i).copy().multiply(B.col(j)).sum());
-    // }
-    // }
-    //
-    // TestCase.assertEquals( V, C );
-  }
 
   public static int
          dgetrf(AbstractMatrix A,
