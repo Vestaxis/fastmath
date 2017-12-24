@@ -137,7 +137,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     SolutionValidator validator = point -> {
       ExponentialMutuallyExcitingProcess process = newProcess(point.getPoint());
       double mean = process.Λ().mean();
-      out.println( "process mean " + mean );
+      out.println("process mean " + mean);
       return mean > 0;
     };
 
@@ -260,6 +260,22 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   {
     return sum(j -> (α(j, type, type) / β(j, type, type)) * (1 - (exp(-β(j, type, type) * (T.get(tk + 1) - T.get(tk))))) * A(type, tk, j), 0, order() - 1)
            / Z();
+  }
+
+  public double
+         B(int type,
+           int tk,
+           int j)
+  {
+    return A(type, tk, j) - 1;
+  }
+
+  public double
+         Asum(int type,
+              int tk,
+              int j)
+  {
+    throw new UnsupportedOperationException( "TODO" );
   }
 
   public double

@@ -4,11 +4,49 @@ import static java.lang.Math.random;
 import static java.lang.System.out;
 import static org.fusesource.jansi.Ansi.ansi;
 
+import org.arblib.Real;
+
+import fastmath.IntVector;
 import fastmath.Vector;
 import junit.framework.TestCase;
+import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 
 public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {
+
+  public void
+         testA()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+    process.T = new Vector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+    process.T.set(2, 27);
+    process.K = new IntVector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 1);
+    process.T.set(2, 0);
+    
+    for ( int type = 0; type < process.order(); type++ )
+    {
+      
+        
+    for (int j = 0; j < process.order(); j++)
+    {
+      for (int tk = 0; tk < process.T.size(); tk++)
+      {
+        double a = process.Asum(type, tk, j);
+        double b = process.A(type, tk,j);
+        Real c = process.AReal(type, tk, j);
+        double d = process.B(type, tk, j);
+        // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
+        assertEquals(a, b, 1E-14);
+        assertEquals(a, 1 + d, 1E-14);
+      }
+    }
+    }
+
+  }
 
   public void
          testGetAndAssignParameters()

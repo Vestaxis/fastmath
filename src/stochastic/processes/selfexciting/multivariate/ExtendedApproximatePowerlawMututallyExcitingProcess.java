@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+import org.arblib.Real;
 
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
@@ -311,7 +312,15 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   public Vector
          λvector()
   {
-    throw new UnsupportedOperationException( "TODO" );
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  public Real
+         AReal(int type,
+               int tk,
+               int j)
+  {
+    throw new UnsupportedOperationException("TODO");
   }
 
 }
