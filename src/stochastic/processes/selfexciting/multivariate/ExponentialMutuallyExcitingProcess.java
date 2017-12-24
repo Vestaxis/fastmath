@@ -275,7 +275,12 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
               int tk,
               int j)
   {
-    throw new UnsupportedOperationException( "TODO" );
+    if (tk < 0)
+    {
+      return 0;
+    }
+    double Ti = T.get(tk);
+    return 1 + sum(k -> exp(-β(j, type, type) * (Ti - T.get(k))), 0, tk - 1);
   }
 
   public double
@@ -283,7 +288,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            int tk,
            int j)
   {
-    assert 0 <= type && type < dim() : format("type=%d tk=%d j=%d val=%d dim=%d order=%d\n", type, tk, j, dim(), order());
+    assert 0 <= type && type < dim() : format("type=%d tk=%d j=%d dim=%d order=%d\n", type, tk, j, dim(), order());
     if (A == null)
     {
       A = new double[dim()][T.size()][order()];
@@ -293,6 +298,25 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     {
       val = tk == 0 ? 1 : (1 + (exp(-β(j, type, type) * (T.get(tk) - T.get(tk - 1))) * A(type, tk - 1, j)));
       A[type][tk][j] = val;
+    }
+    return val;
+  }
+
+  public Real
+         AReal(int type,
+               int tk,
+               int j)
+  {
+    assert 0 <= type && type < dim() : format("type=%d tk=%d j=%d val=%d dim=%d order=%d\n", type, tk, j, dim(), order());
+    if (AReal == null)
+    {
+      AReal = new Real[dim()][T.size()][order()];
+    }
+    Real val = AReal[type][tk][j];
+    if (val == null)
+    {
+      val = tk == 0 ? Real.ONE : (Real.ONE.add((exp(-β(j, type, type) * (T.get(tk) - T.get(tk - 1))) * A(type, tk - 1, j))));
+      AReal[type][tk][j] = val;
     }
     return val;
   }

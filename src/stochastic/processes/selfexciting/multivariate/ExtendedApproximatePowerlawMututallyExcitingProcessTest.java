@@ -26,24 +26,22 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
     process.T.set(0, 0);
     process.T.set(1, 1);
     process.T.set(2, 0);
-    
-    for ( int type = 0; type < process.order(); type++ )
-    {
-      
-        
-    for (int j = 0; j < process.order(); j++)
+
+    for (int type = 0; type < process.dim(); type++)
     {
       for (int tk = 0; tk < process.T.size(); tk++)
       {
-        double a = process.Asum(type, tk, j);
-        double b = process.A(type, tk,j);
-        Real c = process.AReal(type, tk, j);
-        double d = process.B(type, tk, j);
-        // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
-        assertEquals(a, b, 1E-14);
-        assertEquals(a, 1 + d, 1E-14);
+        for (int j = 0; j < process.order(); j++)
+        {
+          double a = process.Asum(type, tk, j);
+          double b = process.A(type, tk, j);
+          Real c = process.AReal(type, tk, j);
+          double d = process.B(type, tk, j);
+          //out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
+          assertEquals(a, b, 1E-14);
+          assertEquals(a, 1 + d, 1E-14);
+        }
       }
-    }
     }
 
   }

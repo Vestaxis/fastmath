@@ -315,12 +315,5 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     throw new UnsupportedOperationException("TODO");
   }
 
-  public Real
-         AReal(int type,
-               int tk,
-               int j)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
+ 
 }
