@@ -10,8 +10,12 @@ import static java.lang.System.out;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
+import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
@@ -85,7 +89,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     return ExtendedApproximatePowerlawSelfExcitingProcess.Parameter.values();
   }
 
-
   @Override
   public double
          mean()
@@ -93,11 +96,13 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     throw new UnsupportedOperationException("TODO");
   }
 
-  @Override
   public double
          getΛKolmogorovSmirnovStatistic()
   {
-    throw new UnsupportedOperationException("TODO");
+    Vector sortedCompensator = new Vector(Λ().doubleStream().sorted()).reverse();
+    KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+    double ksStatistic = ksTest.kolmogorovSmirnovStatistic(new ExponentialDistribution(1), sortedCompensator.toDoubleArray());
+    return 1 - ksStatistic;
   }
 
   /**
@@ -108,7 +113,8 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
    *          from type in [0,dim-1]
    * @param n
    *          to type in [0,dim-1]
-   * @return the j-th element of the Vector of parameters corresponding to the k-th type
+   * @return the j-th element of the Vector of parameters corresponding to the
+   *         k-th type
    */
   @Override
   protected double
@@ -116,13 +122,13 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
               int j,
               int k)
   {
-    assert j < dim() : format("i=%d j=%d k=%d order=%d dim=%d\n", i, j, k, order(), dim() );
-    
+    assert j < dim() : format("i=%d j=%d k=%d order=%d dim=%d\n", i, j, k, order(), dim());
+
     if (j != k)
     {
       return 0;
     }
-    if ( i == M )
+    if (i == M)
     {
       return αS(j);
     }
@@ -158,61 +164,72 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   }
 
   @Override
-  protected double
-            evolveλ(double dt,
-                    double[][] S)
-  {
-    return 0;
-  }
-
-  @Override
-  public double
-         getLjungBoxMeasure()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
   public Type
          getType()
   {
-    return null;
-    // return Type.MultivariateExtendedApproximatePowerlaw;
+    return Type.MultivariateExtendedApproximatePowerlaw;
+  }
+
+  public String
+         getαβString()
+  {
+    return "TODO";
+  }
+
+  public Vector
+         dT()
+  {
+    return (dT != null) ? dT : (dT = T.diff());
+  }
+
+  /**
+   * functions which takes its minimum when the mean and the variance of the
+   * compensator is closer to 1
+   * 
+   * @return measure which is greater the closer the first two moments of the
+   *         compensator are to unity
+   */
+  public double
+         getΛmomentMeasure()
+  {
+    Vector dT = Λ();
+    Vector moments = dT().normalizedMoments(2);
+    Vector normalizedSampleMoments = (moments.copy().subtract(1)).abs();
+    return normalizedSampleMoments.sum();
+  }
+
+  /**
+   * functions which takes its minimum when the mean and the variance of the
+   * compensator is closer to 1
+   * 
+   * @return this{@link #getΛmomentMeasure()} * log( 1 +
+   *         this{@link #getLjungBoxMeasure()} )
+   */
+  public double
+         getΛmomentLjungBoxMeasure()
+  {
+    return getΛmomentMeasure() * log(1 + getLjungBoxMeasure());
+  }
+
+  /**
+   * return a function of the Ljung-Box statistic which measures the amount of
+   * autocorrelation remaining in the compensator up to lags of
+   * this{@link #LJUNG_BOX_ORDER}
+   * 
+   * @return (Λ().getLjungBoxStatistic( this{@link #LJUNG_BOX_ORDER} ) - (
+   *         this{@link #LJUNG_BOX_ORDER} - 2 ))^2
+   */
+  public double
+         getLjungBoxMeasure()
+  {
+    return pow(Λ().getLjungBoxStatistic(ExponentialSelfExcitingProcess.LJUNG_BOX_ORDER) - (ExponentialSelfExcitingProcess.LJUNG_BOX_ORDER - 2), 2);
   }
 
   @Override
   public double
          getBranchingRatio()
   {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
-         logLikelihood(Vector t)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
-         getStationaryλ()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
-         λ(double t)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public Vector
-         λvector()
-  {
-    throw new UnsupportedOperationException("TODO");
+    return 1;
   }
 
   @Override
@@ -261,18 +278,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
            / Z();
   }
 
-  public String
-         getαβString()
-  {
-    return "TODO";
-  }
-
-  public Vector
-         dT()
-  {
-    return (dT != null) ? dT : (dT = T.diff());
-  }
-
   @Override
   public Vector
          getInnovationSequence()
@@ -300,6 +305,13 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
               double y)
   {
     throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public Vector
+         λvector()
+  {
+    throw new UnsupportedOperationException( "TODO" );
   }
 
 }

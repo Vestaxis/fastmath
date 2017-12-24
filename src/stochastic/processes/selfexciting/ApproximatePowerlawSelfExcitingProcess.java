@@ -8,6 +8,7 @@ import static java.lang.Math.pow;
 
 import org.arblib.Real;
 
+import fastmath.Vector;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory.Type;
 
 public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcitingProcess
@@ -63,7 +64,6 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
     }
 
   }
-
 
   public double τ;
 
@@ -143,6 +143,20 @@ public class ApproximatePowerlawSelfExcitingProcess extends ExponentialSelfExcit
          getType()
   {
     return Type.ExtendedApproximatePowerlaw;
+  }
+
+  @Override
+  public Vector
+         λvector(int type)
+  {
+    if (type == 0)
+    {
+      return λvector();
+    }
+    else
+    {
+      throw new IllegalArgumentException("there is only one dimension, zero, since this is a univariate process");
+    }
   }
 
 }

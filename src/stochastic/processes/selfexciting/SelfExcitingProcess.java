@@ -29,7 +29,5 @@ public interface SelfExcitingProcess
   public Vector
          Λ();
 
-  public Vector
-         λvector();
 
 }

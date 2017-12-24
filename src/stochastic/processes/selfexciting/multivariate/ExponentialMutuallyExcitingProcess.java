@@ -8,6 +8,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.log;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static java.lang.System.err;
 import static java.lang.System.out;
@@ -90,9 +91,6 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     double ll = tn - T.getLeftmostValue() - totalΛ();
     final int n = T.size();
 
-    A = new double[n][order()][dim()];
-    AReal = new Real[n][order()][dim()];
-
     double S[][] = new double[order()][dim()];
     for (int tk = 1; tk < n; tk++)
     {
@@ -128,97 +126,54 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
 
   public ParallelMultistartMultivariateOptimizer
          estimateParameters(int numStarts,
-                            IntConsumer proigressNotifier)
+                            IntConsumer progressNotifier)
   {
     int digits = 15;
     int maxIters = Integer.MAX_VALUE;
-    assert T != null : "T cannot be null";
-    assert K != null : "K cannot be null";
-
-    assert T.size() == K.size() : "times and types should be of same dimension";
-
-    final MultivariateFunction logLikelihoodFunction = new MultivariateFunction()
-    {
-
-      @Override
-      public double
-             value(double[] paramArray)
-      {
-        Pair<Vector[], TreeMap<Double, Integer>[]> timesSubPair = getSubTimes(T, K);
-
-        Vector mean = calculateMean();
-        double ll = 0;
-        Double compMeans[] = new Double[dim()];
-
-        Double compVars[] = new Double[dim()];
-        for (int i = 0; i < dim(); i++)
-        {
-          final Vector intensity = calculateIntensity(timesSubPair, i);
-
-          // final Vector compensator =
-          // calculateCompensatorSlow(timesSubPair,
-          // i);
-          final Vector compensator = calculateCompensator(timesSubPair, i);
-          compMeans[i] = compensator.mean();
-          compVars[i] = compensator.variance();
-          // double fastMean = compensatorFast.mean();
-          // System.out.println("fastMean " + fastMean + " should equal " +
-          // compMeans[i]);
-
-          assert intensity.size() == compensator.size();
-          for (int j = 0; j < intensity.size(); j++)
-          {
-            ll += Math.log(intensity.get(j)) - compensator.get(j);
-          }
-        }
-
-        return ll;
-      }
-
-    };
 
     MaxEval maxEval = new MaxEval(maxIters);
     SimpleBounds simpleBounds = getParameterBounds();
 
     SolutionValidator validator = point -> {
       ExponentialMutuallyExcitingProcess process = newProcess(point.getPoint());
-      for (int i = 0; i < process.dim(); i++)
-      {
-        if (process.Λ(i).mean() < 0)
-        {
-          return false;
-        }
-      }
-      return true;
+      return process.Λ().mean() > 0;
     };
 
-    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim * 2 + 1);
+    Supplier<MultivariateOptimizer> optimizerSupplier = () -> new BOBYQAOptimizer(getParamCount() * dim() * 2 + 1);
 
-    ParallelMultistartMultivariateOptimizer optimizer = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
-                                                                                                    numStarts,
-                                                                                                    getRandomVectorGenerator(simpleBounds));
+    ParallelMultistartMultivariateOptimizer multiopt = new ParallelMultistartMultivariateOptimizer(optimizerSupplier,
+                                                                                                   numStarts,
+                                                                                                   getRandomVectorGenerator(simpleBounds));
 
-    PointValuePairComparator momentMatchingComparator = (a,
-                                                         b) -> {
+    PointValuePairComparator momentMatchingAutocorrelationComparator = (a,
+                                                                        b) -> {
       ExponentialMutuallyExcitingProcess processA = newProcess(a.getPoint());
       ExponentialMutuallyExcitingProcess processB = newProcess(b.getPoint());
-      double mma = processA.getΛmomentMeasure();
-      double mmb = processB.getΛmomentMeasure();
+      double mma = processA.getΛmomentLjungBoxMeasure();
+      double mmb = processB.getΛmomentLjungBoxMeasure();
       return Double.compare(mma, mmb);
     };
 
     double startTime = currentTimeMillis();
-    PointValuePair optimum = optimizer.optimize(GoalType.MAXIMIZE, momentMatchingComparator, validator, maxEval, objectiveFunctionSupplier, simpleBounds);
+    PointValuePair optimum = multiopt.optimize(progressNotifier,
+                                               GoalType.MAXIMIZE,
+                                               momentMatchingAutocorrelationComparator,
+                                               validator,
+                                               maxEval,
+                                               objectiveFunctionSupplier,
+                                               simpleBounds);
     double stopTime = currentTimeMillis();
     double secondsElapsed = (stopTime - startTime) / 1000;
-    double evaluationsPerSecond = optimizer.getEvaluations() / secondsElapsed;
+    double evaluationsPerSecond = multiopt.getEvaluations() / secondsElapsed;
     double minutesElapsed = secondsElapsed / 60;
 
     assignParameters(optimum.getKey());
 
     out.format("estimation completed in %f minutes at %f evals/sec\n", minutesElapsed, evaluationsPerSecond);
 
-    return optimizer;
+    // plot("λ(t)", this::λ, T.fmin(), T.fmax(), 5000 );
+
+    return multiopt;
   }
 
   public double
@@ -310,6 +265,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            int tk,
            int j)
   {
+    assert 0 <= type && type < dim() : format("type=%d tk=%d j=%d val=%d dim=%d order=%d\n", type, tk, j, dim(), order());
     if (A == null)
     {
       A = new double[dim()][T.size()][order()];
@@ -952,12 +908,6 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
          getColumnHeaders()
   {
     return concat(stream(getBoundedParameters()).map(param -> param.getName()), asList(statisticNames).stream()).collect(toList()).toArray(new String[0]);
-  }
-
-  public AbstractMatrix
-         conditionalλ()
-  {
-    throw new UnsupportedOperationException("TODO");
   }
 
   public void

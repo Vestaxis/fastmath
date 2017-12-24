@@ -3,6 +3,8 @@ package stochastic.processes.selfexciting.multivariate;
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
 
+import fastmath.Vector;
+
 public abstract class DiagonalExponentialMututallyExcitingProcess extends ExponentialMutuallyExcitingProcess
 {
   @Override
@@ -33,6 +35,34 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
       }
     }
     return λ / Z();
+  }
+
+  @Override
+  public double
+         logLikelihood(Vector t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         getStationaryλ()
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public double
+         λ(double t)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
+
+  @Override
+  public Vector
+         λvector( int type )
+  {
+    throw new UnsupportedOperationException("TODO");
   }
 
 }

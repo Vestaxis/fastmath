@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.function.IntConsumer;
+import java.util.function.IntToDoubleFunction;
 
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.PointValuePair;
@@ -22,6 +23,7 @@ import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 
 import dnl.utils.text.table.TextTable;
+import fastmath.AbstractMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
@@ -378,7 +380,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
          getInnovationSequence()
   {
     int n = T.size() - 1;
-    return new Vector(seq(tk -> invΛ(tk, 1) - (T.get(tk + 1) - T.get(tk)), 0, n)).slice(forecastStartIndex, n);
+    return new Vector(seq((IntToDoubleFunction) tk -> invΛ(tk, 1) - (T.get(tk + 1) - T.get(tk)), 0, n)).slice(forecastStartIndex, n);
   }
 
   public abstract double
@@ -429,5 +431,11 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
 
     return tt;
   }
+
+  public abstract Vector
+         λvector();
+
+  public abstract Vector
+         λvector(int type);
 
 };

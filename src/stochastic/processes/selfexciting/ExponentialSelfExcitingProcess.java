@@ -429,6 +429,7 @@ public abstract class ExponentialSelfExcitingProcess extends AbstractSelfExcitin
   public double
          getΛKolmogorovSmirnovStatistic()
   {
+    KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
     Vector sortedCompensator = new Vector(Λ().doubleStream().sorted()).reverse();
     double ksStatistic = ksTest.kolmogorovSmirnovStatistic(expDist, sortedCompensator.toDoubleArray());
     return 1 - ksStatistic;

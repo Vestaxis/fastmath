@@ -256,8 +256,8 @@ public class Functions
 
   public static Real
          realSum(IntFunction<Real> elements,
-             int lowerIndex,
-             int upperIndex)
+                 int lowerIndex,
+                 int upperIndex)
   {
     Real s = Real.ZERO;
     for (int i = lowerIndex; i <= upperIndex; i++)
@@ -277,6 +277,14 @@ public class Functions
     return rangeClosed(0, n).mapToDouble(t -> left + (t * dt));
   }
 
+  public static Stream<?>
+         seq(IntFunction<?> elements,
+             int lowerIndex,
+             int upperIndex)
+  {
+    return rangeClosed(lowerIndex, upperIndex).mapToObj(elements);
+  }
+
   public static DoubleStream
          seq(IntToDoubleFunction elements,
              int lowerIndex,
@@ -287,8 +295,8 @@ public class Functions
 
   public static Stream<Real>
          seqReal(IntFunction<Real> elements,
-             int lowerIndex,
-             int upperIndex)
+                 int lowerIndex,
+                 int upperIndex)
   {
     return rangeClosed(lowerIndex, upperIndex).mapToObj(elements);
   }

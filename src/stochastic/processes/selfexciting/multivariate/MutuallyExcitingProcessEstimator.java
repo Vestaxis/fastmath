@@ -1,5 +1,6 @@
 package stochastic.processes.selfexciting.multivariate;
 
+import static fastmath.Functions.seq;
 import static java.lang.System.out;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 
 import org.apache.commons.math3.optim.PointValuePair;
 import org.fusesource.jansi.Ansi.Color;
@@ -168,14 +170,25 @@ public class MutuallyExcitingProcessEstimator
                                          ExponentialMutuallyExcitingProcess process) throws IOException
   {
     Vector compensator = process.Λ().setName("comp");
-    DoubleMatrix intensity = process.conditionalλ().setName("intensity");
+
+    Vector intensities[] = seq((IntFunction<Vector>) type -> process.λvector(type).setName("intensity" + type), 0, process.dim()).toArray(Vector[]::new);
+
     Vector innov = process.getInnovationSequence();
     out.println("writing timestamp data, compensator, intensity, and innov to " + testFile.getAbsolutePath()
                 + " E[data.dt]="
                 + data.diff().mean()
                 + " 1/k="
                 + process.κ.pow(-1));
-    MatFile.write(testFile, data.createMiMatrix(), compensator.createMiMatrix(), intensity.createMiMatrix(), innov.createMiMatrix());
+    MatFile outFile = new MatFile(testFile, MutuallyExcitingProcessEstimator.class.getSimpleName());
+    outFile.write(data.createMiMatrix());
+    outFile.write(compensator.createMiMatrix());
+    outFile.write(innov.createMiMatrix());
+    outFile.write(data.createMiMatrix());
+    for (int i = 0; i < process.dim; i++)
+    {
+      outFile.write(intensities[i].createMiMatrix());
+    }
+    outFile.close();
   }
 
   public void
