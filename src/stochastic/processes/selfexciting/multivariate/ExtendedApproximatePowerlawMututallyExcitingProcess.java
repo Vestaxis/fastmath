@@ -146,7 +146,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   {
     if (j != k)
     {
-      return 0;
+      return 1;
     }
     return i < M ? 1 / (τ.get(j) * pow(m, i)) : βS(j);
 
@@ -251,7 +251,11 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   public double
          Z()
   {
-    return sum(j -> sum(m -> sum(n -> α(j, m, n) / β(j, m, n), 0, dim() - 1), 0, dim() - 1), 0, order() - 1);
+    return sum(j -> sum(m -> sum(n -> {
+      double a = α(j, m, n);
+      double b = β(j, m, n);
+      return a / b;
+    }, 0, dim() - 1), 0, dim() - 1), 0, order() - 1);
   }
 
   @Override
@@ -267,16 +271,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
             double y)
   {
     throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
-         totalΛ()
-  {
-    double tn = T.getRightmostValue();
-
-    return (sum(i -> sum(j -> sum(k -> (α(i, j, k) / β(i, j, k)) * (1 - exp(-β(i, j, k) * (tn - T.get(i)))), 0, order() - 1), 0, dim() - 1), 0, T.size() - 1))
-           / Z();
   }
 
   @Override
@@ -315,5 +309,4 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     throw new UnsupportedOperationException("TODO");
   }
 
- 
 }

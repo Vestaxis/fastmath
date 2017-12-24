@@ -14,35 +14,39 @@ import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExciting
 public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {
 
+  public void testZ()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+
+    double z = process.Z();
+    out.println("z=" + z);
+    assertTrue(Double.isFinite(z));
+  }
+  
   public void
          testLikelihood()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
-    process.T = new Vector(3);
-    process.T.set(0, 0);
-    process.T.set(1, 19);
-    process.T.set(2, 27);
-    process.K = new IntVector(3);
-    process.T.set(0, 0);
-    process.T.set(1, 1);
-    process.T.set(2, 0);
+
     double ll = process.logLik();
     out.println("ll=" + ll);
     assertTrue(Double.isFinite(ll));
   }
 
+  public void testTotalΛ()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+
+    double tl = process.totalΛ();
+    out.println("totalΛ=" + tl);
+    assertTrue(Double.isFinite(tl));
+  }
+  
   public void
          testA()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
-    process.T = new Vector(3);
-    process.T.set(0, 0);
-    process.T.set(1, 19);
-    process.T.set(2, 27);
-    process.K = new IntVector(3);
-    process.T.set(0, 0);
-    process.T.set(1, 1);
-    process.T.set(2, 0);
+
 
     for (int type = 0; type < process.dim(); type++)
     {
@@ -86,6 +90,16 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
 
     process.assignParameters(new double[]
     { 1, 0, 3, 1.78, 1, 0.01, 2.99, 1.75 });
+    
+    process.T = new Vector(3);
+    process.T.set(0, 0);
+    process.T.set(1, 19);
+    process.T.set(2, 27);
+    process.K = new IntVector(3);
+    process.K.set(0, 0);
+    process.K.set(1, 1);
+    process.K.set(2, 0);
+    
     return process;
   }
 
