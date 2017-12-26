@@ -14,7 +14,8 @@ import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExciting
 public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {
 
-  public void testZ()
+  public void
+         testZ()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
 
@@ -22,7 +23,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
     out.println("z=" + z);
     assertTrue(Double.isFinite(z));
   }
-  
+
   public void
          testLikelihood()
   {
@@ -33,7 +34,20 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
     assertTrue(Double.isFinite(ll));
   }
 
-  public void testTotalΛ()
+  public void
+         testλVector()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+
+    Vector lv0 = process.λvector(0);
+    out.println("lv0=" + lv0);
+    Vector lv1 = process.λvector(1);
+    out.println("lv1=" + lv1);
+    // assertTrue(Double.isFinite(ll));
+  }
+
+  public void
+         testTotalΛ()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
 
@@ -41,12 +55,11 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
     out.println("totalΛ=" + tl);
     assertTrue(Double.isFinite(tl));
   }
-  
+
   public void
          testA()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
-
 
     for (int type = 0; type < process.dim(); type++)
     {
@@ -90,7 +103,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
 
     process.assignParameters(new double[]
     { 1, 0, 3, 1.78, 1, 0.01, 2.99, 1.75 });
-    
+
     process.T = new Vector(3);
     process.T.set(0, 0);
     process.T.set(1, 19);
@@ -99,7 +112,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
     process.K.set(0, 0);
     process.K.set(1, 1);
     process.K.set(2, 0);
-    
+
     return process;
   }
 

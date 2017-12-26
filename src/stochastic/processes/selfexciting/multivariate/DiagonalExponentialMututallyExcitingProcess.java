@@ -2,6 +2,7 @@ package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Functions.sum;
 import static java.lang.Math.exp;
+import static java.lang.String.format;
 
 import fastmath.Vector;
 
@@ -26,6 +27,8 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
                     double dt,
                     double[][] S)
   {
+    assert type < dim() : format("type=%d dt=%f order=%d dim=%d\n", type, dt, order(), dim());
+
     double λ = 0;
     for (int j = 0; j < order(); j++)
     {
