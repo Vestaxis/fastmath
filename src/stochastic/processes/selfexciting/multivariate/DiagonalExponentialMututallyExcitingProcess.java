@@ -75,6 +75,8 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
   public Vector
          λvector(int type)
   {
+    assert type < dim() : format("type=%d order=%d dim=%d\n", type, order(), dim());
+
     final int n = T.size();
     Vector λ = new Vector(n);
 

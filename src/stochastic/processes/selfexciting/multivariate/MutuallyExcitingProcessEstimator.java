@@ -171,7 +171,7 @@ public class MutuallyExcitingProcessEstimator
   {
     Vector compensator = process.Λ().setName("comp");
 
-    Vector intensities[] = seq((IntFunction<Vector>) type -> process.λvector(type).setName("intensity" + type), 0, process.dim()).toArray(Vector[]::new);
+    Vector intensities[] = seq((IntFunction<Vector>) type -> process.λvector(type).setName("intensity" + type), 0, process.dim() - 1).toArray(Vector[]::new);
 
     Vector innov = process.getInnovationSequence();
     out.println("writing timestamp data, compensator, intensity, and innov to " + testFile.getAbsolutePath()
