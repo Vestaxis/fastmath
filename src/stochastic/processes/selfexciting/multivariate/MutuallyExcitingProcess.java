@@ -72,7 +72,7 @@ public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProces
     Vector params = new Vector(getParamCount() * dim);
     for (int i = 0; i < getParamCount(); i++)
     {
-      Vector fieldArray = getField(i);
+      Vector fieldArray = getVectorField(i);
       if (fieldArray == null)
       {
         throw new IllegalArgumentException("Vector field '" + getParameterFields()[i].getName() + "' not found in " + getClass().getSimpleName());
@@ -105,7 +105,7 @@ public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProces
 
     for (int i = 0; i < params.length; i++)
     {
-      Vector fieldArray = getField(i);
+      Vector fieldArray = getVectorField(i);
       for (int j = 0; j < dim; j++)
       {
         {
@@ -122,8 +122,8 @@ public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProces
    * @return a Vector of dimension this{@link #dim()}, one is constructed if it
    *         does not already exist
    */
-  public Vector
-         getField(Field field)
+  public final Vector
+         getVectorField(Field field)
   {
     try
     {
@@ -149,10 +149,10 @@ public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProces
    * @return the {@link Vector} corresponding to the i-th parameter as determined
    *         by this{@link #getParameterFields()}
    */
-  public Vector
-         getField(int i)
+  public final Vector
+         getVectorField(int i)
   {
-    return getField(getParameterFields()[i]);
+    return getVectorField(getParameterFields()[i]);
   }
 
   /**
@@ -165,7 +165,7 @@ public abstract class MutuallyExcitingProcess extends AbstractSelfExcitingProces
          getFieldValue(Field field,
                        int j)
   {
-    return getField(field).get(j);
+    return getVectorField(field).get(j);
   }
 
 }

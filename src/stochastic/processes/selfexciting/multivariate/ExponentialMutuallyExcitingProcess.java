@@ -20,6 +20,7 @@ import static java.util.stream.Stream.concat;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -61,8 +62,8 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 
 public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitingProcess
-{
-
+{  
+  
   public abstract int
          order();
 
@@ -343,7 +344,19 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
       process.getLjungBoxMeasure(),
       process.getΛmomentLjungBoxMeasure() };
 
-    return addAll(stream(getParameterFields()).map(param -> process.getFieldValue(param)).toArray(), statisticsVector);
+    /**
+     * Exception in thread "main" java.lang.RuntimeException: Attempt to get
+     * fastmath.Vector field
+     * "stochastic.processes.selfexciting.multivariate.ExtendedApproximatePowerlawMututallyExcitingProcess.τ"
+     * with illegal data type conversion to double at
+     * stochastic.processes.selfexciting.AbstractSelfExcitingProcess.getFieldValue(AbstractSelfExcitingProcess.java:260)
+     * at
+     * stochastic.processes.selfexciting.multivariate.ExponentialMutuallyExcitingProcess.lambda$6(ExponentialMutuallyExcitingProcess.java:346)
+     */
+    return addAll(stream(getParameterFields()).map(param -> {
+      Vector value = process.getVectorField(param);
+      return value;
+    }).toArray(), statisticsVector);
   }
 
   /**
