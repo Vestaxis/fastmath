@@ -1,8 +1,10 @@
 package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Functions.sum;
+import static java.lang.Math.abs;
 import static java.lang.Math.exp;
 import static java.lang.String.format;
+import static java.lang.System.out;
 
 import fastmath.Vector;
 
@@ -70,6 +72,34 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
   {
     throw new UnsupportedOperationException("TODO");
   }
+
+  @Override
+  public double
+         invΛ(int tk,
+              double y)
+  {
+    double dt = 0;
+
+    double δ = 0;
+    double lastTime = T.get(tk);
+    double nextTime = lastTime;
+
+    for (int i = 0; i <= 1000; i++)
+    {
+      δ = Φδ(dt = (nextTime - lastTime), y, tk);
+
+      if (trace)
+      {
+        out.println("double dt[" + i + "]=" + dt + " δ=" + δ);
+      }
+      nextTime = nextTime + δ;
+      if (abs(δ) < 1E-10 || !Double.isFinite(δ))
+      {
+        break;
+      }
+
+    }
+    return dt;  }
 
   @Override
   public Vector

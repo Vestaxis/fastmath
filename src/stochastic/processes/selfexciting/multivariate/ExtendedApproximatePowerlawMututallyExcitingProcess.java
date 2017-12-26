@@ -12,7 +12,6 @@ import java.io.IOException;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
-import org.arblib.Real;
 
 import fastmath.Vector;
 import stochastic.processes.selfexciting.BoundedParameter;
@@ -274,8 +273,10 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   }
 
   @Override
-  public Vector
-         getInnovationSequence()
+  public double
+         Φδ(double t,
+            double y,
+            int tk)
   {
     throw new UnsupportedOperationException("TODO");
   }
@@ -290,14 +291,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   @Override
   public double
          getMeanSquaredPredictionError()
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
-
-  @Override
-  public double
-         invΛ(int tk,
-              double y)
   {
     throw new UnsupportedOperationException("TODO");
   }

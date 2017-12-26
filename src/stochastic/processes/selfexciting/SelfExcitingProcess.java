@@ -19,6 +19,11 @@ public interface SelfExcitingProcess
          Φδ(double t,
             double y);
 
+  public double
+         Φδ(double t,
+            double y,
+            int tk);
+
   /**
    * 
    * @param t
@@ -28,6 +33,5 @@ public interface SelfExcitingProcess
 
   public Vector
          Λ();
-
 
 }

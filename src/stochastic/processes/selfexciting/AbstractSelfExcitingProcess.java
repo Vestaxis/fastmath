@@ -20,10 +20,8 @@ import java.util.function.IntToDoubleFunction;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
-import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 
 import dnl.utils.text.table.TextTable;
-import fastmath.AbstractMatrix;
 import fastmath.DoubleMatrix;
 import fastmath.Vector;
 import fastmath.optim.ParallelMultistartMultivariateOptimizer;
@@ -369,7 +367,7 @@ public abstract class AbstractSelfExcitingProcess implements MultivariateFunctio
     return data;
   }
 
-  final int forecastStartIndex = 6;
+  protected final int forecastStartIndex = 6;
 
   /**
    * @see this{@link #forecastStartIndex}

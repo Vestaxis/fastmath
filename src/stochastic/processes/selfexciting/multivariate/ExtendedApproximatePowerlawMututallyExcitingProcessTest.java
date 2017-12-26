@@ -9,7 +9,6 @@ import org.arblib.Real;
 import fastmath.IntVector;
 import fastmath.Vector;
 import junit.framework.TestCase;
-import stochastic.processes.selfexciting.ExtendedApproximatePowerlawSelfExcitingProcess;
 
 public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {

@@ -20,7 +20,6 @@ import static java.util.stream.Stream.concat;
 import static org.apache.commons.lang.ArrayUtils.addAll;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -28,7 +27,6 @@ import java.util.TreeMap;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
-import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.LegendreGaussIntegrator;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
@@ -43,7 +41,6 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.arblib.Real;
 
-import fastmath.AbstractMatrix;
 import fastmath.DoubleColMatrix;
 import fastmath.EigenDecomposition;
 import fastmath.IntVector;
@@ -58,7 +55,6 @@ import fastmath.optim.ParallelMultistartMultivariateOptimizer;
 import fastmath.optim.PointValuePairComparator;
 import fastmath.optim.SolutionValidator;
 import stochastic.processes.pointprocesses.finance.TradingFiltration;
-import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 
 public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitingProcess
