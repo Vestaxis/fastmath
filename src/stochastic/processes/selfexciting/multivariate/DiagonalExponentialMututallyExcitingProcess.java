@@ -22,7 +22,8 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
    */
   @Override
   protected double
-            evolveλ(double dt,
+            evolveλ(int type,
+                    double dt,
                     double[][] S)
   {
     double λ = 0;
@@ -30,8 +31,8 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
     {
       for (int k = 0; k < dim(); k++)
       {
-        S[j][k] = exp(-β(j, k, k) * dt) * (1 + S[j][k]);
-        λ += α(j, k, k) * S[j][k];
+        S[j][k] = exp(-β(j, type, k) * dt) * (1 + S[j][k]);
+        λ += α(j, type, k) * S[j][k];
       }
     }
     return λ / Z();
@@ -71,7 +72,19 @@ public abstract class DiagonalExponentialMututallyExcitingProcess extends Expone
   public Vector
          λvector(int type)
   {
-    throw new UnsupportedOperationException("TODO");
+    final int n = T.size();
+    Vector λ = new Vector(n);
+
+    double S[][] = new double[order()][dim()];
+    for (int i = 1; i < n; i++)
+    {
+      double t = T.get(i);
+      double prevdt = i == 1 ? 0 : (T.get(i - 1) - T.get(i - 2));
+      double dt = t - T.get(i - 1);
+      λ.set(i, evolveλ(type, dt, S));
+    }
+
+    return λ;
   }
 
 }

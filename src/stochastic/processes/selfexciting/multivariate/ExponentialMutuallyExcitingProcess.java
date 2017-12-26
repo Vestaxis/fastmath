@@ -62,8 +62,8 @@ import stochastic.processes.selfexciting.ExponentialSelfExcitingProcess;
 import stochastic.processes.selfexciting.SelfExcitingProcessFactory;
 
 public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitingProcess
-{  
-  
+{
+
   public abstract int
          order();
 
@@ -93,32 +93,36 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     final int n = T.size();
 
     double S[][] = new double[order()][dim()];
-    for (int tk = 1; tk < n; tk++)
-    {
-      double t = T.get(tk);
-      double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
-      double dt = t - T.get(tk - 1);
-      double λ = evolveλ(dt, S);
-
-      if (λ > 0)
-      {
-        ll += log(λ);
-      }
-
-      // ll -= Λ;
-
-    }
-
-    if (Double.isNaN(ll))
+    for (int type = 0; type < dim(); type++)
 
     {
-      if (verbose)
+      for (int tk = 1; tk < n; tk++)
       {
-        out.println(Thread.currentThread().getName() + " NaN for LL ");
-      }
-      ll = Double.NEGATIVE_INFINITY;
-    }
+        double t = T.get(tk);
+        double prevdt = tk == 1 ? 0 : (T.get(tk - 1) - T.get(tk - 2));
+        double dt = t - T.get(tk - 1);
+        double λ = evolveλ(type, dt, S);
 
+        if (λ > 0)
+        {
+          ll += log(λ);
+        }
+
+        // ll -= Λ;
+
+      }
+
+      if (Double.isNaN(ll))
+
+      {
+        if (verbose)
+        {
+          out.println(Thread.currentThread().getName() + " NaN for LL ");
+        }
+        ll = Double.NEGATIVE_INFINITY;
+      }
+    }
+    
     return ll;
 
   }
@@ -597,7 +601,8 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   }
 
   protected abstract double
-            evolveλ(double dt,
+            evolveλ(int type,
+                    double dt,
                     double[][] S);
 
   protected double
