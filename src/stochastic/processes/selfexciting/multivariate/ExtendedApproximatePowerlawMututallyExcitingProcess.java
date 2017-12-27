@@ -264,22 +264,7 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
     throw new UnsupportedOperationException("TODO");
   }
 
-  @Override
-  public double
-         Φδ(double t,
-            double y)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
 
-  @Override
-  public double
-         Φδ(double t,
-            double y,
-            int tk)
-  {
-    throw new UnsupportedOperationException("TODO");
-  }
 
   @Override
   public double

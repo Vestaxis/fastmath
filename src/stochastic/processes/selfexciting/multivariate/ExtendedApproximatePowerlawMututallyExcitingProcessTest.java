@@ -4,14 +4,33 @@ import static java.lang.Math.random;
 import static java.lang.System.out;
 import static org.fusesource.jansi.Ansi.ansi;
 
+import java.util.Arrays;
+import java.util.TreeMap;
+
 import org.arblib.Real;
 
 import fastmath.IntVector;
+import fastmath.Pair;
 import fastmath.Vector;
 import junit.framework.TestCase;
 
 public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends TestCase
 {
+
+  public void
+         testSubTimes()
+  {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+    process.T = new Vector(new double[]
+    { 25, 91, 93, 112, 166, 167, 175, 176, 189, 227 });
+    process.K = new IntVector(new int[]
+    { 0, 0, 1, 0, 1, 1, 0, 0, 1, 1 });
+    Pair<Vector[], TreeMap<Double, Integer>[]> sliced = process.getSubTimes();
+
+    TreeMap<Double, Integer>[] timeIndices = sliced.right;
+    out.println("sliced left= " + Arrays.toString(sliced.left) + " right=" + Arrays.toString(timeIndices));
+
+  }
 
   public void
          testZ()

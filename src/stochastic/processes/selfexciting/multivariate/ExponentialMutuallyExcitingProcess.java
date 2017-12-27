@@ -2,6 +2,7 @@
 package stochastic.processes.selfexciting.multivariate;
 
 import static fastmath.Functions.eye;
+import static fastmath.Functions.product;
 import static fastmath.Functions.sum;
 import static fastmath.Functions.uniformRandom;
 import static java.lang.Math.exp;
@@ -25,6 +26,8 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
+import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -43,6 +46,7 @@ import org.arblib.Real;
 
 import fastmath.DoubleColMatrix;
 import fastmath.EigenDecomposition;
+import fastmath.Functions;
 import fastmath.IntVector;
 import fastmath.Pair;
 import fastmath.Vector;
@@ -69,6 +73,121 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   public ExponentialMutuallyExcitingProcess()
   {
 
+  }
+
+  @Override
+  public double
+         Φδ(double t,
+            double y)
+  {
+    int tk = T.size() - 1;
+    throw new UnsupportedOperationException("TODO");
+    // return Φ(t, y, tk) / Φdt(t, tk);
+  }
+
+  public double
+         Φ(int m,
+           double dt,
+           double y,
+           int tk)
+  {
+    return τ(m, dt, y) + sum(l -> sum(i -> Φ(m, i, l) * sum(k -> σ(m, i, l, k, dt, dt) - σ(m, i, l, k, dt, lastT(m)), 0, tk), 0, dim() - 1), 0, order() - 1);
+  }
+
+  /**
+   * 
+   * @param m
+   * @param dt
+   * @param y
+   * @return -y * this{@link #v(int)}(m)*{@link #η(int, double)}(m,dt)
+   */
+  public double
+         τ(int m,
+           double dt,
+           double y)
+  {
+    return -y * v(m) * η(m, dt);
+  }
+
+  /**
+   * 
+   * @param m
+   *          dimension/index of the process, an integer in [0,dim)
+   * 
+   * @return ∏(∏(β(m,n,j),j=1..P),n=1..M)
+   */
+  public double
+         v(int m)
+  {
+    return product((IntToDoubleFunction) j -> product((IntToDoubleFunction) n -> β(m, n, j), 0, dim() - 1), 0, order() - 1);
+  }
+
+  public double
+         Φ(int m,
+           int i,
+           int l)
+  {
+    return product((IntToDoubleFunction) j -> product((IntToDoubleFunction) n -> n == i && j == l ? α(m, n, j) : β(m, n, j), 0, dim() - 1), 0, order() - 1);
+  }
+
+  public double
+         σ(int m,
+           int i,
+           int l,
+           int k,
+           double ds,
+           double dt)
+  {
+    double Tm = lastT(m);
+
+    return exp(sum(j -> sum(n -> β(m, n, j) * ((n == i && j == l) ? (ds + T(n, k)) : (dt + lastT(n))), 0, order() - 1), 0, order() - 1));
+  }
+
+  public double
+         T(int dim,
+           int timeIndex)
+  {
+    return getSubTimes().left[dim].get(timeIndex);
+  }
+
+  public double
+         η(int m,
+           double dt)
+  {
+    double Tm = lastT(m);
+
+    return exp((dt + Tm) * sum(j -> sum(n -> β(m, n, j), 0, dim() - 1), 0, order() - 1));
+  }
+
+  public Double
+         lastT(int m)
+  {
+    return getSubTimes().right[m].lastKey();
+  }
+
+  public double
+         γ(int type,
+           int k)
+  {
+    IntToDoubleFunction a = j -> j == k ? α(j, type, type) : β(j, type, type);
+
+    return product(a, 0, order() - 1);
+  }
+
+  @Override
+  public double
+         Φδ(double t,
+            double y,
+            int tk)
+  {
+    return sum(m -> Φ(m, t, y, tk) / Φdt(t, tk), 0, dim() - 1);
+  }
+
+  public double
+         Φdt(double t,
+             int tk)
+  {
+    throw new UnsupportedOperationException("TODO");
   }
 
   private Entry<Double, Integer>[][][] lowerEntries;
@@ -118,7 +237,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
         ll = Double.NEGATIVE_INFINITY;
       }
     }
-    
+
     return ll;
 
   }
@@ -234,7 +353,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   }
 
   public Vector
-         Λ(int index)
+         Λ(int type)
   {
 
     final int n = T.size() - 1;
@@ -242,7 +361,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     Vector compensator = new Vector(n);
     for (int i = 0; i < n; i++)
     {
-      compensator.set(i, Λ(index, i));
+      compensator.set(i, Λ(type, i));
     }
 
     return compensator.setName("Λ");
@@ -363,13 +482,11 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * Given two Vectors (of times and types), calculate indices and partition
    * subsets of different types
    *
-   * @param times
-   * @param types
+   * 
    * @return Pair<Vector times[dim],Map<time,type>[dim]>
    */
   public Pair<Vector[], TreeMap<Double, Integer>[]>
-         getSubTimes(final Vector times,
-                     final IntVector types)
+         getSubTimes()
   {
     if (cachedSubTimes != null)
     {
@@ -384,9 +501,9 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
       timesSub[i] = new ArrayList<Double>();
       timeIndices[i] = new TreeMap<Double, Integer>();
     }
-    for (int i = 0; i < times.size(); i++)
+    for (int i = 0; i < T.size(); i++)
     {
-      timesSub[types.get(i)].add(times.get(i));
+      timesSub[K.get(i)].add(T.get(i));
     }
     for (int i = 0; i < dim(); i++)
     {
@@ -445,9 +562,12 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * 
    * @param j
    *          index in [0,order()-1]
-   * @param k
-   *          dimension in [0,dim-1]
-   * @return the j-th β parameter corresponding to the k-th dimension
+   * @param m
+   *          from type in [0,dim-1]
+   * @param n
+   *          to type in [0,dim-1]
+   * @return the j-th element of the Vector of parameters corresponding to the
+   *         k-th type
    */
   protected abstract double
             β(int j,
