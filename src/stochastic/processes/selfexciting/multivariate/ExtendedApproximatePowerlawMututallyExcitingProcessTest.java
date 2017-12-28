@@ -21,10 +21,12 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
          testΦ()
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
+    process.ε.assign( 0.02, 0.04 );
     process.T = new Vector(new double[]
     { 25, 91, 93, 112, 166, 167, 175, 176, 189, 227 });
     process.K = new IntVector(new int[]
     { 0, 0, 1, 0, 1, 1, 0, 0, 1, 1 });
+    out.println( "params = " + process.getαβString() );
     double x = process.Φ(0, 0.25, 1, process.getSubTimes().left[0].size() - 1);
     assertTrue(Double.isFinite(x));
     out.println("x=" + x);

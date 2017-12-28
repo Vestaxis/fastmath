@@ -88,7 +88,9 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            double y,
            int tk)
   {
-    return τ(m, dt, y) + sum(l -> sum(i -> Φ(m, i, l) * sum(k -> σ(m, i, l, k, dt, dt) - σ(m, i, l, k, dt, lastT(m)), 0, tk), 0, dim() - 1), 0, order() - 1);
+    double τ = τ(m, dt, y);
+    out.println("τ=" + τ);
+    return τ + sum(l -> sum(i -> Φ(m, i, l) * sum(k -> σ(m, i, l, k, dt, dt) - σ(m, i, l, k, dt, lastT(m)), 0, tk), 0, dim() - 1), 0, order() - 1);
   }
 
   /**
@@ -103,7 +105,10 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            double dt,
            double y)
   {
-    return -y * v(m) * η(m, dt);
+    double v = v(m);
+    double η = η(m, dt);
+    out.println("v=" + v + " η=" + η);
+    return -y * v * η;
   }
 
   /**
@@ -156,7 +161,15 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   {
     double Tm = lastT(m);
 
-    return exp((dt + Tm) * sum(j -> sum(n -> β(m, n, j), 0, dim() - 1), 0, order() - 1));
+    double vol = sum(j -> sum(n -> {
+      double β = β(m, n, j);
+      out.println(format("β(m=%d,n=%d,j=%d)=%f", m, n, j, β));
+      return β;
+    }, 0, dim() - 1), 0, order() - 1);
+
+    double measure = (dt + Tm) * vol;
+    out.println("vol=" + vol + " dt=" + dt + " Tm=" + Tm + " measure=" + measure );
+    return exp(measure);
   }
 
   public Double

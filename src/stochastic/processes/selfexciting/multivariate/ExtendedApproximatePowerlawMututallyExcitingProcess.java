@@ -30,11 +30,22 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   public ExtendedApproximatePowerlawMututallyExcitingProcess(int dim)
   {
     this.dim = dim;
-    κ = new Vector(dim).setName("κ");
-    η = new Vector(dim).setName("η");
-    b = new Vector(dim).setName("b");
-    ε = new Vector(dim).setName("ε");
     τ = new Vector(dim).setName("τ");
+    ε = new Vector(dim).setName("ε");
+    η = new Vector(dim).setName("η");
+    κ = new Vector(dim).setName("κ");
+    b = new Vector(dim).setName("b");
+  }
+
+  public String
+         toString()
+  {
+    return format("ExtendedApproximatePowerlawMututallyExcitingProcess[%s,%s,%s,%s,%s]",
+                  τ.toString().trim(),
+                  ε.toString().trim(),
+                  η.toString().trim(),
+                  κ.toString().trim(),
+                  b.toString().trim());
   }
 
   public Vector κ;
@@ -173,7 +184,20 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   public String
          getαβString()
   {
-    return "TODO";
+    StringBuilder sb = new StringBuilder();
+    sb.append("{Z=" + Z());
+    for (int i = 0; i < order(); i++)
+    {
+      for (int j = 0; j < dim(); j++)
+      {
+        for (int k = 0; k < dim(); k++)
+        {
+          sb.append(format(", alpha[%d,%d,%d]=%s, beta[%d,%d,%d]=%s", i + 1, j + 1, k + 1, α(i, j, k), i + 1, j + 1, k + 1, β(i, j, k)));
+        }
+      }
+    }
+    sb.append("}");
+    return sb.toString();
   }
 
   public Vector
@@ -263,8 +287,6 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcess extends Diagona
   {
     throw new UnsupportedOperationException("TODO");
   }
-
-
 
   @Override
   public double
