@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.IntConsumer;
-import java.util.function.IntFunction;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
@@ -46,8 +45,6 @@ import org.arblib.Real;
 
 import fastmath.DoubleColMatrix;
 import fastmath.EigenDecomposition;
-import fastmath.Functions;
-import fastmath.IntVector;
 import fastmath.Pair;
 import fastmath.Vector;
 import fastmath.VectorContainer;
@@ -138,16 +135,19 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            double ds,
            double dt)
   {
+    assert m < dim() : "m=" + m + " >= dim";
     double Tm = lastT(m);
 
-    return exp(sum(j -> sum(n -> β(m, n, j) * ((n == i && j == l) ? (ds + T(n, k)) : (dt + lastT(n))), 0, order() - 1), 0, order() - 1));
+    return exp(sum(j -> sum(n -> β(m, n, j) * ((n == i && j == l) ? (ds + T(n, k)) : (dt + lastT(n))), 0, dim() - 1), 0, order() - 1));
   }
 
   public double
-         T(int dim,
+         T(int m,
            int timeIndex)
   {
-    return getSubTimes().left[dim].get(timeIndex);
+    assert m < dim() : "m=" + m + " >= dim";
+
+    return getSubTimes().left[m].get(timeIndex);
   }
 
   public double
@@ -162,6 +162,8 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   public Double
          lastT(int m)
   {
+    assert m < dim() : "m=" + m + " >= dim";
+
     return getSubTimes().right[m].lastKey();
   }
 
