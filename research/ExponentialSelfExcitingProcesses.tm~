@@ -422,21 +422,16 @@
 
   is the filtration up to time <math|T>, to be interpreted as the set of
   available information, here denoting fitted parameters and observed arrival
-  times of all dimensions, and where\ 
+  times of all dimensions, and wh
 
   <\equation>
-    \<tau\><rsub|m><around*|(|x,\<varepsilon\>|)>=<around*|(|<around*|(|x-T<rsub|m>|)>\<kappa\><rsub|m>-\<varepsilon\>|)>\<upsilon\><rsub|m>\<eta\><rsub|m><around*|(|x|)>
+    \<tau\><rsub|m><around*|(|dt,y|)>=-y\<upsilon\><rsub|m>\<eta\><rsub|m><around*|(|dt|)>
   </equation>
 
   <\equation>
-    \<eta\><rsub|m><with|font-base-size|10|<around*|(|x|)>=e<rsup|<around*|(|x+
+    \<eta\><rsub|m><with|font-base-size|10|<around*|(|dt|)>=e<rsup|<around*|(|dt+
     T<rsub|m>|)><big|sum><rsub|j=1><rsup|P><big|sum><rsub|n=1><rsup|M>\<beta\><rsub|m,n,j>>>
   </equation>
-
-  can be seen to be similar to the uni-variate equations
-  <math|\<tau\><around*|(|x,\<varepsilon\>|)>=<around*|(|<around*|(|x-T|)>\<kappa\>-\<varepsilon\>|)>\<upsilon\>\<eta\><around*|(|x|)>>
-  and <math|\<eta\><with|font-base-size|10|<around*|(|x|)>=e<rsup|<around*|(|x+T|)><big|sum><rsub|k=1><rsup|P>\<beta\><rsub|k>>>>
-  and
 
   <\equation>
     \<upsilon\><rsub|m>=<big|prod><rsub|j=1><rsup|P><big|prod><rsub|n=1><rsup|M>\<beta\><rsub|m,n,j>
