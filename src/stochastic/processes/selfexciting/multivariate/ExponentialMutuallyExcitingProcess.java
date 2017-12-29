@@ -414,13 +414,15 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * @param n
    * @param j
    * @param i
-   * @return
+   * @return α(j, m, n) / β(j, m, n) * (1 - e^(-β * (T(m,i) - T(m,i-1)))) * A(m,
+   *         i, j) + sum(k -> 1 - e^(-β * (T(m, i) - T(n, k))), N(T(m,i-1)),
+   *         N(T(m,i)))
    */
   public double
-          V(int m,
-            int n,
-            int j,
-            int i)
+         V(int m,
+           int n,
+           int j,
+           int i)
   {
     final double β = β(m, n, j);
     double lowerTime = t(m, i - 1);
