@@ -357,6 +357,12 @@
 
   <section|Multivariate Processes>
 
+  <subsection|The Multivariate Compensator>
+
+  <subsection|The Multivariate Likelihood>
+
+  \;
+
   The next event arrival time of the <math|m>-th dimension of a multivariate
   self-exciting process having the usual exponential kernel can be predicted
   in the same way as the uni-variate process , by solving for the unknown
@@ -407,13 +413,6 @@
     <big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|T<rsub|m>><rsup|i>><around*|(|\<sigma\><rsub|m,i,l,k><around*|(|dt,dt|)>-\<sigma\><rsub|m,i,l,k><around*|(|dt,T<rsub|m>|)>|)><label|mc>
   </equation>
 
-  which is similar to the uni-variate case
-
-  <\equation>
-    <with|font-base-size|10|<with|font-base-size|10|\<varphi\><rsub|P><around*|(|x<around*|(|\<varepsilon\>|)>|)>=><tabular|<tformat|<table|<row|<cell|<with|font-base-size|10|\<tau\><around*|(|x,\<varepsilon\>|)>+<big|sum><rsub|j=1><rsup|P>\<phi\><rsub|j>
-    <big|sum><rsub|k=0><rsup|<wide|N|\<breve\>><rsub|T>><around*|(|\<sigma\><rsub|j,k><around*|(|x,x|)>-\<sigma\><rsub|j,k><around*|(|x,T|)>|)>><with|font-base-size|10|<rsup|>>>>>>>>
-  </equation>
-
   where
 
   <\equation>
@@ -422,21 +421,16 @@
 
   is the filtration up to time <math|T>, to be interpreted as the set of
   available information, here denoting fitted parameters and observed arrival
-  times of all dimensions, and where\ 
+  times of all dimensions, and wh
 
   <\equation>
-    \<tau\><rsub|m><around*|(|x,\<varepsilon\>|)>=<around*|(|<around*|(|x-T<rsub|m>|)>\<kappa\><rsub|m>-\<varepsilon\>|)>\<upsilon\><rsub|m>\<eta\><rsub|m><around*|(|x|)>
+    \<tau\><rsub|m><around*|(|dt,y|)>=-y\<upsilon\><rsub|m>\<eta\><rsub|m><around*|(|dt|)>
   </equation>
 
   <\equation>
-    \<eta\><rsub|m><with|font-base-size|10|<around*|(|x|)>=e<rsup|<around*|(|x+
+    \<eta\><rsub|m><with|font-base-size|10|<around*|(|dt|)>=e<rsup|<around*|(|dt+
     T<rsub|m>|)><big|sum><rsub|j=1><rsup|P><big|sum><rsub|n=1><rsup|M>\<beta\><rsub|m,n,j>>>
   </equation>
-
-  can be seen to be similar to the uni-variate equations
-  <math|\<tau\><around*|(|x,\<varepsilon\>|)>=<around*|(|<around*|(|x-T|)>\<kappa\>-\<varepsilon\>|)>\<upsilon\>\<eta\><around*|(|x|)>>
-  and <math|\<eta\><with|font-base-size|10|<around*|(|x|)>=e<rsup|<around*|(|x+T|)><big|sum><rsub|k=1><rsup|P>\<beta\><rsub|k>>>>
-  and
 
   <\equation>
     \<upsilon\><rsub|m>=<big|prod><rsub|j=1><rsup|P><big|prod><rsub|n=1><rsup|M>\<beta\><rsub|m,n,j>
@@ -520,7 +514,9 @@
     <associate|auto-4|<tuple|1.2|4>>
     <associate|auto-5|<tuple|1.3|5>>
     <associate|auto-6|<tuple|2|6>>
-    <associate|auto-7|<tuple|40|7>>
+    <associate|auto-7|<tuple|2.1|7>>
+    <associate|auto-8|<tuple|2.2|?>>
+    <associate|auto-9|<tuple|39|?>>
     <associate|bib-chavez2012high|<tuple|3|7>>
     <associate|bib-chp|<tuple|2|7>>
     <associate|bib-hawkes-finance|<tuple|8|7>>
