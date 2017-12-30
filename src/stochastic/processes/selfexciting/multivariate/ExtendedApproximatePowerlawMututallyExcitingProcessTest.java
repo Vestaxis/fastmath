@@ -20,16 +20,23 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
   public void
          testΦ()
   {
+    ExtendedApproximatePowerlawMututallyExcitingProcess process = constructLongerProcess();
+    out.println("params = " + process.getαβString());
+    double x = process.Φ(0, 0.25, 1, process.getSubTimes().left[0].size() - 1);
+    assertTrue(Double.isFinite(x));
+    out.println("x=" + x);
+  }
+
+  public static ExtendedApproximatePowerlawMututallyExcitingProcess
+         constructLongerProcess()
+  {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
-    process.ε.assign( 0.02, 0.04 );
+    process.ε.assign(0.02, 0.04);
     process.T = new Vector(new double[]
     { 25, 91, 93, 112, 166, 167, 175, 176, 189, 227 });
     process.K = new IntVector(new int[]
     { 0, 0, 1, 0, 1, 1, 0, 0, 1, 1 });
-    out.println( "params = " + process.getαβString() );
-    double x = process.Φ(0, 0.25, 1, process.getSubTimes().left[0].size() - 1);
-    assertTrue(Double.isFinite(x));
-    out.println("x=" + x);
+    return process;
   }
 
   public void
@@ -94,19 +101,22 @@ public class ExtendedApproximatePowerlawMututallyExcitingProcessTest extends Tes
   {
     ExtendedApproximatePowerlawMututallyExcitingProcess process = constructProcess();
 
-    for (int type = 0; type < process.dim(); type++)
+    for (int m = 0; m < process.dim(); m++)
     {
-      for (int tk = 0; tk < process.T.size(); tk++)
+      for (int n = 0; n < process.dim(); n++)
       {
-        for (int j = 0; j < process.order(); j++)
+        for (int tk = 0; tk < process.T.size(); tk++)
         {
-          double a = process.Asum(type, tk, j);
-          double b = process.A(type, tk, j);
-          Real c = process.AReal(type, tk, j);
-          double d = process.B(type, tk, j);
-          // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
-          assertEquals(a, b, 1E-14);
-          assertEquals(a, 1 + d, 1E-14);
+          for (int j = 0; j < process.order(); j++)
+          {
+            double a = process.Asum(j, m, n, tk);
+            double b = process.A(m, tk, j);
+            Real c = process.AReal(m, tk, j);
+            double d = process.B(m, tk, j);
+            // out.println("a=" + a + " b=" + b + " c=" + c + " d=" + d);
+            assertEquals(a, b, 1E-14);
+            assertEquals(a, 1 + d, 1E-14);
+          }
         }
       }
     }

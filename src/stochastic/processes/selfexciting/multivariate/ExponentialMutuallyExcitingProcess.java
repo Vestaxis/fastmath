@@ -143,7 +143,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
     assert m < dim() : "m=" + m + " >= dim";
     double Tm = lastT(m);
 
-    return exp(sum(j -> sum(n -> β(m, n, j) * ((n == i && j == l) ? (ds + t(n, k)) : (dt + lastT(n))), 0, dim() - 1), 0, order() - 1));
+    return exp(sum(j -> sum(n -> β(m, n, j) * ((n == i && j == l) ? (ds + T(n, k)) : (dt + lastT(n))), 0, dim() - 1), 0, order() - 1));
   }
 
   /**
@@ -156,7 +156,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * @return
    */
   public double
-         t(int m,
+         T(int m,
            int i)
   {
     assert m < dim() : "m=" + m + " >= dim";
@@ -425,13 +425,13 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
            int i)
   {
     final double β = β(m, n, j);
-    double lowerTime = t(m, i - 1);
-    double upperTime = t(m, i);
+    double lowerTime = T(m, i - 1);
+    double upperTime = T(m, i);
     Integer lowerTimeIndex = getSubTimes().right[m].get(lowerTime);
     Integer upperTimeIndex = getSubTimes().right[m].get(upperTime);
     assert lowerTimeIndex != null;
     assert upperTimeIndex != null;
-    double interim = sum(k -> 1 - exp(-β * (t(m, i) - t(n, k))), lowerTimeIndex, upperTimeIndex);
+    double interim = sum(k -> 1 - exp(-β * (T(m, i) - T(n, k))), lowerTimeIndex, upperTimeIndex);
     return α(j, m, n) / β(j, m, n) * (1 - exp(-β * (upperTime - lowerTime))) * A(m, i, j) + interim;
   }
 
@@ -444,16 +444,35 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
   }
 
   public double
-         Asum(int type,
-              int tk,
-              int j)
+         Asum(int j,
+              int m,
+              int n,
+              int i)
   {
-    if (tk < 0)
+    if (i < 0)
     {
       return 0;
     }
-    double Ti = T.get(tk);
-    return 1 + sum(k -> exp(-β(j, type, type) * (Ti - T.get(k))), 0, tk - 1);
+    double Tmi = T(m, i);
+    return sum(k -> exp(-β(j, m, n) * (Tmi - T(n, k))), 0, N(j, Tmi) - 1);
+  }
+
+  /**
+   * counting function for the number of events of a certain type and occuring
+   * before a specified time
+   * 
+   * @param m
+   *          of event, integer in [0,dim)
+   * @param t
+   * 
+   * @return number of events of type m before time t
+   */
+  public int
+         N(int type,
+           double t)
+  {
+    Entry<Double, Integer> entry = getSubTimes().right[type].lowerEntry(t);
+    return entry == null ? 0 : (entry.getValue() + 1);
   }
 
   public double
@@ -529,6 +548,12 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
       Vector value = process.getVectorField(param);
       return value;
     }).toArray(), statisticsVector);
+  }
+
+  public Vector
+         getTimes(int type)
+  {
+    return getSubTimes().left[type];
   }
 
   /**
