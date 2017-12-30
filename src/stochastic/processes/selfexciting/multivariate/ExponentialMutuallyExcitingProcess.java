@@ -538,6 +538,7 @@ public abstract class ExponentialMutuallyExcitingProcess extends MutuallyExcitin
    * 
    * @return Pair<Vector times[dim],Map<time,type>[dim]>
    */
+  @SuppressWarnings("unchecked")
   public Pair<Vector[], TreeMap<Double, Integer>[]>
          getSubTimes()
   {

@@ -11,7 +11,8 @@ import fastmath.matfile.MiDouble;
 import fastmath.matfile.Writable;
 
 /**
- * Basic functionality of buffered classes
+ * Basic functionality of buffered classes, that is, Vectors, Matrixes, etc
+ * whose data is stored in a {@link ByteBuffer}
  */
 public abstract class AbstractBufferedObject implements Writable
 {
