@@ -9,12 +9,23 @@ import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import stochastic.annotations.Units;
-
 public class DateUtils
 {
 
   final static ThreadLocalDateFormat millisecondTimeFormat = new ThreadLocalDateFormat("HH:mm:ss.SSS");
+
+  /**
+   * 
+   * @param unixTime
+   *          in units of milliseconds
+   * @return offset in units of hours
+   */
+  public static long
+         getTimeZoneOffset(long unixTime)
+  {
+    int offset = EAST_COAST_TIME.getOffset(unixTime);
+    return TimeUnit.HOURS.convert(offset, TimeUnit.MILLISECONDS);
+  }
 
   /**
    * @param date1
@@ -34,28 +45,12 @@ public class DateUtils
   }
 
   public static final long MS_IN_DAY = 86400000;
-  
+
   public static final TimeZone EAST_COAST_TIME = TimeZone.getTimeZone("EST5EDT");
-  
+
   public static final long MICROS_IN_DAY = MS_IN_DAY * 1000;
-  
+
   public static final List<Integer> WEEKDAY = asList(Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY);
-
-  @Units(time = TimeUnit.HOURS)
-  public static double
-         getTimeOfDay(@Units(time = TimeUnit.MICROSECONDS) long unixTime)
-  {
-    double hoursSinceMidnight = getSecondsSinceMidnight(unixTime) / TimeUnit.SECONDS.convert(1, TimeUnit.HOURS);
-    return hoursSinceMidnight;
-  }
-
-  @Units(time = TimeUnit.HOURS)
-  public static long
-         getTimeZoneOffset(@Units(time = TimeUnit.MILLISECONDS) long unixTime)
-  {
-    int offset = EAST_COAST_TIME.getOffset(unixTime);
-    return TimeUnit.HOURS.convert(offset, TimeUnit.MILLISECONDS);
-  }
 
   /**
    * 
@@ -67,9 +62,8 @@ public class DateUtils
    * 
    * @return
    */
-  @Units(time = TimeUnit.SECONDS)
   protected static double
-            getSecondsSinceMidnight(@Units(time = TimeUnit.MICROSECONDS) long unixTime)
+            getSecondsSinceMidnight(long unixTime)
   {
     unixTime -= DateUtils.EAST_COAST_TIME.getOffset(TimeUnit.MILLISECONDS.convert(unixTime, TimeUnit.MICROSECONDS));
     return (unixTime / TimeUnit.MICROSECONDS.convert(1, TimeUnit.SECONDS)) % (TimeUnit.SECONDS.convert(24, TimeUnit.HOURS));
