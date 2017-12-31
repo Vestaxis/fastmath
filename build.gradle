@@ -1,10 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'sc'
 version = '7.1'
 
 description = "fastmath"
+
+def installer = install.repositories.mavenInstaller
 
 sourceSets {
     main {
