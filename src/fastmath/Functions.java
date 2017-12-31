@@ -7,14 +7,8 @@ import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
-import org.arblib.Real;
-
 public class Functions
 {
-  static
-  {
-    NativeUtils.loadNativeFastmathLibrary();
-  }
 
   public static final double π = Math.PI;
 
@@ -254,19 +248,6 @@ public class Functions
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).sum();
   }
 
-  public static Real
-         realSum(IntFunction<Real> elements,
-                 int lowerIndex,
-                 int upperIndex)
-  {
-    Real s = Real.ZERO;
-    for (int i = lowerIndex; i <= upperIndex; i++)
-    {
-      s = s.add(elements.apply(i));
-    }
-    return s;
-  }
-
   public static DoubleStream
          grid(double left,
               double right,
@@ -293,14 +274,6 @@ public class Functions
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements);
   }
 
-  public static Stream<Real>
-         seqReal(IntFunction<Real> elements,
-                 int lowerIndex,
-                 int upperIndex)
-  {
-    return rangeClosed(lowerIndex, upperIndex).mapToObj(elements);
-  }
-
   public static double
          sumExcluding(IntToDoubleFunction elements,
                       int lowerIndex,
@@ -308,19 +281,6 @@ public class Functions
                       int excluding)
   {
     return rangeClosed(lowerIndex, upperIndex).filter(i -> i != excluding).mapToDouble(elements).sum();
-  }
-
-  public static Real
-         product(IntFunction<Real> elements,
-                 int lowerIndex,
-                 int upperIndex)
-  {
-    Real Π = Real.ONE;
-    for (int i = lowerIndex; i <= upperIndex; i++)
-    {
-      Π = Π.mul(elements.apply(i));
-    }
-    return Π;
   }
 
   public static double

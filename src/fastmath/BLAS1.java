@@ -8,21 +8,19 @@ import fastmath.exceptions.FastMathException;
 
 public class BLAS1
 {
-  static
-  {
-    NativeUtils.loadNativeFastmathLibrary();
-  }
-
-
-  public native static int
+ 
+  public static int
          dgetri(boolean colMajor,
                 int n,
                 ByteBuffer A,
                 int offA,
                 int ldA,
-                ByteBuffer ipiv);
+                ByteBuffer ipiv)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
 
-  public native static int
+  public static int
          dsyev(char jobz,
                char uplo,
                int n,
@@ -31,7 +29,12 @@ public class BLAS1
                int ldA,
                ByteBuffer W,
                ByteBuffer work,
-               int lwork);
+               int lwork)
+  {
+
+    throw new UnsupportedOperationException("TODO");
+
+  }
 
   public static int
          dsyev(char jobz,
@@ -50,28 +53,43 @@ public class BLAS1
     return dsyev(jobz, uplo, A.getRowCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount(), W.getBuffer(), work.getBuffer(), lwork);
   }
 
-  public static native int
+  public static int
          dpotrf(boolean colMajor,
                 boolean upper,
                 int n,
                 ByteBuffer A,
                 int offA,
-                int ldA);
+                int ldA)
+  {
 
-  public static native int
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  public static int
          dgetrf(boolean colMajor,
                 int M,
                 int N,
                 ByteBuffer A,
                 int offA,
                 int lda,
-                ByteBuffer buffer);
+                ByteBuffer buffer)
+  {
 
-  public native static double
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  public static double
          dlassq(int N,
                 ByteBuffer X,
                 int offX,
-                int incX);
+                int incX)
+  {
+
+    throw new UnsupportedOperationException("TODO");
+
+  }
 
   public static double
          dasum(int N,
@@ -81,7 +99,7 @@ public class BLAS1
     throw new UnsupportedOperationException("TODO");
   }
 
-  public native static void
+  public static void
          dgeadd(int M,
                 int N,
                 double alpha,
@@ -89,27 +107,40 @@ public class BLAS1
                 int lda,
                 double beta,
                 ByteBuffer C,
-                int ldc);
+                int ldc)
+  {
 
-  public native static void
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  public static void
          dcopy(int N,
                ByteBuffer X,
                int offX,
                int incX,
                ByteBuffer Y,
                int offY,
-               int incY);
+               int incY)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
 
-  public native static void
+  public static void
          zcopy(int N,
                ByteBuffer X,
                int offX,
                int incX,
                ByteBuffer Y,
                int offY,
-               int incY);
+               int incY)
+  {
 
-  public static native void
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  public static void
          dgemm(boolean colMajor,
                boolean TransA,
                boolean TransB,
@@ -126,9 +157,14 @@ public class BLAS1
                double beta,
                ByteBuffer C,
                int offC,
-               int ldc);
+               int ldc)
+  {
 
-  public native static int
+    throw new UnsupportedOperationException("TODO");
+
+  }
+
+  public static int
          dgeev(char jobvl,
                char jobvr,
                int n,
@@ -144,7 +180,12 @@ public class BLAS1
                int offVR,
                int ldVR,
                ByteBuffer work,
-               int lwork);
+               int lwork)
+  {
+
+    throw new UnsupportedOperationException("TODO");
+
+  }
 
   /**
    * DGEEV computes for an N-by-N real nonsymmetric matrix A, the eigenvalues and,
@@ -231,7 +272,7 @@ public class BLAS1
                  workSize);
   }
 
-  public native static int
+  public static int
          zgeev(char jobvl,
                char jobvr,
                int n,
@@ -247,7 +288,12 @@ public class BLAS1
                int ldVR,
                ByteBuffer work,
                int lwork,
-               ByteBuffer rwork);
+               ByteBuffer rwork)
+  {
+
+    throw new UnsupportedOperationException("TODO");
+
+  }
 
   /**
    * Y = X
@@ -266,7 +312,6 @@ public class BLAS1
     // X.getIncrement(), Y.getBuffer().asDoubleBuffer(), Y.getIncrement());
   }
 
-
   public static int
          dgetrf(AbstractMatrix A,
                 IntVector ipiv)
@@ -274,26 +319,6 @@ public class BLAS1
     return dgetrf(A.isColMajor(), A.getRowCount(), A.getColCount(), A.getBuffer(), A.getOffset(0, 0), A.getRowCount(), ipiv.getBuffer());
   }
 
-  public static void
-         dgetrs(AbstractMatrix A,
-                AbstractMatrix B,
-                IntVector ipiv)
-  {
-    assert A.isSquare() : "A must be square";
-    assert !A.isTranspose() : "A cannot be a transposed view";
-    assert A.isColMajor() : "A must be colmajor";
-
-    DoubleMatrix.dgetrs(A.isTranspose() ? 'T' : 'N',
-                        A.getRowCount(),
-                        B.getColCount(),
-                        A.getBuffer(),
-                        A.getOffset(0, 0),
-                        A.getRowCount(),
-                        ipiv.getBuffer(),
-                        B.getBuffer(),
-                        B.getOffset(0, 0),
-                        B.getRowCount());
-  }
 
   public static int
          dpotrf(boolean upper,

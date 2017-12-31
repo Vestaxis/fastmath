@@ -17,10 +17,6 @@ import fastmath.matfile.NamedWritable;
 @SuppressWarnings("unchecked")
 public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritable
 {
-  static
-  {
-    NativeUtils.loadNativeFastmathLibrary();
-  }
 
   private static final long serialVersionUID = 1L;
 
@@ -158,186 +154,6 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
   }
 
   /**
-   * dchdd downdates an augmented cholesky decomposition or the triangular factor
-   * of an augmented qr decomposition. specifically, given an upper triangular
-   * matrix r of order p, a row vector x, a column vector z, and a scalar y, dchdd
-   * determineds a orthogonal matrix u and a scalar zeta such that
-   * 
-   * (r z ) (rr zz) u * ( ) = ( ) , (0 zeta) ( x y)
-   * 
-   * where rr is upper triangular. if r and z have been obtained from the
-   * factorization of a least squares problem, then rr and zz are the factors
-   * corresponding to the problem with the observation (x,y) removed. in this
-   * case, if rho is the norm of the residual vector, then the norm of the
-   * residual vector of the downdated problem is dsqrt(rho**2 - zeta**2). dchdd
-   * will simultaneously downdate several triplets (z,y,rho) along with r. for a
-   * less terse description of what dchdd does and how it may be applied, see the
-   * linpack guide.
-   * 
-   * the matrix u is determined as the product u(1)*...*u(p) where u(i) is a
-   * rotation in the (p+1,i)-plane of the form ( c(i) -s(i) ) ( ) . ( s(i) c(i) )
-   * 
-   * the rotations are chosen so that c(i) is double precision.
-   * 
-   * the user is warned that a given downdating problem may be impossible to
-   * accomplish or may produce inaccurate results. for example, this can happen if
-   * x is near a vector whose removal will reduce the rank of r. beware.
-   * 
-   * on entry
-   * 
-   * r double precision(ldr,p), where ldr .ge. p. r contains the upper triangular
-   * matrix that is to be downdated. the part of r below the diagonal is not
-   * referenced.
-   * 
-   * ldr int. ldr is the leading dimension fo the array r.
-   * 
-   * p int. p is the order of the matrix r.
-   * 
-   * x double precision(p). x contains the row vector that is to be removed from
-   * r. x is not altered by dchdd.
-   * 
-   * z double precision(ldz,nz), where ldz .ge. p. z is an array of nz p-vectors
-   * which are to be downdated along with r.
-   * 
-   * ldz int. ldz is the leading dimension of the array z.
-   * 
-   * nz int. nz is the number of vectors to be downdated nz may be zero, in which
-   * case z, y, and rho are not referenced.
-   * 
-   * y double precision(nz). y contains the scalars for the downdating of the
-   * vectors z. y is not altered by dchdd.
-   * 
-   * rho double precision(nz). rho contains the norms of the residual vectors that
-   * are to be downdated.
-   * 
-   * on return
-   * 
-   * r z contain the downdated quantities. rho
-   * 
-   * c double precision(p). c contains the cosines of the transforming rotations.
-   * 
-   * s double precision(p). s contains the sines of the transforming rotations.
-   * 
-   * returns 0 if the entire downdating was successful.
-   * 
-   * -1 if r could not be downdated. in this case, all quantities are left
-   * unaltered.
-   * 
-   * 1 if some rho could not be downdated. the offending rhos are set to -1.
-   * 
-   * linpack. this version dated 08/14/78 . g.w. stewart, university of maryland,
-   * argonne national lab.
-   * 
-   * dchdd uses the following functions and subprograms.
-   * 
-   * fortran dabs blas ddot, dnrm2
-   */
-  public static native int
-         cholDowndate(ByteBuffer r,
-                      int rOff,
-                      int ldr,
-                      int p,
-                      ByteBuffer x,
-                      int xOff,
-                      ByteBuffer z,
-                      int zOff,
-                      int ldz,
-                      int lz,
-                      ByteBuffer y,
-                      int yOff,
-                      ByteBuffer rho,
-                      int rhoOff,
-                      ByteBuffer c,
-                      int cOff,
-                      ByteBuffer s,
-                      int sOff);
-
-  /**
-   * dchud updates an augmented cholesky decomposition of the triangular part of
-   * an augmented qr decomposition. specifically, given an upper triangular matrix
-   * r of order p, a row vector x, a column vector z, and a scalar y, dchud
-   * determines a untiary matrix u and a scalar zeta such that
-   * 
-   * 
-   * (r z) (rr zz ) u * ( ) = ( ) , (x y) ( 0 zeta)
-   * 
-   * where rr is upper triangular. if r and z have been obtained from the
-   * factorization of a least squares problem, then rr and zz are the factors
-   * corresponding to the problem with the observation (x,y) appended. in this
-   * case, if rho is the norm of the residual vector, then the norm of the
-   * residual vector of the updated problem is dsqrt(rho**2 + zeta**2). dchud will
-   * simultaneously update several triplets (z,y,rho). for a less terse
-   * description of what dchud does and how it may be applied, see the linpack
-   * guide.
-   * 
-   * the matrix u is determined as the product u(p)*...*u(1), where u(i) is a
-   * rotation in the (i,p+1) plane of the form ( c(i) s(i) ) ( ) . ( -s(i) c(i) )
-   * 
-   * the rotations are chosen so that c(i) is double precision.
-   * 
-   * on entry
-   * 
-   * r double precision(ldr,p), where ldr .ge. p. r contains the upper triangular
-   * matrix that is to be updated. the part of r below the diagonal is not
-   * referenced.
-   * 
-   * ldr int. ldr is the leading dimension of the array r.
-   * 
-   * p int. p is the order of the matrix r.
-   * 
-   * x double precision(p). x contains the row to be added to r. x is not altered
-   * by dchud.
-   * 
-   * z double precision(ldz,nz), where ldz .ge. p. z is an array containing nz
-   * p-vectors to be updated with r.
-   * 
-   * ldz int. ldz is the leading dimension of the array z.
-   * 
-   * nz int. nz is the number of vectors to be updated nz may be zero, in which
-   * case z, y, and rho are not referenced.
-   * 
-   * y double precision(nz). y contains the scalars for updating the vectors z. y
-   * is not altered by dchud.
-   * 
-   * rho double precision(nz). rho contains the norms of the residual vectors that
-   * are to be updated. if rho(j) is negative, it is left unaltered.
-   * 
-   * on return
-   * 
-   * rc rho contain the updated quantities. z
-   * 
-   * c double precision(p). c contains the cosines of the transforming rotations.
-   * 
-   * s double precision(p). s contains the sines of the transforming rotations.
-   * 
-   * linpack. this version dated 08/14/78 . g.w. stewart, university of maryland,
-   * argonne national lab.
-   * 
-   * dchud uses the following functions and subroutines.
-   * 
-   * extended blas drotg fortran dsqrt
-   */
-  public static native void
-         cholUpdate(ByteBuffer r,
-                    int rOff,
-                    int ldr,
-                    int p,
-                    ByteBuffer x,
-                    int xOff,
-                    ByteBuffer z,
-                    int zOff,
-                    int ldz,
-                    int lz,
-                    ByteBuffer y,
-                    int yOff,
-                    ByteBuffer rho,
-                    int rhoOff,
-                    ByteBuffer c,
-                    int cOff,
-                    ByteBuffer s,
-                    int sOff);
-
-  /**
    * Purpose =======
    * 
    * DGEQP3 computes a QR factorization with column pivoting of a matrix A: A*P =
@@ -391,7 +207,7 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
    * v(1:i-1) = 0 and v(i) = 1; v(i+1:m) is stored on exit in A(i+1:m,i), and tau
    * in TAU(i).
    */
-  private static native int
+  private static int
           dgeqp3(int m,
                  int n,
                  ByteBuffer A,
@@ -401,50 +217,10 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
                  ByteBuffer tau,
                  int tauOff,
                  ByteBuffer work,
-                 int lwork);
-
-  /**
-   * DGETRS solves a system of linear equations A * X = B or A' * X = B with a
-   * general N-by-N matrix A using the LU factorization computed by DGETRF.
-   * 
-   * Arguments =========
-   * 
-   * TRANS (input) CHARACTER*1 Specifies the form of the system of equations: =
-   * 'N': A * X = B (No transpose) = 'T': A'* X = B (Transpose) = 'C': A'* X = B
-   * (Conjugate transpose = Transpose)
-   * 
-   * N (input) INTEGER The order of the matrix A. N >= 0.
-   * 
-   * NRHS (input) INTEGER The number of right hand sides, i.e., the number of
-   * columns of the matrix B. NRHS >= 0.
-   * 
-   * A (input) DOUBLE PRECISION array, dimension (LDA,N) The factors L and U from
-   * the factorization A = P*L*U as computed by DGETRF.
-   * 
-   * LDA (input) INTEGER The leading dimension of the array A. LDA >= max(1,N).
-   * 
-   * IPIV (input) INTEGER array, dimension (N) The pivot indices from DGETRF; for
-   * 1<=i<=N, row i of the matrix was interchanged with row IPIV(i).
-   * 
-   * B (input/output) DOUBLE PRECISION array, dimension (LDB,NRHS) On entry, the
-   * right hand side matrix B. On exit, the solution matrix X.
-   * 
-   * LDB (input) INTEGER The leading dimension of the array B. LDB >= max(1,N).
-   * 
-   * return = 0: successful exit < 0: if INFO = -i, the i-th argument had an
-   * illegal value
-   */
-  public static native int
-         dgetrs(char trans,
-                int n,
-                int nrhs,
-                ByteBuffer a,
-                int aOff,
-                int lda,
-                ByteBuffer ipiv,
-                ByteBuffer b,
-                int bOff,
-                int ldb);
+                 int lwork)
+  {
+    throw new UnsupportedOperationException("TODO");
+  }
 
   /**
    * DORGQR generates an M-by-N real matrix Q with orthonormal columns, which is

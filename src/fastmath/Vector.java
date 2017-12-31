@@ -38,11 +38,6 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
 
   }
 
-  static
-  {
-    NativeUtils.loadNativeFastmathLibrary();
-  }
-
   public Pointer
          getPointer()
   {
