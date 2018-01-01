@@ -18,6 +18,58 @@
 
   \;
 
+  <\table-of-contents|toc>
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|1<space|2spc>Preliminary
+    Outline> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-1><vspace|0.5fn>
+
+    <with|par-left|1tab|1.1<space|2spc>Definitions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-2>>
+
+    <with|par-left|1tab|1.2<space|2spc>Transcendental Equations Satisifed By
+    The Nontrivial Riemann Zeros <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-3>>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|2<space|2spc>Iterated
+    Function Systems> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-5><vspace|0.5fn>
+
+    <with|par-left|1tab|2.1<space|2spc>Fixed-Points of Functions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-6>>
+
+    <with|par-left|2tab|2.1.1<space|2spc>An Iteration Function Which
+    Successively Removes Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-7>>
+
+    <with|par-left|2tab|2.1.2<space|2spc>Indifferent Fixed-Points
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-8>>
+
+    <with|par-left|2tab|2.1.3<space|2spc>Attractive and Repulsive
+    Fixed-Points <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-9>>
+
+    <with|par-left|1tab|2.2<space|2spc>Contraction Mappings
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-12>>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|3<space|2spc>Appendix>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-13><vspace|0.5fn>
+
+    <with|par-left|1tab|3.1<space|2spc>Definitions
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-14>>
+
+    <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-15><vspace|0.5fn>
+  </table-of-contents>
+
+  \;
+
   <section|Preliminary Outline>
 
   <subsection|Definitions>
@@ -83,16 +135,6 @@
 
   <subsection|Transcendental Equations Satisifed By The Nontrivial Riemann
   Zeros>
-
-  <\definition>
-    The <verbatim|critical line> is the line in the complex plane defined by
-    <math|Re<around*|(|t|)>=<frac|1|2>>.
-  </definition>
-
-  <\definition>
-    The <verbatim|critical strip> is the strip in the complex plane defined
-    by <math|0\<less\>Re<around*|(|t|)>\<less\>1>.
-  </definition>
 
   <\definition>
     The <verbatim|exact equation> for the <math|n>-th zero of the Hardy
@@ -260,7 +302,9 @@
     for each <math|n\<in\>\<bbb-Z\><rsup|+>>. <cite-detail|z0t|IX>
   </corollary>
 
-  <subsection|Iterated Function Systems>
+  <section|Iterated Function Systems>
+
+  <subsection|Fixed-Points of Functions>
 
   <\definition>
     A fixed-point <math|\<alpha\>> of a function <math|f<around*|(|x|)>> is a
@@ -295,6 +339,32 @@
     the fixed-point <math|\<alpha\>> is said to be superattractive
     fixed-point of <math|f<around*|(|t|)>><cite-detail|raadstrom1953iteration|3.>
   </definition>
+
+  <\lemma>
+    The Banach Fixed-Point Theorem
+
+    If <math|f<around*|(|x|)>> is a continuous function defined on
+    <math|<around*|[|a,b|]>> and
+
+    <\equation>
+      f<around*|(|x|)>\<in\><around*|[|a,b|]>\<forall\>x\<in\><around*|[|a,b|]>
+    </equation>
+
+    and there exists some constant <math|0\<less\>c\<less\>1> such that
+
+    <\equation>
+      <text|<math|<frac|<around*|\||f<around*|(|x|)>-f<around*|(|y|)>|\|>|x-y>\<leqslant\>c
+      >><label|lc>
+    </equation>
+
+    then <math|f<around*|(|x|)>> has a unique fixed-point
+    <math|x\<in\><around*|[|a,b|]>> and the sequence
+    <math|f<around*|(|x<rsub|0>|)>,f<around*|(|f<around*|(|x<rsub|0>|)>|)>,f<around*|(|f<around*|(|f<around*|(|x<rsub|0>|)>|)>|)>,\<ldots\>>
+    converges to the unique fixed-point of <math|f<around*|(|x|)>> in the
+    interval <math|<around*|[|a,b|]>>.
+  </lemma>
+
+  <subsubsection|An Iteration Function Which Successively Removes Roots>
 
   <\definition>
     Let
@@ -354,6 +424,8 @@
     when <math|Z<around*|(|t|)>=0>.
   </proof>
 
+  <subsubsection|Indifferent Fixed-Points>
+
   <\theorem>
     <math|Y<rsub|n,m><around*|(|t|)>> has indifferent fixed-points at each
     point <math|y<rsub|k>> where <math|k=1\<ldots\>n-1>
@@ -400,6 +472,8 @@
     <math|<around*|\||tanh<around*|(|\<infty\>|)>|\|>=1> the multiplier is
     equal to 1 at each <math|-<frac|i|2><around*|(|-4n-1|)>>.
   </proof>
+
+  <subsubsection|Alternating Attractive and Repulsive Fixed-Points>
 
   <\proposition>
     <label|podd>When <math|n> is an odd number,
@@ -448,6 +522,8 @@
     in computer implementations.
   </remark>
 
+  <subsection|Contraction Mappings>
+
   <\theorem>
     <label|cm>The Lipschitz constant <math|M> of the map
     <math|Y<rsub|n,m><around*|(|t|)>\<less\>1\<forall\>t\<gtr\>e> therefore
@@ -483,6 +559,8 @@
     <math|<around*|\||<frac|\<mathd\>|\<mathd\>t>Y<rsub|n,m><around*|(|t|)>|\|>\<neq\>1\<forall\>t\<in\>\<bbb-R\>>
     and the Lipschitz constant <math|M> is strictly less than 1.
   </proof>
+
+  <subsubsection|Sequential Convergence to the Nearest Fixed-Points>
 
   <\proposition>
     <label|p1>The limit\ 
@@ -705,29 +783,17 @@
 
   <section|Appendix>
 
-  <\lemma>
-    The Banach Fixed-Point Theorem
+  <subsection|Definitions>
 
-    If <math|f<around*|(|x|)>> is a continuous function defined on
-    <math|<around*|[|a,b|]>> and
+  <\definition>
+    The <verbatim|critical line> is the line in the complex plane defined by
+    <math|Re<around*|(|t|)>=<frac|1|2>>.
+  </definition>
 
-    <\equation>
-      f<around*|(|x|)>\<in\><around*|[|a,b|]>\<forall\>x\<in\><around*|[|a,b|]>
-    </equation>
-
-    and there exists some constant <math|0\<less\>c\<less\>1> such that
-
-    <\equation>
-      <text|<math|<frac|<around*|\||f<around*|(|x|)>-f<around*|(|y|)>|\|>|x-y>\<leqslant\>c
-      >><label|lc>
-    </equation>
-
-    then <math|f<around*|(|x|)>> has a unique fixed-point
-    <math|x\<in\><around*|[|a,b|]>> and the sequence
-    <math|f<around*|(|x<rsub|0>|)>,f<around*|(|f<around*|(|x<rsub|0>|)>|)>,f<around*|(|f<around*|(|f<around*|(|x<rsub|0>|)>|)>|)>,\<ldots\>>
-    converges to the unique fixed-point of <math|f<around*|(|x|)>> in the
-    interval <math|<around*|[|a,b|]>>.
-  </lemma>
+  <\definition>
+    The <verbatim|critical strip> is the strip in the complex plane defined
+    by <math|0\<less\>Re<around*|(|t|)>\<less\>1>.
+  </definition>
 
   <\bibliography|bib|tm-plain|references.bib>
     <\bib-list|7>
@@ -776,39 +842,46 @@
 
 <\references>
   <\collection>
-    <associate|N0|<tuple|14|3>>
-    <associate|RH|<tuple|8|3>>
+    <associate|N0|<tuple|14|4>>
+    <associate|RH|<tuple|6|4>>
     <associate|S|<tuple|6|2>>
-    <associate|Z|<tuple|3|1>>
-    <associate|Zz|<tuple|4|1>>
-    <associate|ae|<tuple|10|2>>
+    <associate|Z|<tuple|3|2>>
+    <associate|Zz|<tuple|4|2>>
+    <associate|ae|<tuple|10|3>>
     <associate|auto-1|<tuple|1|1>>
+    <associate|auto-10|<tuple|2|7>>
+    <associate|auto-11|<tuple|3|7>>
+    <associate|auto-12|<tuple|2.2|7>>
+    <associate|auto-13|<tuple|2.2.1|10>>
+    <associate|auto-14|<tuple|3|10>>
+    <associate|auto-15|<tuple|3.1|10>>
+    <associate|auto-16|<tuple|34|?>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.2|2>>
     <associate|auto-4|<tuple|1|3>>
-    <associate|auto-5|<tuple|1.3|4>>
-    <associate|auto-6|<tuple|2|6>>
-    <associate|auto-7|<tuple|3|6>>
-    <associate|auto-8|<tuple|2|9>>
-    <associate|auto-9|<tuple|38|9>>
-    <associate|bib-HardyZ|<tuple|2|9>>
-    <associate|bib-Johansson2017arb|<tuple|3|9>>
-    <associate|bib-milnor2006dynamics|<tuple|4|9>>
-    <associate|bib-raadstrom1953iteration|<tuple|6|9>>
-    <associate|bib-ramachandra1995lectures|<tuple|7|9>>
-    <associate|bib-z0t|<tuple|1|9>>
-    <associate|bib-zt|<tuple|5|9>>
-    <associate|cm|<tuple|22|7>>
+    <associate|auto-5|<tuple|2|4>>
+    <associate|auto-6|<tuple|2.1|4>>
+    <associate|auto-7|<tuple|2.1.1|5>>
+    <associate|auto-8|<tuple|2.1.2|6>>
+    <associate|auto-9|<tuple|2.1.3|6>>
+    <associate|bib-HardyZ|<tuple|2|10>>
+    <associate|bib-Johansson2017arb|<tuple|3|10>>
+    <associate|bib-milnor2006dynamics|<tuple|4|10>>
+    <associate|bib-raadstrom1953iteration|<tuple|6|10>>
+    <associate|bib-ramachandra1995lectures|<tuple|7|10>>
+    <associate|bib-z0t|<tuple|1|10>>
+    <associate|bib-zt|<tuple|5|10>>
+    <associate|cm|<tuple|21|7>>
     <associate|ee|<tuple|7|2>>
-    <associate|fl|<tuple|10|4>>
-    <associate|lc|<tuple|38|9>>
-    <associate|le|<tuple|6|3>>
+    <associate|fl|<tuple|8|4>>
+    <associate|lc|<tuple|20|5>>
+    <associate|le|<tuple|4|3>>
     <associate|ord|<tuple|11|3>>
-    <associate|p1|<tuple|23|7>>
-    <associate|pc|<tuple|27|8>>
-    <associate|peven|<tuple|20|6>>
-    <associate|podd|<tuple|19|6>>
-    <associate|vartheta|<tuple|2|1>>
+    <associate|p1|<tuple|22|8>>
+    <associate|pc|<tuple|26|8>>
+    <associate|peven|<tuple|19|6>>
+    <associate|podd|<tuple|18|6>>
+    <associate|vartheta|<tuple|2|2>>
   </collection>
 </references>
 
@@ -866,11 +939,11 @@
       so it is added. It is plain to see that the curves
       <with|mode|<quote|math>|><with|mode|<quote|math>|tanh<around*|(|<frac|Z<around*|(|t|)>|\<Omega\><around*|(|t|)><big|prod><rsub|k=1><rsup|n-1>tanh<around*|(|t-y<rsub|k>|)>>|)>>
       do not cross the zero axis for any <with|mode|<quote|math>|t\<less\>y<rsub|n>>
-      >|<pageref|auto-6>>
+      >|<pageref|auto-10>>
 
       <tuple|normal|<surround|<hidden|<tuple>>||Multipler<with|mode|<quote|math>|>
       of the maps <with|mode|<quote|math>|Y<rsub|1><around*|(|t|)>> and
-      <with|mode|<quote|math>|Y<rsub|3><around*|(|t|)>>>|<pageref|auto-7>>
+      <with|mode|<quote|math>|Y<rsub|3><around*|(|t|)>>>|<pageref|auto-11>>
     </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1<space|2spc>Preliminary
@@ -886,17 +959,41 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-3>>
 
-      <with|par-left|<quote|1tab>|1.3<space|2spc>Iterated Function Systems
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-5>>
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Iterated
+      Function Systems> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-5><vspace|0.5fn>
 
-      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|2<space|2spc>Appendix>
+      <with|par-left|<quote|1tab>|2.1<space|2spc>Fixed-Points of Functions
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-8><vspace|0.5fn>
+      <no-break><pageref|auto-6>>
+
+      <with|par-left|<quote|2tab>|2.1.1<space|2spc>An Iteration Function
+      Which Successively Removes Roots <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-7>>
+
+      <with|par-left|<quote|2tab>|2.1.2<space|2spc>Indifferent Fixed-Points
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-8>>
+
+      <with|par-left|<quote|2tab>|2.1.3<space|2spc>Alternating Attractive and
+      Repulsive Fixed-Points <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-9>>
+
+      <with|par-left|<quote|1tab>|2.2<space|2spc>Contraction Mappings
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-12>>
+
+      <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|3<space|2spc>Appendix>
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13><vspace|0.5fn>
+
+      <with|par-left|<quote|1tab>|3.1<space|2spc>Definitions
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-14>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-9><vspace|0.5fn>
+      <no-break><pageref|auto-15><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>

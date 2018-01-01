@@ -1480,7 +1480,7 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     maxLength += 2;
 
     String name = getName() != null ? (getName()) : "";
-    TextTable table = new TextTable(seq((IntFunction<?>) k -> name + "[x," + (k + 1) + "]", 0, numCols - 1).toArray(String[]::new), strings);
+    TextTable table = new TextTable(seq((IntFunction<?>) k -> name + "[m," + (k + 1) + "]", 0, numCols - 1).toArray(String[]::new), strings);
 
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     PrintStream ps = new PrintStream(os);
@@ -1501,32 +1501,6 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
       throw new RuntimeException(e.getMessage(), e);
     }
 
-    //
-    // for (int i = 0; i < numRows; i++)
-    // {
-    // for (int j = 0; j < numCols; j++)
-    // {
-    // String string = strings[i][j];
-    //
-    // int skip = maxDecimal - string.indexOf('.');
-    //
-    // for (int k = 0; k < skip; k++)
-    // {
-    // sb.append(" ");
-    // }
-    //
-    // sb.append(string);
-    //
-    // for (int k = string.length() + skip; k < maxLength; k++)
-    // {
-    // sb.append(" ");
-    // }
-    // }
-    //
-    // sb.append(i < numRows ? "\n" : "");
-    // }
-    //
-    // return sb.toString();
   }
 
   private String

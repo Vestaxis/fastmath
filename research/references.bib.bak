@@ -4254,4 +4254,12 @@ We model the arrival of mid-price changes in the E-mini S&P futures contract as 
   url    = {http://www.dtc.umn.edu/~odlyzko/zeta_tables/index.html},
 }
 
+@Book{ramachandra1995lectures,
+  author    = {Ramachandra, Kanakanahalli},
+  title     = {Lectures on the mean-value and omega-theorems for the Riemann zeta-function},
+  year      = {1995},
+  volume    = {85},
+  publisher = {Springer},
+}
+
 @Comment{jabref-meta: databaseType:biblatex;}
