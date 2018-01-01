@@ -1,12 +1,18 @@
 package fastmath;
 
+import static fastmath.Functions.seq;
 import static java.lang.String.format;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
 import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 
+import dnl.utils.text.table.TextTable;
 import fastmath.exceptions.FastMathException;
 import fastmath.exceptions.IllegalValueError;
 import fastmath.exceptions.SingularFactorException;
@@ -1473,33 +1479,54 @@ public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritab
     }
     maxLength += 2;
 
-    StringBuffer sb = new StringBuffer((getName() != null ? (getName() + "=") : "") + getDimString() + "\n");
+    String name = getName() != null ? (getName()) : "";
+    TextTable table = new TextTable(seq((IntFunction<?>) k -> name + "[x," + (k + 1) + "]", 0, numCols - 1).toArray(String[]::new), strings);
 
-    for (int i = 0; i < numRows; i++)
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    PrintStream ps = new PrintStream(os);
+
+    StringBuffer sb = new StringBuffer();
+
+    table.setAddRowNumbering(true);
+    table.printTable(ps, 0);
+    ps.close();
+
+    try
     {
-      for (int j = 0; j < numCols; j++)
-      {
-        String string = strings[i][j];
-
-        int skip = maxDecimal - string.indexOf('.');
-
-        for (int k = 0; k < skip; k++)
-        {
-          sb.append(" ");
-        }
-
-        sb.append(string);
-
-        for (int k = string.length() + skip; k < maxLength; k++)
-        {
-          sb.append(" ");
-        }
-      }
-
-      sb.append(i < numRows ? "\n" : "");
+      return os.toString("UTF8");
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      e.printStackTrace(System.err);
+      throw new RuntimeException(e.getMessage(), e);
     }
 
-    return sb.toString();
+    //
+    // for (int i = 0; i < numRows; i++)
+    // {
+    // for (int j = 0; j < numCols; j++)
+    // {
+    // String string = strings[i][j];
+    //
+    // int skip = maxDecimal - string.indexOf('.');
+    //
+    // for (int k = 0; k < skip; k++)
+    // {
+    // sb.append(" ");
+    // }
+    //
+    // sb.append(string);
+    //
+    // for (int k = string.length() + skip; k < maxLength; k++)
+    // {
+    // sb.append(" ");
+    // }
+    // }
+    //
+    // sb.append(i < numRows ? "\n" : "");
+    // }
+    //
+    // return sb.toString();
   }
 
   private String

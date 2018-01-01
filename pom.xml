@@ -257,6 +257,7 @@
 			<artifactId>jansi</artifactId>
 			<version>1.16</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.knowm.xchart</groupId>
 			<artifactId>xchart</artifactId>
@@ -281,13 +282,7 @@
 			<version>4.11</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>javafx</artifactId>
-			<version>2.2.3</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/jfxrt.jar</systemPath>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
