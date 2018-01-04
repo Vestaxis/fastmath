@@ -480,10 +480,17 @@ public class MatFile implements Iterable<MiElement>
 
   public static void
          write(String filename,
-               MiElement... writables) throws IOException
+               MiElement... writables)
   {
     File file = new File(filename);
-    write(file, writables);
+    try
+    {
+      write(file, writables);
+    }
+    catch (IOException e)
+    {
+      throw new RuntimeException(e.getMessage(), e);
+    }
   }
 
   public static void

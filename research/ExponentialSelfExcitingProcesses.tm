@@ -54,17 +54,29 @@
     of Operators> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-9><vspace|0.5fn>
 
-    <with|par-left|1tab|3.1.<space|2spc>The Hahn-Banach Theorem
+    <with|par-left|1tab|3.1.<space|2spc>Hille-Yosida Operators
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-10>>
 
-    <with|par-left|1tab|3.2.<space|2spc>The Hille\UYosida Theorem
+    <with|par-left|2tab|3.1.1.<space|2spc>The Hahn-Banach Theorem
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-11>>
 
+    <with|par-left|1tab|3.2.<space|2spc>The Hille\UYosida Theorem
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-12>>
+
+    <with|par-left|1tab|3.3.<space|2spc>The Perron-Frobenius Theorem
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-13>>
+
+    <with|par-left|2tab|3.3.1.<space|2spc>Continuous Extensions of Norm 1
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-14>>
+
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Bibliography>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-12><vspace|0.5fn>
+    <no-break><pageref|auto-15><vspace|0.5fn>
   </table-of-contents>
 
   <section|Self-Exciting Point Processes>
@@ -263,7 +275,7 @@
   </equation>
 
   Therefore this slightly modified Newton iteration function is an
-  automorphism of the real line expressed by
+  endomorphism of the real line expressed by
 
   <\equation>
     <tabular|<tformat|<table|<row|<cell|N<rsub|\<varphi\>><around*|(|t<rsub|n+1>,y|)>>|<cell|=t<rsub|n>-<frac|\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>|<frac|\<partial\>|\<partial\>t>\<varphi\><around*|(|t<rsub|n+1>-t<rsub|n>,y|)>>>>|<row|<cell|>|<cell|=t<rsub|n>-<frac|<big|sum><rsub|j=1><rsup|P><around*|(|e<rsup|-\<beta\><rsub|j>
@@ -471,7 +483,9 @@
 
   <section|Semigroups of Operators>
 
-  <subsection|The Hahn-Banach Theorem>
+  <subsection|Hille-Yosida Operators>
+
+  <subsubsection|The Hahn-Banach Theorem>
 
   Let <math|X> be a Banach space and <math|X<rprime|'>> be its dual space.
   For every <math|x\<in\>X> there exists an
@@ -493,10 +507,43 @@
 
   <subsection|The Hille\UYosida Theorem>
 
-  \;
+  <cite-detail|engel1999one|Definition 3.2>
+
+  <subsection|The Perron-Frobenius Operator>
+
+  <\definition>
+    The Perron-Frobenius operator
+
+    <\equation>
+      PF<around*|(|\<varphi\>|)><around*|(|z|)>
+    </equation>
+  </definition>
+
+  ...
+
+  <subsubsection|Continuous Extensions of Norm 1>
+
+  <\proposition>
+    The Perron-Frobenius operator
+
+    <\equation>
+      PF\<assign\>d<rsup|-k>f<rsub|\<ast\>>
+    </equation>
+
+    has a continuous extension of norm <math|1> to
+    <math|L<rsup|2><around*|(|\<mu\>|)>>. Also, the adjoint of
+    <math|\<Lambda\>> satisfies <math|\<Lambda\><rsup|<rsup|-1>><around*|(|\<varphi\>|)>=\<varphi\>\<circ\>f>
+    and <math|\<Lambda\>\<circ\>\<Lambda\><rsup|<rsup|-1>>=id.> If
+    <math|L<rsub|0><rsup|2><around*|(|\<mu\>|)>> is the hyperplane of
+    <math|L<rsup|2><around*|(|\<mu\>|)>> defined by
+    <math|<around|\<langle\>|\<mu\>,\<varphi\>|\<rangle\>>=0> then the
+    spectral radius of <math|\<Lambda\>> on
+    <math|L<rsub|0><rsup|2><around*|(|\<mu\>|)>> is also equal to
+    1.<cite-detail|sibony2010holomorphic|Proposition 1.81>
+  </proposition>
 
   <\bibliography|bib|tm-plain|references.bib>
-    <\bib-list|9>
+    <\bib-list|10>
       <bibitem*|1><label|bib-ocvshjb>Martino Bardi<localize| and >Italo
       Capuzzo-Dolcetta. <newblock><with|font-shape|italic|Optimal Control and
       Viscosity Solutions of Hamilton-Jacobi-Bellman Equations (Systems &
@@ -540,7 +587,14 @@
       self-excited point process. <newblock><with|font-shape|italic|Available
       at SSRN 1668160>, 2010.<newblock>
 
-      <bibitem*|9><label|bib-hawkes-finance>Ioane<nbsp>Muni Toke.
+      <bibitem*|9><label|bib-sibony2010holomorphic>Nessim Sibony, Dierk
+      Schleicher, Dinh<nbsp>Tien Cuong, Marco Brunella, Eric
+      Bedford<localize|, and >Marco Abate.
+      <newblock><with|font-shape|italic|Holomorphic Dynamical Systems:
+      Lectures Given at the CIME Summer School Held in Cetraro, Italy, July
+      7-12, 2008>. <newblock>Springer, 2010.<newblock>
+
+      <bibitem*|10><label|bib-hawkes-finance>Ioane<nbsp>Muni Toke.
       <newblock>An introduction to hawkes processes with applications to
       finance. <newblock><with|font-shape|italic|???>,
       <slink|http://fiquant.mas.ecp.fr/ioane_files/HawkesCourseSlides.pdf>,
@@ -565,8 +619,12 @@
     <associate|HawkesIntensity|<tuple|3|1>>
     <associate|auto-1|<tuple|1|1>>
     <associate|auto-10|<tuple|3.1|7>>
-    <associate|auto-11|<tuple|3.2|7>>
+    <associate|auto-11|<tuple|3.1.1|7>>
     <associate|auto-12|<tuple|3.2|7>>
+    <associate|auto-13|<tuple|3.3|7>>
+    <associate|auto-14|<tuple|3.3.1|7>>
+    <associate|auto-15|<tuple|43|7>>
+    <associate|auto-16|<tuple|42|?>>
     <associate|auto-2|<tuple|1.1|1>>
     <associate|auto-3|<tuple|1.1.1|3>>
     <associate|auto-4|<tuple|1.2|4>>
@@ -578,12 +636,13 @@
     <associate|bib-chavez2012high|<tuple|3|7>>
     <associate|bib-chp|<tuple|2|7>>
     <associate|bib-engel1999one|<tuple|4|7>>
-    <associate|bib-hawkes-finance|<tuple|9|7>>
+    <associate|bib-hawkes-finance|<tuple|10|8>>
     <associate|bib-hawkes1971spectra|<tuple|5|7>>
     <associate|bib-ocvshjb|<tuple|1|7>>
-    <associate|bib-ogata1981lewis|<tuple|6|7>>
-    <associate|bib-ozaki1979maximum|<tuple|7|7>>
-    <associate|bib-shek2010modeling|<tuple|8|7>>
+    <associate|bib-ogata1981lewis|<tuple|6|8>>
+    <associate|bib-ozaki1979maximum|<tuple|7|8>>
+    <associate|bib-shek2010modeling|<tuple|8|8>>
+    <associate|bib-sibony2010holomorphic|<tuple|9|8>>
     <associate|comp|<tuple|8|3>>
     <associate|footnote-1|<tuple|1|1>>
     <associate|footnr-1|<tuple|1|1>>
@@ -614,6 +673,10 @@
       ocvshjb
 
       engel1999one
+
+      engel1999one
+
+      sibony2010holomorphic
     </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|1.<space|2spc>Self-Exciting
@@ -654,17 +717,29 @@
       of Operators> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9><vspace|0.5fn>
 
-      <with|par-left|<quote|1tab>|3.1.<space|2spc>The Hahn-Banach Theorem
+      <with|par-left|<quote|1tab>|3.1.<space|2spc>Hille-Yosida Operators
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-10>>
 
-      <with|par-left|<quote|1tab>|3.2.<space|2spc>The Hille\UYosida Theorem
+      <with|par-left|<quote|2tab>|3.1.1.<space|2spc>The Hahn-Banach Theorem
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-11>>
 
+      <with|par-left|<quote|1tab>|3.2.<space|2spc>The Hille\UYosida Theorem
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-12>>
+
+      <with|par-left|<quote|1tab>|3.3.<space|2spc>The Perron-Frobenius
+      Theorem <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-13>>
+
+      <with|par-left|<quote|2tab>|3.3.1.<space|2spc>Continuous Extensions of
+      Norm 1 <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-14>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Bibliography>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-12><vspace|0.5fn>
+      <no-break><pageref|auto-15><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
