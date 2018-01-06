@@ -89,6 +89,10 @@ public class AutoArrayList<V> extends ArrayList<V>
     if (constructor != null)
     {
       V constructed = constructor.apply(key);
+      while ( size() < key )
+      {
+        add(null);
+      }
       add(key, constructed);
       return constructed;
     }
