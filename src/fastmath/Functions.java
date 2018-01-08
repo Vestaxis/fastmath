@@ -245,6 +245,10 @@ public class Functions
              int lowerIndex,
              int upperIndex)
   {
+    if (upperIndex < lowerIndex)
+    {
+      return 0;
+    }
     return rangeClosed(lowerIndex, upperIndex).mapToDouble(elements).sum();
   }
 
