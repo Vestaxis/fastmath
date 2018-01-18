@@ -7,6 +7,10 @@ import java.util.function.IntToDoubleFunction;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
+import org.apache.commons.math3.random.JDKRandomGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.UniformRandomGenerator;
+
 public class Functions
 {
 
@@ -155,6 +159,8 @@ public class Functions
     return x - Math.floor(x);
   }
 
+  static RandomGenerator uniRng = new JDKRandomGenerator(1);
+
   /**
    * @param range
    * @return random number uniformly distributed within range
@@ -162,7 +168,7 @@ public class Functions
   public static double
          uniformRandom(Pair<Double, Double> range)
   {
-    return Math.random() * (range.right - range.left) + range.left;
+    return uniRng.nextDouble() * (range.right - range.left) + range.left;
   }
 
   /**
