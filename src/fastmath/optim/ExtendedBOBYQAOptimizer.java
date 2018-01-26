@@ -1,5 +1,7 @@
 package fastmath.optim;
 
+import static java.lang.System.out;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -509,6 +511,8 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
       }
       case 60:
       {
+       
+
         printState(60); // XXX
         final ArrayRealVector gnew = new ArrayRealVector(n);
         final ArrayRealVector xbdi = new ArrayRealVector(n);
@@ -1337,6 +1341,9 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
       case 680:
       {
         printState(680); // XXX
+        out.format(Thread.currentThread().getName() + " " + " radius ρ=%20.20f at %d evals\n", rho, getEvaluations());
+        out.flush();
+
         if (rho > stoppingTrustRegionRadius)
         {
           delta = HALF * rho;
@@ -1360,6 +1367,7 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
           break;
         }
 
+        
         // Return from the calculation, after another Newton-Raphson step, if
         // it is too short to have been tried before.
 
