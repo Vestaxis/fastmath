@@ -105,11 +105,11 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
   TreeSet<PointValuePair> optima = null;
 
   @SuppressWarnings("unchecked")
-  protected PointValuePair
+  protected final PointValuePair
             doOptimize()
   {
     assert optimData != null;
-    
+
     // Remove all instances of "MaxEval" and "InitialGuess" from the
     // array that will be passed to the internal optimizer.
     // The former is to enforce smaller numbers of allowed evaluations
@@ -184,7 +184,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
     AtomicInteger progress = new AtomicInteger();
 
     // Multi-start loop.
-    range(0, starts).parallel().forEach(i -> {
+    IntConsumer optimize = i -> {
       OptimizationData[] instanceOptimData = optimData.clone();
       assert instanceOptimData != null;
       BaseMultivariateOptimizer<PointValuePair> optimizer = optimizerSupplier.get();
@@ -226,7 +226,9 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       }
       int evalCount = totalEvaluations.addAndGet(optimizer.getEvaluations());
 
-    });
+    };
+
+    range(0, starts).parallel().forEach(optimize);
 
     return optima.first();
   }

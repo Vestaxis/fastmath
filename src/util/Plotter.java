@@ -125,7 +125,7 @@ public class Plotter
                double right,
                ToDoubleFunction<Double> timeAxisTransformer)
   {
-    return chart(xAxisTitle, seriesName, func, left, right, 1000, timeAxisTransformer);
+    return chart(xAxisTitle, seriesName, func, left, right, 10000, timeAxisTransformer);
   }
 
   public static XYChart
