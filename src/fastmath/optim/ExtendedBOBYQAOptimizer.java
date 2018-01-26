@@ -913,7 +913,7 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
         }
 
         f = computeObjectiveValue(currentBest.toArray());
-        out.println(Thread.currentThread().getName() + " f=" + f + " where radius ρ is " + rho);
+        //out.println(Thread.currentThread().getName() + " f=" + f + " where radius ρ is " + rho);
 
         if (!isMinimize)
         {
