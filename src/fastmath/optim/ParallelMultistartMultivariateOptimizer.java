@@ -205,7 +205,7 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
           boolean valid = _validator == null || _validator.apply(result);
           if (valid)
           {
-            out.format("%20s %10s %s\n", Thread.currentThread().getName(), iterString, " Storing " + new Vector(result.getKey()));
+            out.format("%20s %10s %s\n", Thread.currentThread().getName(), iterString, " Storing " + new Vector(result.getKey()) + " with LL score " + result.getValue() );
             optima.add(result);
           }
           else
