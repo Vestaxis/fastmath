@@ -511,7 +511,6 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
       }
       case 60:
       {
-       
 
         printState(60); // XXX
         final ArrayRealVector gnew = new ArrayRealVector(n);
@@ -914,6 +913,7 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
         }
 
         f = computeObjectiveValue(currentBest.toArray());
+        out.println(Thread.currentThread().getName() + " f=" + f + " where radius ρ is " + rho);
 
         if (!isMinimize)
         {
@@ -1367,7 +1367,6 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
           break;
         }
 
-        
         // Return from the calculation, after another Newton-Raphson step, if
         // it is too short to have been tried before.
 
