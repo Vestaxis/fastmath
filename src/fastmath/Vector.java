@@ -258,6 +258,15 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
     this(ds.toArray());
   }
 
+  public Vector(IntVector k)
+  {
+    this(k.size);
+    for (int i = 0; i < k.size; i++)
+    {
+      set(i, k.get(i));
+    }
+  }
+
   /**
    * Transform to absolute values
    * 

@@ -1341,8 +1341,8 @@ public class ExtendedBOBYQAOptimizer extends MultivariateOptimizer
       case 680:
       {
         printState(680); // XXX
-        out.format(Thread.currentThread().getName() + " " + " radius ρ=%20.20f at %d evals\n", rho, getEvaluations());
-        out.flush();
+//        out.format(Thread.currentThread().getName() + " " + " radius ρ=%20.20f at %d evals\n", rho, getEvaluations());
+//        out.flush();
 
         if (rho > stoppingTrustRegionRadius)
         {

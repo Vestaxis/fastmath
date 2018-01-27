@@ -3,6 +3,7 @@ package fastmath.optim;
 import static java.lang.System.err;
 import static java.lang.System.out;
 import static java.util.stream.IntStream.range;
+import static org.fusesource.jansi.Ansi.ansi;
 
 import java.util.Arrays;
 import java.util.TreeSet;
@@ -20,6 +21,7 @@ import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.random.RandomVectorGenerator;
+import org.fusesource.jansi.Ansi.Color;
 
 import fastmath.Vector;
 
@@ -205,7 +207,10 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
           boolean valid = _validator == null || _validator.apply(result);
           if (valid)
           {
-            out.format("%20s %10s %s\n", Thread.currentThread().getName(), iterString, " Storing " + new Vector(result.getKey()) + " with LL score " + result.getValue() );
+            out.format(ansi().fg(Color.RED) + "%20s %10s %s\n",
+                       Thread.currentThread().getName(),
+                       iterString,
+                       " Storing " + new Vector(result.getKey()) + " with LL score " + result.getValue() + ansi().fgDefault());
             optima.add(result);
           }
           else
