@@ -200,7 +200,8 @@ public class ParallelMultistartMultivariateOptimizer extends BaseMultivariateOpt
       try
       {
         final PointValuePair result = optimizer.optimize(instanceOptimData);
-        String iterString = String.format("#%d/%d", iterationCounter.incrementAndGet(), starts);
+        int solutionNumber = iterationCounter.incrementAndGet();
+        String iterString = String.format("#%d/%d", solutionNumber, starts);
 
         synchronized (optima)
         {
