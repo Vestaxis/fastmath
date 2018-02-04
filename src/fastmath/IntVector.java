@@ -1,5 +1,8 @@
 package fastmath;
 
+import static java.lang.String.format;
+import static java.lang.System.out;
+
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,6 +13,29 @@ import fastmath.matfile.MiInt32;
 
 public class IntVector extends AbstractBufferedObject implements Iterable<Integer>
 {
+  @Override
+  public boolean
+         equals(Object obj)
+  {
+    if (!(obj instanceof IntVector))
+    {
+      return false;
+    }
+    IntVector other = (IntVector) obj;
+    if (!(other.size() == size))
+    {
+      return false;
+    }
+    for (int i = 0; i < size; i++)
+    {
+      if (get(i) != other.get(i))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
   protected int size;
   private int capacity;
   private double incrementalCapacityExpansionFactor = 1.75;
@@ -52,18 +78,22 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     }
   }
 
-  public void set(int i, Integer num)
+  public void
+         set(int i,
+             Integer num)
   {
     setElementAt(i, num);
   }
 
-  public int size()
+  public int
+         size()
   {
     return size;
   }
 
   @Override
-  public String toString()
+  public String
+         toString()
   {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < size; i++)
@@ -74,17 +104,21 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     return sb.toString();
   }
 
-  public int elementAt(int i)
+  public int
+         elementAt(int i)
   {
     return buffer.getInt(getOffset(i));
   }
 
-  public int getOffset(int i)
+  public int
+         getOffset(int i)
   {
     return i * MiInt32.BYTES;
   }
 
-  public void setElementAt(int i, int x)
+  public void
+         setElementAt(int i,
+                      int x)
   {
     buffer.putInt(getOffset(i), x);
   }
@@ -100,7 +134,8 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
    * @return this with this{@link #size()} being 1 greater than it was prior
    * 
    */
-  public IntVector append(int x)
+  public IntVector
+         append(int x)
   {
     if (size == capacity)
     {
@@ -114,7 +149,8 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     return this;
   }
 
-  private int getNewElementsIncrement()
+  private int
+          getNewElementsIncrement()
   {
     return Math.max(1, (int) (size * (incrementalCapacityExpansionFactor)));
   }
@@ -124,12 +160,14 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
    * 
    * @return new Vector sharing the same underlying buffer as this
    */
-  public IntVector reverse()
+  public IntVector
+         reverse()
   {
     return new Sub(buffer, size, getOffset(size() - 1), getIncrement() * -1);
   }
 
-  public int getIncrement()
+  public int
+         getIncrement()
   {
     return 1;
   }
@@ -158,7 +196,8 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     }
 
     @Override
-    public int getIncrement()
+    public int
+           getIncrement()
     {
       return increment;
     }
@@ -169,20 +208,24 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
      * 
      * @return
      */
-    public int getIndex()
+    public int
+           getIndex()
     {
       return index;
     }
 
     @Override
-    public int getOffset(int i)
+    public int
+           getOffset(int i)
     {
       return baseOffset + (increment * i * MiInt32.BYTES);
     }
 
   }
 
-  public IntVector slice(int beginIndex, int endIndex)
+  public IntVector
+         slice(int beginIndex,
+               int endIndex)
   {
     assert beginIndex >= 0 : String.format("beginIndex %d must be >= 0", beginIndex);
     assert endIndex <= size() : String.format("endIndex %d must be <= %d", endIndex, size());
@@ -190,7 +233,8 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     return new IntVector.Sub(buffer, endIndex - beginIndex, getOffset(beginIndex), getIncrement());
   }
 
-  public IntVector unique()
+  public IntVector
+         unique()
   {
     TreeSet<Integer> values = new TreeSet<Integer>();
     for (int i = 0; i < size(); i++)
@@ -200,37 +244,105 @@ public class IntVector extends AbstractBufferedObject implements Iterable<Intege
     return new IntVector(values);
   }
 
-  public int get(int i)
+  public int
+         get(int i)
   {
     return elementAt(i);
   }
 
   @Override
-  public Iterator<Integer> iterator()
+  public Iterator<Integer>
+         iterator()
   {
     return new PrimitiveIterator.OfInt()
     {
       int i = 0;
 
       @Override
-      public boolean hasNext()
+      public boolean
+             hasNext()
       {
         return i < size();
       }
 
       @Override
-      public int nextInt()
+      public int
+             nextInt()
       {
         return get(i++);
       }
 
       @Override
-      public void remove()
+      public void
+             remove()
       {
         throw new UnsupportedOperationException();
       }
 
     };
+  }
+
+  /**
+   * Return a Vector with the same contents but longer length, padded with zeros
+   * 
+   * @param i
+   * @return
+   */
+  public IntVector
+         extend(int i)
+  {
+    IntVector newVector = new IntVector(size() + i);
+    newVector.slice(0, size()).assign(this);
+    return newVector;
+  }
+
+  /**
+   * Sets an element of this vector
+   * 
+   * @param i
+   * @param x
+   * 
+   * @return this
+   */
+  public IntVector
+         set(int i,
+             int x)
+  {
+    assert i < size() && i >= 0 : format("i=%d size()=%d", i, size());
+
+    int offset = getOffset(i);
+    try
+    {
+      buffer.putInt(offset, x);
+    }
+    catch (IndexOutOfBoundsException e)
+    {
+      IndexOutOfBoundsException moreInformativeException = new IndexOutOfBoundsException(format("offset=%d > %d", offset, buffer.limit()));
+      moreInformativeException.addSuppressed(e);
+      throw moreInformativeException;
+    }
+
+    return this;
+  }
+
+  public IntVector
+         assign(IntVector x)
+  {
+    assert size() == x.size() : format("dimensions do not match in assignment: this.size=%d != %d", size(), x.size());
+    for (int i = 0; i < x.size(); i++)
+    {
+      set(i, x.get(i));
+    }
+    return this;
+  }
+
+  public IntVector
+         copyAndAppend(int d)
+  {
+    int len = size();
+    IntVector newVec = extend(1);
+    newVec.set(len, d);
+    return newVec;
   }
 
 }
