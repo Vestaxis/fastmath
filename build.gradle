@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'sc'
-version = '7.2'
+version = '7.3'
 
 description = "fastmath"
 
