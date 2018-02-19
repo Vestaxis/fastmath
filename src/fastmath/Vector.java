@@ -1418,7 +1418,7 @@ public class Vector extends AbstractBufferedObject implements Writable, Iterable
   public double
          getRightmostValue()
   {
-    return get(size() - 1);
+    return isEmpty() ? Double.NaN : get(size() - 1);
   }
 
   public Vector
