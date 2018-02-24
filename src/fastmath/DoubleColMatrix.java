@@ -133,7 +133,6 @@ public class DoubleColMatrix extends DoubleMatrix
     return reuseBuffer ? new DoubleColMatrix(buffer, getBaseOffset(), numRows, numCols) : new DoubleColMatrix(this);
   }
 
-
   /**
    * Return offset in BYTES
    * 
@@ -389,5 +388,18 @@ public class DoubleColMatrix extends DoubleMatrix
          supNorm()
   {
     return rows().stream(false).mapToDouble(row -> row.doubleStream().map(val -> abs(val)).sum()).max().getAsDouble();
+  }
+
+  public DoubleColMatrix
+         assign(double[][] ds)
+  {
+    for (int m = 0; m < numRows; m++)
+    {
+      for (int n = 0; n < numCols; n++)
+      {
+        set(m, n, ds[m][n]);
+      }
+    }
+    return this;
   }
 }
