@@ -1,0 +1,14 @@
+/target/*
+/*.bin
+/*.log
+/*.mat
+/*.bak
+/*~
+/*.model
+/autocor.png
+/docs/
+/target/
+/build/
+/gradle/
+/.gradle/
+/.attach_pid8993
