@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"fastmath"},{"l":"fastmath.exceptions"},{"l":"fastmath.functions"},{"l":"fastmath.io"},{"l":"fastmath.matfile"},{"l":"fastmath.matfile.exceptions"},{"l":"fastmath.optim"},{"l":"util"}]
