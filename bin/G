@@ -1,3 +1,0 @@
-#!/bin/sh -x
-
-java -classpath `mvn -q exec:exec` math.functions.implementations.maple.GFunction 
