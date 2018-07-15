@@ -1,7 +1,0 @@
-#!/bin/sh
-
-FMDIR=$(dirname $(readlink -f $0))/..
-$FMDIR/bin/runfm stochastic.processes.selfexciting.gui.ModelViewer $@
-
-
-
