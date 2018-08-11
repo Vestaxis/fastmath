@@ -18,8 +18,8 @@ import util.AutoHashMap;
 public abstract class AbstractMatrix extends AbstractBufferedObject implements  Writable
 {
   protected String name;
-   protected int numCols;
-   protected int numRows;
+  protected int numCols;
+  protected int numRows;
 
   public AbstractMatrix()
   {
