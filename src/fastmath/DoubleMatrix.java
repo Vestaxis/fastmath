@@ -12,6 +12,8 @@ import java.text.NumberFormat;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 
+import com.sleepycat.persist.model.Persistent;
+
 import dnl.utils.text.table.TextTable;
 import fastmath.exceptions.FastMathException;
 import fastmath.exceptions.IllegalValueError;
@@ -21,6 +23,7 @@ import fastmath.matfile.MiDouble;
 import fastmath.matfile.NamedWritable;
 
 @SuppressWarnings("unchecked")
+@Persistent
 public abstract class DoubleMatrix extends AbstractMatrix implements NamedWritable
 {
 

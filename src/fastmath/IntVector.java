@@ -1,7 +1,6 @@
 package fastmath;
 
 import static java.lang.String.format;
-import static java.lang.System.out;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
@@ -9,8 +8,11 @@ import java.util.Iterator;
 import java.util.PrimitiveIterator;
 import java.util.TreeSet;
 
+import com.sleepycat.persist.model.Persistent;
+
 import fastmath.matfile.MiInt32;
 
+@Persistent
 public class IntVector extends AbstractBufferedObject implements Iterable<Integer>
 {
   @Override

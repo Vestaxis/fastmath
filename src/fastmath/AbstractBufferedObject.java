@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 
+import com.sleepycat.persist.model.Persistent;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
@@ -14,6 +15,7 @@ import fastmath.matfile.Writable;
  * Basic functionality of buffered classes, that is, Vectors, Matrixes, etc
  * whose data is stored in a {@link ByteBuffer}
  */
+@Persistent
 public abstract class AbstractBufferedObject implements Writable
 {
 

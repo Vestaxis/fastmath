@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import com.sleepycat.persist.model.Persistent;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
@@ -15,6 +16,7 @@ import fastmath.exceptions.NotInvertableException;
 import fastmath.matfile.MiDouble;
 
 @SuppressWarnings("unchecked")
+@Persistent
 public class DoubleColMatrix extends DoubleMatrix
 {
 
