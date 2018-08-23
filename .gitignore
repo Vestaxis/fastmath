@@ -6,6 +6,7 @@
 /*~
 /*.model
 /autocor.png
+<<<<<<< HEAD
 /docs/
 /target/
 /build/
@@ -15,3 +16,10 @@
 /research/
 /research/
 /research/
+=======
+/target/
+/build/
+/gradle/
+/.gradle/
+/.attach_pid8993
+>>>>>>> refs/remotes/fastmath@github/master

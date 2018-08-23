@@ -17,6 +17,5 @@
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="math.maple.OpenMapleTest"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPEcom.canaccord.mathematics.examples.OpenMapleTestples.OpenMapleTest" value=""/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="fastmath"/>
-    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.library.path=/usr/local/bin.X86_64_LINUX"/>
 </launchConfiguration>
