@@ -22,8 +22,6 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
-<<<<<<< HEAD
-import com.sleepycat.persist.model.Persistent;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
@@ -32,17 +30,6 @@ import fastmath.matfile.MiDouble;
 import fastmath.matfile.MiMatrix;
 import fastmath.matfile.Writable;
 
-@Persistent
-=======
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-
-import fastmath.exceptions.FastMathException;
-import fastmath.matfile.MiDouble;
-import fastmath.matfile.MiMatrix;
-import fastmath.matfile.Writable;
-
->>>>>>> refs/remotes/fastmath@github/master
 public class Vector extends AbstractBufferedObject implements Writable, Iterable<Double>, Collection<Double>
 {
 

@@ -4,30 +4,15 @@ import static java.lang.String.format;
 
 import java.util.function.Consumer;
 
-<<<<<<< HEAD
-import com.sleepycat.persist.model.Persistent;
-
 import fastmath.Vector.Condition;
 import fastmath.matfile.MiDouble;
 
 /**
- * a row-major double matrix representation. most notible is the this
+ * a row-major double matrix representation. most notable is the this
  * {@link #appendRow(Vector)} method, which {@link DoubleColMatrix} does not
  * have, since it has {@link DoubleColMatrix#appendColumn(Vector)}
  */
 @SuppressWarnings("unchecked")
-@Persistent
-=======
-import fastmath.Vector.Condition;
-import fastmath.matfile.MiDouble;
-
-/**
- * a row-major double matrix representation. most notible is the this
- * {@link #appendRow(Vector)} method, which {@link DoubleColMatrix} does not
- * have, since it has {@link DoubleColMatrix#appendColumn(Vector)}
- */
-@SuppressWarnings("unchecked")
->>>>>>> refs/remotes/fastmath@github/master
 public class DoubleRowMatrix extends DoubleMatrix
 {
 
