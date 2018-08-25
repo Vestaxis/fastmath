@@ -8,8 +8,11 @@ import java.util.Iterator;
 import java.util.PrimitiveIterator;
 import java.util.TreeSet;
 
+import com.sleepycat.persist.model.Persistent;
+
 import fastmath.matfile.MiInt32;
 
+@Persistent
 public class IntVector extends AbstractBufferedObject implements Iterable<Integer>
 {
   @Override
