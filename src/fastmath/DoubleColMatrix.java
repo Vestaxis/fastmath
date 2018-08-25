@@ -16,6 +16,7 @@ import fastmath.exceptions.NotInvertableException;
 import fastmath.matfile.MiDouble;
 
 @SuppressWarnings("unchecked")
+@Persistent
 public class DoubleColMatrix extends DoubleMatrix
 {
 
