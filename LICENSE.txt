@@ -1,3 +1,4 @@
-Everything in this project is copyright ©2003-2017 by Stephen Crowley. 
-All rights reserved.
+Everything in this project is copyright ©2003-2017 by Stephen Crowley under the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+See LICENSE
+
  
